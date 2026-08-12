@@ -1,17 +1,11 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Maldivas logo">
-    <defs>
-          <linearGradient id="gold" x1="16" y1="18" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#E6CF8F"/>
-                  <stop offset="0.5" stop-color="#C9A84C"/>
-                  <stop offset="1" stop-color="#9A7B2E"/>
-          </linearGradient>
-          <linearGradient id="ring" x1="10" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#7C3AED"/>
-                  <stop offset="0.55" stop-color="#3ECF8E"/>
-                  <stop offset="1" stop-color="#C026D3"/>
-          </linearGradient>
-    </defs>
-    <path d="M32 3.5 56.7 17.75 56.7 46.25 32 60.5 7.3 46.25 7.3 17.75Z" fill="#0b0f1a" stroke="url(#ring)" stroke-width="2.4" stroke-linejoin="round"/>
-    <path d="M32 11 50.2 21.5 50.2 42.5 32 53 13.8 42.5 13.8 21.5Z" fill="none" stroke="#3ECF8E" stroke-opacity="0.55" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M20 45 L20 21 L26.5 21 L32 31.5 L37.5 21 L44 21 L44 45 L38.6 45 L38.6 30.5 L33.5 39.5 L30.5 39.5 L25.4 30.5 L25.4 45 Z" fill="url(#gold)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2DD4BF"/>
+      <stop offset="55%" stop-color="#0E9384"/>
+      <stop offset="100%" stop-color="#1E3A5F"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#g)"/>
+  <path d="M15 45V19h6.6l10.4 15.4L42.4 19H49v26h-6.4V30.2L33.6 43h-3.2L21.4 30.2V45z" fill="#04151A"/>
 </svg>

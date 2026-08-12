@@ -1,26 +1,39 @@
-# 🌐 rafael-paiva.dev — Portfólio
+# Maldivas Tech Solutions — site institucional e portfólio
 
-> Portfólio profissional bilíngue (PT/EN) de **Rafael Paiva** — Desenvolvedor Fullstack · Análise de Dados & BI.
+Site de **Rafael Maldivas** / Maldivas Tech Solutions (CNPJ 63.310.253/0001-81).
+Bilíngue pt-BR / en, Next.js 14 App Router, TypeScript estrito, CSS puro.
 
-![Next.js](https://img.shields.io/badge/Next.js_14-000000?style=flat&logo=nextdotjs&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React_18-61DAFB?style=flat&logo=react&logoColor=black)
-![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white)
-
-## ✨ Destaques
-
-- 🌎 **Bilíngue** — alternância PT/EN instantânea, sem reload
-- ⚡ **Next.js 14 (App Router)** com TypeScript estrito
-- 🎨 **CSS puro** — design system próprio com variáveis, sem dependências de UI
-- 📱 Totalmente responsivo · SEO com Open Graph
-
-## 🚀 Rodando localmente
+## Rodar
 
 ```bash
 npm install
-npm run dev
+npm run dev     # http://localhost:3000
+npm run build   # build de produção
 ```
 
----
+## Estrutura
 
-**Rafael Paiva** · [GitHub](https://github.com/MaldivaSky) · [LinkedIn](https://www.linkedin.com/in/rafael-paiva-dias-da-silva-022b17122/) · rafaelmaldivas@gmail.com
+```
+app/
+  layout.tsx    metadata, JSON-LD (Organization + Person), fontes
+  page.tsx      página única — dicionário pt/en em `t`, produtos em `products`
+  globals.css   design system (tokens em :root)
+  icon.svg      favicon
+```
+
+## Manutenção
+
+- **Adicionar produto:** um objeto novo em `products` (page.tsx), com `problem` e `solution` nos dois idiomas.
+- **Trocar texto:** tudo vive no objeto `t` — não há string solta no JSX.
+- **Cores e espaçamento:** variáveis em `:root` no `globals.css`.
+- **Negrito no conteúdo:** use `**texto**` — a função `rich()` converte sem `dangerouslySetInnerHTML`.
+
+## Pendências antes do deploy
+
+- [ ] Confirmar o handle da organização no GitHub (`GITHUB_ORG` em `page.tsx`)
+- [ ] Registrar o domínio e ajustar `SITE` em `layout.tsx`
+- [ ] Adicionar imagem Open Graph (`app/opengraph-image.png`, 1200×630)
+- [ ] Publicar o case study do exportador .xls e linkar no card do SelectSys
+
+---
+Backup da versão anterior em `_backup_pre_maldivas/`.
