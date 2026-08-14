@@ -60,7 +60,7 @@ type Product = {
 
 const products: Product[] = [
   {
-    icon: "/logo-mercadinhosys.png",
+    icon: "/logo-miseon.png",
     logoHorizontal: "/logo-horiz-miseon.png",
     name: "MiseOn",
     status: "live",
@@ -243,7 +243,7 @@ const products: Product[] = [
     }
   },
   {
-    icon: "/logo-miseon.png",
+    icon: "/logo-mercadinhosys.png",
     logoHorizontal: "/logo-horiz-mercadinhosys.png",
     name: "mercadinhosys",
     status: "live",

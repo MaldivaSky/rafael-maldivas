@@ -94,17 +94,13 @@ export default function ArchitectureModal({ isOpen, onClose, product, lang }: Mo
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
               {(product.logoHorizontal || product.icon) && (
                 <div style={{ 
-                  background: (product.name.includes("SelectSys") || product.name.includes("mercadinhosys")) ? 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,245,255,0.9))' : 'linear-gradient(135deg, rgba(30,40,55,0.5), rgba(15,20,30,0.8))', 
-                  padding: (product.name.includes("SelectSys") || product.name.includes("mercadinhosys")) ? '10px 24px' : '12px 20px', 
-                  borderRadius: '24px', 
-                  boxShadow: (product.name.includes("SelectSys") || product.name.includes("mercadinhosys")) 
-                    ? 'inset 0 2px 4px rgba(255,255,255,1), 0 10px 30px rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.1)' 
-                    : 'inset 0 2px 2px rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(45,212,191,0.2)',
-                  border: (product.name.includes("SelectSys") || product.name.includes("mercadinhosys")) ? '1px solid rgba(255,255,255,1)' : '1px solid rgba(255,255,255,0.15)',
-                  backdropFilter: 'blur(16px)',
+                  background: '#ffffff', 
+                  padding: '8px 16px', 
+                  borderRadius: '12px', 
+                  boxShadow: '0 8px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
-                  <img src={`${product.logoHorizontal || product.icon}?v=6`} alt={product.name} style={{ height: '52px', width: 'auto', objectFit: 'contain', filter: (product.name.includes("SelectSys") || product.name.includes("mercadinhosys")) ? 'drop-shadow(0 4px 6px rgba(0,0,0,0.05))' : 'drop-shadow(0 8px 16px rgba(0,0,0,0.5))' }} />
+                  <img src={`${product.logoHorizontal || product.icon}?v=12`} alt={product.name} style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
                 </div>
               )}
               <div>
