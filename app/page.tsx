@@ -55,12 +55,12 @@ type Product = {
   tags: { l: string; s?: string }[];
   repo: string | null;
   demo: string | null;
-  deepTech?: { pt: React.ReactNode; en: React.ReactNode };
+  deepTech?: { pt: { id: string; icon: any; title: string; desc: React.ReactNode }[]; en: { id: string; icon: any; title: string; desc: React.ReactNode }[] };
 };
 
 const products: Product[] = [
   {
-    icon: "/logo-miseon.png",
+    icon: "/logo-mercadinhosys.png",
     logoHorizontal: "/logo-horiz-miseon.png",
     name: "MiseOn",
     status: "live",
@@ -243,7 +243,7 @@ const products: Product[] = [
     }
   },
   {
-    icon: "/logo-mercadinhosys.png",
+    icon: "/logo-miseon.png",
     logoHorizontal: "/logo-horiz-mercadinhosys.png",
     name: "mercadinhosys",
     status: "live",
@@ -584,7 +584,7 @@ function rich(text: string) {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } }
 };
 
 const staggerContainer = {
