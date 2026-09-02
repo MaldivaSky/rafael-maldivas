@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 >nul
-title Publicar portfolio - Maldivas Tech Solutions
+title Publicar portfolio - Maldivas Tech
 
 echo.
 echo  ============================================================
@@ -9,7 +9,7 @@ echo    Publicar o portfolio novo no GitHub + Vercel
 echo  ============================================================
 echo.
 echo    Repositorio : github.com/MaldivaSky/rafael-maldivas
-echo    Site        : rafael-paiva-dev.vercel.app
+echo    Site        : maldivas-tech-solutions.vercel.app
 echo.
 echo    O Vercel ja esta conectado nesse repositorio.
 echo    Depois do push ele publica sozinho em 1-2 minutos.
@@ -53,7 +53,7 @@ echo  [5/7] Preparando os arquivos alterados...
 git add -A
 
 echo  [6/7] Criando o commit...
-git commit -m "feat: reposicionamento Maldivas Tech Solutions - site bilingue PT/EN, case studies por produto, dados da empresa (CNPJ) e JSON-LD"
+git commit -m "feat: reposicionamento Maldivas Tech - site bilingue PT/EN, case studies por produto, dados da empresa (CNPJ) e JSON-LD"
 if errorlevel 1 (
   echo         Nada mudou em relacao ao que ja esta no GitHub.
   echo         Nao ha o que publicar.
@@ -72,13 +72,13 @@ echo    PUBLICADO.
 echo.
 echo    Codigo    : https://github.com/MaldivaSky/rafael-maldivas
 echo    Deploy    : https://vercel.com/dashboard  (acompanhe o build)
-echo    Site novo : https://rafael-paiva-dev.vercel.app
+echo    Site novo : https://maldivas-tech-solutions.vercel.app
 echo.
 echo    O Vercel detecta o push e publica em 1-2 minutos.
 echo  ============================================================
 echo.
 pause
-start "" "https://rafael-paiva-dev.vercel.app"
+start "" "https://maldivas-tech-solutions.vercel.app"
 exit /b 0
 
 :erro_rede

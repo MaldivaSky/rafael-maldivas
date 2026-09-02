@@ -406,7 +406,7 @@ const t = {
     h1a: "Sistemas de gestão para operações que ",
     h1b: "não podem parar",
     lead: "Construo ERP, PDV fiscal, marketplace e ATS multi-tenant — do modelo de dados ao deploy. Software que a operação usa todo dia, com emissão de nota, controle de acesso por linha e trilha de auditoria.",
-    note: "Rafael Maldivas · Engenheiro de software fullstack e análise de dados. Fundador da **Maldivas Tech Solutions** — CNPJ ativo, emissão de nota fiscal de serviço.",
+    note: "Rafael Maldivas · Engenheiro de software fullstack e análise de dados. Fundador da **Maldivas Tech** — CNPJ ativo, emissão de nota fiscal de serviço.",
     ctaWork: "Ver os produtos",
     ctaTalk: "Falar sobre um projeto",
     ctaGh: "GitHub",
@@ -459,20 +459,22 @@ const t = {
       { h: "Aceite e garantia", p: "Treinamento da equipe, termo de aceite e 90 dias de garantia técnica sobre tudo que estava no escopo." },
     ],
     aboutTag: "Empresa",
-    aboutTitle: "Maldivas Tech Solutions",
+    aboutTitle: "Maldivas Tech",
     aboutBody: [
       "Sou **Rafael Maldivas**, engenheiro de software fullstack com foco em sistemas de gestão e análise de dados. Antes de programar, trabalhei com vendas — e é por isso que eu começo pelo processo, não pela stack. Software que ignora como a operação realmente funciona não é usado, por melhor que seja o código.",
-      "A **Maldivas Tech Solutions** é a estrutura formal por trás desse trabalho: CNPJ ativo, contrato, nota fiscal de serviço e responsabilidade definida por escrito. Se você precisa de fornecedor que a área financeira consegue cadastrar, existe.",
+      "A **Maldivas Tech** é a estrutura formal por trás desse trabalho: CNPJ ativo, contrato, nota fiscal de serviço e responsabilidade definida por escrito. Se você precisa de fornecedor que a área financeira consegue cadastrar, existe.",
       "Atendo **projeto B2B sob contrato** e também posições **fullstack em regime CLT ou PJ**, remoto no Brasil ou internacional. Nos dois casos eu entrego a mesma coisa: sistema que aguenta a operação real e código que a próxima pessoa consegue manter.",
     ],
     corp: "Dados da empresa",
     kv: [
-      ["Razão social", "63.310.253 Renann H. P. D. da Silva"],
-      ["Nome fantasia", "Maldivas Tech Solutions"],
-      ["CNPJ", "63.310.253/0001-81"],
-      ["Situação", "Ativa"],
-      ["Sede", "Guarulhos — SP, Brasil"],
-      ["Nota fiscal", "NFS-e emitida mensalmente"],
+      ["Razão social", "Rafael Paiva Dias da Silva Consultoria em Tecnologia da Informação LTDA"],
+      ["Nome fantasia", "Maldivas Tech"],
+      ["CNPJ", "68.923.239/0001-77"],
+      ["Natureza jurídica", "Sociedade Empresária Limitada · porte ME"],
+      ["CNAE principal", "62.01-5-01 — Desenvolvimento de programas de computador sob encomenda"],
+      ["Situação cadastral", "Ativa desde 02/09/2026"],
+      ["Sede", "R. Pais Leme, 215 · cj. 1713 — Pinheiros, São Paulo/SP · 05424-150"],
+      ["Nota fiscal", "NFS-e de serviço, emitida mensalmente"],
       ["Responsável técnico", "Rafael Maldivas"],
     ],
     contactTitle: "Tem uma operação que precisa de sistema?",
@@ -489,7 +491,7 @@ const t = {
     h1a: "Management systems for operations that ",
     h1b: "cannot go down",
     lead: "I build multi-tenant ERPs, fiscal POS, marketplaces and ATS platforms — from the data model to deployment. Software the operation uses every day, with tax invoicing, row-level access control and audit trails.",
-    note: "Rafael Maldivas · Fullstack software engineer and data analyst. Founder of **Maldivas Tech Solutions** — registered Brazilian company issuing formal service invoices.",
+    note: "Rafael Maldivas · Fullstack software engineer and data analyst. Founder of **Maldivas Tech** — registered Brazilian company issuing formal service invoices.",
     ctaWork: "See the products",
     ctaTalk: "Discuss a project",
     ctaGh: "GitHub",
@@ -542,19 +544,21 @@ const t = {
       { h: "Acceptance and warranty", p: "Team training, a signed acceptance document and 90 days of technical warranty covering everything in scope." },
     ],
     aboutTag: "Company",
-    aboutTitle: "Maldivas Tech Solutions",
+    aboutTitle: "Maldivas Tech",
     aboutBody: [
       "I'm **Rafael Maldivas**, a fullstack software engineer focused on management systems and data analysis. Before I wrote code, I worked in sales — which is why I start with the process, not the stack. Software that ignores how an operation actually runs doesn't get used, however good the code is.",
-      "**Maldivas Tech Solutions** is the formal structure behind that work: a registered Brazilian company with contracts, service invoicing and written liability terms. If you need a vendor your finance team can actually onboard, it exists.",
+      "**Maldivas Tech** is the formal structure behind that work: a registered Brazilian company with contracts, service invoicing and written liability terms. If you need a vendor your finance team can actually onboard, it exists.",
       "I take on **contracted B2B projects** as well as **fullstack roles**, remote in Brazil or internationally. Either way you get the same thing: a system that survives real operational load, and code the next person can maintain.",
     ],
     corp: "Company details",
     kv: [
-      ["Legal name", "63.310.253 Renann H. P. D. da Silva"],
-      ["Trade name", "Maldivas Tech Solutions"],
-      ["Tax ID (CNPJ)", "63.310.253/0001-81"],
-      ["Status", "Active"],
-      ["Headquarters", "Guarulhos — SP, Brazil"],
+      ["Legal name", "Rafael Paiva Dias da Silva Consultoria em Tecnologia da Informação LTDA"],
+      ["Trade name", "Maldivas Tech"],
+      ["Tax ID (CNPJ)", "68.923.239/0001-77"],
+      ["Legal form", "Brazilian limited company (LTDA) · small enterprise"],
+      ["Primary activity", "62.01-5-01 — Custom software development"],
+      ["Registry status", "Active since 2026-09-02"],
+      ["Headquarters", "R. Pais Leme, 215 · suite 1713 — Pinheiros, São Paulo/SP · Brazil"],
       ["Invoicing", "Monthly service invoice (NFS-e)"],
       ["Technical lead", "Rafael Maldivas"],
     ],
@@ -616,7 +620,7 @@ export default function Home() {
           <a href="#top" className="brand">
             <div className="brand-mark">M</div>
             <div className="brand-txt">
-              <span className="brand-name">Maldivas Tech Solutions</span>
+              <span className="brand-name">Maldivas Tech</span>
               <span className="brand-sub">Rafael Maldivas</span>
             </div>
           </a>
@@ -965,7 +969,7 @@ export default function Home() {
             </div>
             <p className="contact-fine">
               {EMAIL}<br />
-              Maldivas Tech Solutions · CNPJ 63.310.253/0001-81 · Guarulhos/SP<br />
+              Maldivas Tech · CNPJ 68.923.239/0001-77 · São Paulo/SP<br />
               {c.contactFine}
             </p>
           </motion.div>
@@ -975,7 +979,7 @@ export default function Home() {
       {/* ---------- rodapé ---------- */}
       <footer>
         <div className="wrap foot">
-          <span>© {new Date().getFullYear()} Maldivas Tech Solutions. {c.rights}</span>
+          <span>© {new Date().getFullYear()} Maldivas Tech. {c.rights}</span>
           <div className="foot-links">
             <a href={GITHUB_USER} target="_blank" rel="noopener noreferrer">GitHub</a>
             <a href={GITHUB_ORG} target="_blank" rel="noopener noreferrer">Organização</a>

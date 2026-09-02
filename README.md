@@ -1,6 +1,6 @@
-# Maldivas Tech Solutions — site institucional e portfólio
+# Maldivas Tech — site institucional e portfólio
 
-Site de **Rafael Maldivas** / Maldivas Tech Solutions (CNPJ 63.310.253/0001-81).
+Site de **Rafael Maldivas** / Maldivas Tech — Rafael Paiva Dias da Silva Consultoria em Tecnologia da Informação LTDA, CNPJ 68.923.239/0001-77.
 Bilíngue pt-BR / en, Next.js 14 App Router, TypeScript estrito, CSS puro.
 
 ## Rodar
