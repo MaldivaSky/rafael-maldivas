@@ -1,3 +1,4 @@
+
 "use client";
 
 import { ExternalLink, MessageCircle } from "lucide-react";
@@ -91,7 +92,7 @@ export default function PortfolioClient() {
         </div>
       </header>
 
-      <section style={{ paddingTop: 0 }}>
+            <section id="saas" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <Reveal>
             <div className="sec-tag">{c.saasTag}</div>
@@ -102,7 +103,7 @@ export default function PortfolioClient() {
         </div>
       </section>
 
-      <section>
+      <section id="clientes">
         <div className="wrap">
           <Reveal>
             <div className="sec-tag">{c.worksTag}</div>
@@ -138,7 +139,7 @@ export default function PortfolioClient() {
         </div>
       </section>
 
-      <section>
+            <section id="audiovisual">
         <div className="wrap">
           <Reveal>
             <div className="sec-tag">{c.mediaTag}</div>
