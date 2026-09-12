@@ -29,7 +29,9 @@ import { t } from "./lib/content";
 import { rich } from "./lib/rich";
 import { craftStack } from "./lib/credentials";
 import { CANVA_REEL, GITHUB_USER, LINKEDIN, WHATSAPP, YOUTUBE, cdnIcon } from "./lib/site";
-import VideoBackdrop from "./components/VideoBackdrop";
+import PersonalIntro from "./components/PersonalIntro";
+import CityStory from "./components/CityStory";
+import StudioInvite from "./components/StudioInvite";
 import PartnerBadges from "./components/PartnerBadges";
 import ProductCards from "./components/ProductCards";
 import Mission from "./components/Mission";
@@ -55,11 +57,11 @@ const local = {
     mediaYT: ["Canal no YouTube", "Conteúdo em vídeo do MiseOn — tutorial, lançamento e material de apoio ao cliente."],
     mediaReel: ["Portfólio de vídeo", "Reel com os projetos de edição e motion."],
     craftTag: "Stack de criação",
-    craftTitle: "Onde eu trabalho o dia inteiro",
+    craftTitle: "Ferramentas que uso para criar",
     toolsTag: "Ferramentas gratuitas",
-    toolsTitle: "Testa antes de falar comigo",
+    toolsTitle: "Uma ajuda para o seu dia a dia",
     toolsLead:
-      "Quatorze ferramentas de graça, sem cadastro e sem pedir o seu e-mail. Elas fazem de verdade o que prometem: conferem o dígito da chave da nota, validam o código do Pix, consultam CNPJ na Receita, veem se o seu domínio está livre e mostram quanto sobra de cada venda.",
+      "Ferramentas gratuitas para conferir uma nota, calcular preços, consultar dados e preparar imagens. Escolha o que precisa e use, sem cadastro.",
     tools: [
       ["Decodificador de chave NF-e / NFC-e", "Cole os 44 dígitos do cupom e leia UF, CNPJ do emitente, modelo, série, número e o dígito verificador por módulo 11.", "/ferramentas#nfe"],
       ["Leitor e validador de Pix Copia e Cola", "Parse do payload EMV campo a campo, com chave do recebedor, valor, txid e conferência do CRC16-CCITT.", "/ferramentas#pix"],
@@ -91,9 +93,9 @@ const local = {
     craftTag: "Creation stack",
     craftTitle: "The tools I deliver in",
     toolsTag: "Free tools",
-    toolsTitle: "Competence isn't promised. It's demonstrated.",
+    toolsTitle: "Useful tools, ready to use.",
     toolsLead:
-      "Fourteen open tools, no signup and no email capture. They actually do what they promise: check the fiscal key digit, validate Pix payloads, look up companies in the federal registry, test domain availability and show what is left from each sale.",
+      "Free tools for checking invoices, calculating prices, looking up information and preparing images. Choose what you need and use it without an account.",
     tools: [
       ["Brazilian e-invoice key decoder", "Paste the 44 digits and read state, issuer tax ID, model, series, number and the modulo-11 check digit.", "/ferramentas#nfe"],
       ["Pix copy-and-paste validator", "Field-by-field EMV payload parsing, with recipient key, amount, txid and CRC16-CCITT verification.", "/ferramentas#pix"],
@@ -123,83 +125,7 @@ export default function HomeClient() {
   return (
     <>
       {/* ---------- hero com o vídeo institucional ---------- */}
-      <header className="hero hero-video" id="top">
-        <VideoBackdrop
-          label={{
-            on: lang === "pt" ? "Ativar o som" : "Unmute",
-            off: lang === "pt" ? "Silenciar" : "Mute",
-            replay: lang === "pt" ? "Ouvir de novo" : "Play sound again",
-            hint: lang === "pt" ? "Toque para ouvir" : "Tap to hear it",
-          }}
-        />
-
-        <div className="wrap">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.09 } } }}
-          >
-            {[
-              <div className="hero-badge" key="badge">
-                <span className="dot" />
-                {c.heroBadge}
-              </div>,
-              <h1 key="h1">
-                {c.h1a}
-                <br />
-                <span className="hl">{c.h1b}</span>
-              </h1>,
-              <p className="hero-lead" key="lead">
-                {c.lead}
-              </p>,
-              <p className="hero-note" key="note">
-                {rich(c.note)}
-              </p>,
-              <div className="cta-row" key="cta">
-                <Magnetic>
-                  <Link className="btn btn-primary" href="/servicos">
-                    {lang === "pt" ? "Ver os serviços" : "See the services"} →
-                  </Link>
-                </Magnetic>
-                <Magnetic>
-                  <a className="btn btn-ghost" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle size={18} /> {c.ctaTalk}
-                  </a>
-                </Magnetic>
-                <Magnetic>
-                  <a className="btn btn-ghost" href={LINKEDIN} target="_blank" rel="noopener noreferrer">
-                    <TechIcon src="/icons/linkedin.svg" size={18} /> LinkedIn
-                  </a>
-                </Magnetic>
-              </div>,
-              <div className="stats" key="stats">
-                {c.stats.map((s) => (
-                  <div className="stat" key={s.l}>
-                    <div className="stat-n">
-                      {/^\d+\+?$/.test(s.n) ? (
-                        <CountUp to={parseInt(s.n, 10)} suffix={s.n.includes("+") ? "+" : ""} />
-                      ) : (
-                        s.n
-                      )}
-                    </div>
-                    <div className="stat-l">{s.l}</div>
-                  </div>
-                ))}
-              </div>,
-            ].map((node, i) => (
-              <motion.div
-                key={i}
-                variants={{
-                  hidden: { opacity: 0, y: 30 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
-                }}
-              >
-                {node}
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </header>
+      <PersonalIntro />
 
       {/* ---------- faixa de tecnologias ---------- */}
       <div className="marquee" aria-hidden="true">
@@ -269,8 +195,8 @@ export default function HomeClient() {
               const Ico = icons[i % icons.length];
               return (
                 <Reveal className="cap-wrapper" key={cap.h} delay={i * 0.06}>
-                  <div className="cap-inner">
-                    <div className="cap-front">
+                  <details className="cap-details">
+                    <summary className="cap-front">
                       <div className="cap-icon-box">
                         <Ico size={36} strokeWidth={1.5} />
                       </div>
@@ -286,9 +212,9 @@ export default function HomeClient() {
                           opacity: 0.6,
                         }}
                       >
-                        {lang === "pt" ? "passe o mouse ⟳" : "hover to flip ⟳"}
+                        {lang === "pt" ? "Ver tecnologias e atividades +" : "View technologies and activities +"}
                       </div>
-                    </div>
+                    </summary>
                     <div className="cap-back">
                       <h3>{cap.h}</h3>
                       <ul>
@@ -297,7 +223,7 @@ export default function HomeClient() {
                         ))}
                       </ul>
                     </div>
-                  </div>
+                  </details>
                 </Reveal>
               );
             })}
@@ -305,6 +231,7 @@ export default function HomeClient() {
         </div>
       </section>
 
+      <CityStory />
       <VideoShowcase />
 
       {/* ---------- stack de criação ---------- */}
@@ -339,6 +266,7 @@ export default function HomeClient() {
             <p className="sec-lead">{l.toolsLead}</p>
           </Reveal>
 
+          <StudioInvite />
           <div className="packs">
             {l.tools.map(([title, desc, href], i) => {
               const icons = [Receipt, QrCode, MailCheck, ShieldCheck, Calculator, LineChart, Building2, Coins, Globe, MapPin, TrendingUp, CalendarDays, ChefHat, Scale];

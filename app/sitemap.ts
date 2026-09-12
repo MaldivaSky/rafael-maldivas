@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/portfolio", 0.9, "monthly"],
     ["/ferramentas", 0.8, "monthly"],
     ["/sobre", 0.6, "yearly"],
+    ["/ferramentas/estudio-de-imagem", 0.8, "monthly"],
   ];
 
   // cada ferramenta entra sozinha: é a página que vai ranquear

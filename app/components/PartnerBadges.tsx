@@ -6,18 +6,18 @@ import { useLang } from "../lib/i18n";
 import { Reveal, Spotlight } from "./fx";
 
 const t = {
-  pt: {
-    tag: "Credenciais de plataforma",
-    title: "Homologado por quem opera o mercado",
-    lead: "Integrar com iFood ou WhatsApp não é consumir uma API pública: passa por análise de segurança e homologação da plataforma. Estes são os processos que a Maldivas Tech já concluiu.",
-    note: "Comprovação de cada homologação enviada sob solicitação, na reunião técnica.",
+  "pt": {
+    "tag": "Credenciais de plataforma",
+    "title": "Integrações e credenciais",
+    "lead": "O status das integrações da Maldivas Tech com plataformas de pedidos e atendimento.",
+    "note": "Comprovação de cada homologação enviada sob solicitação, na reunião técnica."
   },
-  en: {
-    tag: "Platform credentials",
-    title: "Approved by the platforms that run the market",
-    lead: "Integrating with iFood or WhatsApp isn't calling a public API: it goes through the platform's security review and approval. These are the processes Maldivas Tech has already cleared.",
-    note: "Evidence for each approval is shared on request, during the technical call.",
-  },
+  "en": {
+    "tag": "Platform credentials",
+    "title": "Integrations and credentials",
+    "lead": "The status of Maldivas Tech’s ordering and customer service integrations.",
+    "note": "Evidence for each approval is shared on request, during the technical call."
+  }
 } as const;
 
 export default function PartnerBadges() {

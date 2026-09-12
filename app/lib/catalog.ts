@@ -482,8 +482,8 @@ export const pecas: Peca[] = [
     modalidade: { pt: "Vinheta de marca", en: "Brand ident" },
     titulo: { pt: "Abertura da Maldivas Tech", en: "Maldivas Tech ident" },
     desc: {
-      pt: "Peça de abertura da marca, com trilha própria. É a mesma que roda no topo deste site.",
-      en: "The brand's opening piece, with its own soundtrack. It's the one running at the top of this site.",
+      pt: "Peça de apresentação da Maldivas Tech, com trilha própria e pós-produção.",
+      en: "An introduction to Maldivas Tech, with its own soundtrack and post-production.",
     },
     ficha: { pt: "Motion · vídeo generativo · pós-produção", en: "Motion · generative video · post" },
   },

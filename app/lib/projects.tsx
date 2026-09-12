@@ -28,16 +28,16 @@ export const products: Product[] = [
     role: { pt: "SaaS multi-tenant · Food service", en: "Multi-tenant SaaS · Food service" },
     statusLabel: { pt: "Em operação", en: "Live" },
     desc: {
-      pt: "SaaS Multi-tenant para Food Service desenhado para conversão brutal e usabilidade sem atritos. Interfaces ultra-responsivas construídas com Tailwind CSS de altíssimo nível. Renderização espacial imersiva com Three.js e Konva, e logística via Leaflet. UX fluida e offline-first (PWA) garantida por testes pesados de carga (k6) e E2E (Cypress).",
-      en: "Multi-tenant SaaS for Food Service designed for brutal conversion and frictionless usability. Ultra-responsive interfaces built with top-tier Tailwind CSS. Immersive spatial rendering with Three.js and Konva, plus logistics via Leaflet. Fluid, offline-first UX (PWA) guaranteed by heavy load testing (k6) and E2E (Cypress).",
+      pt: "Sistema para restaurantes, com pedidos, estoque, atendimento e integrações de delivery. Desenvolvo as telas e a estrutura de dados, incluindo recursos visuais com Three.js e Konva.",
+      en: "Restaurant software for orders, stock, service and delivery integrations. I develop the interface and data structure, including visual features with Three.js and Konva.",
     },
     problem: {
-      pt: "Dono de restaurante sabe quanto vendeu. Quase nunca sabe **quanto sobrou**. O cliente na mesa odeia sistemas lentos, e o garçom abandona telas confusas. O churn nasce da má experiência do usuário.",
-      en: "Restaurant owners know their revenue. They almost never know their **margin**. Dine-in customers hate slow systems, and waiters abandon confusing screens. Churn is born from poor UX.",
+      pt: "Pedidos chegam de diferentes canais, enquanto estoque e atendimento precisam acompanhar a mesma operação.",
+      en: "Orders arrive through different channels while stock and service need to stay coordinated.",
     },
     solution: {
-      pt: "Ledger de estoque **PEPS auditável** imerso em uma interface construída com precisão clínica. O usuário é guiado ao fechamento do pedido de forma intuitiva, aumentando o ticket médio. Tudo suportado por uma infraestrutura que simplesmente não cai.",
-      en: "An auditable **FIFO inventory ledger** immersed in a clinically precise interface. The user is intuitively guided to checkout, increasing average ticket size. All supported by an infrastructure that simply does not go down.",
+      pt: "Pedidos e movimentações reunidos no sistema, com controle de estoque **PEPS**, permissões por empresa e integrações com iFood e WhatsApp.",
+      en: "Orders and stock movements in one system, with **FIFO inventory**, company access controls and integrations with iFood and WhatsApp.",
     },
     tags: [
       { l: "React 19", s: ic("react") },
@@ -59,40 +59,40 @@ export const products: Product[] = [
         {
           id: "offline",
           icon: Code2,
-          title: "Offline-First & PWA Sync",
-          desc: <p>Garçons não podem perder pedidos se o Wi-Fi do restaurante cair. A arquitetura <strong>Offline-First</strong> usa IndexedDB local e Service Workers. As mutações de pedidos entram numa fila local e sofrem <em>Optimistic UI Updates</em>, sendo sincronizadas em background assim que a rede volta, com resolução de conflitos CRDT no servidor.</p>
+          title: "Pedidos e conexão",
+          desc: <p>IndexedDB e Service Workers dão suporte aos recursos locais da PWA. O trabalho envolve acompanhar a sincronização dos pedidos e tratar o retorno da conexão.</p>
         },
         {
           id: "spatial",
           icon: Server,
-          title: "Renderização Espacial (Three.js/Konva)",
-          desc: <p>A gestão de salão não é uma tabela chata. Criei um módulo de layout interativo usando Canvas (Konva) e Three.js para renderizar a planta do restaurante em tempo real. O dono arrasta as mesas (Drag & Drop), altera o status (livre/ocupada) e os dados persistem em milissegundos via WebSockets.</p>
+          title: "Salão com Three.js e Konva",
+          desc: <p>Three.js e Konva são usados nos recursos visuais de layout do salão. A ideia é permitir que a equipe trabalhe com a posição e a situação das mesas.</p>
         },
         {
           id: "k6",
           icon: ShieldCheck,
-          title: "Stress Testing Massivo com k6",
-          desc: <p>A sexta-feira à noite não pode derrubar o servidor. A API Node.js é coberta por testes de carga (Stress e Spike tests) rodando k6 scripts. O sistema suporta requisições massivas de 10.000 chamadas concorrentes para fechamento de conta e emissão fiscal (NFC-e), otimizadas por pool de conexões (PgBouncer).</p>
+          title: "Testes com k6",
+          desc: <p>Testes de carga ajudam a avaliar o comportamento dos fluxos de pedidos e fechamento. Os resultados dependem do cenário, do ambiente e da configuração testada.</p>
         }
       ],
       en: [
         {
           id: "offline",
           icon: Code2,
-          title: "Offline-First & PWA Sync",
-          desc: <p>Waiters cannot lose orders if the restaurant's Wi-Fi drops. The <strong>Offline-First</strong> architecture utilizes local IndexedDB and Service Workers. Order mutations enter a local queue and trigger <em>Optimistic UI Updates</em>, syncing in the background via CRDT conflict resolution as soon as the network returns.</p>
+          title: "Orders and connectivity",
+          desc: <p>IndexedDB and Service Workers support local PWA features. The work includes tracking order synchronisation and handling reconnection.</p>
         },
         {
           id: "spatial",
           icon: Server,
-          title: "Spatial Rendering (Three.js/Konva)",
-          desc: <p>Floor management isn't a boring table. I built an interactive layout module using Canvas (Konva) and Three.js to render the restaurant floor plan in real-time. Owners drag and drop tables, change status (free/busy), and data persists in milliseconds via WebSockets.</p>
+          title: "Floor layout with Three.js and Konva",
+          desc: <p>Three.js and Konva support visual floor layout features, allowing staff to work with table positions and status.</p>
         },
         {
           id: "k6",
           icon: ShieldCheck,
-          title: "Massive Stress Testing with k6",
-          desc: <p>Friday night rush cannot crash the server. The Node.js API is heavily covered by load testing (Stress and Spike tests) using k6 scripts. The system handles massive bursts of 10,000 concurrent requests for checkout and fiscal invoice issuance, highly optimized via connection pooling (PgBouncer).</p>
+          title: "Testing with k6",
+          desc: <p>Load tests help assess ordering and checkout flows. Results depend on the scenario, environment and configuration under test.</p>
         }
       ]
     }
@@ -105,16 +105,16 @@ export const products: Product[] = [
     role: { pt: "ATS bilíngue · Recrutamento Brasil → Japão", en: "Bilingual ATS · Brazil → Japan recruitment" },
     statusLabel: { pt: "Em implantação", en: "Rolling out" },
     desc: {
-      pt: "ATS bilíngue de altíssimo nível (Brasil → Japão) com pipeline de inteligência artificial embarcada no client-side para uma UX sem atritos. Processamento instantâneo e design system robusto guiando o usuário até a conversão.",
-      en: "Top-tier bilingual ATS (Brazil → Japan) with client-side AI pipeline for frictionless UX. Instant processing and a robust design system guiding the user straight to conversion.",
+      pt: "Sistema de recrutamento para uma agência que trabalha entre Brasil e Japão. Cadastro de candidatos, organização de documentos e exportação de informações fazem parte do projeto.",
+      en: "Recruitment software for an agency working between Brazil and Japan, including candidate records, document organisation and data exports.",
     },
     problem: {
-      pt: "Sistemas complexos afastam candidatos. Exigir digitação repetitiva de um currículo de 130 campos mata a taxa de conversão. Se a interface não for genial, a agência perde o talento.",
-      en: "Complex systems drive candidates away. Forcing repetitive data entry for a 130-field résumé kills the conversion rate. If the interface isn't brilliant, the agency loses the talent.",
+      pt: "A equipe precisa reunir informações e documentos dos candidatos e preparar os formulários usados no processo de recrutamento.",
+      en: "The team needs to collect candidate information and documents and prepare the forms used in recruitment.",
     },
     solution: {
-      pt: "Extração OCR nativa no navegador (Tesseract.js e PDF.js) que preenche o cadastro em segundos. Exportação fiel com ExcelJS gerando o relatório COE exigido pelo governo japonês. O candidato ama usar, e o Product Owner tem a adesão que precisa.",
-      en: "Native in-browser OCR extraction (Tesseract.js and PDF.js) that auto-fills the form in seconds. Faithful export with ExcelJS generating the exact COE report required by the Japanese government. The candidate loves using it, and the Product Owner gets the needed adoption.",
+      pt: "Cadastro bilíngue, leitura de documentos com **Tesseract.js e PDF.js** e exportação para planilhas. O projeto reúne o preenchimento pelo candidato e o acompanhamento pela agência.",
+      en: "Bilingual forms, document reading with **Tesseract.js and PDF.js**, and spreadsheet exports. The project connects candidate registration with agency follow-up.",
     },
     tags: [
       { l: "React 19", s: ic("react") },
@@ -133,76 +133,76 @@ export const products: Product[] = [
         {
           id: "match",
           icon: Server,
-          title: "Motor de Match Preditivo",
-          desc: <p>A qualificação de um Dekassegui para o visto não é trivial. Desenvolvi o <strong>MatchEngine.ts</strong>, que cruza dados não convencionais: tamanho do EPI, nível de proficiência em Japonês (JLPT N2/N3) e geração da descendência (Sansei/Yonsei) para gerar um Match Score automático (0 a 100), definindo elegibilidade para imigração antes do recrutador ler o perfil.</p>
+          title: "Organização dos candidatos",
+          desc: <p>O cadastro reúne informações para apoiar a análise da agência. Critérios de seleção e decisões sobre documentação precisam ser conferidos pela equipe responsável.</p>
         },
         {
           id: "export",
           icon: Code2,
-          title: "Motor de Exportação Híbrido (O Diferencial de Vendas)",
-          desc: <p>O Japão e a Fujiarte não abandonam o Excel. Acoplei ao Node.js um script Python nativo (<code>xlrd</code> e <code>xlutils</code>). O candidato usa uma PWA mobile moderna, e o backend cospe um binário <code>.xls</code> injetando os dados milimetricamente nas <strong>147 linhas e 59 colunas</strong> do template da imigração japonesa. Zero atrito na adoção B2B.</p>
+          title: "Exportação para planilhas",
+          desc: <p>O projeto trabalha com ExcelJS e rotinas Python com xlrd e xlutils para preencher modelos de planilha usados pela agência. Preservar o formato de saída faz parte da entrega.</p>
         },
         {
           id: "ai_proxy",
           icon: Code2,
-          title: "Integração DeepSeek AI (Edge Functions)",
-          desc: <p>Para resumir currículos extensos e traduzir termos nativos para agências japonesas, criei um proxy em Edge Functions (Deno) se comunicando via <strong>DeepSeek API</strong>. O pipeline analisa o histórico de trabalho e gera um <em>cover letter</em> automático perfeitamente formatado, rodando de forma serverless com latência ínfima.</p>
+          title: "Apoio à escrita e tradução",
+          desc: <p>Integração com DeepSeek por Edge Functions para apoiar resumos e traduções. O conteúdo gerado precisa de revisão antes de ser usado pela agência.</p>
         },
         {
           id: "async",
           icon: Database,
-          title: "Filas Assíncronas (Job Queues)",
-          desc: <p>Processamentos demorados (geração de Excel, OCR de passaporte, envio de emails) não bloqueiam o Thread Pool. O banco de dados dispara triggers (<code>06_job_queues_async_processing.sql</code>) para filas assíncronas consumidas por workers isolados. O frontend ouve Webhooks e atualiza via WebSockets quando o job está concluído.</p>
+          title: "Processamento em filas",
+          desc: <p>Tarefas como geração de arquivos e envio de mensagens podem levar mais tempo. Filas e workers permitem acompanhar esse processamento sem mantê-lo preso à requisição da tela.</p>
         },
         {
           id: "rls",
           icon: ShieldCheck,
-          title: "LGPD, APPI e Isolamento RLS",
-          desc: <p>Lidar com passaportes e biometria requer compliance absoluto (LGPD Art. 11, APPI japonês). Desenvolvi Row Level Security e Triggers de <em>Soft Delete Auditável</em> (<code>05_soft_delete_audit_lgpd.sql</code>) direto no PostgreSQL. A aplicação não consegue, nem por erro de código, vazar dados entre Tenants concorrentes.</p>
+          title: "Permissões no PostgreSQL",
+          desc: <p>Políticas de Row Level Security e registros de alteração ajudam a controlar o acesso aos dados de cada empresa. Esse controle exige configuração e testes para os diferentes perfis.</p>
         },
         {
           id: "backup",
           icon: ShieldCheck,
-          title: "Plano de Continuidade & DevOps",
-          desc: <p>Desenvolvi scripts robustos de PowerShell para validação cruzada (<code>backup_restore_test.ps1</code>). Automação CI/CD no GitHub Actions que não permite PRs sem 100% de passagem nos testes (Playwright) e testes unitários da engine de pontuação. Arquitetura desenhada para SLA de 99.99%.</p>
+          title: "Backup e validação",
+          desc: <p>Rotinas de backup e restauração em PowerShell, além de testes com Playwright no fluxo de desenvolvimento. O objetivo é conferir mudanças e manter um caminho de recuperação.</p>
         }
       ],
       en: [
         {
           id: "match",
           icon: Server,
-          title: "Predictive Match Engine",
-          desc: <p>Qualifying a Dekassegui isn't trivial. I built <strong>MatchEngine.ts</strong>, cross-referencing unconventional data: PPE size, JLPT N2/N3 proficiency, and Japanese descent generation (Sansei/Yonsei) to generate an automatic Match Score (0 to 100), defining immigration eligibility before a human reads the profile.</p>
+          title: "Candidate organisation",
+          desc: <p>Candidate records bring information together for agency review. Selection criteria and document decisions need verification by the responsible team.</p>
         },
         {
           id: "export",
           icon: Code2,
-          title: "Hybrid Export Engine (The B2B Closer)",
-          desc: <p>Japan and Fujiarte will never abandon Excel. I coupled a native Python script (<code>xlrd</code>/<code>xlutils</code>) to the Node.js backend. Candidates use a modern mobile PWA, and the backend outputs an <code>.xls</code> binary, injecting data precisely into the <strong>147 rows and 59 columns</strong> of the immigration template. Zero B2B friction.</p>
+          title: "Spreadsheet exports",
+          desc: <p>The project uses ExcelJS and Python routines with xlrd and xlutils to fill spreadsheet templates used by the agency. Preserving the output format is part of the work.</p>
         },
         {
           id: "ai_proxy",
           icon: Code2,
-          title: "DeepSeek AI Integration (Edge)",
-          desc: <p>To summarize extensive resumes and translate native terms for Japanese agencies, I created an Edge Function proxy (Deno) communicating with the <strong>DeepSeek API</strong>. The pipeline analyzes work history and generates an automatic, perfectly formatted cover letter running serverless with minimal latency.</p>
+          title: "Writing and translation support",
+          desc: <p>DeepSeek integration through Edge Functions supports summaries and translations. Generated content needs review before agency use.</p>
         },
         {
           id: "async",
           icon: Database,
-          title: "Asynchronous Job Queues",
-          desc: <p>Heavy processing (Excel generation, passport OCR, email dispatching) never blocks the Thread Pool. The database fires triggers to async queues consumed by isolated workers. The frontend listens to Webhooks and updates via WebSockets when the job completes.</p>
+          title: "Queued processing",
+          desc: <p>File generation and messaging can take time. Queues and workers allow processing to be tracked separately from the interface request.</p>
         },
         {
           id: "rls",
           icon: ShieldCheck,
-          title: "Data Privacy & Tenant Isolation",
-          desc: <p>Handling passports and biometrics requires absolute compliance (LGPD, Japanese APPI). I developed Row Level Security and <em>Auditable Soft Delete</em> triggers directly in PostgreSQL. The application cannot, even through a coding error, leak data between competing Tenants.</p>
+          title: "PostgreSQL permissions",
+          desc: <p>Row Level Security policies and change records help control access to each company’s data. These controls require configuration and testing for different roles.</p>
         },
         {
           id: "backup",
           icon: ShieldCheck,
-          title: "Business Continuity & DevOps",
-          desc: <p>I developed robust PowerShell scripts for cross-validation. GitHub Actions CI/CD automation blocks PRs without 100% pass rates on Playwright tests. Architecture designed for a rigid 99.99% SLA.</p>
+          title: "Backup and validation",
+          desc: <p>PowerShell backup and restore routines, alongside Playwright tests in the development workflow, help validate changes and maintain a recovery path.</p>
         }
       ]
     }
@@ -215,16 +215,16 @@ export const products: Product[] = [
     role: { pt: "ERP multi-tenant · Varejo e PDV fiscal", en: "Multi-tenant ERP · Retail & fiscal POS" },
     statusLabel: { pt: "Em operação", en: "Live" },
     desc: {
-      pt: "ERP multi-tenant com foco em retenção e product discovery. Interface super intuitiva que simplifica operações diárias complexas. Equipado com motor de Business Intelligence nativo para análise estatística.",
-      en: "Multi-tenant ERP focused on retention and product discovery. Super intuitive interface that simplifies complex daily operations. Powered by a native Business Intelligence engine for statistical analysis.",
+      pt: "ERP para varejo com vendas, estoque e análise de dados. Uso Python e Flask no backend e bibliotecas de análise para organizar indicadores da operação.",
+      en: "Retail ERP for sales, stock and data analysis. I use Python and Flask on the backend and analysis libraries to organise business indicators.",
     },
     problem: {
-      pt: "Sistemas de gestão geralmente são feios e exigem semanas de treinamento. Se o software causa fadiga visual e processos truncados, a equipe não usa, o dado não entra e o dono perde o controle do negócio.",
-      en: "Management systems are usually ugly and require weeks of training. If the software causes visual fatigue and clunky workflows, the team won't use it, data doesn't get logged, and the owner loses control of the business.",
+      pt: "Conferir vendas, estoque e compras em lugares separados dificulta entender o que está acontecendo na loja.",
+      en: "Checking sales, stock and purchases in separate places makes it harder to understand what is happening in the store.",
     },
     solution: {
-      pt: "Uma UI cuidadosamente polida acoplada a um backend preditivo (Pandas e Statsmodels). Dashboards interativos em Plotly mostram Curva ABC e RFM com clareza cristalina. Telemetria e rastreabilidade total via Sentry garantem zero downtime para a operação.",
-      en: "A carefully polished UI coupled with a predictive backend (Pandas and Statsmodels). Interactive Plotly dashboards show ABC curves and RFM with crystal clarity. Full telemetry and traceability via Sentry guarantee zero downtime.",
+      pt: "Registro das movimentações e relatórios com **Pandas, Statsmodels e Plotly**, incluindo Curva ABC e análise RFM. O Sentry apoia a investigação de erros.",
+      en: "Movement records and reporting with **Pandas, Statsmodels and Plotly**, including ABC and RFM analysis. Sentry helps investigate errors.",
     },
     tags: [
       { l: "Flask / Python", s: ic("flask/white") },
@@ -242,52 +242,52 @@ export const products: Product[] = [
         {
           id: "ledger",
           icon: Database,
-          title: "Ledger Imutável (Event Sourcing)",
-          desc: <p>Sistemas de PDV comuns calculam estoque com updates diretos. Este ERP usa um <strong>Ledger Imutável (Event Sourcing)</strong>. Entradas e saídas são apensadas (append-only) no PostgreSQL. Se ocorrer um problema de concorrência massiva de acessos, o saldo é perfeitamente auditável até a origem, garantindo consistência bancária para o varejista.</p>
+          title: "Histórico de estoque",
+          desc: <p>Entradas e saídas ficam registradas no PostgreSQL. Esse histórico permite conferir a formação do saldo e investigar divergências de estoque.</p>
         },
         {
           id: "pandas",
           icon: Server,
-          title: "Business Intelligence com Pandas",
-          desc: <p>Um pipeline avançado de dados em Python no backend. Utilizo bibliotecas como <strong>Pandas e Statsmodels</strong> para ingerir séries temporais, gerando análises de Curva ABC, matriz RFM (Recência, Frequência e Valor monetário) e predição estatística de ruptura de estoque para compras automatizadas.</p>
+          title: "Análise com Pandas e Statsmodels",
+          desc: <p>Organização dos dados em Python para análises de vendas, Curva ABC, RFM e séries temporais. São recursos para apoiar a leitura do negócio e o planejamento de compras.</p>
         },
         {
           id: "dashboards",
           icon: Code2,
-          title: "Data Visualization (Plotly)",
-          desc: <p>O frontend exibe esses dados massivos não com tabelas entediantes, mas com gráficos e superfícies 3D geradas pelo <strong>Plotly</strong>. A leitura dos KPIs da empresa se torna visual e cirúrgica, reduzindo o esforço cognitivo do gestor ao tomar decisões financeiras críticas.</p>
+          title: "Visualização com Plotly",
+          desc: <p>Gráficos interativos apresentam os indicadores de vendas e estoque. O foco é permitir comparar períodos e explorar os dados com mais facilidade.</p>
         },
         {
           id: "observability",
           icon: ShieldCheck,
-          title: "Observabilidade & Sentry",
-          desc: <p>O sistema possui rastreabilidade total (tracing) conectada ao Sentry. Erros silenciosos no cliente ou no servidor são interceptados na Edge, com call stacks e estado do Redux anexados ao log. O erro é corrigido antes mesmo do cliente notar.</p>
+          title: "Investigação com Sentry",
+          desc: <p>O Sentry reúne registros de erro para ajudar a reproduzir problemas e localizar suas causas durante a manutenção.</p>
         }
       ],
       en: [
         {
           id: "ledger",
           icon: Database,
-          title: "Immutable Ledger (Event Sourcing)",
-          desc: <p>Standard POS systems calculate inventory with direct updates. This ERP uses an <strong>Immutable Ledger</strong>. Inserts and subtractions are append-only in PostgreSQL. If a massive concurrency issue occurs, the balance is perfectly auditable back to the source, ensuring bank-level consistency for the retailer.</p>
+          title: "Stock movement history",
+          desc: <p>Stock entries and exits are recorded in PostgreSQL, allowing balances to be checked and discrepancies investigated.</p>
         },
         {
           id: "pandas",
           icon: Server,
-          title: "Business Intelligence with Pandas",
-          desc: <p>An advanced data pipeline in Python running on the backend. I utilize <strong>Pandas and Statsmodels</strong> to ingest time series, generating ABC Curve analysis, RFM matrices (Recency, Frequency, Monetary), and statistical stockout predictions for automated purchasing.</p>
+          title: "Analysis with Pandas and Statsmodels",
+          desc: <p>Python data processing supports sales analysis, ABC classification, RFM and time series, helping users understand the business and plan purchases.</p>
         },
         {
           id: "dashboards",
           icon: Code2,
-          title: "Data Visualization (Plotly)",
-          desc: <p>The frontend displays this massive data not with boring tables, but with highly interactive charts and 3D surfaces generated by <strong>Plotly</strong>. Reading company KPIs becomes visual and surgical, reducing the manager's cognitive load during critical financial decisions.</p>
+          title: "Visualisation with Plotly",
+          desc: <p>Interactive charts display sales and stock indicators, helping users compare periods and explore the data.</p>
         },
         {
           id: "observability",
           icon: ShieldCheck,
-          title: "Observability & Sentry",
-          desc: <p>The system has full distributed tracing connected to Sentry. Silent client-side or server errors are intercepted at the Edge, with call stacks and Redux state attached to the log. The bug is fixed before the client even notices.</p>
+          title: "Investigation with Sentry",
+          desc: <p>Sentry collects error reports to help reproduce problems and locate their causes during maintenance.</p>
         }
       ]
     }
@@ -304,8 +304,8 @@ export const products: Product[] = [
       en: "Multi-seller marketplace with Pix and card payments, automatic revenue split, real-time shipping quotes and asynchronous processing.",
     },
     problem: {
-      pt: "Marketplace só funciona se o dinheiro chegar certo a cada lojista, na hora certa. Repasse manual não escala e é onde a operação quebra.",
-      en: "A marketplace only works if money reaches each seller correctly and on time. Manual payouts don't scale — that's where the operation breaks.",
+      pt: "Uma loja com vários vendedores precisa organizar o catálogo, calcular frete e acompanhar a divisão dos pagamentos.",
+      en: "A multi-seller store needs to organise its catalogue, calculate shipping and track payment splits.",
     },
     solution: {
       pt: "**Split automático de receita** na liquidação (Efí Bank), frete cotado em tempo real via Melhor Envio e fila assíncrona com Celery e Redis para não travar o checkout.",
@@ -327,19 +327,19 @@ export const products: Product[] = [
           id: "split",
           icon: Server,
           title: "Split Automático de Receitas",
-          desc: <p>Gerenciar marketplaces B2B2C exige precisão bancária. Desenvolvi integração transparente com a API do Efí Bank e Stripe para executar o <strong>Split de Pagamento no momento da liquidação</strong>. Comissões da plataforma, frete e royalties do lojista caem separadamente nas contas, evitando bi-tributação e trabalho contábil humano.</p>
+          desc: <p>Integrações de pagamento com Efí Bank e Stripe fazem parte do projeto. O split permite distribuir os valores entre plataforma e vendedores conforme as regras configuradas.</p>
         },
         {
           id: "celery",
           icon: Database,
           title: "Processamento Distribuído (Celery + Redis)",
-          desc: <p>Finalizar compra exige cotação de frete, reserva de estoque, validação anti-fraude e emissão de nota. Para o frontend não ficar girando infinito e perder a conversão (Timeout), o Django joga essas tarefas para um broker de fila (Redis) consumido por workers em Celery de forma totalmente assíncrona.</p>
+          desc: <p>Celery e Redis dão suporte ao processamento de tarefas em segundo plano no backend Django. A loja pode acompanhar o andamento sem esperar toda a execução na mesma requisição.</p>
         },
         {
           id: "headless",
           icon: Code2,
-          title: "Arquitetura Headless com Next.js",
-          desc: <p>O backend (Django API) é totalmente desacoplado da vitrine. O Next.js 15 consome via App Router, utilizando cache agressivo (ISR - Incremental Static Regeneration) para servir o catálogo com LCP abaixo de 800ms para SEO, mesmo com milhares de produtos no banco de dados.</p>
+          title: "Loja com Next.js e Django",
+          desc: <p>O Next.js apresenta o catálogo e se comunica com a API em Django. A separação permite trabalhar na experiência da loja e nas regras de negócio de forma independente.</p>
         }
       ],
       en: [
@@ -347,19 +347,19 @@ export const products: Product[] = [
           id: "split",
           icon: Server,
           title: "Automatic Revenue Split",
-          desc: <p>Managing B2B2C marketplaces requires bank-level precision. I developed a transparent integration with Efí Bank and Stripe APIs to execute <strong>Payment Splitting at settlement</strong>. Platform commissions, shipping, and seller royalties land separately in their respective accounts, avoiding double taxation and manual accounting work.</p>
+          desc: <p>The project includes payment integrations with Efí Bank and Stripe. Payment splitting distributes amounts between the platform and sellers according to configured rules.</p>
         },
         {
           id: "celery",
           icon: Database,
           title: "Distributed Processing (Celery + Redis)",
-          desc: <p>Checking out requires shipping quotes, stock reservation, anti-fraud validation, and invoicing. So the frontend doesn't spin infinitely and lose conversions due to Timeouts, Django throws these tasks to a queue broker (Redis) consumed by Celery workers entirely asynchronously.</p>
+          desc: <p>Celery and Redis support background tasks in the Django backend. The storefront can track progress without waiting for all processing in the same request.</p>
         },
         {
           id: "headless",
           icon: Code2,
-          title: "Headless Architecture (Next.js)",
-          desc: <p>The backend (Django API) is entirely decoupled from the storefront. Next.js 15 consumes via the App Router, utilizing aggressive caching (ISR - Incremental Static Regeneration) to serve the catalog with an LCP under 800ms for massive SEO wins, even with thousands of products in the database.</p>
+          title: "Storefront with Next.js and Django",
+          desc: <p>Next.js presents the catalogue and communicates with the Django API. This separation allows the storefront and business rules to evolve independently.</p>
         }
       ]
     }

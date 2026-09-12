@@ -3,9 +3,9 @@ import FerramentasClient from "./FerramentasClient";
 import { SITE } from "../lib/site";
 
 export const metadata: Metadata = {
-  title: "Ferramentas gratuitas — calculadora de CMV e teste de SPF, DKIM e DMARC",
+  title: "Ferramentas gratuitas — imagens, custos e consultas",
   description:
-    "Duas ferramentas grátis e sem cadastro: calculadora de preço de venda e CMV para restaurantes e varejo, e diagnóstico de autenticação de e-mail do domínio (SPF, DKIM e DMARC) para saber se sua mensagem está caindo no spam.",
+    "Ferramentas gratuitas para preparar imagens, calcular custos, conferir NF-e e Pix e consultar dados de empresas e domínios. Sem cadastro.",
   alternates: { canonical: "/ferramentas" },
   openGraph: {
     title: "Ferramentas gratuitas — Maldivas Tech",

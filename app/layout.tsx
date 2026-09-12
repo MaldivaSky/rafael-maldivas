@@ -16,6 +16,7 @@ import {
   YOUTUBE,
 } from "./lib/site";
 import "./globals.css";
+import "./editorial.css";
 
 const ThreeBackground = dynamic(() => import("./components/ThreeBackground"), {
   ssr: false,

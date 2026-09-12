@@ -42,40 +42,40 @@ const ICONS: Record<string, typeof Server> = {
 };
 
 const copy = {
-  pt: {
-    tag: "Serviços",
-    h1a: "Primeiro eu entendo o problema. ",
-    h1b: "O formato do contrato vem depois.",
-    lead: "A conversa não começa por tabela de preço. Começa comigo entendendo o que está travando a sua operação e quanto isso está custando. Abaixo estão as quatorze frentes que eu atendo, separadas por tipo de trabalho — cada uma pode ser contratada sozinha.",
-    note: "**O diagnóstico do processo e a primeira conversa não custam nada.** Eu preciso entender o seu negócio antes de saber o que proponho.",
-    modelsTag: "Formas de contratar",
-    modelsTitle: "Quatro formatos, escolhidos depois do diagnóstico",
-    modelsLead: "Eu não empurro contrato mensal para todo mundo. Depois de ver a operação eu sei o tamanho real da demanda, e digo qual destes quatro resolve o seu caso. Às vezes é o menor deles.",
-    modelsWho: "Serve para você se",
-    start: "Fazer o levantamento",
-    ctaTitle: "O que está travando a sua operação hoje?",
-    ctaLead: "Preencha o levantamento acima, ou me chame direto. Eu marco uma visita ou uma chamada para ver o problema acontecendo.",
-    ctaBtn: "Falar no WhatsApp",
-    ctaAlt: "Chamar no LinkedIn",
-    frentes: "frentes",
+  "pt": {
+    "tag": "Serviços",
+    "h1a": "Como posso ajudar ",
+    "h1b": "a sua empresa.",
+    "lead": "Desenvolvimento de sistemas, consultoria de TI, sites e produção de conteúdo. Você pode contratar um trabalho específico ou combinar acompanhamento para o que precisa de continuidade.",
+    "note": "**A primeira conversa é gratuita.** Me conte o que você precisa para avaliarmos as possibilidades.",
+    "modelsTag": "Formas de contratar",
+    "modelsTitle": "Um formato que caiba no seu projeto",
+    "modelsLead": "Podemos combinar uma entrega com escopo definido, horas de trabalho ou acompanhamento mensal. Prazo, responsabilidades e valores ficam na proposta.",
+    "modelsWho": "Serve para você se",
+    "start": "Contar o que preciso",
+    "ctaTitle": "O que você precisa resolver?",
+    "ctaLead": "Use o formulário ou me chame pelo WhatsApp. Podemos combinar uma chamada para conversar.",
+    "ctaBtn": "Falar no WhatsApp",
+    "ctaAlt": "Chamar no LinkedIn",
+    "frentes": "frentes"
   },
-  en: {
-    tag: "Services",
-    h1a: "First I understand the problem. ",
-    h1b: "The contract format comes after.",
-    lead: "The conversation doesn't start with a price list. It starts with me understanding what's blocking your operation and what it's costing. Below are the fourteen areas I work in, split by kind of work — each one can be hired on its own.",
-    note: "**The process diagnosis and the first conversation are free.** I need to understand your business before I know what to propose.",
-    modelsTag: "Ways to hire",
-    modelsTitle: "Four formats, chosen after the diagnosis",
-    modelsLead: "I don't push a retainer on everyone. After seeing the operation I know the real size of the demand, and I'll say which of these four fits. Sometimes it's the smallest one.",
-    modelsWho: "This fits you if",
-    start: "Start the discovery",
-    ctaTitle: "What's blocking your operation today?",
-    ctaLead: "Fill in the discovery form above, or message me directly. I'll set up a visit or a call to see the problem happening.",
-    ctaBtn: "Message on WhatsApp",
-    ctaAlt: "Reach out on LinkedIn",
-    frentes: "areas",
-  },
+  "en": {
+    "tag": "Services",
+    "h1a": "How I can help ",
+    "h1b": "your business.",
+    "lead": "Software development, IT consulting, websites and content production. Hire a specific service or arrange ongoing support.",
+    "note": "**The first conversation is free.** Tell me what you need so we can look at the options.",
+    "modelsTag": "Ways to hire",
+    "modelsTitle": "An arrangement that fits your project",
+    "modelsLead": "We can agree on a defined deliverable, hourly work or ongoing support. The proposal sets out the timeline, responsibilities and price.",
+    "modelsWho": "This fits you if",
+    "start": "Tell me what you need",
+    "ctaTitle": "What do you need help with?",
+    "ctaLead": "Use the form or message me on WhatsApp. We can arrange a call.",
+    "ctaBtn": "Message on WhatsApp",
+    "ctaAlt": "Reach out on LinkedIn",
+    "frentes": "areas"
+  }
 } as const;
 
 export default function ServicosClient() {
