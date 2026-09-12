@@ -20,11 +20,12 @@ const t = {
     nav: "Navegação",
     social: "Onde me achar",
     company: "Empresa",
-    links: [
+        links: [
       ["/servicos", "Serviços"],
       ["/portfolio", "Portfólio"],
       ["/sobre", "Sobre"],
       ["/#contato", "Contato"],
+      ["/admin", "Painel"],
     ],
     rights: "Todos os direitos reservados.",
     marks:
@@ -36,11 +37,12 @@ const t = {
     nav: "Navigation",
     social: "Find me",
     company: "Company",
-    links: [
+        links: [
       ["/servicos", "Services"],
       ["/portfolio", "Portfolio"],
       ["/sobre", "About"],
       ["/#contato", "Contact"],
+      ["/admin", "Dashboard"],
     ],
     rights: "All rights reserved.",
     marks:
