@@ -7,11 +7,11 @@ import { AREAS, servicos, type Area } from "../lib/catalog";
 import { EMAIL, WHATSAPP } from "../lib/site";
 
 /**
- * Levantamento de requisitos.
+ * Levantamento de requisitos + captação de lead.
  *
- * Não existe backend aqui, e é de propósito: formulário que depende de
- * servidor cai calado e o contato se perde. Este monta uma mensagem
- * estruturada e abre no WhatsApp ou no e-mail, com tudo já escrito.
+ * O envio grava uma linha no CRM (base no Notion, via /api/lead). Se o
+ * registro falhar por qualquer motivo, cai no WhatsApp com a mensagem já
+ * montada — o contato nunca se perde.
  */
 
 const t = {
@@ -34,11 +34,15 @@ const t = {
     ],
     name: "Seu nome",
     contact: "WhatsApp ou e-mail para eu responder",
-    send: "Enviar pelo WhatsApp",
+    send: "Enviar e registrar",
+    sending: "Enviando…",
+    sent: "Recebido! Vou te responder em breve.",
+    sentHint: "Quer adiantar? Pode me chamar no WhatsApp também.",
+    orWhats: "Prefiro só chamar no WhatsApp",
     mail: "Prefiro por e-mail",
     missing: "Responda pelo menos o que está doendo hoje.",
     preview: "O que vai ser enviado",
-    privacy: "Nada é gravado neste site. A mensagem vai direto para mim, pelo canal que você escolher.",
+    privacy: "Seu contato fica guardado comigo apenas para eu te responder. Nada é compartilhado.",
     areas: "Área",
   },
   en: {
@@ -60,11 +64,15 @@ const t = {
     ],
     name: "Your name",
     contact: "WhatsApp or email so I can reply",
-    send: "Send on WhatsApp",
+    send: "Send and register",
+    sending: "Sending…",
+    sent: "Got it! I'll get back to you shortly.",
+    sentHint: "Want to speed it up? Message me on WhatsApp too.",
+    orWhats: "I'd rather just use WhatsApp",
     mail: "I'd rather use email",
     missing: "At least tell me what hurts today.",
     preview: "What gets sent",
-    privacy: "Nothing is stored on this site. The message goes straight to me through the channel you pick.",
+    privacy: "Your contact is kept only so I can reply to you. Nothing is shared.",
     areas: "Area",
   },
 } as const;
@@ -79,7 +87,10 @@ export default function BriefingForm() {
   const [prazo, setPrazo] = useState("");
   const [nome, setNome] = useState("");
   const [contato, setContato] = useState("");
+  const [honey, setHoney] = useState(""); // honeypot anti-bot (invisível)
   const [tentou, setTentou] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
 
   const toggle = (id: string) =>
     setEscolhas((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
@@ -105,11 +116,30 @@ export default function BriefingForm() {
 
   const valido = dor.trim().length > 3;
 
-  const enviar = (canal: "wa" | "mail") => (e: React.MouseEvent) => {
+  // grava o lead no CRM (Notion). Em caso de falha, libera o fallback.
+  const registrar = async (e: React.MouseEvent) => {
+    e.preventDefault();
     if (!valido) {
-      e.preventDefault();
       setTentou(true);
       return;
+    }
+    setEnviando(true);
+    try {
+      const r = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ negocio, dor, escolhas, prazo, nome, contato, idioma: lang, honey }),
+      });
+      const d = await r.json();
+      if (d.ok) {
+        setEnviado(true);
+      } else {
+        window.open(`${WHATSAPP}?text=${encodeURIComponent(mensagem)}`, "_blank");
+      }
+    } catch {
+      window.open(`${WHATSAPP}?text=${encodeURIComponent(mensagem)}`, "_blank");
+    } finally {
+      setEnviando(false);
     }
   };
 
@@ -211,20 +241,50 @@ export default function BriefingForm() {
               </div>
             </div>
 
-            <div className="p-links" style={{ marginTop: 8 }}>
-              <a
-                className="plink solid"
-                href={valido ? waHref : "#briefing"}
-                onClick={enviar("wa")}
-                target={valido ? "_blank" : undefined}
-                rel="noopener noreferrer"
-              >
-                <MessageCircle size={17} /> {c.send} <ArrowRight size={15} />
-              </a>
-              <a className="plink" href={valido ? mailHref : "#briefing"} onClick={enviar("mail")}>
-                <Send size={16} /> {c.mail}
-              </a>
-            </div>
+            {/* honeypot: invisível para humanos, irresistível para bots */}
+            <input
+              type="text"
+              name="empresa_site"
+              value={honey}
+              onChange={(e) => setHoney(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+            />
+
+            {enviado ? (
+              <div className="result result-hero" style={{ marginTop: 8 }} role="status">
+                <div className="result-label">{lang === "pt" ? "Recebido" : "Received"}</div>
+                <div className="result-value" style={{ fontSize: 24 }}>
+                  {c.sent}
+                </div>
+                <p className="result-note">{c.sentHint}</p>
+                <div className="cta-row" style={{ marginBottom: 0, marginTop: 16 }}>
+                  <a className="btn btn-primary" href={waHref} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle size={17} /> {lang === "pt" ? "Chamar no WhatsApp" : "Message on WhatsApp"}
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="p-links" style={{ marginTop: 8 }}>
+                <a className="plink solid" href="#briefing" onClick={registrar} aria-disabled={enviando}>
+                  {enviando ? (
+                    <>{c.sending}</>
+                  ) : (
+                    <>
+                      <ArrowRight size={16} /> {c.send}
+                    </>
+                  )}
+                </a>
+                <a className="plink" href={valido ? mailHref : "#briefing"}>
+                  <Send size={16} /> {c.mail}
+                </a>
+                <a className="plink" href={waHref} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle size={16} /> {c.orWhats}
+                </a>
+              </div>
+            )}
           </div>
 
           <aside className="briefing-preview">
