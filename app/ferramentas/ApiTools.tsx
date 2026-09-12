@@ -269,22 +269,56 @@ export function CambioTool() {
   const [from, setFrom] = useState("BRL");
   const [to, setTo] = useState("JPY");
 
+      const stamp = (s: string) => {
+    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+    if (!m) return s;
+    const [, y, mo, d, h, mi] = m;
+    return lang === "pt" ? `${d}/${mo}/${y} ${h}:${mi}` : `${y}-${mo}-${d} ${h}:${mi}`;
+  };
+
   useEffect(() => {
+    let alive = true;
     fetch("/api/cambio")
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((d) => {
-        setRates(d.rates);
-        setUpdated(d.updatedAt);
+        if (!alive) return;
+        const list: Rate[] = Array.isArray(d?.rates)
+          ? d.rates.filter(
+              (r: Rate) =>
+                r && typeof r.code === "string" && Number.isFinite(r.brl) && r.brl > 0
+            )
+          : [];
+        if (list.length === 0) {
+          setFailed(true);
+          return;
+        }
+        setRates(list);
+        setUpdated(d?.updatedAt ?? null);
       })
-      .catch(() => setFailed(true));
+      .catch(() => {
+        if (alive) setFailed(true);
+      });
+    return () => {
+      alive = false;
+    };
   }, []);
+
+  const codes = useMemo(() => ["BRL", ...(rates ?? []).map((r) => r.code)], [rates]);
+
+  // se a cotação trocar/atrasar, garante que "De"/"Para" sempre existam na lista
+  useEffect(() => {
+    if (!rates) return;
+    if (!codes.includes(from)) setFrom("BRL");
+    if (!codes.includes(to)) setTo(codes.includes("JPY") ? "JPY" : "BRL");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rates]);
 
   // tudo passa por BRL: converte para real e depois para a moeda de destino
   const toBrl = (code: string) =>
     code === "BRL" ? 1 : (rates?.find((r) => r.code === code)?.brl ?? 0);
 
   const result = useMemo(() => {
-    const v = parseFloat(amount.replace(",", ".")) || 0;
+    const v = parseFloat(amount.replace(/\./g, "").replace(",", ".")) || 0;
     const f = toBrl(from);
     const t = toBrl(to);
     if (!f || !t) return null;
@@ -292,13 +326,19 @@ export function CambioTool() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amount, from, to, rates]);
 
-  const codes = ["BRL", ...(rates ?? []).map((r) => r.code)];
-  const fmt = (n: number, code: string) =>
-    n.toLocaleString(lang === "pt" ? "pt-BR" : "en-US", {
-      style: "currency",
-      currency: code,
-      maximumFractionDigits: code === "JPY" ? 0 : 2,
-    });
+  const fmt = (n: number, code: string) => {
+    try {
+      return n.toLocaleString(lang === "pt" ? "pt-BR" : "en-US", {
+        style: "currency",
+        currency: code,
+        maximumFractionDigits: code === "JPY" ? 0 : 2,
+      });
+    } catch {
+      return `${n.toLocaleString(lang === "pt" ? "pt-BR" : "en-US", {
+        maximumFractionDigits: code === "JPY" ? 0 : 2,
+      })} ${code}`;
+    }
+  };
 
   return (
     <Spotlight className="tool-card">
@@ -371,22 +411,25 @@ export function CambioTool() {
               <div className="result-label" style={{ marginBottom: 8 }}>
                 {c.table}
               </div>
-              {rates.map((r) => (
-                <div className="result-row" key={r.code}>
-                  <span>
-                    {r.name} ({r.code})
-                  </span>
-                  <span className={r.change < 0 ? "result-ok" : "result-warn"}>
-                    {fmt(r.brl, "BRL")} · {r.change > 0 ? "+" : ""}
-                    {r.change.toFixed(2).replace(".", ",")}%
-                  </span>
-                </div>
-              ))}
+                            {rates.map((r) => {
+                const change = Number.isFinite(r.change) ? r.change : 0;
+                return (
+                  <div className="result-row" key={r.code}>
+                    <span>
+                      {r.name} ({r.code})
+                    </span>
+                    <span className={change < 0 ? "result-ok" : "result-warn"}>
+                      {fmt(r.brl, "BRL")} · {change > 0 ? "+" : ""}
+                      {change.toFixed(2).replace(".", ",")}%
+                    </span>
+                  </div>
+                );
+              })}
             </div>
 
             {updated && (
-              <p className="field-hint" style={{ marginTop: 12 }}>
-                {c.updated} {updated}
+                            <p className="field-hint" style={{ marginTop: 12 }}>
+                {c.updated} {stamp(updated)}
               </p>
             )}
           </div>
