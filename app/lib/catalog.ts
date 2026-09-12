@@ -501,15 +501,15 @@ export const pecas: Peca[] = [
   },
   {
     id: "edicao",
-    src: "/video/edicao-varejo.mp4",
-    poster: "/video/edicao-varejo-poster.jpg",
-    modalidade: { pt: "Edição de vídeo", en: "Video editing" },
-    titulo: { pt: "Peça publicitária para varejo alimentar", en: "Ad piece for food retail" },
+    src: "/video/sabor-de-braganca.mp4",
+    poster: "/video/sabor-de-braganca-poster.jpg",
+    modalidade: { pt: "Edição de vídeo · cliente", en: "Video editing · client" },
+    titulo: { pt: "Sabor de Bragança — Linguiças Especiais", en: "Sabor de Bragança — Specialty Sausages" },
     desc: {
-      pt: "Montagem de material bruto em peça de campanha: corte, cor, trilha e ritmo de anúncio.",
-      en: "Raw footage cut into a campaign piece: editing, colour, soundtrack and ad pacing.",
+      pt: "Peça publicitária completa para o cliente: abertura de marca, aérea de Bragança Paulista, produção, ponto de venda e fechamento. Corte, cor, trilha e ritmo de anúncio.",
+      en: "A full ad piece for the client: brand opening, aerial of Bragança Paulista, production line, point of sale and close. Editing, colour, soundtrack and ad pacing.",
     },
-    ficha: { pt: "Corte · cor · trilha · legenda", en: "Cut · colour · soundtrack · captions" },
+    ficha: { pt: "Cliente real · corte · cor · trilha", en: "Real client · cut · colour · soundtrack" },
   },
   {
     id: "produto",
