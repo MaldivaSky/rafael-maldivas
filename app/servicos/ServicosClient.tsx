@@ -1,26 +1,44 @@
 "use client";
 
 import {
+  BarChart3,
+  Clapperboard,
   Code2,
   Compass,
   Layout,
   Mail,
+  Map,
   Megaphone,
   MessageCircle,
+  Palette,
+  PlaneTakeoff,
+  Plug,
+  Scissors,
   Server,
+  Share2,
 } from "lucide-react";
-import { hiringModels, packs } from "../lib/services";
+import { AREAS, servicos, type Area } from "../lib/catalog";
+import { hiringModels } from "../lib/services";
 import { useLang } from "../lib/i18n";
 import { EMAIL, LINKEDIN, WHATSAPP } from "../lib/site";
+import BriefingForm from "../components/BriefingForm";
 import { Magnetic, Reveal, Spotlight, TechIcon } from "../components/fx";
 
-const icons: Record<string, typeof Server> = {
+const ICONS: Record<string, typeof Server> = {
+  code: Code2,
+  plug: Plug,
+  chart: BarChart3,
+  compass: Compass,
   server: Server,
   mail: Mail,
   layout: Layout,
+  map: Map,
   megaphone: Megaphone,
-  code: Code2,
-  compass: Compass,
+  palette: Palette,
+  clapper: Clapperboard,
+  scissors: Scissors,
+  drone: PlaneTakeoff,
+  instagram: Share2,
 };
 
 const copy = {
@@ -28,57 +46,42 @@ const copy = {
     tag: "Serviços",
     h1a: "Primeiro eu entendo o problema. ",
     h1b: "O formato do contrato vem depois.",
-    lead: "A conversa não começa por tabela de preço. Começa comigo entendendo o que está travando a sua operação e quanto isso está custando. Só depois disso a gente fala de formato — e aí existem quatro, do projeto fechado à minha entrada no seu time.",
-    note: "Qualquer um dos serviços abaixo pode vir sozinho ou junto com os outros. **O diagnóstico do processo e a primeira conversa não custam nada** — eu preciso entender o seu negócio antes de saber o que proponho.",
+    lead: "A conversa não começa por tabela de preço. Começa comigo entendendo o que está travando a sua operação e quanto isso está custando. Abaixo estão as quatorze frentes que eu atendo, separadas por tipo de trabalho — cada uma pode ser contratada sozinha.",
+    note: "**O diagnóstico do processo e a primeira conversa não custam nada.** Eu preciso entender o seu negócio antes de saber o que proponho.",
     modelsTag: "Formas de contratar",
     modelsTitle: "Quatro formatos, escolhidos depois do diagnóstico",
     modelsLead: "Eu não empurro contrato mensal para todo mundo. Depois de ver a operação eu sei o tamanho real da demanda, e digo qual destes quatro resolve o seu caso. Às vezes é o menor deles.",
     modelsWho: "Serve para você se",
-    modelsHow: "Como funciona",
-    promoTag: "Condição de lançamento",
-    promoTitle: "Contratação exclusiva",
-    promoBody: "Estou abrindo um número limitado de contratos mensais nesta fase, com condição de entrada diferenciada e prioridade de agenda. Quem entra agora trava a condição pelos 12 meses de vigência.",
-    promoItems: [
-      "Diagnóstico do processo sem custo, antes de qualquer proposta",
-      "Sem taxa de implantação — a licença de uso do sistema já entra no valor",
-      "Horas não utilizadas acumulam até 50% para o mês seguinte",
-      "90 dias de garantia técnica sobre tudo que estava no escopo",
-    ],
+    start: "Fazer o levantamento",
     ctaTitle: "O que está travando a sua operação hoje?",
-    ctaLead: "Me conte em duas linhas o que está pegando. Eu marco uma visita ou uma chamada para ver o problema acontecendo. Se depois disso eu não for a melhor saída para o seu caso, eu falo isso na hora e indico quem faz melhor.",
+    ctaLead: "Preencha o levantamento acima, ou me chame direto. Eu marco uma visita ou uma chamada para ver o problema acontecendo.",
     ctaBtn: "Falar no WhatsApp",
     ctaAlt: "Chamar no LinkedIn",
+    frentes: "frentes",
   },
   en: {
     tag: "Services",
-    h1a: "Every business needs a different kind of help. ",
-    h1b: "I work in all four.",
-    lead: "Some people need a whole system and want the price fixed before anything starts. Some only need one screen fixed. Some companies want someone from tech around every month. And some teams just need one more senior dev inside them. I take on all four, and we pick together which one fits you.",
-    note: "Any of the services below can come on its own or bundled. **Pricing on request** — the first conversation and the process diagnosis are free.",
+    h1a: "First I understand the problem. ",
+    h1b: "The contract format comes after.",
+    lead: "The conversation doesn't start with a price list. It starts with me understanding what's blocking your operation and what it's costing. Below are the fourteen areas I work in, split by kind of work — each one can be hired on its own.",
+    note: "**The process diagnosis and the first conversation are free.** I need to understand your business before I know what to propose.",
     modelsTag: "Ways to hire",
-    modelsTitle: "How you'd rather work with me",
-    modelsLead: "I don't push a retainer on everyone. On the first call I look at the size of your demand and tell you which of these four is cheapest for you — even when the cheapest is the one I earn least from.",
+    modelsTitle: "Four formats, chosen after the diagnosis",
+    modelsLead: "I don't push a retainer on everyone. After seeing the operation I know the real size of the demand, and I'll say which of these four fits. Sometimes it's the smallest one.",
     modelsWho: "This fits you if",
-    modelsHow: "How it works",
-    promoTag: "Launch terms",
-    promoTitle: "Limited onboarding",
-    promoBody: "I'm opening a limited number of monthly contracts in this phase, with preferential entry terms and schedule priority. Whoever joins now locks the terms for the full 12-month period.",
-    promoItems: [
-      "Free process diagnosis before any proposal",
-      "No setup fee — the licence to the existing system is included",
-      "Unused hours roll over up to 50% into the following month",
-      "90 days of technical warranty on everything in scope",
-    ],
-    ctaTitle: "Which of these is blocking you today?",
-    ctaLead: "Tell me about the operation in two lines. I'll reply saying whether I can solve it, what it costs and how long it takes — or point you to someone better suited.",
+    start: "Start the discovery",
+    ctaTitle: "What's blocking your operation today?",
+    ctaLead: "Fill in the discovery form above, or message me directly. I'll set up a visit or a call to see the problem happening.",
     ctaBtn: "Message on WhatsApp",
     ctaAlt: "Reach out on LinkedIn",
+    frentes: "areas",
   },
 } as const;
 
 export default function ServicosClient() {
   const { lang } = useLang();
   const c = copy[lang];
+  const areas = Object.keys(AREAS) as Area[];
 
   return (
     <>
@@ -98,13 +101,13 @@ export default function ServicosClient() {
             </p>
             <div className="cta-row">
               <Magnetic>
-                <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
-                  <MessageCircle size={18} /> {c.ctaBtn}
+                <a className="btn btn-primary" href="#briefing">
+                  {c.start} →
                 </a>
               </Magnetic>
               <Magnetic>
-                <a className="btn btn-ghost" href={`mailto:${EMAIL}`}>
-                  {EMAIL}
+                <a className="btn btn-ghost" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle size={18} /> {c.ctaBtn}
                 </a>
               </Magnetic>
             </div>
@@ -112,33 +115,56 @@ export default function ServicosClient() {
         </div>
       </header>
 
+      {/* ---------- serviços separados por tipo de trabalho ---------- */}
       <section style={{ paddingTop: 0 }}>
         <div className="wrap">
-          <div className="packs">
-            {packs.map((pk, i) => {
-              const Ico = icons[pk.icon] ?? Server;
-              return (
-                <Reveal key={pk.id} delay={i * 0.06}>
-                  <Spotlight className={`pack ${pk.featured ? "pack-featured" : ""}`}>
-                    <div className="pack-icon">
-                      <Ico size={24} />
-                    </div>
-                    <h3>{pk.name[lang]}</h3>
-                    <p className="pack-pitch">{pk.pitch[lang]}</p>
-                    <ul>
-                      {pk.items[lang].map((it) => (
-                        <li key={it}>{it}</li>
-                      ))}
-                    </ul>
-                    <div className="pack-outcome">{pk.outcome[lang]}</div>
-                  </Spotlight>
+          {areas.map((area) => {
+            const itens = servicos.filter((s) => s.area === area);
+            return (
+              <div className="area-block" key={area} id={area}>
+                <Reveal>
+                  <div className="area-head">
+                    <h3>{AREAS[area][lang]}</h3>
+                    <span className="area-count">
+                      {itens.length} {c.frentes}
+                    </span>
+                    <p>{AREAS[area].lead[lang]}</p>
+                  </div>
                 </Reveal>
-              );
-            })}
-          </div>
+
+                <div className="area-grid">
+                  {itens.map((s, i) => {
+                    const Ico = ICONS[s.icon] ?? Server;
+                    return (
+                      <Reveal key={s.id} delay={i * 0.05}>
+                        <Spotlight className="servico">
+                          <div className="servico-top">
+                            <span className="servico-icon">
+                              <Ico size={21} />
+                            </span>
+                            <h4>{s.nome[lang]}</h4>
+                          </div>
+                          <p className="servico-resumo">{s.resumo[lang]}</p>
+                          <ul>
+                            {s.entrega[lang].map((x) => (
+                              <li key={x}>{x}</li>
+                            ))}
+                          </ul>
+                          <div className="servico-res">{s.resultado[lang]}</div>
+                        </Spotlight>
+                      </Reveal>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
+      <BriefingForm />
+
+      {/* ---------- formas de contratar ---------- */}
       <section>
         <div className="wrap">
           <Reveal>
@@ -169,37 +195,13 @@ export default function ServicosClient() {
         </div>
       </section>
 
-      <section style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <Reveal>
-            <div className="mission">
-              <div className="sec-tag">{c.promoTag}</div>
-              <h2 className="mission-quote" style={{ maxWidth: "18ch" }}>
-                {c.promoTitle}
-              </h2>
-              <div className="mission-body">
-                <p>{c.promoBody}</p>
-                <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
-                  {c.promoItems.map((it) => (
-                    <li key={it} style={{ display: "flex", gap: 10, color: "var(--fg-muted)", fontSize: 16 }}>
-                      <span style={{ color: "var(--accent)" }}>▹</span>
-                      {it}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
       <section id="contato" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <Reveal>
             <Spotlight className="contact-box">
               <h2>{c.ctaTitle}</h2>
               <p>{c.ctaLead}</p>
-              <div className="cta-row" style={{ justifyContent: "center", marginBottom: 0 }}>
+              <div className="cta-row" style={{ justifyContent: "center", marginBottom: 16 }}>
                 <Magnetic>
                   <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
                     <MessageCircle size={18} /> {c.ctaBtn}
@@ -211,6 +213,7 @@ export default function ServicosClient() {
                   </a>
                 </Magnetic>
               </div>
+              <p className="contact-fine">{EMAIL}</p>
             </Spotlight>
           </Reveal>
         </div>

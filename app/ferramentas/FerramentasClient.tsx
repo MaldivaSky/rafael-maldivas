@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { AlertTriangle, Check, Loader2, MessageCircle, Search, X } from "lucide-react";
 import { useLang } from "../lib/i18n";
 import { WHATSAPP } from "../lib/site";
@@ -14,6 +14,7 @@ import { CepTool, DominioTool, FeriadosTool, FichaTool, IpcaTool, MarkupTool } f
 const copy = {
   pt: {
     tag: "Ferramentas gratuitas",
+    indexTitle: "Vá direto para a ferramenta",
     h1a: "Testa o meu trabalho ",
     h1b: "antes de falar comigo",
     lead: "Site de agência esconde tudo atrás de um formulário de contato. Aqui não. São quatorze ferramentas abertas, de graça e sem cadastro, e o que elas fazem por dentro é o mesmo tipo de coisa que eu entrego cobrando. Usa, testa, e depois você decide se quer conversar.",
@@ -69,6 +70,7 @@ const copy = {
   },
   en: {
     tag: "Free tools",
+    indexTitle: "Jump straight to a tool",
     h1a: "Tools I opened up ",
     h1b: "for anyone to use",
     lead: "No signup, no email, no catch. They're the pocket version of two things I do under contract — and they let you judge the quality of the work before hiring me.",
@@ -394,7 +396,84 @@ function MailTool({ c }: { c: Copy }) {
   );
 }
 
+
 /* ------------------------------------------------------------------ */
+/*  Índice — 14 cards sem navegação é lista, não ferramenta            */
+/* ------------------------------------------------------------------ */
+
+const GROUPS = {
+  pt: [
+    ["Fiscal e pagamento", [
+      ["nfe", "Chave NF-e / NFC-e"],
+      ["pix", "Pix Copia e Cola"],
+      ["cnpj", "CNPJ na Receita"],
+    ]],
+    ["Preço e margem", [
+      ["preco", "Preço de venda e CMV"],
+      ["markup", "Margem × markup"],
+      ["ficha", "Ficha técnica e fator de correção"],
+      ["delivery", "Margem por canal de venda"],
+    ]],
+    ["Site, domínio e segurança", [
+      ["dominio", "Domínio .com.br está livre?"],
+      ["email", "SPF, DKIM e DMARC"],
+      ["headers", "Cabeçalhos de segurança"],
+    ]],
+    ["Contrato e operação", [
+      ["ipca", "Reajuste pelo IPCA"],
+      ["cambio", "Câmbio do dia"],
+      ["feriados", "Feriados e emendas"],
+      ["cep", "CEP e coordenada"],
+    ]],
+  ],
+  en: [
+    ["Tax and payments", [
+      ["nfe", "E-invoice key"],
+      ["pix", "Pix payload"],
+      ["cnpj", "Company registry"],
+    ]],
+    ["Price and margin", [
+      ["preco", "Selling price and food cost"],
+      ["markup", "Margin vs markup"],
+      ["ficha", "Recipe costing and yield"],
+      ["delivery", "Margin by channel"],
+    ]],
+    ["Site, domain and security", [
+      ["dominio", "Is the domain free?"],
+      ["email", "SPF, DKIM and DMARC"],
+      ["headers", "Security headers"],
+    ]],
+    ["Contracts and operations", [
+      ["ipca", "Inflation adjustment"],
+      ["cambio", "Today's exchange rate"],
+      ["feriados", "Holidays and long weekends"],
+      ["cep", "Postcode and coordinates"],
+    ]],
+  ],
+} as const;
+
+function ToolIndex({ lang, title }: { lang: "pt" | "en"; title: string }) {
+  let n = 0;
+  return (
+    <nav className="tool-index" aria-label={title}>
+      <span className="tool-index-title">{title}</span>
+      {GROUPS[lang].map(([group, items]) => (
+        <Fragment key={group}>
+          <span className="tool-group">{group}</span>
+          {items.map(([id, label]) => {
+            n += 1;
+            return (
+              <a className="tool-chip" href={`#${id}`} key={id}>
+                <b>{String(n).padStart(2, "0")}</b>
+                {label}
+              </a>
+            );
+          })}
+        </Fragment>
+      ))}
+    </nav>
+  );
+}
 
 export default function FerramentasClient() {
   const { lang } = useLang();
@@ -417,6 +496,8 @@ export default function FerramentasClient() {
 
       <section style={{ paddingTop: 0 }}>
         <div className="wrap">
+          <ToolIndex lang={lang} title={c.indexTitle} />
+
           <div className="tools-grid">
             <div id="nfe">
               <NfeTool />

@@ -33,6 +33,8 @@ import VideoBackdrop from "./components/VideoBackdrop";
 import PartnerBadges from "./components/PartnerBadges";
 import ProductCards from "./components/ProductCards";
 import Mission from "./components/Mission";
+import VideoShowcase from "./components/VideoShowcase";
+import BriefingForm from "./components/BriefingForm";
 import { CountUp, Magnetic, Reveal, Spotlight, TechIcon } from "./components/fx";
 
 const techs = [
@@ -126,6 +128,7 @@ export default function HomeClient() {
           label={{
             on: lang === "pt" ? "Ativar o som" : "Unmute",
             off: lang === "pt" ? "Silenciar" : "Mute",
+            replay: lang === "pt" ? "Ouvir de novo" : "Play sound again",
             hint: lang === "pt" ? "Toque para ouvir" : "Tap to hear it",
           }}
         />
@@ -302,70 +305,11 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ---------- audiovisual ---------- */}
-      <section id="audiovisual">
+      <VideoShowcase />
+
+      {/* ---------- stack de criação ---------- */}
+      <section id="criacao" style={{ paddingTop: 0 }}>
         <div className="wrap">
-          <Reveal>
-            <div className="sec-tag">{l.mediaTag}</div>
-            <h2>{l.mediaTitle}</h2>
-            <p className="sec-lead">{l.mediaLead}</p>
-          </Reveal>
-
-          <div className="media-grid">
-            <Reveal className="media-card">
-              <video
-                poster="/video/drone-sp-poster.jpg"
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="none"
-              >
-                <source src="/video/drone-sp.mp4" type="video/mp4" />
-              </video>
-              <div className="media-cap">
-                <h3>{l.mediaDrone[0]}</h3>
-                <p>{l.mediaDrone[1]}</p>
-              </div>
-            </Reveal>
-
-            <div className="media-side">
-              <Reveal className="media-card" delay={0.08}>
-                <img src="/video/maldivas-hero-poster.jpg" alt="" />
-                <div className="media-cap">
-                  <h3>{l.mediaBrand[0]}</h3>
-                  <p>{l.mediaBrand[1]}</p>
-                </div>
-              </Reveal>
-
-              <Reveal className="media-card" delay={0.16}>
-                <img src="/media/drone-pilot.jpg" alt="" />
-                <a
-                  className="media-link"
-                  href={YOUTUBE}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={l.mediaYT[0]}
-                />
-                <div className="media-cap">
-                  <h3>{l.mediaYT[0]} ↗</h3>
-                  <p>{l.mediaYT[1]}</p>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-
-          <div className="cta-row" style={{ marginTop: 28, marginBottom: 0 }}>
-            <a className="btn btn-ghost" href={YOUTUBE} target="_blank" rel="noopener noreferrer">
-              <TechIcon src="/icons/youtube.svg" size={18} /> YouTube
-            </a>
-            <a className="btn btn-ghost" href={CANVA_REEL} target="_blank" rel="noopener noreferrer">
-              <TechIcon src="/icons/canva.svg" size={18} /> {l.mediaReel[0]}
-            </a>
-          </div>
-
-          <div style={{ height: 56 }} />
-
           <Reveal>
             <div className="sec-tag">{l.craftTag}</div>
             <h2 style={{ fontSize: "clamp(26px, 3vw, 34px)", marginBottom: 32 }}>{l.craftTitle}</h2>
@@ -437,6 +381,8 @@ export default function HomeClient() {
           </div>
         </div>
       </section>
+
+      <BriefingForm />
 
       {/* ---------- contato ---------- */}
       <section id="contato">
