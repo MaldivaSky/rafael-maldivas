@@ -13,7 +13,7 @@ import { ScrollProgress } from "./fx";
 const links = [
   { href: "/servicos", pt: "Serviços", en: "Services" },
   { href: "/portfolio", pt: "Portfólio", en: "Portfolio" },
-  { href: "/#engenharia", pt: "Engenharia", en: "Engineering" },
+  { href: "/ferramentas", pt: "Ferramentas", en: "Tools" },
   { href: "/sobre", pt: "Sobre", en: "About" },
 ];
 

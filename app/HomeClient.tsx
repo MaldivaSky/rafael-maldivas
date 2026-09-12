@@ -124,8 +124,9 @@ export default function HomeClient() {
       <header className="hero hero-video" id="top">
         <VideoBackdrop
           label={{
-            on: lang === "pt" ? "Ativar som do vídeo" : "Unmute video",
-            off: lang === "pt" ? "Silenciar vídeo" : "Mute video",
+            on: lang === "pt" ? "Ativar o som" : "Unmute",
+            off: lang === "pt" ? "Silenciar" : "Mute",
+            hint: lang === "pt" ? "Toque para ouvir" : "Tap to hear it",
           }}
         />
 
