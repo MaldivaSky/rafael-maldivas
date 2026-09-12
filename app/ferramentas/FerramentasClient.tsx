@@ -1,17 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { Fragment, useMemo, useState } from "react";
 import { AlertTriangle, Check, Loader2, MessageCircle, Search, X } from "lucide-react";
 import { useLang } from "../lib/i18n";
 import { WHATSAPP } from "../lib/site";
 import { Reveal, Spotlight } from "../components/fx";
+import { GROUP_LABEL, tools as toolList, type ToolGroup } from "../lib/tools";
 import { DeliveryTool, HeadersTool, NfeTool, PixTool } from "./MoreTools";
 import { CambioTool, CnpjTool } from "./ApiTools";
 import { CepTool, DominioTool, FeriadosTool, FichaTool, IpcaTool, MarkupTool } from "./BizTools";
 
 /* ------------------------------------------------------------------ */
 
-const copy = {
+export const copy = {
   pt: {
     tag: "Ferramentas gratuitas",
     indexTitle: "Vá direto para a ferramenta",
@@ -137,7 +139,7 @@ function money(n: number) {
 }
 const pct = (n: number) => `${n.toFixed(1).replace(".", ",")}%`;
 
-function PriceTool({ c }: { c: Copy }) {
+export function PriceTool({ c }: { c: Copy }) {
   const [v, setV] = useState({
     ingredients: "18",
     losses: "8",
@@ -292,7 +294,7 @@ function Row({ ok, name, text, detail }: { ok: boolean | "warn"; name: string; t
   );
 }
 
-function MailTool({ c }: { c: Copy }) {
+export function MailTool({ c }: { c: Copy }) {
   const [domain, setDomain] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "done" | "error" | "invalid">("idle");
   const [data, setData] = useState<DnsResult | null>(null);
@@ -401,74 +403,27 @@ function MailTool({ c }: { c: Copy }) {
 /*  Índice — 14 cards sem navegação é lista, não ferramenta            */
 /* ------------------------------------------------------------------ */
 
-const GROUPS = {
-  pt: [
-    ["Fiscal e pagamento", [
-      ["nfe", "Chave NF-e / NFC-e"],
-      ["pix", "Pix Copia e Cola"],
-      ["cnpj", "CNPJ na Receita"],
-    ]],
-    ["Preço e margem", [
-      ["preco", "Preço de venda e CMV"],
-      ["markup", "Margem × markup"],
-      ["ficha", "Ficha técnica e fator de correção"],
-      ["delivery", "Margem por canal de venda"],
-    ]],
-    ["Site, domínio e segurança", [
-      ["dominio", "Domínio .com.br está livre?"],
-      ["email", "SPF, DKIM e DMARC"],
-      ["headers", "Cabeçalhos de segurança"],
-    ]],
-    ["Contrato e operação", [
-      ["ipca", "Reajuste pelo IPCA"],
-      ["cambio", "Câmbio do dia"],
-      ["feriados", "Feriados e emendas"],
-      ["cep", "CEP e coordenada"],
-    ]],
-  ],
-  en: [
-    ["Tax and payments", [
-      ["nfe", "E-invoice key"],
-      ["pix", "Pix payload"],
-      ["cnpj", "Company registry"],
-    ]],
-    ["Price and margin", [
-      ["preco", "Selling price and food cost"],
-      ["markup", "Margin vs markup"],
-      ["ficha", "Recipe costing and yield"],
-      ["delivery", "Margin by channel"],
-    ]],
-    ["Site, domain and security", [
-      ["dominio", "Is the domain free?"],
-      ["email", "SPF, DKIM and DMARC"],
-      ["headers", "Security headers"],
-    ]],
-    ["Contracts and operations", [
-      ["ipca", "Inflation adjustment"],
-      ["cambio", "Today's exchange rate"],
-      ["feriados", "Holidays and long weekends"],
-      ["cep", "Postcode and coordinates"],
-    ]],
-  ],
-} as const;
 
 function ToolIndex({ lang, title }: { lang: "pt" | "en"; title: string }) {
+  const groups: ToolGroup[] = ["fiscal", "margem", "site", "operacao"];
   let n = 0;
   return (
     <nav className="tool-index" aria-label={title}>
       <span className="tool-index-title">{title}</span>
-      {GROUPS[lang].map(([group, items]) => (
-        <Fragment key={group}>
-          <span className="tool-group">{group}</span>
-          {items.map(([id, label]) => {
-            n += 1;
-            return (
-              <a className="tool-chip" href={`#${id}`} key={id}>
-                <b>{String(n).padStart(2, "0")}</b>
-                {label}
-              </a>
-            );
-          })}
+      {groups.map((g) => (
+        <Fragment key={g}>
+          <span className="tool-group">{GROUP_LABEL[g][lang]}</span>
+          {toolList
+            .filter((t) => t.group === g)
+            .map((t) => {
+              n += 1;
+              return (
+                <Link className="tool-chip" href={`/ferramentas/${t.slug}`} key={t.slug}>
+                  <b>{String(n).padStart(2, "0")}</b>
+                  {t.title}
+                </Link>
+              );
+            })}
         </Fragment>
       ))}
     </nav>

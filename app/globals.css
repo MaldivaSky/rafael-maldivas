@@ -922,13 +922,13 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   font-size: 12.5px; font-weight: 700; transition: all .2s;
 }
 .peca-controls button:hover { background: rgba(8,12,22,0.92); border-color: var(--accent); transform: translateY(-1px); }
-.peca-info { padding: 24px 26px 26px; display: flex; flex-direction: column; flex: 1; }
+.peca-info { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; }
 .peca-mod {
   font-size: 11.5px; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase;
   color: var(--accent); margin-bottom: 9px;
 }
-.peca-info h3 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 9px; line-height: 1.28; }
-.peca-info p { font-size: 15px; color: var(--fg-muted); line-height: 1.6; margin-bottom: 16px; }
+.peca-info h3 { font-size: 18.5px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 9px; line-height: 1.28; }
+.peca-info p { font-size: 14.5px; color: var(--fg-muted); line-height: 1.55; margin-bottom: 12px; }
 .peca-ficha {
   margin-top: auto; font-size: 12.5px; color: var(--fg-dim);
   font-family: var(--mono); letter-spacing: -0.2px;
@@ -982,7 +982,7 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
 }
 
 @media (max-width: 1100px) {
-  .area-grid, .pecas { grid-template-columns: 1fr; }
+  .area-grid { grid-template-columns: 1fr; }
   .briefing { grid-template-columns: 1fr; }
   .briefing-preview { position: static; }
 }
@@ -990,3 +990,28 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   .briefing-form { padding: 24px 20px; }
   .peca-controls { left: 10px; bottom: 10px; }
 }
+
+/* ---------------- página individual de ferramenta ---------------- */
+.tool-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 700; color: var(--fg-dim); transition: color .2s;
+}
+.tool-back:hover { color: var(--accent); }
+.tool-solo { max-width: 760px; }
+
+.faq { display: flex; flex-direction: column; gap: 12px; max-width: 820px; }
+.faq-item {
+  border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  background: var(--bg-soft); padding: 20px 24px;
+}
+.faq-item summary {
+  cursor: pointer; font-size: 17px; font-weight: 700; letter-spacing: -0.2px;
+  list-style: none; display: flex; justify-content: space-between; gap: 16px;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; color: var(--accent); font-weight: 800; flex-shrink: 0; }
+.faq-item[open] summary::after { content: "−"; }
+.faq-item p { margin-top: 14px; font-size: 15.5px; color: var(--fg-muted); line-height: 1.68; }
+
+/* a seção de vídeo empilhada ficava com 3.5k px de altura */
+@media (max-width: 860px) { .pecas { grid-template-columns: 1fr; } }
