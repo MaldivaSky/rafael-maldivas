@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@imgly/background-removal": "^1.7.0",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
     "framer-motion": "^13.1.0",

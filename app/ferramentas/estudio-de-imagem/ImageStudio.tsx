@@ -2,8 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Download, ImagePlus, ArrowLeft, Upload, ShieldCheck } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Download, ImagePlus, ArrowLeft, Upload, ShieldCheck, Wand2 } from "lucide-react";
 import { useLang } from "../../lib/i18n";
+
+/* A remoção de fundo traz um modelo ONNX grande: só baixa quando a aba abre. */
+const BackgroundRemover = dynamic(() => import("./BackgroundRemover"), {
+  ssr: false,
+  loading: () => (
+    <div className="studio-drop" role="status">
+      <span>Carregando o editor de fundo… / Loading the background editor…</span>
+    </div>
+  ),
+});
 
 type Loaded = { image: HTMLImageElement; name: string; bytes: number; url: string };
 type Result = { url: string; size: number; width: number; height: number; ext: string };
@@ -11,6 +22,7 @@ const bytes = (n:number) => n >= 1048576 ? `${(n/1048576).toFixed(2)} MB` : `${M
 
 export default function ImageStudio(){
  const {lang}=useLang(); const pt=lang==="pt";
+ const [tab,setTab]=useState<"prepare"|"cutout">("prepare");
  const [source,setSource]=useState<Loaded|null>(null);
  const [result,setResult]=useState<Result|null>(null);
  const [format,setFormat]=useState("image/webp");
@@ -73,6 +85,13 @@ export default function ImageStudio(){
  return <div className="image-studio wrap">
    <Link href="/ferramentas" className="personal-link"><ArrowLeft size={16}/>{pt?"Todas as ferramentas":"All tools"}</Link>
    <div className="studio-heading"><div><div className="sec-tag">{pt?"Estúdio de imagem / Maldivas Tech":"Image studio / Maldivas Tech"}</div><h1>{pt?"Sua foto, pronta para usar.":"Your photo, ready to use."}</h1><p>{pt?"Ajuste o tamanho, escolha o formato e baixe. Para o seu site, catálogo ou próxima publicação.":"Choose the size and format, then download. For your website, catalogue or next post."}</p></div><span className="studio-private"><ShieldCheck size={18}/>{pt?"Sem enviar sua foto a um servidor":"No image upload to a server"}</span></div>
+   <div className="studio-tabs" role="tablist" aria-label={pt?"Escolha o que fazer com a imagem":"Choose what to do with the image"}>
+    <button role="tab" type="button" aria-selected={tab==="prepare"} className={tab==="prepare"?"is-active":""} onClick={()=>setTab("prepare")}><ImagePlus size={17}/>{pt?"Preparar imagem":"Prepare image"}</button>
+    <button role="tab" type="button" aria-selected={tab==="cutout"} className={tab==="cutout"?"is-active":""} onClick={()=>setTab("cutout")}><Wand2 size={17}/>{pt?"Remover fundo":"Remove background"}</button>
+   </div>
+
+   {tab==="cutout"&&<BackgroundRemover/>}
+   {tab==="prepare"&&<>
    <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" className="studio-file" aria-label={pt?"Escolher imagem":"Choose image"} onChange={e=>{const file=e.target.files?.[0];if(file)void open(file);e.target.value="";}}/>
    <div className="studio-workspace">
     <div className="studio-preview">
@@ -95,5 +114,6 @@ export default function ImageStudio(){
    </div>
    {error&&<p role="alert" className="studio-error">{error}</p>}
    <div className="studio-explainer"><div><h2>{pt?"Qual formato escolher?":"Which format should I use?"}</h2><p>{pt?"WebP costuma ser uma boa opção para sites. JPG tem ampla compatibilidade para fotografias. PNG preserva transparência no modo original, mas pode gerar um arquivo maior.":"WebP is often useful for websites. JPG is widely supported for photographs. PNG preserves transparency in original mode, but may produce a larger file."}</p></div><div><h2>{pt?"A foto fica com você":"Your photo stays with you"}</h2><p>{pt?"A ferramenta trabalha no seu navegador. Você não precisa criar uma conta e a imagem não é enviada para processamento. Ao sair, baixe o resultado se quiser guardá-lo.":"Processing happens in your browser. No account needed and no image is sent away for processing. Download the result before leaving if you want to keep it."}</p></div></div>
+   </>}
  </div>;
 }
