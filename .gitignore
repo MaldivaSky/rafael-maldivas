@@ -9,3 +9,12 @@ next-env.d.ts
 .vercel
 .env*
 .next-build/
+
+# logs locais de dev/build
+*-err.log
+*-out.log
+npm-debug.log*
+yarn-error.log*
+
+# readmes de perfil do GitHub (nao fazem parte do projeto)
+_readme_perfil_*.md
