@@ -81,7 +81,7 @@ async function feriados(q: string) {
     year,
     feriados: d.map((f) => {
       const dt = new Date(`${f.date}T12:00:00`);
-      const wd = dt.getDay();
+            const wd = dt.getDay();
       return {
         data: f.date,
         nome: f.name,
@@ -101,7 +101,7 @@ async function ipca() {
   const d = (await get(
     "https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados/ultimos/12?formato=json",
     43200
-  )) as { data: string; valor: string }[];
+    )) as { data: string; valor: string }[];
 
   // índice de preço compõe, não soma
   const factor = d.reduce((acc, m) => acc * (1 + parseFloat(m.valor) / 100), 1);
@@ -115,12 +115,102 @@ async function ipca() {
   });
 }
 
+/* ---------------- DDD — estado e cidades atendidas ---------------- */
+
+async function ddd(q: string) {
+  const code = q.replace(/\D/g, "");
+  if (code.length !== 2) return json({ error: "invalid" }, 400);
+
+  const d = await get(`https://brasilapi.com.br/api/ddd/v1/${code}`, 2592000);
+  return json({
+    ddd: code,
+    state: d.state ?? null,
+    cities: Array.isArray(d.cities) ? d.cities.slice(0, 120) : [],
+    total: Array.isArray(d.cities) ? d.cities.length : 0,
+  });
+}
+
+/* ---------------- Bancos — código, ISPB ou nome ---------------- */
+
+type Bank = { ispb: string; name: string; code: number | null; fullName: string };
+
+const mapBank = (b: Bank) => ({
+  code: b.code,
+  ispb: b.ispb,
+  name: b.name,
+  fullName: b.fullName,
+});
+
+async function bancos(q: string) {
+  const term = q.trim();
+  const all = (await get("https://brasilapi.com.br/api/banks/v1", 86400)) as Bank[];
+
+  if (!term) {
+    const ordered = [...all].sort((a, b) => (a.code ?? 9999) - (b.code ?? 9999));
+    return json({ bancos: ordered.slice(0, 60).map(mapBank), total: all.length });
+  }
+
+  const digits = term.replace(/\D/g, "");
+  const asNumber = digits ? parseInt(digits, 10) : NaN;
+  const needle = term.toLowerCase();
+
+  const hits = all
+    .filter(
+      (b) =>
+        (Number.isFinite(asNumber) && b.code === asNumber) ||
+        (digits.length === 8 && b.ispb === digits) ||
+        (b.name ?? "").toLowerCase().includes(needle) ||
+        (b.fullName ?? "").toLowerCase().includes(needle)
+    )
+    .slice(0, 60)
+    .map(mapBank);
+
+  return json({ bancos: hits, total: hits.length });
+}
+
+/* ---------------- Selic, CDI e IPCA do dia ---------------- */
+
+async function taxas() {
+  // Séries do Banco Central: 432 = CDI diário · 4189 = Selic meta · 11 = Selic efetiva diária
+  const [resumo, cdi, meta, efetiva] = await Promise.all([
+    get("https://brasilapi.com.br/api/taxas/v1", 3600) as Promise<
+      { nome: string; valor: number }[]
+    >,
+    get("https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json", 3600),
+    get("https://api.bcb.gov.br/dados/serie/bcdata.sgs.4189/dados/ultimos/1?formato=json", 3600),
+    get("https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados/ultimos/1?formato=json", 3600),
+  ]);
+
+  const last = (raw: unknown) =>
+    Array.isArray(raw) && raw.length
+      ? (raw[raw.length - 1] as { data: string; valor: string })
+      : null;
+
+  const cdiLast = last(cdi);
+  const metaLast = last(meta);
+  const efLast = last(efetiva);
+
+  return json({
+    selic: resumo.find((r) => r.nome === "Selic")?.valor ?? null,
+    cdi: resumo.find((r) => r.nome === "CDI")?.valor ?? null,
+    ipca: resumo.find((r) => r.nome === "IPCA")?.valor ?? null,
+    // Selic efetiva diária (% ao dia) — é a que rende de fato na conta
+    selicEfetivaDia: efLast ? parseFloat(efLast.valor) : null,
+    atualizadoEm: metaLast?.data ?? cdiLast?.data ?? null,
+    fonteData: {
+      cdi: cdiLast?.data ?? null,
+      selicMeta: metaLast?.data ?? null,
+      selicEfetiva: efLast?.data ?? null,
+    },
+  });
+}
+
 /* ------------------------------------------------------------------ */
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const tipo = url.searchParams.get("tipo") ?? "";
-  const q = url.searchParams.get("q") ?? "";
+    const q = url.searchParams.get("q") ?? "";
 
   try {
     switch (tipo) {
@@ -132,6 +222,12 @@ export async function GET(req: Request) {
         return await feriados(q);
       case "ipca":
         return await ipca();
+      case "ddd":
+        return await ddd(q);
+      case "bancos":
+        return await bancos(q);
+      case "taxas":
+        return await taxas();
       default:
         return json({ error: "tipo_invalido" }, 400);
     }
