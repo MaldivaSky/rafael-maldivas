@@ -9,7 +9,7 @@ import { ChevronDown, Menu, Moon, Sun, X } from "lucide-react";
 import { useLang } from "../lib/i18n";
 import { WHATSAPP } from "../lib/site";
 import { AREAS, servicos } from "../lib/catalog";
-import { tools } from "../lib/tools";
+import { tools, GROUP_LABEL, type ToolGroup } from "../lib/tools";
 import { ScrollProgress } from "./fx";
 
 /* ------------------------------------------------------------------ */
@@ -22,7 +22,9 @@ import { ScrollProgress } from "./fx";
 /* ------------------------------------------------------------------ */
 
 type SubItem = { href: string; pt: string; en: string };
-type MenuItem = { href: string; pt: string; en: string; sub?: SubItem[] };
+/** Submenu com tópicos: cada grupo tem um rótulo e seus itens. */
+type SubGroup = { label: { pt: string; en: string }; items: SubItem[] };
+type MenuItem = { href: string; pt: string; en: string; sub?: SubItem[]; groups?: SubGroup[] };
 
 const servicesSub: SubItem[] = (
   Object.keys(AREAS) as (keyof typeof AREAS)[]
@@ -43,17 +45,35 @@ const portfolioSub: SubItem[] = [
   { href: "/portfolio#contato", pt: "Falar sobre um projeto", en: "Talk about a project" },
 ];
 
-// Ferramentas: cada uma leva à sua própria página /ferramentas/<slug>
-const toolsSub: SubItem[] = tools.map((t) => ({
-  href: `/ferramentas/${t.slug}`,
-  pt: t.title,
-  en: t.title,
-}));
+// Ferramentas: cada uma leva à sua própria página /ferramentas/<slug>.
+// O submenu é agrupado por tópico (igual à página /ferramentas) e os itens
+// ficam em ordem alfabética dentro de cada grupo. O Estúdio de imagem é uma
+// rota própria e por isso não vive no registro `tools` — entra à parte, em
+// destaque, no topo da lista.
+const GROUP_ORDER: ToolGroup[] = ["fiscal", "margem", "site", "operacao"];
+
+const studioItem: SubItem = {
+  href: "/ferramentas/estudio-de-imagem",
+  pt: "Estúdio de imagem — remover fundo",
+  en: "Image studio — remove background",
+};
+
+const toolsGroups: SubGroup[] = [
+  { label: { pt: "Em destaque", en: "Featured" }, items: [studioItem] },
+  ...GROUP_ORDER.map((g) => ({
+    label: GROUP_LABEL[g],
+    items: tools
+      .filter((t) => t.group === g)
+      .slice()
+      .sort((a, b) => a.title.localeCompare(b.title, "pt"))
+      .map((t) => ({ href: `/ferramentas/${t.slug}`, pt: t.title, en: t.title })),
+  })),
+];
 
 const menu: MenuItem[] = [
   { href: "/servicos", pt: "Serviços", en: "Services", sub: servicesSub },
   { href: "/portfolio", pt: "Portfólio", en: "Portfolio", sub: portfolioSub },
-  { href: "/ferramentas", pt: "Ferramentas", en: "Tools", sub: toolsSub },
+  { href: "/ferramentas", pt: "Ferramentas", en: "Tools", groups: toolsGroups },
   { href: "/sobre", pt: "Sobre", en: "About" },
 ];
 
@@ -109,8 +129,8 @@ function DesktopItem({
     }
   };
 
-  // sem submenu: link simples
-  if (!item.sub) {
+  // sem submenu nem grupos: link simples
+  if (!item.sub && !item.groups) {
     return (
       <Link href={item.href} className={`nav-link ${active ? "on" : ""}`}>
         {label}
@@ -153,11 +173,24 @@ function DesktopItem({
           {lang === "pt" ? `Ver ${item.pt.toLowerCase()}` : `View all ${item.en.toLowerCase()}`}
         </Link>
         <div className="nav-dropdown-list">
-          {item.sub.map((s) => (
-            <Link key={s.href} href={s.href} className="nav-dropdown-item" role="menuitem">
-              {lang === "pt" ? s.pt : s.en}
-            </Link>
-          ))}
+          {item.groups
+            ? item.groups.map((grp) => (
+                <div key={grp.label.en} className="nav-dropdown-group">
+                  <div className="nav-dropdown-group-label">
+                    {lang === "pt" ? grp.label.pt : grp.label.en}
+                  </div>
+                  {grp.items.map((s) => (
+                    <Link key={s.href} href={s.href} className="nav-dropdown-item" role="menuitem">
+                      {lang === "pt" ? s.pt : s.en}
+                    </Link>
+                  ))}
+                </div>
+              ))
+            : item.sub?.map((s) => (
+                <Link key={s.href} href={s.href} className="nav-dropdown-item" role="menuitem">
+                  {lang === "pt" ? s.pt : s.en}
+                </Link>
+              ))}
         </div>
       </div>
     </div>
@@ -267,7 +300,7 @@ export default function SiteNav() {
         <div className="wrap mobile-menu-in">
           {menu.map((item) => {
             const label = lang === "pt" ? item.pt : item.en;
-            if (!item.sub) {
+            if (!item.sub && !item.groups) {
               return (
                 <Link key={item.href} href={item.href} className="mm-link">
                   {label}
@@ -291,11 +324,24 @@ export default function SiteNav() {
                     <Link href={item.href} className="mm-sub-item mm-sub-head">
                       {lang === "pt" ? `Ver ${item.pt.toLowerCase()}` : `View all ${item.en.toLowerCase()}`}
                     </Link>
-                    {item.sub.map((s) => (
-                      <Link key={s.href} href={s.href} className="mm-sub-item">
-                        {lang === "pt" ? s.pt : s.en}
-                      </Link>
-                    ))}
+                    {item.groups
+                      ? item.groups.map((grp) => (
+                          <div key={grp.label.en} className="mm-sub-group">
+                            <div className="mm-sub-group-label">
+                              {lang === "pt" ? grp.label.pt : grp.label.en}
+                            </div>
+                            {grp.items.map((s) => (
+                              <Link key={s.href} href={s.href} className="mm-sub-item">
+                                {lang === "pt" ? s.pt : s.en}
+                              </Link>
+                            ))}
+                          </div>
+                        ))
+                      : item.sub?.map((s) => (
+                          <Link key={s.href} href={s.href} className="mm-sub-item">
+                            {lang === "pt" ? s.pt : s.en}
+                          </Link>
+                        ))}
                   </div>
                 )}
               </div>

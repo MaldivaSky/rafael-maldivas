@@ -588,6 +588,15 @@ footer { border-top: 1px solid var(--line); padding: 34px 0; position: relative;
 }
 .nav-dropdown-item:hover { background: var(--accent-glow); color: var(--accent); }
 
+/* submenu por tópico (ex.: Ferramentas agrupadas por área) */
+.nav-dropdown-group { display: flex; flex-direction: column; padding-top: 6px; }
+.nav-dropdown-group + .nav-dropdown-group { margin-top: 6px; border-top: 1px solid var(--line); }
+.nav-dropdown-group-label {
+  padding: 8px 14px 4px; font-size: 11px; font-weight: 800;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-dim);
+}
+.nav-dropdown-group .nav-dropdown-item { padding-left: 18px; }
+
 /* ---------------- acordeão do menu mobile ---------------- */
 .mm-group { border-bottom: 1px solid var(--line); }
 .mm-trigger {
@@ -606,6 +615,12 @@ footer { border-top: 1px solid var(--line); padding: 34px 0; position: relative;
 }
 .mm-sub-item:hover { color: var(--accent); }
 .mm-sub-head { color: var(--accent); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+.mm-sub-group { display: flex; flex-direction: column; }
+.mm-sub-group + .mm-sub-group { margin-top: 12px; }
+.mm-sub-group-label {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--fg-dim); padding: 6px 0 2px;
+}
 
 /* ---------------- hero em vídeo ---------------- */
 .hero-video { position: relative; z-index: 1; overflow: hidden; padding: 132px 0 96px; }
