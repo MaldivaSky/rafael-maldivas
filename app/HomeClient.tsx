@@ -8,9 +8,14 @@ import {
   CalendarDays,
   ChefHat,
   Coins,
+  FileCode2,
   Globe,
+  IdCard,
   Layout,
+  Landmark,
   MapPin,
+  Percent,
+  Phone,
   Scale,
   TrendingUp,
   LineChart,
@@ -77,6 +82,11 @@ const local = {
       ["Feriados e efeito na escala", "Calendário do ano marcando onde vira emenda e muda compra, escala e movimento.", "/ferramentas#feriados"],
       ["Ficha técnica e fator de correção", "Você compra 1 kg mas não usa 1 kg. Veja quanto custa de verdade o que vai no prato.", "/ferramentas#ficha"],
       ["Margem × markup", "30% em cima do custo não dá 30% de margem. Dá 23%. Essa conta some do caixa todo mês.", "/ferramentas#markup"],
+      ["Extrator de dados da NF-e (XML)", "Suba o XML da nota e receba emitente, itens, quantidade, valor unitário, impostos e total já separados.", "/ferramentas#nfexml"],
+      ["Validador de CPF", "Confira o dígito verificador por módulo 11 e veja ainda a região fiscal que emitiu o número.", "/ferramentas#cpf"],
+      ["DDD: de que estado é o número?", "Digite o código de área e veja o estado e as cidades atendidas pela Anatel.", "/ferramentas#ddd"],
+      ["Códigos de bancos (COMPE e ISPB)", "Procure o banco pelo código, pelo ISPB ou pelo nome para conferir boleto e remessa.", "/ferramentas#bancos"],
+      ["Selic, CDI e calculadora de rendimento", "A taxa do Banco Central e uma simulação de juros compostos para o valor e o prazo que você escolher.", "/ferramentas#taxas"],
     ],
     toolsCta: "Abrir as ferramentas",
     linkedinCta: "Ver meu perfil no LinkedIn",
@@ -107,10 +117,13 @@ const local = {
       ["Currency converter, live rate", "Dollar, euro, yen and pound at today's rate. Handy for quoting abroad without guessing.", "/ferramentas#cambio"],
       ["Is your domain free?", "Direct registro.br lookup before you print cards, signage and menus.", "/ferramentas#dominio"],
       ["Postcode lookup with coordinates", "Full address, municipal code and latitude to check delivery areas.", "/ferramentas#cep"],
-      ["Contract adjustment by inflation", "Accumulated index pulled from the Central Bank, applied to your contract value.", "/ferramentas#ipca"],
-      ["Holidays and roster impact", "The year's calendar tagged where a long weekend shifts buying, staffing and footfall.", "/ferramentas#feriados"],
       ["Recipe costing and yield factor", "You buy 1 kg but you don't use 1 kg. See what the plate really costs.", "/ferramentas#ficha"],
       ["Margin vs markup", "30% on cost is not a 30% margin. It is 23%. That gap leaves the till every month.", "/ferramentas#markup"],
+      ["Invoice (NF-e) XML extractor", "Upload the invoice XML and get issuer, line items, quantity, unit price, taxes and total already separated.", "/ferramentas#nfexml"],
+      ["CPF validator", "Check the check digits via modulo 11 and see the fiscal region that issued the number.", "/ferramentas#cpf"],
+      ["Area code (DDD) lookup", "Type the two-digit code and see the state and the cities served, from Anatel data.", "/ferramentas#ddd"],
+      ["Bank codes (COMPE and ISPB)", "Look a bank up by code, ISPB or name to check a boleto and a remittance file.", "/ferramentas#bancos"],
+      ["Selic, CDI and yield calculator", "The Central Bank rate plus a compound-interest simulation for the amount and term you choose.", "/ferramentas#taxas"],
     ],
     toolsCta: "Open the tools",
     linkedinCta: "See my LinkedIn profile",
@@ -269,7 +282,7 @@ export default function HomeClient() {
           <StudioInvite />
           <div className="packs">
             {l.tools.map(([title, desc, href], i) => {
-              const icons = [Receipt, QrCode, MailCheck, ShieldCheck, Calculator, LineChart, Building2, Coins, Globe, MapPin, TrendingUp, CalendarDays, ChefHat, Scale];
+              const icons = [Receipt, QrCode, MailCheck, ShieldCheck, Calculator, LineChart, Building2, Coins, Globe, MapPin, TrendingUp, CalendarDays, ChefHat, Scale, FileCode2, IdCard, Phone, Landmark, Percent];
               const Ico = icons[i % icons.length];
               return (
                 <Reveal key={href} delay={i * 0.05}>

@@ -149,7 +149,8 @@ export const t = {
     "aboutTag": "Empresa",
     "aboutTitle": "Maldivas Tech",
     "aboutBody": [
-      "Sou **Rafael Maldivas**, desenvolvedor e fundador da **Maldivas Tech**. Trabalhei com vendas, qualidade e processos; também passei pela marcenaria, pela formação técnica em química e pela gastronomia. São experiências que fazem parte de como eu entendo o trabalho de uma empresa.",
+      "Antes de falar de tecnologia, eu entendo o negócio: o fluxo de trabalho, o que toma tempo, o que dá problema, onde o dinheiro vaza e onde alguém redigita à toa. Só então eu proponho uma solução — sem over-engineering, sem enrolação.",
+      "Essa leitura vem de fora da programação. Trabalhei com vendas, qualidade e processos; também passei pela marcenaria, pela formação técnica em química e pela gastronomia. Sei o que é lidar com prazo, custo e cliente esperando. São experiências que fazem parte de como eu entendo o trabalho de uma empresa.",
       "Hoje reúno esse conhecimento em serviços de tecnologia: sistemas, integrações, análise de dados e presença digital. Gosto de acompanhar o projeto da conversa inicial até o uso, ouvir o retorno de quem trabalha com ele e fazer os ajustes necessários.",
       "A Maldivas Tech é minha empresa, com CNPJ, contrato e nota fiscal. Atendo projetos de consultoria e desenvolvimento e também converso sobre oportunidades de trabalho em equipe."
     ],

@@ -10,6 +10,7 @@ import { copy, MailTool, PriceTool } from "../FerramentasClient";
 import { DeliveryTool, HeadersTool, NfeTool, PixTool } from "../MoreTools";
 import { CambioTool, CnpjTool } from "../ApiTools";
 import { CepTool, DominioTool, FeriadosTool, FichaTool, IpcaTool, MarkupTool } from "../BizTools";
+import { BancosTool, CpfTool, DddTool, NfeXmlTool, TaxasTool } from "../NewTools";
 
 const t = {
   pt: {
@@ -41,34 +42,48 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
 
   const render = () => {
     switch (tool.key) {
+            // margem
       case "preco":
         return <PriceTool c={k} />;
-      case "email":
-        return <MailTool c={k} />;
-      case "nfe":
-        return <NfeTool />;
-      case "pix":
-        return <PixTool />;
-      case "headers":
-        return <HeadersTool />;
-      case "delivery":
-        return <DeliveryTool />;
-      case "cnpj":
-        return <CnpjTool />;
-      case "cambio":
-        return <CambioTool />;
-      case "dominio":
-        return <DominioTool />;
-      case "cep":
-        return <CepTool />;
-      case "ipca":
-        return <IpcaTool />;
-      case "feriados":
-        return <FeriadosTool />;
-      case "ficha":
-        return <FichaTool />;
       case "markup":
         return <MarkupTool />;
+      case "ficha":
+        return <FichaTool />;
+      case "delivery":
+        return <DeliveryTool />;
+      // fiscal
+      case "cnpj":
+        return <CnpjTool />;
+      case "pix":
+        return <PixTool />;
+      case "nfe":
+        return <NfeTool />;
+      case "cpf":
+        return <CpfTool />;
+      case "nfexml":
+        return <NfeXmlTool />;
+      case "bancos":
+        return <BancosTool />;
+      // site
+      case "dominio":
+        return <DominioTool />;
+      case "email":
+        return <MailTool c={k} />;
+      case "headers":
+        return <HeadersTool />;
+      // operação
+      case "ipca":
+        return <IpcaTool />;
+      case "cambio":
+        return <CambioTool />;
+      case "feriados":
+        return <FeriadosTool />;
+      case "cep":
+        return <CepTool />;
+      case "ddd":
+        return <DddTool />;
+      case "taxas":
+        return <TaxasTool />;
       default:
         return null;
     }
@@ -147,7 +162,7 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
               <h2>{c.ctaTitle}</h2>
               <p>{c.ctaLead}</p>
               <div className="cta-row" style={{ justifyContent: "center", marginBottom: 0 }}>
-                <Magnetic>
+                                <Magnetic>
                   <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
                     <MessageCircle size={18} /> {c.cta}
                   </a>

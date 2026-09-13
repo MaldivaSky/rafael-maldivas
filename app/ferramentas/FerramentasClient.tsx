@@ -11,6 +11,7 @@ import { GROUP_LABEL, tools as toolList, type ToolGroup } from "../lib/tools";
 import { DeliveryTool, HeadersTool, NfeTool, PixTool } from "./MoreTools";
 import { CambioTool, CnpjTool } from "./ApiTools";
 import { CepTool, DominioTool, FeriadosTool, FichaTool, IpcaTool, MarkupTool } from "./BizTools";
+import { BancosTool, CpfTool, DddTool, NfeXmlTool, TaxasTool } from "./NewTools";
 
 /* ------------------------------------------------------------------ */
 
@@ -388,11 +389,6 @@ export function MailTool({ c }: { c: Copy }) {
 }
 
 
-/* ------------------------------------------------------------------ */
-/*  Índice — 14 cards sem navegação é lista, não ferramenta            */
-/* ------------------------------------------------------------------ */
-
-
 function ToolIndex({ lang, title }: { lang: "pt" | "en"; title: string }) {
   const groups: ToolGroup[] = ["fiscal", "margem", "site", "operacao"];
   let n = 0;
@@ -468,7 +464,7 @@ export default function FerramentasClient() {
             <div id="cambio">
               <CambioTool />
             </div>
-            <div id="dominio">
+                        <div id="dominio">
               <DominioTool />
             </div>
             <div id="cep">
@@ -485,6 +481,21 @@ export default function FerramentasClient() {
             </div>
             <div id="markup">
               <MarkupTool />
+            </div>
+            <div id="nfexml">
+              <NfeXmlTool />
+            </div>
+            <div id="cpf">
+              <CpfTool />
+            </div>
+            <div id="ddd">
+              <DddTool />
+            </div>
+            <div id="bancos">
+              <BancosTool />
+            </div>
+            <div id="taxas">
+              <TaxasTool />
             </div>
           </div>
 

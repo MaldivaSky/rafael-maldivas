@@ -432,6 +432,159 @@ export const tools: Tool[] = [
       ],
     ],
   },
+  {
+    slug: "validar-cpf",
+    key: "cpf",
+    group: "fiscal",
+    title: "Validador de CPF",
+    seoTitle: "Validar CPF online: confira o dígito verificador | grátis",
+    h1: "Validador de CPF",
+    description:
+      "Confira se um CPF é válido pelo cálculo do dígito verificador por módulo 11. A ferramenta mostra ainda a região fiscal do número. Grátis, sem cadastro e sem enviar dados.",
+    keywords: [
+      "validar CPF",
+      "verificar CPF",
+      "validar CPF online",
+      "dígito verificador CPF",
+      "gerador de CPF válido",
+      "conferir CPF",
+    ],
+    category: "BusinessApplication",
+    faq: [
+      [
+        "Como funciona a validação de CPF?",
+        "O CPF tem 11 dígitos, sendo os dois últimos calculados a partir dos nove primeiros por módulo 11. Se o cálculo dos dígitos verificadores não bater com os dígitos informados, o número é inválido.",
+      ],
+      [
+        "O que o nono dígito do CPF indica?",
+        "A região fiscal que emitiu o número, não o estado onde a pessoa mora. O dígito 8, por exemplo, corresponde a São Paulo; o 7, ao Rio de Janeiro e ao Espírito Santo.",
+      ],
+    ],
+  },
+  {
+    slug: "extrator-nota-fiscal-xml",
+    key: "nfexml",
+    group: "fiscal",
+    title: "Extrator de dados da NF-e (XML)",
+    seoTitle: "Ler XML de NF-e: extrator de itens e valores | grátis",
+    h1: "Extrator de dados de NF-e / NFC-e (XML)",
+    description:
+      "Suba o XML da nota fiscal e extraia emitente, destinatário, itens com quantidade e valor, impostos, pagamento e total. O arquivo é lido no seu navegador, sem upload para servidor.",
+    keywords: [
+      "ler XML NF-e",
+      "extrair dados nota fiscal XML",
+      "visualizar XML NF-e",
+      "importar XML no estoque",
+      "consultar itens da nota",
+      "leitor de XML NFC-e",
+    ],
+    category: "BusinessApplication",
+    faq: [
+      [
+        "O arquivo que eu envio fica guardado no site?",
+        "Não. A leitura do XML acontece inteira no seu navegador, com o componente nativo de parse de XML. O arquivo não é enviado para nenhum servidor nem armazenado.",
+      ],
+      [
+        "Consigo importar os itens direto para o meu estoque?",
+        "A ferramenta separa os dados para você conferir e copiar. A entrada automática no estoque, com atualização de saldo e custo médio, é parte de um ERP — é o que eu implemento no mercadinhosys.",
+      ],
+      [
+        "Funciona para NFC-e de cupom?",
+        "Sim. A estrutura do XML da NFC-e é a mesma da NF-e; muda apenas o modelo (65 em vez de 55). A ferramenta identifica o tipo automaticamente.",
+      ],
+    ],
+  },
+  {
+    slug: "consultar-ddd",
+    key: "ddd",
+    group: "operacao",
+    title: "DDD: de que estado é esse número?",
+    seoTitle: "Consultar DDD: qual estado e cidades | grátis",
+    h1: "DDD: de que estado é esse número?",
+    description:
+      "Descubra a qual estado pertence um DDD e veja as cidades atendidas pelo código de área. Dados da Anatel, via consulta gratuita e sem cadastro.",
+    keywords: [
+      "consultar DDD",
+      "de que estado é o DDD",
+      "DDD de São Paulo",
+      "código de área",
+      "DDD 11",
+      "lista de DDD por estado",
+    ],
+    category: "BusinessApplication",
+    faq: [
+      [
+        "O DDD indica onde a pessoa mora?",
+        "Indica a região do número, não necessariamente onde a pessoa está. Os códigos de área foram divididos por região, e em 2016 o nono dígito foi acrescentado aos celulares da maioria do país.",
+      ],
+      [
+        "O mesmo DDD atende mais de uma cidade?",
+        "Sim, e em geral muitas. O DDD 11, por exemplo, cobre toda a Grande São Paulo e mais de 60 municípios. A ferramenta lista as principais cidades de cada código.",
+      ],
+    ],
+  },
+  {
+    slug: "codigos-de-bancos",
+    key: "bancos",
+    group: "fiscal",
+    title: "Códigos de bancos (COMPE e ISPB)",
+    seoTitle: "Código de banco: consultar COMPE e ISPB | grátis",
+    h1: "Códigos de bancos: COMPE e ISPB",
+    description:
+      "Consulte o código de qualquer banco pelo número COMPE, pelo ISPB ou pelo nome. Útil para conferir boleto, DDA e o código que aparece no aplicativo na hora de pagar.",
+    keywords: [
+      "código de banco",
+      "consulta código COMPE",
+      "ISPB banco",
+      "banco 341",
+      "código do banco no boleto",
+      "lista de bancos código",
+    ],
+    category: "FinanceApplication",
+    faq: [
+      [
+        "O que é o código COMPE do banco?",
+        "É o número de três dígitos que identifica a instituição na câmara de compensação. É o 341 do Itaú, o 237 do Bradesco, o 001 do Banco do Brasil. Ele aparece no boleto, no DDA e no app do banco.",
+      ],
+      [
+        "O que é o ISPB?",
+        "É o identificador de oito dígitos usado no Sistema de Pagamentos Brasileiro, base do Pix. Ele não muda com fusões e vem substituindo o COMPE em integrações novas.",
+      ],
+    ],
+  },
+  {
+    slug: "calculadora-selic-cdi-rendimento",
+    key: "taxas",
+    group: "operacao",
+    title: "Selic, CDI e calculadora de rendimento",
+    seoTitle: "Calculadora de rendimento: Selic e CDI de hoje | grátis",
+    h1: "Selic, CDI e calculadora de juros compostos",
+    description:
+      "Veja a Selic e o CDI do dia, direto do Banco Central, e simule quanto rende um valor em juros compostos pelo prazo que você escolher. Grátis e sem cadastro.",
+    keywords: [
+      "calculadora de juros compostos",
+      "taxa Selic hoje",
+      "CDI hoje",
+      "quanto rende o CDI",
+      "simulador de rendimento",
+      "juros compostos online",
+    ],
+    category: "FinanceApplication",
+    faq: [
+      [
+        "Como calcular quanto rende 100% do CDI?",
+        "O CDI acompanha de perto a Selic. Para 12 meses, o rendimento aproximado é o valor aplicado multiplicado por (1 + taxa do CDI) elevado a 1 ano. A ferramenta converte a taxa anual para mensal e compõe mês a mês.",
+      ],
+      [
+        "O rendimento mostrado é líquido de imposto?",
+        "Não. O cálculo mostra a rentabilidade bruta, sem descontar imposto de renda nem taxa de administração. Em renda fixa, o IR é regressivo: começa em 22,5% e cai até 15% conforme o prazo.",
+      ],
+      [
+        "A taxa da ferramenta é a mesma do meu banco?",
+        "A Selic e o CDI exibidos são as taxas oficiais do momento. Cada investimento aplica um percentual do CDI (por exemplo, 100% ou 110%), que você digita no campo de taxa para simular o seu caso.",
+      ],
+    ],
+  },
 ];
 
 export const GROUP_LABEL: Record<ToolGroup, { pt: string; en: string }> = {
