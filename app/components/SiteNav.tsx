@@ -6,7 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { ChevronDown, Menu, Moon, Sun, X } from "lucide-react";
-import { useLang } from "../lib/i18n";
+import { useLang, localePath } from "../lib/i18n";
 import { WHATSAPP } from "../lib/site";
 import { AREAS, servicos } from "../lib/catalog";
 import { tools, GROUP_LABEL, type ToolGroup } from "../lib/tools";
@@ -132,7 +132,7 @@ function DesktopItem({
   // sem submenu nem grupos: link simples
   if (!item.sub && !item.groups) {
     return (
-      <Link href={item.href} className={`nav-link ${active ? "on" : ""}`}>
+      <Link href={localePath(item.href, lang)} className={`nav-link ${active ? "on" : ""}`}>
         {label}
       </Link>
     );
@@ -169,7 +169,7 @@ function DesktopItem({
           setOpen(true);
         }}
       >
-        <Link href={item.href} className="nav-dropdown-head" role="menuitem">
+        <Link href={localePath(item.href, lang)} className="nav-dropdown-head" role="menuitem">
           {lang === "pt" ? `Ver ${item.pt.toLowerCase()}` : `View all ${item.en.toLowerCase()}`}
         </Link>
         <div className="nav-dropdown-list">
@@ -180,14 +180,14 @@ function DesktopItem({
                     {lang === "pt" ? grp.label.pt : grp.label.en}
                   </div>
                   {grp.items.map((s) => (
-                    <Link key={s.href} href={s.href} className="nav-dropdown-item" role="menuitem">
+                    <Link key={s.href} href={localePath(s.href, lang)} className="nav-dropdown-item" role="menuitem">
                       {lang === "pt" ? s.pt : s.en}
                     </Link>
                   ))}
                 </div>
               ))
             : item.sub?.map((s) => (
-                <Link key={s.href} href={s.href} className="nav-dropdown-item" role="menuitem">
+                <Link key={s.href} href={localePath(s.href, lang)} className="nav-dropdown-item" role="menuitem">
                   {lang === "pt" ? s.pt : s.en}
                 </Link>
               ))}
@@ -230,14 +230,18 @@ export default function SiteNav() {
   }, []);
 
   const isDark = resolvedTheme !== "light";
-  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  // pathname pode vir como /pt/servicos ou /en/servicos — normaliza antes de comparar
+  const isActive = (href: string) => {
+    const clean = pathname.replace(/^\/(pt|en)/, "") || "/";
+    return clean === href || clean.startsWith(`${href}/`);
+  };
 
   return (
     <>
       <ScrollProgress />
       <nav className="nav">
         <div className="wrap nav-in">
-          <Link href="/" className="brand" aria-label="Maldivas Tech">
+          <Link href={localePath("/", lang)} className="brand" aria-label="Maldivas Tech">
             <Image
               src="/brand/logo-mark.png"
               alt=""
@@ -302,7 +306,7 @@ export default function SiteNav() {
             const label = lang === "pt" ? item.pt : item.en;
             if (!item.sub && !item.groups) {
               return (
-                <Link key={item.href} href={item.href} className="mm-link">
+                <Link key={item.href} href={localePath(item.href, lang)} className="mm-link">
                   {label}
                 </Link>
               );
@@ -321,7 +325,7 @@ export default function SiteNav() {
                 </button>
                 {expanded && (
                   <div className="mm-sub">
-                    <Link href={item.href} className="mm-sub-item mm-sub-head">
+                    <Link href={localePath(item.href, lang)} className="mm-sub-item mm-sub-head">
                       {lang === "pt" ? `Ver ${item.pt.toLowerCase()}` : `View all ${item.en.toLowerCase()}`}
                     </Link>
                     {item.groups
@@ -331,14 +335,14 @@ export default function SiteNav() {
                               {lang === "pt" ? grp.label.pt : grp.label.en}
                             </div>
                             {grp.items.map((s) => (
-                              <Link key={s.href} href={s.href} className="mm-sub-item">
+                              <Link key={s.href} href={localePath(s.href, lang)} className="mm-sub-item">
                                 {lang === "pt" ? s.pt : s.en}
                               </Link>
                             ))}
                           </div>
                         ))
                       : item.sub?.map((s) => (
-                          <Link key={s.href} href={s.href} className="mm-sub-item">
+                          <Link key={s.href} href={localePath(s.href, lang)} className="mm-sub-item">
                             {lang === "pt" ? s.pt : s.en}
                           </Link>
                         ))}

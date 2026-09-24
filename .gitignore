@@ -11,6 +11,7 @@ next-env.d.ts
 .next-build/
 
 # logs locais de dev/build
+build.log
 *-err.log
 *-out.log
 npm-debug.log*

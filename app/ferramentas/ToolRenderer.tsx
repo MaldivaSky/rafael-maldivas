@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { ArrowRight, MessageCircle } from "lucide-react";
-import { useLang } from "../../lib/i18n";
-import { tools, GROUP_LABEL, type Tool } from "../../lib/tools";
-import { WHATSAPP } from "../../lib/site";
-import { Magnetic, Reveal } from "../../components/fx";
-import { copy, MailTool, PriceTool } from "../FerramentasClient";
-import { DeliveryTool, HeadersTool, NfeTool, PixTool } from "../MoreTools";
-import { CambioTool, CnpjTool } from "../ApiTools";
-import { CepTool, DominioTool, FeriadosTool, FichaTool, IpcaTool, MarkupTool } from "../BizTools";
-import { BancosTool, CpfTool, DddTool, NfeXmlTool, TaxasTool } from "../NewTools";
+import { useLang, localePath } from "../lib/i18n";
+import { tools, GROUP_LABEL, type Tool } from "../lib/tools";
+import { WHATSAPP } from "../lib/site";
+import { Magnetic, Reveal } from "../components/fx";
+import { copy, MailTool, PriceTool } from "./FerramentasClient";
+import { DeliveryTool, HeadersTool, NfeTool, PixTool } from "./MoreTools";
+import { CambioTool, CnpjTool } from "./ApiTools";
+import { CepTool, DominioTool, FeriadosTool, FichaTool, IpcaTool, MarkupTool } from "./BizTools";
+import { BancosTool, CpfTool, DddTool, NfeXmlTool, TaxasTool } from "./NewTools";
 
 const t = {
   pt: {
@@ -42,7 +42,7 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
 
   const render = () => {
     switch (tool.key) {
-            // margem
+      // margem
       case "preco":
         return <PriceTool c={k} />;
       case "markup":
@@ -96,7 +96,7 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
       <header className="hero" style={{ paddingBottom: 40 }}>
         <div className="wrap">
           <Reveal>
-            <Link href="/ferramentas" className="tool-back">
+            <Link href={localePath("/ferramentas", lang)} className="tool-back">
               ← {c.back}
             </Link>
             <div className="sec-tag" style={{ marginTop: 18 }}>
@@ -145,7 +145,7 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
             </Reveal>
             <div className="tool-index" style={{ marginBottom: 0 }}>
               {irmas.map((x) => (
-                <Link className="tool-chip" href={`/ferramentas/${x.slug}`} key={x.slug}>
+                <Link className="tool-chip" href={localePath(`/ferramentas/${x.slug}`, lang)} key={x.slug}>
                   {x.title}
                   <ArrowRight size={14} />
                 </Link>
@@ -162,13 +162,13 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
               <h2>{c.ctaTitle}</h2>
               <p>{c.ctaLead}</p>
               <div className="cta-row" style={{ justifyContent: "center", marginBottom: 0 }}>
-                                <Magnetic>
+                <Magnetic>
                   <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
                     <MessageCircle size={18} /> {c.cta}
                   </a>
                 </Magnetic>
                 <Magnetic>
-                  <Link className="btn btn-ghost" href="/servicos#briefing">
+                  <Link className="btn btn-ghost" href={localePath("/servicos#briefing", lang)}>
                     {lang === "pt" ? "Fazer o levantamento" : "Start the discovery"}
                   </Link>
                 </Magnetic>

@@ -29,7 +29,7 @@ import {
   Compass,
   Clapperboard,
 } from "lucide-react";
-import { useLang } from "./lib/i18n";
+import { useLang, localePath } from "./lib/i18n";
 import { t } from "./lib/content";
 import { rich } from "./lib/rich";
 import { craftStack } from "./lib/credentials";
@@ -165,7 +165,7 @@ export default function HomeClient() {
           </Reveal>
           <ProductCards />
           <div style={{ marginTop: 34 }}>
-            <Link className="btn btn-ghost" href="/portfolio">
+                        <Link className="btn btn-ghost" href={localePath("/portfolio", lang)}>
               {lang === "pt" ? "Ver o portfólio completo" : "See the full portfolio"} →
             </Link>
           </div>
@@ -286,7 +286,7 @@ export default function HomeClient() {
               const Ico = icons[i % icons.length];
               return (
                 <Reveal key={href} delay={i * 0.05}>
-                  <Link href={href} className="pack" style={{ display: "flex" }}>
+                  <Link href={localePath(href, lang)} className="pack" style={{ display: "flex" }}>
                     <div className="pack-icon">
                       <Ico size={24} />
                     </div>

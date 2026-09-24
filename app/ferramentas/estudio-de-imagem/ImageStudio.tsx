@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Download, ImagePlus, ArrowLeft, Upload, ShieldCheck, Wand2 } from "lucide-react";
-import { useLang } from "../../lib/i18n";
+import { useLang, localePath } from "../../lib/i18n";
 
 /* A remoção de fundo traz um modelo ONNX grande: só baixa quando a aba abre. */
 const BackgroundRemover = dynamic(() => import("./BackgroundRemover"), {
@@ -83,7 +83,7 @@ export default function ImageStudio(){
 
  function reset(){loadVersion.current++;generation.current++;setSource(null);setResult(null);setError("");setBusy(false);setLoading(false);if(input.current)input.current.value="";}
  return <div className="image-studio wrap">
-   <Link href="/ferramentas" className="personal-link"><ArrowLeft size={16}/>{pt?"Todas as ferramentas":"All tools"}</Link>
+   <Link href={localePath("/ferramentas", lang)} className="personal-link"><ArrowLeft size={16}/>{pt?"Todas as ferramentas":"All tools"}</Link>
    <div className="studio-heading"><div><div className="sec-tag">{pt?"Estúdio de imagem / Maldivas Tech":"Image studio / Maldivas Tech"}</div><h1>{pt?"Sua foto, pronta para usar.":"Your photo, ready to use."}</h1><p>{pt?"Ajuste o tamanho, escolha o formato e baixe. Para o seu site, catálogo ou próxima publicação.":"Choose the size and format, then download. For your website, catalogue or next post."}</p></div><span className="studio-private"><ShieldCheck size={18}/>{pt?"Sem enviar sua foto a um servidor":"No image upload to a server"}</span></div>
    <div className="studio-tabs" role="tablist" aria-label={pt?"Escolha o que fazer com a imagem":"Choose what to do with the image"}>
     <button role="tab" type="button" aria-selected={tab==="prepare"} className={tab==="prepare"?"is-active":""} onClick={()=>setTab("prepare")}><ImagePlus size={17}/>{pt?"Preparar imagem":"Prepare image"}</button>

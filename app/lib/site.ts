@@ -3,17 +3,18 @@
 /* ------------------------------------------------------------------ */
 
 /**
- * Domínio canônico.
+ * Domínio canônico: https://maldivastech.dev
  *
- * O valor antigo (rafael-maldivas.dev) não resolvia em DNS, o que apontava
- * todos os canonical e @id do JSON-LD para um host inexistente — motivo
- * suficiente para o Google e o Bing não indexarem o site.
+ * O fallback já é o domínio oficial (não o host de preview), para que um
+ * deploy sem a env var definida NUNCA aponte canonical/@id para o domínio
+ * errado. Definir NEXT_PUBLIC_SITE_URL no Vercel sobrescreve, se preciso.
  *
- * Ao registrar o domínio próprio, basta definir NEXT_PUBLIC_SITE_URL nas
- * variáveis de ambiente do Vercel. Nenhum arquivo precisa mudar.
+ * Histórico: o valor antigo (rafael-maldivas.dev) não resolvia em DNS, o que
+ * apontava todos os canonical e @id do JSON-LD para um host inexistente —
+ * motivo suficiente para o Google e o Bing não indexarem o site.
  */
 export const SITE = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://rafael-maldivas.vercel.app"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://maldivastech.dev"
 ).replace(/\/$/, "");
 
 export const EMAIL = "rafaelmaldivas@gmail.com";

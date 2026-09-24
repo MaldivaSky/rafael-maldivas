@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, MapPin } from "lucide-react";
-import { useLang } from "../lib/i18n";
+import { useLang, localePath } from "../lib/i18n";
 import { t } from "../lib/content";
 import { WHATSAPP } from "../lib/site";
 
@@ -21,7 +21,7 @@ export default function PersonalIntro({ about = false }: { about?: boolean }) {
           <p className="personal-note">{pt ? "Gosto de entender o trabalho de quem me procura. O que toma tempo, o que dá problema e o que dá para fazer melhor." : "I like understanding the work of the people who reach out to me. What takes time, what causes problems and what we can improve."}</p>
           <div className="personal-actions">
             <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer">{pt ? "Vamos conversar" : "Let’s talk"}<ArrowUpRight size={18} /></a>
-            <Link className="personal-link" href={about ? "/portfolio" : "/servicos"}>{about ? (pt ? "Conhecer meus projetos" : "Explore my projects") : (pt ? "Como posso ajudar" : "How I can help")}<ArrowUpRight size={17} /></Link>
+            <Link className="personal-link" href={localePath(about ? "/portfolio" : "/servicos", lang)}>{about ? (pt ? "Conhecer meus projetos" : "Explore my projects") : (pt ? "Como posso ajudar" : "How I can help")}<ArrowUpRight size={17} /></Link>
           </div>
           <div className="personal-location"><MapPin size={14} />{pt ? "São Paulo · atendimento local e a distância" : "São Paulo · local and remote work"}</div>
         </div>
@@ -32,9 +32,9 @@ export default function PersonalIntro({ about = false }: { about?: boolean }) {
         </figure>
       </div>
       <div className="wrap personal-routes">
-        <Link href="/portfolio"><span>01</span><div><strong>{pt ? "Conheça os projetos" : "Explore the projects"}</strong><small>{pt ? "Software, clientes e trabalho técnico" : "Software, clients and technical work"}</small></div><ArrowUpRight size={20} /></Link>
-        <Link href="/ferramentas"><span>02</span><div><strong>{pt ? "Use as ferramentas" : "Use the tools"}</strong><small>{pt ? "Cálculos, consultas e imagens — grátis" : "Calculators, lookups and images — free"}</small></div><ArrowUpRight size={20} /></Link>
-        <Link href={about ? "#trajetoria" : "/sobre"}><span>03</span><div><strong>{pt ? "Veja minha trajetória" : "Get to know me"}</strong><small>{pt ? "Experiência, formação e contato" : "Experience, education and contact"}</small></div><ArrowUpRight size={20} /></Link>
+        <Link href={localePath("/portfolio", lang)}><span>01</span><div><strong>{pt ? "Conheça os projetos" : "Explore the projects"}</strong><small>{pt ? "Software, clientes e trabalho técnico" : "Software, clients and technical work"}</small></div><ArrowUpRight size={20} /></Link>
+        <Link href={localePath("/ferramentas", lang)}><span>02</span><div><strong>{pt ? "Use as ferramentas" : "Use the tools"}</strong><small>{pt ? "Cálculos, consultas e imagens — grátis" : "Calculators, lookups and images — free"}</small></div><ArrowUpRight size={20} /></Link>
+        <Link href={about ? "#trajetoria" : localePath("/about", lang)}><span>03</span><div><strong>{pt ? "Veja minha trajetória" : "Get to know me"}</strong><small>{pt ? "Experiência, formação e contato" : "Experience, education and contact"}</small></div><ArrowUpRight size={20} /></Link>
       </div>
     </header>
   );

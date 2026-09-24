@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useLang } from "../lib/i18n";
+import { useLang, localePath } from "../lib/i18n";
 import {
   COMPANY,
   EMAIL,
@@ -64,8 +64,8 @@ export default function SiteFooter() {
 
         <div>
           <h4>{c.nav}</h4>
-          {c.links.map(([href, label]) => (
-            <Link key={href} href={href}>
+                    {c.links.map(([href, label]) => (
+            <Link key={href} href={localePath(href, lang)}>
               {label}
             </Link>
           ))}

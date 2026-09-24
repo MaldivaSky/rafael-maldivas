@@ -4,7 +4,7 @@ import Link from "next/link";
 import StudioInvite from "../components/StudioInvite";
 import { Fragment, useMemo, useState } from "react";
 import { AlertTriangle, Check, Loader2, MessageCircle, Search, X } from "lucide-react";
-import { useLang } from "../lib/i18n";
+import { useLang, localePath } from "../lib/i18n";
 import { WHATSAPP } from "../lib/site";
 import { Reveal, Spotlight } from "../components/fx";
 import { GROUP_LABEL, tools as toolList, type ToolGroup } from "../lib/tools";
@@ -403,7 +403,7 @@ function ToolIndex({ lang, title }: { lang: "pt" | "en"; title: string }) {
             .map((t) => {
               n += 1;
               return (
-                <Link className="tool-chip" href={`/ferramentas/${t.slug}`} key={t.slug}>
+                <Link className="tool-chip" href={localePath(`/ferramentas/${t.slug}`, lang)} key={t.slug}>
                   <b>{String(n).padStart(2, "0")}</b>
                   {t.title}
                 </Link>
