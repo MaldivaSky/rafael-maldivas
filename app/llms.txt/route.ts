@@ -85,8 +85,9 @@ export function GET() {
     if (doGrupo.length === 0) continue;
     linhas.push(`### ${GROUP_LABEL[g].pt}`, "");
     for (const t of doGrupo) {
+      const c = t.copy.pt;
       linhas.push(
-        `- [${t.title}](${SITE}/pt/ferramentas/${t.slug}): ${t.description}`,
+        `- [${c.title}](${SITE}/pt/ferramentas/${t.slug}): ${c.description}`,
       );
     }
     linhas.push("");

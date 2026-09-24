@@ -44,6 +44,12 @@ middleware.ts       detecção de idioma (cookie → Accept-Language → pt)
 
 - **Adicionar produto:** um objeto novo em `app/lib/products.ts`, com `copy.pt`
   e `copy.en` (por intenção de busca, não tradução literal).
+- **Adicionar ferramenta:** um objeto novo em `app/lib/tools.ts` com `copy.pt` e
+  `copy.en` (mesmo padrão dos produtos: copy por **intenção de busca**, não
+  tradução literal) e um `case` correspondente em
+  `app/ferramentas/ToolRenderer.tsx` apontando para o componente da ferramenta.
+  Tudo o que consome o registro (`sitemap.ts`, nav, `llms.txt`, índice de
+  `/ferramentas`) já lê `copy`, então a página nova entra sozinha.
 - **Adicionar página:** cria `app/[lang]/<rota>/page.tsx` e usa `buildMetadata()`
   para title/description/canonical/hreflang. Nunca declare canonical à mão.
 - **Links internos:** sempre via `localePath(href, lang)` — nunca `href="/servicos"`

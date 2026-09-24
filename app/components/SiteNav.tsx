@@ -65,8 +65,12 @@ const toolsGroups: SubGroup[] = [
     items: tools
       .filter((t) => t.group === g)
       .slice()
-      .sort((a, b) => a.title.localeCompare(b.title, "pt"))
-      .map((t) => ({ href: `/ferramentas/${t.slug}`, pt: t.title, en: t.title })),
+      .sort((a, b) => a.copy.pt.title.localeCompare(b.copy.pt.title, "pt"))
+      .map((t) => ({
+        href: `/ferramentas/${t.slug}`,
+        pt: t.copy.pt.title,
+        en: t.copy.en.title,
+      })),
   })),
 ];
 

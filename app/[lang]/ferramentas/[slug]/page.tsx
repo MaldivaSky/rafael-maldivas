@@ -29,13 +29,14 @@ export async function generateMetadata({
   if (!isLang(params.lang)) return {};
   const tool = toolBySlug(params.slug);
   if (!tool) return {};
+  const c = tool.copy[params.lang];
 
   return buildMetadata({
-    lang: params.lang as Lang,
+    lang: params.lang,
     path: `ferramentas/${tool.slug}`,
-    title: tool.seoTitle,
-    description: tool.description,
-    keywords: tool.keywords,
+    title: c.seoTitle,
+    description: c.description,
+    keywords: c.keywords,
   });
 }
 
@@ -44,6 +45,7 @@ export default function ToolPage({ params }: { params: Params }) {
   const lang = params.lang as Lang;
   const tool = toolBySlug(params.slug);
   if (!tool) notFound();
+  const c = tool.copy[lang];
 
   const url = `${SITE}/${lang}/ferramentas/${tool.slug}`;
 
@@ -53,12 +55,12 @@ export default function ToolPage({ params }: { params: Params }) {
       {
         "@type": "WebApplication",
         "@id": `${url}#app`,
-        name: tool.title,
+        name: c.title,
         url,
         applicationCategory: tool.category,
         operatingSystem: "Web",
         inLanguage: lang === "pt" ? "pt-BR" : "en",
-        description: tool.description,
+        description: c.description,
         browserRequirements: "Requer JavaScript",
         offers: { "@type": "Offer", price: "0", priceCurrency: "BRL" },
         publisher: { "@id": `${SITE}/#organization` },
@@ -68,7 +70,7 @@ export default function ToolPage({ params }: { params: Params }) {
         // FAQ rende o resultado expandido na busca
         "@type": "FAQPage",
         "@id": `${url}#faq`,
-        mainEntity: tool.faq.map(([q, a]) => ({
+        mainEntity: c.faq.map(([q, a]) => ({
           "@type": "Question",
           name: q,
           acceptedAnswer: { "@type": "Answer", text: a },
@@ -85,7 +87,7 @@ export default function ToolPage({ params }: { params: Params }) {
             name: "Ferramentas",
             item: `${SITE}/${lang}/ferramentas`,
           },
-          { "@type": "ListItem", position: 3, name: tool.title, item: url },
+          { "@type": "ListItem", position: 3, name: c.title, item: url },
         ],
       },
     ],

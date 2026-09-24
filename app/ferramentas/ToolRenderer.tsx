@@ -39,6 +39,7 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
   const { lang } = useLang();
   const c = t[lang];
   const k = copy[lang];
+  const tc = tool.copy[lang];
 
   const render = () => {
     switch (tool.key) {
@@ -102,9 +103,9 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
             <div className="sec-tag" style={{ marginTop: 18 }}>
               {GROUP_LABEL[tool.group][lang]} · {c.free}
             </div>
-            <h1 style={{ fontSize: "clamp(34px, 5.2vw, 60px)", maxWidth: "20ch" }}>{tool.h1}</h1>
+            <h1 style={{ fontSize: "clamp(34px, 5.2vw, 60px)", maxWidth: "20ch" }}>{tc.h1}</h1>
             <p className="hero-lead" style={{ marginBottom: 0 }}>
-              {tool.description}
+              {tc.description}
             </p>
           </Reveal>
         </div>
@@ -116,7 +117,7 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
         </div>
       </section>
 
-      {tool.faq.length > 0 && (
+      {tc.faq.length > 0 && (
         <section style={{ paddingTop: 0 }}>
           <div className="wrap">
             <Reveal>
@@ -124,7 +125,7 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
               <div style={{ height: 28 }} />
             </Reveal>
             <div className="faq">
-              {tool.faq.map(([q, a], i) => (
+              {tc.faq.map(([q, a], i) => (
                 <Reveal key={q} delay={i * 0.05}>
                   <details className="faq-item" open={i === 0}>
                     <summary>{q}</summary>
@@ -146,7 +147,7 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
             <div className="tool-index" style={{ marginBottom: 0 }}>
               {irmas.map((x) => (
                 <Link className="tool-chip" href={localePath(`/ferramentas/${x.slug}`, lang)} key={x.slug}>
-                  {x.title}
+                  {x.copy[lang].title}
                   <ArrowRight size={14} />
                 </Link>
               ))}

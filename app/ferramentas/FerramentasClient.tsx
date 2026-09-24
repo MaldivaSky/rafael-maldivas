@@ -403,9 +403,9 @@ function ToolIndex({ lang, title }: { lang: "pt" | "en"; title: string }) {
             .map((t) => {
               n += 1;
               return (
-                <Link className="tool-chip" href={localePath(`/ferramentas/${t.slug}`, lang)} key={t.slug}>
+                                <Link className="tool-chip" href={localePath(`/ferramentas/${t.slug}`, lang)} key={t.slug}>
                   <b>{String(n).padStart(2, "0")}</b>
-                  {t.title}
+                  {t.copy[lang].title}
                 </Link>
               );
             })}
