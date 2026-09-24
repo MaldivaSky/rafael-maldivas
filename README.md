@@ -55,8 +55,8 @@ middleware.ts       detecção de idioma (cookie → Accept-Language → pt)
 
 ## Pendências antes do deploy
 
-- [ ] Definir `NEXT_PUBLIC_SITE_URL=https://maldivastech.dev` no Vercel (fallback
-      já aponta para o domínio oficial em `app/lib/site.ts`)
+- [ ] Definir `NEXT_PUBLIC_SITE_URL=https://www.maldivastech.dev` no Vercel
+      (fallback já aponta para o domínio oficial em `app/lib/site.ts`)
 - [ ] Publicar o case study do exportador .xls e linkar no card do SelectSys
 - [x] Imagem Open Graph (`app/opengraph-image.png`, 1200×630) — presente
 
@@ -64,8 +64,15 @@ middleware.ts       detecção de idioma (cookie → Accept-Language → pt)
 
 ## SEO técnico, i18n e Geo-SEO
 
-Domínio canônico: **`https://maldivastech.dev`** (definido por
-`NEXT_PUBLIC_SITE_URL` no Vercel). Tudo o que segue é derivado dele.
+Domínio canônico: **`https://www.maldivastech.dev`** (o `www` é o host
+principal no Vercel; o apex `maldivastech.dev` faz 301 → www). Definido por
+`NEXT_PUBLIC_SITE_URL` no Vercel. Tudo o que segue é derivado dele.
+
+> **Apex vs www (crítico):** canonical, `@id` do JSON-LD, sitemap e robots usam
+> **sempre o `www`**. O apex redireciona 301 para www em `next.config.mjs`
+> (`redirects` com `has: host`). Não misturar os dois hosts, senão o Google vê
+> conteúdo duplicado. Se um dia o apex virar o host principal, basta definir
+> `NEXT_PUBLIC_SITE_URL=https://maldivastech.dev` no Vercel.
 
 ### Estrutura i18n (`app/[lang]/`)
 
@@ -171,18 +178,19 @@ navegador; os bots do Google leem o HTML cru e não são afetados.
 
 | Nome | Exemplo | Função |
 |---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | `https://maldivastech.dev` | domínio canônico (todas as URLs absolutas) |
+| `NEXT_PUBLIC_SITE_URL` | `https://www.maldivastech.dev` | domínio canônico (todas as URLs absolutas) |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | `xxxx` | Search Console |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | `xxxx` | Bing Webmaster |
 
 ### Checklist pós-deploy
 
 - [ ] Definir `NEXT_PUBLIC_SITE_URL` no Vercel e redeployar
-- [ ] Cadastrar `maldivastech.dev` no Google Search Console e Bing
-- [ ] Enviar `https://maldivastech.dev/sitemap.xml`
+- [ ] Cadastrar a **propriedade de domínio** `maldivastech.dev` no Google Search
+      Console e no Bing (a propriedade de domínio cobre apex e www juntos)
+- [ ] Enviar `https://www.maldivastech.dev/sitemap.xml`
 - [ ] Validar JSON-LD no Rich Results Test (MiseOn, SelectSys Jobs)
 - [ ] Conferir `hreflang` no relatório "Internacional" do GSC
-- [ ] Verificar `https://maldivastech.dev/llms.txt`
+- [ ] Verificar `https://www.maldivastech.dev/llms.txt`
 
 ---
 Backup da versão anterior em `_backup_pre_maldivas/`.

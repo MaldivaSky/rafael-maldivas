@@ -87,6 +87,20 @@ const nextConfig = {
   /* ----------------------------------------------------------------- */
   async redirects() {
     return [
+      /* --------------------------------------------------------------- */
+      /*  Canonical de host: apex → www (301)                             */
+      /*                                                                  */
+      /*  O www é o host principal no Vercel (serve 200). O apex responde */
+      /*  308 → www. Este 301 reforça, em código, que TODA URL canônica   */
+      /*  (canonical, @id, sitemap) usa www — evitando conteúdo duplicado */
+      /*  entre maldivastech.dev e www.maldivastech.dev.                  */
+      /* --------------------------------------------------------------- */
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "maldivastech.dev" }],
+        destination: "https://www.maldivastech.dev/:path*",
+        permanent: true,
+      },
       // páginas legadas → /pt/*
       { source: "/servicos", destination: "/pt/servicos", permanent: true },
       { source: "/portfolio", destination: "/pt/portfolio", permanent: true },

@@ -3,18 +3,21 @@
 /* ------------------------------------------------------------------ */
 
 /**
- * Domínio canônico: https://maldivastech.dev
+ * Domínio canônico: https://www.maldivastech.dev
  *
- * O fallback já é o domínio oficial (não o host de preview), para que um
- * deploy sem a env var definida NUNCA aponte canonical/@id para o domínio
- * errado. Definir NEXT_PUBLIC_SITE_URL no Vercel sobrescreve, se preciso.
+ * ATENÇÃO AO WWW. O domínio configurado como principal no Vercel é o
+ * `www.maldivastech.dev` (é ele que serve 200). O apex `maldivastech.dev`
+ * responde 308 → www. Se o canonical/@id/sitemap apontarem para o apex,
+ * o Google vê um canonical que redireciona para outro host — conflito que
+ * atrapalha a indexação. Por isso o valor canônico AQUI é o www.
  *
- * Histórico: o valor antigo (rafael-maldivas.dev) não resolvia em DNS, o que
- * apontava todos os canonical e @id do JSON-LD para um host inexistente —
- * motivo suficiente para o Google e o Bing não indexarem o site.
+ * O fallback já é o domínio de produção (não o host de preview), para que um
+ * deploy sem a env var definida NUNCA aponte canonical/@id para o lugar errado.
+ * Definir NEXT_PUBLIC_SITE_URL no Vercel sobrescreve, se preciso — e se um dia
+ * o apex virar o host principal, basta usar `https://maldivastech.dev` na env.
  */
 export const SITE = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://maldivastech.dev"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.maldivastech.dev"
 ).replace(/\/$/, "");
 
 export const EMAIL = "rafaelmaldivas@gmail.com";
