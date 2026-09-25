@@ -5,6 +5,7 @@ import { LangProvider } from "./lib/i18n";
 import SiteNav from "./components/SiteNav";
 import SiteFooter from "./components/SiteFooter";
 import SiteAnalytics from "./components/SiteAnalytics";
+import CookieConsent from "./components/CookieConsent";
 import { COMPANY, SITE, VERIFICATION } from "./lib/site";
 import "./globals.css";
 import "./editorial.css";

@@ -23,6 +23,8 @@ export type Product = {
   slug: ProductSlug;
   /** nome comercial, igual em todo idioma */
   name: string;
+  /** logo horizontal do produto (path público) */
+  logoHorizontal?: string;
   /** domain do app em produção (mesmo host externo, se houver) */
   appUrl?: string;
   /** categoria Schema.org (applicationCategory) */
@@ -50,10 +52,11 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   miseon: {
     slug: "miseon",
     name: "MiseOn",
+    logoHorizontal: "/logo-horiz-miseon.png",
     appUrl: "https://miseon.app.br",
     applicationCategory: "BusinessApplication",
     applicationSubCategory: "RestaurantManagementSystem",
-    priceBRL: "299.00",
+    priceBRL: "149.90",
     priceCurrency: "BRL",
     hasFreeTrial: true,
     ratingValue: 4.8,
@@ -98,6 +101,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   "selectsys-jobs": {
     slug: "selectsys-jobs",
     name: "SelectSys Jobs",
+    logoHorizontal: "/logo-horiz-selectsys.png",
     appUrl: undefined,
     applicationCategory: "BusinessApplication",
     applicationSubCategory: "ApplicantTrackingSystem",

@@ -12,6 +12,8 @@ import { CambioTool, CnpjTool } from "./ApiTools";
 import { CepTool, DominioTool, FeriadosTool, FichaTool, IpcaTool, MarkupTool } from "./BizTools";
 import { BancosTool, CpfTool, DddTool, NfeXmlTool, TaxasTool } from "./NewTools";
 import { WhatsAppTool, CampaignTool, AutomationTool } from "./GrowthTools";
+import { RoiTool } from "./RoiTool";
+import DiagnosticoTool from "./DiagnosticoTool";
 
 const t = {
   pt: {
@@ -47,6 +49,8 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
       case "whatsapp": return <WhatsAppTool />;
       case "utm": return <CampaignTool />;
       case "automacao": return <AutomationTool />;
+      case "roi": return <RoiTool />;
+      case "diagnostico": return <DiagnosticoTool />;
       // margem
       case "preco":
         return <PriceTool c={k} />;

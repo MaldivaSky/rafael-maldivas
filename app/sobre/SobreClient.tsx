@@ -64,6 +64,10 @@ const copy = {
         "ITARC"
       ],
       [
+        "Power BI",
+        "HashTag Treinamentos"
+      ],
+      [
         "Técnico em Química",
         "ETEC Getúlio Vargas"
       ],
@@ -132,6 +136,10 @@ const copy = {
         "ITARC"
       ],
       [
+        "Power BI",
+        "HashTag Treinamentos"
+      ],
+      [
         "Chemistry Technician",
         "ETEC Getúlio Vargas"
       ],
@@ -158,7 +166,7 @@ export default function SobreClient() {
 
 
 
-      <section style={{ paddingTop: 0 }}>
+      <section>
         <div className="wrap">
           <div className="about">
             {/* texto corrido sempre sobre uma superfície opaca */}

@@ -8,7 +8,11 @@ import { WHATSAPP } from "./lib/site";
 import CaseHighlights from "./components/CaseHighlights";
 import BriefingForm from "./components/BriefingForm";
 import ProjectPlanner from "./components/ProjectPlanner";
+import EmpresasInvite from "./components/EmpresasInvite";
+import Testimonials from "./components/Testimonials";
+import ExitToast from "./components/ExitToast";
 import GrowthToolsInvite from "./components/GrowthToolsInvite";
+import BravusPartnership from "./components/BravusPartnership";
 
 export default function HomeClient() {
   const { lang } = useLang();
@@ -43,12 +47,17 @@ export default function HomeClient() {
         <Link href={localePath("/portfolio#audiovisual",lang)} className="studio-project project-video" data-analytics="portfolio_click"><Image src="/media/cidade-anoitecer.jpg" alt={pt ? "Vista aérea da cidade ao anoitecer, por Rafael Maldivas" : "Aerial city view at dusk by Rafael Maldivas"} fill sizes="(max-width: 800px) 95vw, 48vw" /><div className="studio-project-top"><span>02 / {pt ? "UM NOVO OLHAR" : "A FRESH PERSPECTIVE"}</span><ArrowUpRight /></div><div className="studio-project-bottom"><span className="studio-pill">{pt ? "Drone · Vídeo · Conteúdo" : "Drone · Video · Content"}</span><h3>{pt ? "Sua marca vista de outro jeito." : "See your brand in a new light."}</h3><p>{pt ? "Da captação aérea à edição. Imagens que apresentam lugares, histórias e negócios." : "From aerial capture to editing. Images that introduce places, stories and businesses."}</p></div></Link></div>
       </div></section>
       <ProjectPlanner />
+      <BravusPartnership />
+      <EmpresasInvite />
+      <Testimonials />
       <section className="growth-home"><div className="wrap"><GrowthToolsInvite /></div></section>
       <CaseHighlights />
+      <ExitToast />
       <section className="studio-tools" id="ferramentas"><div className="wrap"><div className="studio-section-heading"><div><div className="studio-kicker">{pt ? "EXPERIMENTE. É POR MINHA CONTA." : "TRY IT. IT’S ON ME."}</div><h2>{pt ? "Uma mão na roda." : "A little helping hand."}</h2><p>{pt ? "Ferramentas úteis, sem cadastro. Um pouco do meu trabalho, já ajudando no seu." : "Useful tools, no signup. A little of my work, already helping yours."}</p></div><Link className="studio-text-link" href={localePath("/ferramentas",lang)}>{pt ? "Ver todas" : "See all"}<ArrowUpRight size={18} /></Link></div><div className="studio-tool-grid">{[
-        ["plano-digital", "01", pt ? "Planejador digital" : "Digital planner", pt ? "Encontre uma prioridade e saia com um plano de ação." : "Find a priority and leave with an action plan."],
-        ["plano-digital#simulador", "02", pt ? "Simulador de tempo" : "Time simulator", pt ? "Descubra quanto da rotina poderia ser automatizado." : "Explore how much of your routine could be automated."],
-        ["estudio-de-imagem", "03", pt ? "Estúdio de imagem" : "Image studio", pt ? "Remova fundos e prepare fotos para a sua vitrine." : "Remove backgrounds and prepare photos for your storefront."],
+        ["roi-presenca-digital", "01", pt ? "ROI de presença digital" : "Digital presence ROI", pt ? "Descubra quanto sua empresa deixa na mesa sem presença digital." : "Find out how much your business is missing without a digital presence."],
+        ["plano-digital", "02", pt ? "Planejador digital" : "Digital planner", pt ? "Encontre uma prioridade e saia com um plano de ação." : "Find a priority and leave with an action plan."],
+        ["plano-digital#simulador", "03", pt ? "Simulador de tempo" : "Time simulator", pt ? "Descubra quanto da rotina poderia ser automatizado." : "Explore how much of your routine could be automated."],
+        ["estudio-de-imagem", "04", pt ? "Estúdio de imagem" : "Image studio", pt ? "Remova fundos e prepare fotos para a sua vitrine." : "Remove backgrounds and prepare photos for your storefront."],
       ].map(([slug,n,title,desc])=><Link key={slug} href={localePath(`/ferramentas/${slug}`,lang)} data-analytics="tool_click"><span>{n}<ArrowUpRight size={20} /></span><h3>{title}</h3><p>{desc}</p><small>{pt ? "Abrir ferramenta" : "Open tool"}<ArrowRight size={15} /></small></Link>)}</div></div></section>
       <section className="studio-method" id="metodo"><div className="wrap"><div className="studio-section-heading"><div><div className="studio-kicker">{pt ? "CRIATIVIDADE NO COMEÇO. CUIDADO ATÉ O FIM." : "CREATIVE FROM THE START. CAREFUL TO THE FINISH."}</div><h2>{pt ? "Trabalho bom tem conversa." : "Good work starts with a conversation."}</h2></div></div><div className="studio-method-grid">{(pt ? [["Escutar de verdade", "Entendo sua rotina, o problema e o que precisa mudar."],["Combinar o caminho", "Escopo, prioridades e etapas claros antes de começar."],["Construir junto", "Você acompanha, experimenta e participa dos ajustes."],["Entregar com cuidado", "Validação, orientação de uso e próximos passos combinados."]] : [["Really listen", "I learn about your routine, the problem and what needs to change."],["Agree on the path", "Clear scope, priorities and milestones before we start."],["Build together", "You follow along, try things and help shape the adjustments."],["Deliver with care", "Validation, guidance and agreed next steps."]]).map(([title,desc],i)=><div key={title}><span>0{i+1}</span><h3>{title}</h3><p>{desc}</p></div>)}</div></div></section>
       <BriefingForm />

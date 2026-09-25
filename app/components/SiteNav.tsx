@@ -74,11 +74,17 @@ const toolsGroups: SubGroup[] = [
   })),
 ];
 
+const produtosSub: SubItem[] = [
+  { href: "/produtos/miseon", pt: "MiseOn (Plataforma SaaS)", en: "MiseOn (SaaS Platform)" },
+  { href: "/#bravus-partnership", pt: "Parceria de Hardware (Bravus Core)", en: "Hardware Partnership (Bravus Core)" },
+];
+
 const menu: MenuItem[] = [
   { href: "/servicos", pt: "Serviços", en: "Services", sub: servicesSub },
   { href: "/portfolio", pt: "Portfólio", en: "Portfolio", sub: portfolioSub },
+  { href: "#", pt: "Produtos & Parcerias", en: "Products & Partners", sub: produtosSub },
   { href: "/ferramentas", pt: "Ferramentas", en: "Tools", groups: toolsGroups },
-  { href: "/sobre", pt: "Sobre", en: "About" },
+  { href: "/about", pt: "Sobre", en: "About" },
 ];
 
 /* ------------------------------------------------------------------ */

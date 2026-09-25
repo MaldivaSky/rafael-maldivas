@@ -1,6 +1,19 @@
 .growth-home{padding:58px 0 20px}
 .tools-grid>div,.tools-grid .field,.tools-grid .field-row{min-width:0}.tools-grid input,.tools-grid select{min-width:0;max-width:100%}.tools-grid .tool-card{overflow-wrap:anywhere}
 .growth-plan{padding:24px;border-radius:14px;background:var(--surface)}.growth-plan h3{font-size:20px;margin-bottom:15px}.growth-plan ol{padding-left:22px}.growth-plan li{font-size:15px;color:var(--fg-muted);padding:8px 0 8px 5px}
+/* ── Planner badges & metrics ───────────────────────────────────────── */
+.planner-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.planner-badge{font-size:12px;font-weight:600;padding:5px 13px;border-radius:999px;border:1px solid transparent}
+.badge-high{background:color-mix(in srgb,#10b981 12%,transparent);color:#10b981;border-color:color-mix(in srgb,#10b981 30%,transparent)}
+.badge-med{background:color-mix(in srgb,#f59e0b 12%,transparent);color:#f59e0b;border-color:color-mix(in srgb,#f59e0b 30%,transparent)}
+.badge-time{background:var(--bg-soft);color:var(--fg-muted);border-color:var(--line-strong)}
+.planner-section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-muted);margin:18px 0 10px}
+.planner-metrics{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.planner-metric{font-size:13px;padding:7px 13px;background:var(--bg-soft);border:1px solid var(--line-strong);border-radius:8px;color:var(--fg-muted)}
+.planner-next{padding:16px 18px;background:color-mix(in srgb,var(--accent) 8%,transparent);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);border-radius:12px;margin-top:20px}
+.planner-next p{font-size:15px;color:var(--fg);font-weight:500;line-height:1.6;margin:0}
+.planner-next .planner-section-label{margin-top:0}
+
 .growth-invite{margin-bottom:40px}
 .growth-invite-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px}
 .growth-invite-heading h2{font-size:clamp(25px,3vw,39px);line-height:1.18;letter-spacing:-.035em;margin:12px 0 0}
@@ -43,3 +56,16 @@
 .growth-filters,.growth-search-count,.growth-no-results{width:100%}.growth-search-count,.growth-no-results{font-size:13px;color:var(--fg-muted)}
 @media(max-width:760px){.growth-cards{grid-template-columns:1fr}.growth-invite-heading{align-items:start;flex-direction:column;gap:14px}.growth-invite-heading>p{max-width:none}.growth-card{padding:24px}.growth-card-top{margin-bottom:18px}.growth-home{padding-top:36px}.growth-metrics{grid-template-columns:1fr}.growth-tool .field-row{grid-template-columns:1fr}.growth-tool .btn{white-space:normal;text-align:center}}
 @media(prefers-reduced-motion:reduce){.growth-card{transition:none}.growth-card:hover{transform:none}}
+/* ── ROI Calculator ─────────────────────────────────── */
+.roi-results{margin-top:28px}
+.roi-section-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:18px}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}
+.roi-metric{padding:20px 22px;background:var(--surface);border:1px solid var(--line-strong);border-radius:16px;display:flex;flex-direction:column;gap:8px}
+.roi-metric--highlight{background:var(--accent-glow);border-color:var(--accent)}
+.roi-metric-label{font-size:12px;color:var(--fg-muted);font-weight:500}
+.roi-metric-value{font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--fg)}
+.roi-metric--highlight .roi-metric-value{color:var(--accent)}
+.roi-breakeven{padding:16px 20px;background:var(--bg-soft);border:1px solid var(--line-strong);border-radius:12px;font-size:14px;color:var(--fg-muted)}
+.roi-breakeven strong{color:var(--fg);font-size:16px}
+@media(max-width:640px){.roi-grid{grid-template-columns:1fr}}
+

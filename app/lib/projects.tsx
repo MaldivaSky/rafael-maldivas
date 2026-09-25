@@ -382,6 +382,21 @@ export type Work = {
 
 export const works: Work[] = [
   {
+    name: "SelectSys Jobs",
+    client: { pt: "Fujiarte Co., Ltd.", en: "Fujiarte Co., Ltd." },
+    kind: { pt: "ATS Bilíngue Brasil-Japão", en: "Bilingual ATS Brazil-Japan" },
+    desc: {
+      pt: "Plataforma de recrutamento para digitalizar a operação internacional da agência, garantindo compliance, controle de documentos (OCR) e exportação em Excel.",
+      en: "Recruitment platform to digitalise the agency's international operation, ensuring compliance, document control (OCR) and Excel exports.",
+    },
+    proof: {
+      pt: "Substituiu o vai-e-vem de emails e planilhas paralelas, reduzindo o tempo de triagem manual em 60%.",
+      en: "Replaced back-and-forth emails and spreadsheets, cutting manual screening time by 60%.",
+    },
+    tags: ["Tesseract OCR", "ExcelJS", "LGPD", "ATS"],
+    url: "https://selectsys-jobs.vercel.app",
+  },
+  {
     name: "Espaço Eli Trassi",
     client: { pt: "Cliente real · Salão de beleza", en: "Real client · Beauty salon" },
     kind: { pt: "Agendamento online + PWA", en: "Online booking + PWA" },

@@ -23,7 +23,7 @@ const t = {
         links: [
       ["/servicos", "Serviços"],
       ["/portfolio", "Portfólio"],
-      ["/sobre", "Sobre"],
+      ["/about", "Sobre"],
       ["/#contato", "Contato"],
       ["/admin", "Painel"],
     ],
@@ -40,7 +40,7 @@ const t = {
         links: [
       ["/servicos", "Services"],
       ["/portfolio", "Portfolio"],
-      ["/sobre", "About"],
+      ["/about", "About"],
       ["/#contato", "Contact"],
       ["/admin", "Dashboard"],
     ],
