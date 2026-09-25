@@ -19,12 +19,12 @@ export async function generateMetadata({
     path: "",
     title:
       lang === "pt"
-        ? "Maldivas Tech — Sistemas de Gestão, SaaS e TI Gerenciada"
-        : "Maldivas Tech — Management Systems, SaaS and Managed IT",
+        ? "Maldivas Tech — Sistemas de Gestão e Software Sob Medida em São Paulo"
+        : "Maldivas Tech — Management Systems & Custom Software in São Paulo",
     description:
       lang === "pt"
-        ? "Desenvolvemos sistemas de gestão e SaaS multi-tenant. Produtos próprios — MiseOn (restaurantes) e SelectSys Jobs (ATS) — e software sob medida a partir de São Paulo para o mundo."
-        : "We build management systems and multi-tenant SaaS. Our products — MiseOn (restaurants) and SelectSys Jobs (ATS) — plus custom software from São Paulo to the world.",
+        ? "A Maldivas Tech, de Rafael Maldivas, desenvolve sistemas de gestão e software sob medida para organizar operações, integrar ferramentas e reduzir tarefas manuais. São Paulo e atendimento remoto."
+        : "Maldivas Tech, led by Rafael Maldivas, builds management systems and custom software to organise operations, connect tools and reduce manual work. Based in São Paulo, serving clients remotely.",
     keywords:
       lang === "pt"
         ? ["sistemas de gestão", "SaaS para restaurantes", "ATS para agências", "software sob medida"]

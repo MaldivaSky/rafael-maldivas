@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ArrowRight, Check, MessageCircle, Send } from "lucide-react";
 import { useLang } from "../lib/i18n";
 import { AREAS, servicos, type Area } from "../lib/catalog";
 import { EMAIL, WHATSAPP } from "../lib/site";
+import { trackSiteEvent } from "../lib/analytics";
 
 /**
  * Levantamento de requisitos + captação de lead.
@@ -91,6 +92,7 @@ export default function BriefingForm() {
   const [tentou, setTentou] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
+  const trackedStart = useRef(false);
 
   const toggle = (id: string) =>
     setEscolhas((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
@@ -132,11 +134,14 @@ export default function BriefingForm() {
       });
       const d = await r.json();
       if (d.ok) {
+        trackSiteEvent("lead_submit");
         setEnviado(true);
       } else {
+        trackSiteEvent("contact_click");
         window.open(`${WHATSAPP}?text=${encodeURIComponent(mensagem)}`, "_blank");
       }
     } catch {
+      trackSiteEvent("contact_click");
       window.open(`${WHATSAPP}?text=${encodeURIComponent(mensagem)}`, "_blank");
     } finally {
       setEnviando(false);
@@ -155,7 +160,12 @@ export default function BriefingForm() {
   }));
 
   return (
-    <section id="briefing">
+    <section id="briefing" onFocusCapture={() => {
+      if (!trackedStart.current) {
+        trackedStart.current = true;
+        trackSiteEvent("briefing_start");
+      }
+    }}>
       <div className="wrap">
         <div className="sec-tag">{c.tag}</div>
         <h2>{c.title}</h2>
@@ -261,7 +271,7 @@ export default function BriefingForm() {
                 </div>
                 <p className="result-note">{c.sentHint}</p>
                 <div className="cta-row" style={{ marginBottom: 0, marginTop: 16 }}>
-                  <a className="btn btn-primary" href={waHref} target="_blank" rel="noopener noreferrer">
+                  <a className="btn btn-primary" href={waHref} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">
                     <MessageCircle size={17} /> {lang === "pt" ? "Chamar no WhatsApp" : "Message on WhatsApp"}
                   </a>
                 </div>
@@ -280,7 +290,7 @@ export default function BriefingForm() {
                 <a className="plink" href={valido ? mailHref : "#briefing"}>
                   <Send size={16} /> {c.mail}
                 </a>
-                <a className="plink" href={waHref} target="_blank" rel="noopener noreferrer">
+                <a className="plink" href={waHref} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">
                   <MessageCircle size={16} /> {c.orWhats}
                 </a>
               </div>

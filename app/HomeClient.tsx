@@ -3,29 +3,11 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Building2,
-  Calculator,
-  CalendarDays,
-  ChefHat,
-  Coins,
-  FileCode2,
-  Globe,
-  IdCard,
-  Layout,
-  Landmark,
-  MapPin,
-  Percent,
-  Phone,
-  Scale,
-  TrendingUp,
   LineChart,
-  MailCheck,
+  Layout,
   MessageCircle,
-  QrCode,
-  Receipt,
   Server,
   ShieldCheck,
-  Sparkles,
   Compass,
   Clapperboard,
 } from "lucide-react";
@@ -42,6 +24,7 @@ import ProductCards from "./components/ProductCards";
 import Mission from "./components/Mission";
 import VideoShowcase from "./components/VideoShowcase";
 import BriefingForm from "./components/BriefingForm";
+import CaseHighlights from "./components/CaseHighlights";
 import { CountUp, Magnetic, Reveal, Spotlight, TechIcon } from "./components/fx";
 
 const techs = [
@@ -67,28 +50,6 @@ const local = {
     toolsTitle: "Uma ajuda para o seu dia a dia",
     toolsLead:
       "Ferramentas gratuitas para conferir uma nota, calcular preços, consultar dados e preparar imagens. Escolha o que precisa e use, sem cadastro.",
-    tools: [
-      ["Decodificador de chave NF-e / NFC-e", "Cole os 44 dígitos do cupom e leia UF, CNPJ do emitente, modelo, série, número e o dígito verificador por módulo 11.", "/ferramentas#nfe"],
-      ["Leitor e validador de Pix Copia e Cola", "Parse do payload EMV campo a campo, com chave do recebedor, valor, txid e conferência do CRC16-CCITT.", "/ferramentas#pix"],
-      ["Diagnóstico de e-mail do domínio", "SPF, DKIM e DMARC consultados no DNS — descubra se a sua proposta está caindo no spam do cliente.", "/ferramentas#email"],
-      ["Auditor de cabeçalhos HTTP", "HSTS, CSP, X-Frame-Options e mais, com nota de segurança e o que cada cabeçalho evita.", "/ferramentas#headers"],
-      ["Calculadora de preço de venda e CMV", "Custo real do prato, CMV e o preço que fecha a margem que você quer — com perdas, taxa e imposto.", "/ferramentas#preco"],
-      ["Margem por canal de venda", "Quanto sobra do mesmo pedido no iFood, no 99Food, no seu site e no balcão, e a diferença no fim do mês.", "/ferramentas#delivery"],
-      ["Consulta de CNPJ na Receita", "Situação cadastral, data de abertura, atividade, capital e quadro societário de qualquer empresa do país.", "/ferramentas#cnpj"],
-      ["Conversor de moeda do dia", "Dólar, euro, iene e libra com a cotação de agora. Útil para orçar para fora sem chutar o câmbio.", "/ferramentas#cambio"],
-      ["O domínio da sua empresa está livre?", "Consulta direta no registro.br antes de você mandar imprimir cartão, fachada e cardápio.", "/ferramentas#dominio"],
-      ["Busca de CEP com coordenada", "Endereço completo, código IBGE e latitude para conferir área de entrega.", "/ferramentas#cep"],
-      ["Reajuste de contrato pelo IPCA", "Índice acumulado puxado do Banco Central, aplicado no valor do seu contrato.", "/ferramentas#ipca"],
-      ["Feriados e efeito na escala", "Calendário do ano marcando onde vira emenda e muda compra, escala e movimento.", "/ferramentas#feriados"],
-      ["Ficha técnica e fator de correção", "Você compra 1 kg mas não usa 1 kg. Veja quanto custa de verdade o que vai no prato.", "/ferramentas#ficha"],
-      ["Margem × markup", "30% em cima do custo não dá 30% de margem. Dá 23%. Essa conta some do caixa todo mês.", "/ferramentas#markup"],
-      ["Extrator de dados da NF-e (XML)", "Suba o XML da nota e receba emitente, itens, quantidade, valor unitário, impostos e total já separados.", "/ferramentas#nfexml"],
-      ["Validador de CPF", "Confira o dígito verificador por módulo 11 e veja ainda a região fiscal que emitiu o número.", "/ferramentas#cpf"],
-      ["DDD: de que estado é o número?", "Digite o código de área e veja o estado e as cidades atendidas pela Anatel.", "/ferramentas#ddd"],
-      ["Códigos de bancos (COMPE e ISPB)", "Procure o banco pelo código, pelo ISPB ou pelo nome para conferir boleto e remessa.", "/ferramentas#bancos"],
-      ["Selic, CDI e calculadora de rendimento", "A taxa do Banco Central e uma simulação de juros compostos para o valor e o prazo que você escolher.", "/ferramentas#taxas"],
-    ],
-    toolsCta: "Abrir as ferramentas",
     linkedinCta: "Ver meu perfil no LinkedIn",
   },
   en: {
@@ -106,26 +67,6 @@ const local = {
     toolsTitle: "Useful tools, ready to use.",
     toolsLead:
       "Free tools for checking invoices, calculating prices, looking up information and preparing images. Choose what you need and use it without an account.",
-    tools: [
-      ["Brazilian e-invoice key decoder", "Paste the 44 digits and read state, issuer tax ID, model, series, number and the modulo-11 check digit.", "/ferramentas#nfe"],
-      ["Pix copy-and-paste validator", "Field-by-field EMV payload parsing, with recipient key, amount, txid and CRC16-CCITT verification.", "/ferramentas#pix"],
-      ["Domain email diagnosis", "SPF, DKIM and DMARC looked up in DNS — find out whether your proposals land in spam.", "/ferramentas#email"],
-      ["HTTP security header audit", "HSTS, CSP, X-Frame-Options and more, graded, with what each header prevents.", "/ferramentas#headers"],
-      ["Selling price & food-cost calculator", "Real plate cost, food-cost ratio and the price that hits your target margin.", "/ferramentas#preco"],
-      ["Margin by sales channel", "What's left from the same order on delivery apps, your own site and the counter, and the monthly gap.", "/ferramentas#delivery"],
-      ["Brazilian company lookup", "Registry status, founding date, activity, share capital and ownership of any company in the country.", "/ferramentas#cnpj"],
-      ["Currency converter, live rate", "Dollar, euro, yen and pound at today's rate. Handy for quoting abroad without guessing.", "/ferramentas#cambio"],
-      ["Is your domain free?", "Direct registro.br lookup before you print cards, signage and menus.", "/ferramentas#dominio"],
-      ["Postcode lookup with coordinates", "Full address, municipal code and latitude to check delivery areas.", "/ferramentas#cep"],
-      ["Recipe costing and yield factor", "You buy 1 kg but you don't use 1 kg. See what the plate really costs.", "/ferramentas#ficha"],
-      ["Margin vs markup", "30% on cost is not a 30% margin. It is 23%. That gap leaves the till every month.", "/ferramentas#markup"],
-      ["Invoice (NF-e) XML extractor", "Upload the invoice XML and get issuer, line items, quantity, unit price, taxes and total already separated.", "/ferramentas#nfexml"],
-      ["CPF validator", "Check the check digits via modulo 11 and see the fiscal region that issued the number.", "/ferramentas#cpf"],
-      ["Area code (DDD) lookup", "Type the two-digit code and see the state and the cities served, from Anatel data.", "/ferramentas#ddd"],
-      ["Bank codes (COMPE and ISPB)", "Look a bank up by code, ISPB or name to check a boleto and a remittance file.", "/ferramentas#bancos"],
-      ["Selic, CDI and yield calculator", "The Central Bank rate plus a compound-interest simulation for the amount and term you choose.", "/ferramentas#taxas"],
-    ],
-    toolsCta: "Open the tools",
     linkedinCta: "See my LinkedIn profile",
   },
 } as const;
@@ -140,6 +81,49 @@ export default function HomeClient() {
       {/* ---------- hero com o vídeo institucional ---------- */}
       <PersonalIntro />
 
+      {/* ---------- oferta e demonstrações antes do conteúdo institucional ---------- */}
+      <section id="produtos" className="home-proof-section">
+        <div className="wrap">
+          <Reveal>
+            <div className="sec-tag">{c.prodTag}</div>
+            <h2>{c.prodTitle}</h2>
+            <p className="sec-lead">{c.prodLead}</p>
+          </Reveal>
+          <ProductCards />
+          <div style={{ marginTop: 34 }}>
+            <Link className="btn btn-ghost" href={localePath("/portfolio", lang)} data-analytics="portfolio_click">
+              {lang === "pt" ? "Ver o portfólio completo" : "See the full portfolio"} →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <CaseHighlights />
+
+      <section id="metodo" className="home-method-section">
+        <div className="wrap">
+          <Reveal>
+            <div className="sec-tag">{c.howTag}</div>
+            <h2>{c.howTitle}</h2>
+            <p className="sec-lead">{c.howLead}</p>
+          </Reveal>
+          <div className="steps">
+            {c.steps.map((s, i) => (
+              <Reveal className="step" key={s.h} delay={i * 0.07}>
+                <div className="step-n">{i + 1}</div>
+                <h3>{s.h}</h3>
+                <p>{s.p}</p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <BriefingForm />
+
+      <Mission />
+      <PartnerBadges />
+
       {/* ---------- faixa de tecnologias ---------- */}
       <div className="marquee" aria-hidden="true">
         <div className="marquee-track">
@@ -151,26 +135,6 @@ export default function HomeClient() {
           ))}
         </div>
       </div>
-
-      <Mission />
-      <PartnerBadges />
-
-      {/* ---------- produtos ---------- */}
-      <section id="produtos">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-tag">{c.prodTag}</div>
-            <h2>{c.prodTitle}</h2>
-            <p className="sec-lead">{c.prodLead}</p>
-          </Reveal>
-          <ProductCards />
-          <div style={{ marginTop: 34 }}>
-                        <Link className="btn btn-ghost" href={localePath("/portfolio", lang)}>
-              {lang === "pt" ? "Ver o portfólio completo" : "See the full portfolio"} →
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* ---------- engenharia ---------- */}
       <section id="engenharia">
@@ -280,51 +244,16 @@ export default function HomeClient() {
           </Reveal>
 
           <StudioInvite />
-          <div className="packs">
-            {l.tools.map(([title, desc, href], i) => {
-              const icons = [Receipt, QrCode, MailCheck, ShieldCheck, Calculator, LineChart, Building2, Coins, Globe, MapPin, TrendingUp, CalendarDays, ChefHat, Scale, FileCode2, IdCard, Phone, Landmark, Percent];
-              const Ico = icons[i % icons.length];
-              return (
-                <Reveal key={href} delay={i * 0.05}>
-                  <Link href={localePath(href, lang)} className="pack" style={{ display: "flex" }}>
-                    <div className="pack-icon">
-                      <Ico size={24} />
-                    </div>
-                    <h3 style={{ fontSize: 20 }}>{title}</h3>
-                    <p className="pack-pitch" style={{ marginBottom: 18 }}>{desc}</p>
-                    <span className="plink solid" style={{ marginTop: "auto", alignSelf: "flex-start" }}>
-                      <Sparkles size={15} /> {l.toolsCta}
-                    </span>
-                  </Link>
-                </Reveal>
-              );
-            })}
+          <div className="home-tools-link">
+            <p>{lang === "pt" ? "Consultas, calculadoras e utilitários gratuitos, organizados em uma página própria." : "Free lookups, calculators and utilities, collected on a dedicated page."}</p>
+            <Link className="btn btn-ghost" href={localePath("/ferramentas", lang)} data-analytics="tool_click">
+              {lang === "pt" ? "Explorar todas as ferramentas" : "Explore all tools"} →
+            </Link>
           </div>
         </div>
       </section>
 
       {/* ---------- método ---------- */}
-      <section id="metodo">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-tag">{c.howTag}</div>
-            <h2>{c.howTitle}</h2>
-            <p className="sec-lead">{c.howLead}</p>
-          </Reveal>
-          <div className="steps">
-            {c.steps.map((s, i) => (
-              <Reveal className="step" key={s.h} delay={i * 0.07}>
-                <div className="step-n">{i + 1}</div>
-                <h3>{s.h}</h3>
-                <p>{s.p}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <BriefingForm />
-
       {/* ---------- contato ---------- */}
       <section id="contato">
         <div className="wrap">
@@ -334,7 +263,7 @@ export default function HomeClient() {
               <p>{c.contactLead}</p>
               <div className="cta-row" style={{ justifyContent: "center", marginBottom: 16 }}>
                 <Magnetic>
-                  <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
+                  <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">
                     <MessageCircle size={18} /> {c.contactBtn}
                   </a>
                 </Magnetic>

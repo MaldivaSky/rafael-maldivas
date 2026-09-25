@@ -104,12 +104,13 @@ export default function ProductCards() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="plink solid"
+                    data-analytics="contact_click"
                   >
                     <Sparkles size={17} /> {c.lblHire}
                   </a>
                 )}
                 {p.demo && (
-                  <a href={p.demo} target="_blank" rel="noopener noreferrer" className="plink">
+                  <a href={p.demo} target="_blank" rel="noopener noreferrer" className="plink" data-analytics="product_demo">
                     <ExternalLink size={16} /> {c.lblDemo}
                   </a>
                 )}

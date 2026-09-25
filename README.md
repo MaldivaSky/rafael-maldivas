@@ -188,6 +188,15 @@ navegador; os bots do Google leem o HTML cru e não são afetados.
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | `xxxx` | Search Console |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | `xxxx` | Bing Webmaster |
 
+### Métricas da jornada
+
+O componente `SiteAnalytics` envia eventos sem cookies ou dados de contato para
+`POST /api/analytics`. O endpoint aceita apenas eventos conhecidos e registra
+`metric=site_event`, evento e caminho (sem query string) nos logs da função.
+Eventos: `page_view`, `contact_click`, `service_click`, `portfolio_click`,
+`briefing_start`, `lead_submit`, `tool_click` e `product_demo`. Consulte os logs de Functions no
+Vercel e filtre por `site_event` para comparar páginas, interesse e conversões.
+
 ### Checklist pós-deploy
 
 - [ ] Definir `NEXT_PUBLIC_SITE_URL` no Vercel e redeployar

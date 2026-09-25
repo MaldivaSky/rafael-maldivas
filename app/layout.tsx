@@ -4,6 +4,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { LangProvider } from "./lib/i18n";
 import SiteNav from "./components/SiteNav";
 import SiteFooter from "./components/SiteFooter";
+import SiteAnalytics from "./components/SiteAnalytics";
 import { COMPANY, SITE, VERIFICATION } from "./lib/site";
 import "./globals.css";
 import "./editorial.css";
@@ -16,14 +17,19 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
     default:
-      "Maldivas Tech — Sistemas de gestão, TI gerenciada e presença digital | Rafael Maldivas",
+      "Maldivas Tech — Sistemas de gestão e software sob medida | Rafael Maldivas",
     template: "%s · Maldivas Tech",
   },
   description:
-        "Rafael Maldivas — engenheiro de software fullstack e especialista em UX. ERP multi-tenant, PDV fiscal NFC-e, integrações homologadas com iFood e WhatsApp Business API, gestão de TI e e-mail corporativo, manutenção de site, tráfego pago e produção de vídeo com drone. CNPJ ativo, contrato e nota fiscal.",
+    "Sistemas de gestão e software sob medida para organizar operações, integrar ferramentas e reduzir trabalho manual. Desenvolvimento e consultoria com Rafael Maldivas, em São Paulo e a distância.",
   authors: [{ name: "Rafael Maldivas", url: SITE }],
   creator: "Rafael Maldivas",
   publisher: "Maldivas Tech",
+  // Keep the favicon at the conventional, stable root URL for search crawlers.
+  icons: {
+    icon: [{ url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" }],
+    apple: "/apple-icon.png",
+  },
   // canonical/hreflang/OG/Twitter saem de buildMetadata() em cada página.
   robots: {
     index: true,
@@ -83,6 +89,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <LangProvider>
+            <SiteAnalytics />
             <ThreeBackground />
             <SiteNav />
             <main>{children}</main>

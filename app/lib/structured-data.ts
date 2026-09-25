@@ -46,6 +46,8 @@ export function organizationSchema() {
       "@id": `${SITE}/#logo`,
       url: `${SITE}/brand/logo-mark.png`,
       contentUrl: `${SITE}/brand/logo-mark.png`,
+      width: 512,
+      height: 512,
     },
     image: `${SITE}/opengraph-image.png`,
     email: EMAIL,

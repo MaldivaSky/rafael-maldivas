@@ -286,7 +286,7 @@ export default function SiteNav() {
               </button>
             )}
 
-            <a className="nav-cta" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
+            <a className="nav-cta" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">
               {lang === "pt" ? "Falar comigo" : "Get in touch"}
             </a>
 
@@ -356,7 +356,7 @@ export default function SiteNav() {
             );
           })}
 
-          <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
+          <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">
             {lang === "pt" ? "Falar no WhatsApp" : "Message on WhatsApp"}
           </a>
         </div>
