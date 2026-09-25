@@ -8,6 +8,8 @@ import SiteAnalytics from "./components/SiteAnalytics";
 import { COMPANY, SITE, VERIFICATION } from "./lib/site";
 import "./globals.css";
 import "./editorial.css";
+import "./growth-tools.css";
+import "./studio-home.css";
 
 const ThreeBackground = dynamic(() => import("./components/ThreeBackground"), {
   ssr: false,

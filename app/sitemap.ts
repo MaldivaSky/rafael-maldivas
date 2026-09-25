@@ -29,6 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "servicos", priority: 0.9, changeFrequency: "monthly" },
     { path: "portfolio", priority: 0.9, changeFrequency: "monthly" },
     { path: "ferramentas", priority: 0.8, changeFrequency: "monthly" },
+    { path: "ferramentas/plano-digital", priority: 0.7, changeFrequency: "monthly" },
     { path: "about", priority: 0.7, changeFrequency: "yearly" },
         ...productList.map(
       (p): Route => ({

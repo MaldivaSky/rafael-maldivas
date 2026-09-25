@@ -59,7 +59,7 @@ const studioItem: SubItem = {
 };
 
 const toolsGroups: SubGroup[] = [
-  { label: { pt: "Em destaque", en: "Featured" }, items: [studioItem] },
+  { label: { pt: "Em destaque", en: "Featured" }, items: [studioItem, { href: "/ferramentas/plano-digital", pt: "Planejador digital", en: "Digital planner" }] },
   ...GROUP_ORDER.map((g) => ({
     label: GROUP_LABEL[g],
     items: tools

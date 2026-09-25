@@ -11,6 +11,7 @@ import { DeliveryTool, HeadersTool, NfeTool, PixTool } from "./MoreTools";
 import { CambioTool, CnpjTool } from "./ApiTools";
 import { CepTool, DominioTool, FeriadosTool, FichaTool, IpcaTool, MarkupTool } from "./BizTools";
 import { BancosTool, CpfTool, DddTool, NfeXmlTool, TaxasTool } from "./NewTools";
+import { WhatsAppTool, CampaignTool, AutomationTool } from "./GrowthTools";
 
 const t = {
   pt: {
@@ -43,6 +44,9 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
 
   const render = () => {
     switch (tool.key) {
+      case "whatsapp": return <WhatsAppTool />;
+      case "utm": return <CampaignTool />;
+      case "automacao": return <AutomationTool />;
       // margem
       case "preco":
         return <PriceTool c={k} />;

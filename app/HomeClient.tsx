@@ -1,288 +1,58 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import {
-  LineChart,
-  Layout,
-  MessageCircle,
-  Server,
-  ShieldCheck,
-  Compass,
-  Clapperboard,
-} from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, Check, Code2, Film, Layers, Sparkles } from "lucide-react";
 import { useLang, localePath } from "./lib/i18n";
-import { t } from "./lib/content";
-import { rich } from "./lib/rich";
-import { craftStack } from "./lib/credentials";
-import { CANVA_REEL, GITHUB_USER, LINKEDIN, WHATSAPP, YOUTUBE, cdnIcon } from "./lib/site";
-import PersonalIntro from "./components/PersonalIntro";
-import CityStory from "./components/CityStory";
-import StudioInvite from "./components/StudioInvite";
-import PartnerBadges from "./components/PartnerBadges";
-import ProductCards from "./components/ProductCards";
-import Mission from "./components/Mission";
-import VideoShowcase from "./components/VideoShowcase";
-import BriefingForm from "./components/BriefingForm";
+import { WHATSAPP } from "./lib/site";
 import CaseHighlights from "./components/CaseHighlights";
-import { CountUp, Magnetic, Reveal, Spotlight, TechIcon } from "./components/fx";
-
-const techs = [
-  "python", "typescript", "react", "nextdotjs/white", "django/44B78B", "flask/white",
-  "nodedotjs", "deno/70FFAF", "postgresql", "supabase", "redis", "docker",
-  "tailwindcss", "pandas/E70488", "vercel/white", "threedotjs",
-].map((s) => ({ n: s.split("/")[0], s: cdnIcon(s) }));
-const allTechs = [...techs, { n: "Playwright", s: "/icons/playwright.svg" }];
-
-const local = {
-  pt: {
-    mediaTag: "Audiovisual",
-    mediaTitle: "Eu também filmo, edito e publico",
-    mediaLead:
-      "O sistema arruma a casa por dentro, mas não traz cliente sozinho. Eu faço as duas pontas: a vinheta da marca, a imagem aérea e o conteúdo que vai para as redes.",
-    mediaBrand: ["Vinheta institucional", "Motion de marca em vídeo generativo, com pós-produção e trilha própria."],
-    mediaDrone: ["Captação aérea com drone", "Piloto formado (ITARC, 2024). Imagem aérea de fachada, obra, evento e cidade."],
-    mediaYT: ["Canal no YouTube", "Conteúdo em vídeo do MiseOn — tutorial, lançamento e material de apoio ao cliente."],
-    mediaReel: ["Portfólio de vídeo", "Reel com os projetos de edição e motion."],
-    craftTag: "Stack de criação",
-    craftTitle: "Ferramentas que uso para criar",
-    toolsTag: "Ferramentas gratuitas",
-    toolsTitle: "Uma ajuda para o seu dia a dia",
-    toolsLead:
-      "Ferramentas gratuitas para conferir uma nota, calcular preços, consultar dados e preparar imagens. Escolha o que precisa e use, sem cadastro.",
-    linkedinCta: "Ver meu perfil no LinkedIn",
-  },
-  en: {
-    mediaTag: "Audiovisual",
-    mediaTitle: "I also shoot, edit and publish",
-    mediaLead:
-      "Systems fix the process; content brings people into it. I deliver both — from brand idents to aerial footage.",
-    mediaBrand: ["Brand ident", "Generative-video brand motion, with post-production and its own soundtrack."],
-    mediaDrone: ["Aerial drone footage", "Certified pilot (ITARC, 2024). Aerial imagery of storefronts, sites, events and cities."],
-    mediaYT: ["YouTube channel", "MiseOn video content — tutorials, launches and customer support material."],
-    mediaReel: ["Video portfolio", "A reel of the editing and motion work."],
-    craftTag: "Creation stack",
-    craftTitle: "The tools I deliver in",
-    toolsTag: "Free tools",
-    toolsTitle: "Useful tools, ready to use.",
-    toolsLead:
-      "Free tools for checking invoices, calculating prices, looking up information and preparing images. Choose what you need and use it without an account.",
-    linkedinCta: "See my LinkedIn profile",
-  },
-} as const;
+import BriefingForm from "./components/BriefingForm";
+import ProjectPlanner from "./components/ProjectPlanner";
+import GrowthToolsInvite from "./components/GrowthToolsInvite";
 
 export default function HomeClient() {
   const { lang } = useLang();
-  const c = t[lang];
-  const l = local[lang];
-
+  const pt = lang === "pt";
+  const services = pt ? [
+    ["software", "Organizar para crescer.", "Sistemas e automações que tiram o retrabalho da rotina."],
+    ["marketing", "Aparecer do jeito certo.", "Sites e presença digital com identidade e um caminho claro até você."],
+    ["audiovisual", "Mostrar outro ponto de vista.", "Drone, vídeo e conteúdo para dar vida à sua marca."],
+  ] : [
+    ["software", "Make room to grow.", "Systems and automation that take repetitive work off your plate."],
+    ["marketing", "Show up with purpose.", "Websites and a digital presence with personality and a clear way to reach you."],
+    ["audiovisual", "Offer a fresh perspective.", "Drone footage, video and content that bring your brand to life."],
+  ];
+  const icons = [Code2, Layers, Film];
   return (
-    <>
-      {/* ---------- hero com o vídeo institucional ---------- */}
-      <PersonalIntro />
-
-      {/* ---------- oferta e demonstrações antes do conteúdo institucional ---------- */}
-      <section id="produtos" className="home-proof-section">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-tag">{c.prodTag}</div>
-            <h2>{c.prodTitle}</h2>
-            <p className="sec-lead">{c.prodLead}</p>
-          </Reveal>
-          <ProductCards />
-          <div style={{ marginTop: 34 }}>
-            <Link className="btn btn-ghost" href={localePath("/portfolio", lang)} data-analytics="portfolio_click">
-              {lang === "pt" ? "Ver o portfólio completo" : "See the full portfolio"} →
-            </Link>
+    <div className="studio-home">
+      <header className="studio-hero" id="top"><div className="wrap">
+        <div className="studio-hero-grid">
+          <div className="studio-hero-copy">
+            <div className="studio-kicker"><span />{pt ? "TECNOLOGIA COM CABEÇA. CRIAÇÃO COM ALMA." : "THOUGHTFUL TECHNOLOGY. SOULFUL CREATION."}</div>
+            <h1>{pt ? "Boas ideias" : "Good ideas"}<br />{pt ? "merecem" : "deserve"}<br /><em>{pt ? "ganhar vida." : "to come alive."}</em><Sparkles aria-hidden="true" /></h1>
+            <p>{pt ? "Sou Rafael. Conecto tecnologia, negócio e criatividade para transformar o que você imagina em algo que funciona de verdade." : "I’m Rafael. I connect technology, business and creativity to turn what you imagine into something that really works."}</p>
+            <div className="studio-actions"><a href="#diagnostico" className="btn studio-primary">{pt ? "Descobrir meu próximo passo" : "Find my next step"}<ArrowUpRight size={18} /></a><a href="#produtos" className="studio-text-link">{pt ? "Conheça meu trabalho" : "Explore my work"}<ArrowDown size={16} /></a></div>
+            <div className="studio-hero-note"><span className="studio-avatars">RM</span><span>{pt ? "Da primeira conversa à entrega." : "From the first conversation to delivery."}<strong>{pt ? "Você fala com quem faz." : "You talk to the person who builds it."}</strong></span></div>
           </div>
+          <div className="studio-portrait-composition"><div className="studio-orbit" aria-hidden="true" /><figure className="studio-portrait"><Image src="/media/rafael-drone.jpg" alt={pt ? "Rafael Maldivas pilotando um drone em campo" : "Rafael Maldivas flying a drone in the field"} fill priority sizes="(max-width: 800px) 90vw, 45vw" quality={85} /><span className="studio-photo-label">SÃO PAULO · {pt ? "PARA O MUNDO" : "TO THE WORLD"}</span><figcaption><span>{pt ? "Prazer, eu sou o" : "Hi, I’m"}</span><strong>Rafael Maldivas<span>.</span></strong><small>{pt ? "Engenharia, criatividade e pé no chão." : "Engineering, creativity and a grounded approach."}</small></figcaption></figure><div className="studio-float"><span><Code2 size={22} /></span><div>{pt ? "Da ideia à operação" : "From idea to operation"}<small>{pt ? "Software · Estratégia · Audiovisual" : "Software · Strategy · Video"}</small></div><ArrowUpRight size={18} /></div><span className="studio-handnote" aria-hidden="true">{pt ? "Vamos fazer acontecer ↗" : "Let’s make it happen ↗"}</span></div>
         </div>
-      </section>
-
+        <div className="studio-service-row">{services.map(([id,title,desc],i) => { const Icon = icons[i]; return <Link href={localePath(`/servicos#${id}`,lang)} key={id} data-analytics="service_click"><span className={`studio-service-icon tone-${i}`}><Icon size={23} /></span><div><h2>{title}</h2><p>{desc}</p></div><ArrowUpRight size={19} /></Link>; })}</div>
+      </div></header>
+      <section id="produtos" className="studio-selected"><div className="wrap"><div className="studio-section-heading"><div><div className="studio-kicker">01 / {pt ? "IDEIAS EM MOVIMENTO" : "IDEAS IN MOTION"}</div><h2>{pt ? "É na prática que" : "The work"}<br /><span>{pt ? "a ideia se prova." : "speaks for itself."}</span></h2></div><Link className="studio-text-link" href={localePath("/portfolio",lang)} data-analytics="portfolio_click">{pt ? "Explorar portfólio" : "Explore portfolio"}<ArrowUpRight size={18} /></Link></div>
+        <div className="studio-projects"><Link href={localePath("/produtos/miseon",lang)} className="studio-project project-miseon" data-analytics="portfolio_click"><div className="studio-project-top"><span>01 / FOOD SERVICE</span><ArrowUpRight /></div><div className="studio-product-visual"><Image src="/logo-horiz-miseon.png" alt="MiseOn" width={310} height={120} style={{objectFit:"contain"}} /><div className="studio-operation"><span><Check size={14} />{pt ? "Pedidos" : "Orders"}</span><span><Check size={14} />{pt ? "Estoque" : "Inventory"}</span><span><Check size={14} />{pt ? "Gestão" : "Management"}</span></div></div><div className="studio-project-bottom"><span className="studio-pill">{pt ? "Produto próprio · Em operação" : "Own product · Live"}</span><h3>{pt ? "Mais controle na cozinha." : "More control in the kitchen."}</h3><p>{pt ? "Pedidos, estoque e delivery conectados em um sistema feito para restaurantes." : "Orders, inventory and delivery connected in a system built for restaurants."}</p></div></Link>
+        <Link href={localePath("/portfolio#audiovisual",lang)} className="studio-project project-video" data-analytics="portfolio_click"><Image src="/media/cidade-anoitecer.jpg" alt={pt ? "Vista aérea da cidade ao anoitecer, por Rafael Maldivas" : "Aerial city view at dusk by Rafael Maldivas"} fill sizes="(max-width: 800px) 95vw, 48vw" /><div className="studio-project-top"><span>02 / {pt ? "UM NOVO OLHAR" : "A FRESH PERSPECTIVE"}</span><ArrowUpRight /></div><div className="studio-project-bottom"><span className="studio-pill">{pt ? "Drone · Vídeo · Conteúdo" : "Drone · Video · Content"}</span><h3>{pt ? "Sua marca vista de outro jeito." : "See your brand in a new light."}</h3><p>{pt ? "Da captação aérea à edição. Imagens que apresentam lugares, histórias e negócios." : "From aerial capture to editing. Images that introduce places, stories and businesses."}</p></div></Link></div>
+      </div></section>
+      <ProjectPlanner />
+      <section className="growth-home"><div className="wrap"><GrowthToolsInvite /></div></section>
       <CaseHighlights />
-
-      <section id="metodo" className="home-method-section">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-tag">{c.howTag}</div>
-            <h2>{c.howTitle}</h2>
-            <p className="sec-lead">{c.howLead}</p>
-          </Reveal>
-          <div className="steps">
-            {c.steps.map((s, i) => (
-              <Reveal className="step" key={s.h} delay={i * 0.07}>
-                <div className="step-n">{i + 1}</div>
-                <h3>{s.h}</h3>
-                <p>{s.p}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
+      <section className="studio-tools" id="ferramentas"><div className="wrap"><div className="studio-section-heading"><div><div className="studio-kicker">{pt ? "EXPERIMENTE. É POR MINHA CONTA." : "TRY IT. IT’S ON ME."}</div><h2>{pt ? "Uma mão na roda." : "A little helping hand."}</h2><p>{pt ? "Ferramentas úteis, sem cadastro. Um pouco do meu trabalho, já ajudando no seu." : "Useful tools, no signup. A little of my work, already helping yours."}</p></div><Link className="studio-text-link" href={localePath("/ferramentas",lang)}>{pt ? "Ver todas" : "See all"}<ArrowUpRight size={18} /></Link></div><div className="studio-tool-grid">{[
+        ["plano-digital", "01", pt ? "Planejador digital" : "Digital planner", pt ? "Encontre uma prioridade e saia com um plano de ação." : "Find a priority and leave with an action plan."],
+        ["plano-digital#simulador", "02", pt ? "Simulador de tempo" : "Time simulator", pt ? "Descubra quanto da rotina poderia ser automatizado." : "Explore how much of your routine could be automated."],
+        ["estudio-de-imagem", "03", pt ? "Estúdio de imagem" : "Image studio", pt ? "Remova fundos e prepare fotos para a sua vitrine." : "Remove backgrounds and prepare photos for your storefront."],
+      ].map(([slug,n,title,desc])=><Link key={slug} href={localePath(`/ferramentas/${slug}`,lang)} data-analytics="tool_click"><span>{n}<ArrowUpRight size={20} /></span><h3>{title}</h3><p>{desc}</p><small>{pt ? "Abrir ferramenta" : "Open tool"}<ArrowRight size={15} /></small></Link>)}</div></div></section>
+      <section className="studio-method" id="metodo"><div className="wrap"><div className="studio-section-heading"><div><div className="studio-kicker">{pt ? "CRIATIVIDADE NO COMEÇO. CUIDADO ATÉ O FIM." : "CREATIVE FROM THE START. CAREFUL TO THE FINISH."}</div><h2>{pt ? "Trabalho bom tem conversa." : "Good work starts with a conversation."}</h2></div></div><div className="studio-method-grid">{(pt ? [["Escutar de verdade", "Entendo sua rotina, o problema e o que precisa mudar."],["Combinar o caminho", "Escopo, prioridades e etapas claros antes de começar."],["Construir junto", "Você acompanha, experimenta e participa dos ajustes."],["Entregar com cuidado", "Validação, orientação de uso e próximos passos combinados."]] : [["Really listen", "I learn about your routine, the problem and what needs to change."],["Agree on the path", "Clear scope, priorities and milestones before we start."],["Build together", "You follow along, try things and help shape the adjustments."],["Deliver with care", "Validation, guidance and agreed next steps."]]).map(([title,desc],i)=><div key={title}><span>0{i+1}</span><h3>{title}</h3><p>{desc}</p></div>)}</div></div></section>
       <BriefingForm />
-
-      <Mission />
-      <PartnerBadges />
-
-      {/* ---------- faixa de tecnologias ---------- */}
-      <div className="marquee" aria-hidden="true">
-        <div className="marquee-track">
-          {[...allTechs, ...allTechs].map((x, i) => (
-            <div className="tech" key={i}>
-              <TechIcon src={x.s} size={19} />
-              {x.n}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ---------- engenharia ---------- */}
-      <section id="engenharia">
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-tag">{c.engTag}</div>
-            <h2>{c.engTitle}</h2>
-            <p className="sec-lead">{c.engLead}</p>
-          </Reveal>
-          <div className="eng">
-            {c.eng.map((e, i) => (
-              <Reveal key={e.h} delay={i * 0.08}>
-                <Spotlight className="eng-card">
-                  <div className="eng-n">0{i + 1}</div>
-                  <h3>{e.h}</h3>
-                  <p>{e.p}</p>
-                </Spotlight>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- capacidades ---------- */}
-      <section id="capacidades" style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-tag">{c.capTag}</div>
-            <h2>{c.capTitle}</h2>
-            <div style={{ height: 40 }} />
-          </Reveal>
-          <div className="caps">
-            {c.caps.map((cap, i) => {
-              const icons = [Compass, Layout, Server, ShieldCheck, LineChart, Clapperboard];
-              const Ico = icons[i % icons.length];
-              return (
-                <Reveal className="cap-wrapper" key={cap.h} delay={i * 0.06}>
-                  <details className="cap-details">
-                    <summary className="cap-front">
-                      <div className="cap-icon-box">
-                        <Ico size={36} strokeWidth={1.5} />
-                      </div>
-                      <h3>{cap.h}</h3>
-                      <div
-                        style={{
-                          marginTop: "auto",
-                          color: "var(--accent)",
-                          fontSize: 11,
-                          fontWeight: 800,
-                          letterSpacing: "0.15em",
-                          textTransform: "uppercase",
-                          opacity: 0.6,
-                        }}
-                      >
-                        {lang === "pt" ? "Ver tecnologias e atividades +" : "View technologies and activities +"}
-                      </div>
-                    </summary>
-                    <div className="cap-back">
-                      <h3>{cap.h}</h3>
-                      <ul>
-                        {cap.i.map((it) => (
-                          <li key={it}>{it}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </details>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <CityStory />
-      <VideoShowcase />
-
-      {/* ---------- stack de criação ---------- */}
-      <section id="criacao" style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-tag">{l.craftTag}</div>
-            <h2 style={{ fontSize: "clamp(26px, 3vw, 34px)", marginBottom: 32 }}>{l.craftTitle}</h2>
-          </Reveal>
-          <div className="craft">
-            {craftStack.map((tool, i) => (
-              <Reveal key={tool.name} delay={i * 0.04}>
-                <div className="craft-item">
-                  <TechIcon src={tool.icon} size={26} />
-                  <div>
-                    <div className="craft-name">{tool.name}</div>
-                    <div className="craft-use">{tool.use[lang]}</div>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- ferramentas gratuitas ---------- */}
-      <section id="ferramentas" style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <Reveal>
-            <div className="sec-tag">{l.toolsTag}</div>
-            <h2>{l.toolsTitle}</h2>
-            <p className="sec-lead">{l.toolsLead}</p>
-          </Reveal>
-
-          <StudioInvite />
-          <div className="home-tools-link">
-            <p>{lang === "pt" ? "Consultas, calculadoras e utilitários gratuitos, organizados em uma página própria." : "Free lookups, calculators and utilities, collected on a dedicated page."}</p>
-            <Link className="btn btn-ghost" href={localePath("/ferramentas", lang)} data-analytics="tool_click">
-              {lang === "pt" ? "Explorar todas as ferramentas" : "Explore all tools"} →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- método ---------- */}
-      {/* ---------- contato ---------- */}
-      <section id="contato">
-        <div className="wrap">
-          <Reveal>
-            <Spotlight className="contact-box">
-              <h2>{c.contactTitle}</h2>
-              <p>{c.contactLead}</p>
-              <div className="cta-row" style={{ justifyContent: "center", marginBottom: 16 }}>
-                <Magnetic>
-                  <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">
-                    <MessageCircle size={18} /> {c.contactBtn}
-                  </a>
-                </Magnetic>
-                <Magnetic>
-                  <a className="btn btn-ghost" href={LINKEDIN} target="_blank" rel="noopener noreferrer">
-                    <TechIcon src="/icons/linkedin.svg" size={18} /> {l.linkedinCta}
-                  </a>
-                </Magnetic>
-                <Magnetic>
-                  <a className="btn btn-ghost" href={GITHUB_USER} target="_blank" rel="noopener noreferrer">
-                    {c.ctaGh}
-                  </a>
-                </Magnetic>
-              </div>
-              <p className="contact-fine">{c.contactFine}</p>
-            </Spotlight>
-          </Reveal>
-        </div>
-      </section>
-    </>
+      <section id="contato" className="studio-contact"><div className="wrap"><div className="studio-kicker">{pt ? "O PRÓXIMO PROJETO PODE SER O SEU." : "THE NEXT PROJECT COULD BE YOURS."}</div><h2>{pt ? "Vamos fazer" : "Let’s make"}<br /><em>{pt ? "acontecer?" : "it happen."}</em></h2><p>{pt ? "Me conte a ideia. A gente encontra o caminho." : "Tell me your idea. We’ll find the way forward."}</p><a className="btn studio-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">{pt ? "Conversar com o Rafael" : "Talk to Rafael"}<ArrowUpRight size={20} /></a><span className="studio-contact-sign">Rafael Maldivas / Maldivas Tech</span></div></section>
+    </div>
   );
 }

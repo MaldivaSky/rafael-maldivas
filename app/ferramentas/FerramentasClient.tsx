@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import StudioInvite from "../components/StudioInvite";
+import GrowthToolsInvite from "../components/GrowthToolsInvite";
 import { Fragment, useMemo, useState } from "react";
 import { AlertTriangle, Check, Loader2, MessageCircle, Search, X } from "lucide-react";
 import { useLang, localePath } from "../lib/i18n";
@@ -391,14 +392,32 @@ export function MailTool({ c }: { c: Copy }) {
 
 function ToolIndex({ lang, title }: { lang: "pt" | "en"; title: string }) {
   const groups: ToolGroup[] = ["fiscal", "margem", "site", "operacao"];
+  const [query, setQuery] = useState("");
+  const [group, setGroup] = useState<ToolGroup | "all">("all");
+  const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const searchableTools = [...toolList,
+    { slug: "estudio-de-imagem", group: "site", copy: {
+      pt: { title: "Estúdio de imagem", description: "Remover fundo, redimensionar e converter fotos", keywords: ["imagem", "foto", "fundo"] },
+      en: { title: "Image studio", description: "Remove backgrounds, resize and convert photos", keywords: ["image", "photo", "background"] },
+    } },
+    { slug: "plano-digital", group: "operacao", copy: {
+      pt: { title: "Planejador digital", description: "Escolha uma prioridade e baixe seu plano de ação", keywords: ["plano", "prioridade", "planejador"] },
+      en: { title: "Digital planner", description: "Choose a priority and download an action plan", keywords: ["plan", "priority", "planner"] },
+    } },
+  ];
+  const filtered = searchableTools.filter((tool) => (group === "all" || tool.group === group) && normalize([tool.copy[lang].title, tool.copy[lang].description, ...tool.copy[lang].keywords].join(" ")).includes(normalize(query.trim())));
   let n = 0;
   return (
     <nav className="tool-index" aria-label={title}>
       <span className="tool-index-title">{title}</span>
+      <div className="growth-search"><label htmlFor="tool-search">{lang === "pt" ? "O que você precisa fazer?" : "What do you need to do?"}</label><div><Search size={19}/><input id="tool-search" type="search" placeholder={lang === "pt" ? "Busque por WhatsApp, preço, imagem…" : "Search WhatsApp, pricing, images…"} value={query} onChange={(e) => setQuery(e.target.value)}/></div></div>
+      <div className="growth-filters" role="group" aria-label={lang === "pt" ? "Filtrar por categoria" : "Filter by category"}><button type="button" aria-pressed={group === "all"} onClick={() => setGroup("all")}>{lang === "pt" ? "Todas" : "All"}</button>{groups.map((g) => <button type="button" key={g} aria-pressed={group === g} onClick={() => setGroup(g)}>{GROUP_LABEL[g][lang]}</button>)}</div>
+      <span className="growth-search-count" role="status">{filtered.length} {lang === "pt" ? "ferramentas encontradas" : "tools found"}</span>
+      {filtered.length === 0 && <p className="growth-no-results">{lang === "pt" ? "Nenhum resultado. Tente outra palavra ou limpe os filtros." : "No results. Try another word or clear the filters."} <button type="button" onClick={() => {setQuery(""); setGroup("all");}}>{lang === "pt" ? "Limpar filtros" : "Clear filters"}</button></p>}
       {groups.map((g) => (
         <Fragment key={g}>
-          <span className="tool-group">{GROUP_LABEL[g][lang]}</span>
-          {toolList
+          {filtered.some((tool) => tool.group === g) && <span className="tool-group">{GROUP_LABEL[g][lang]}</span>}
+          {filtered
             .filter((t) => t.group === g)
             .map((t) => {
               n += 1;
@@ -436,6 +455,7 @@ export default function FerramentasClient() {
 
       <section style={{ paddingTop: 0 }}>
         <div className="wrap">
+          <GrowthToolsInvite />
           <StudioInvite />
           <ToolIndex lang={lang} title={c.indexTitle} />
 

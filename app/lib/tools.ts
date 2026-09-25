@@ -9,6 +9,7 @@
 /* ------------------------------------------------------------------ */
 
 import type { Lang } from "./seo";
+import { growthTools } from "./growth-catalog";
 
 export type ToolGroup = "fiscal" | "margem" | "site" | "operacao";
 
@@ -38,6 +39,7 @@ export type Tool = {
 };
 
 export const tools: Tool[] = [
+  ...growthTools,
   {
     slug: "calculadora-cmv-preco-de-venda",
     key: "preco",
