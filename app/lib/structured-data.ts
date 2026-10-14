@@ -143,7 +143,8 @@ export function founderSchema() {
 
 /**
  * SoftwareApplication para cada produto SaaS.
- * `aggregateRating` + `offers` habilitam Rich Snippets (estrelas + preço).
+ * `offers` habilita Rich Snippet de preço. Sem `aggregateRating` enquanto
+ * não houver avaliações reais e visíveis na página (diretriz do Google).
  */
 export function productSchema(slug: ProductSlug, lang: "pt" | "en" = "pt") {
   const p = PRODUCTS[slug];
@@ -181,18 +182,11 @@ export function productSchema(slug: ProductSlug, lang: "pt" | "en" = "pt") {
         ? {
             eligibleQuantity: {
               "@type": "QuantitativeValue",
-              value: 14,
+              value: p.trialDays,
               unitText: "DAY",
             },
           }
         : {}),
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: p.ratingValue,
-      reviewCount: p.reviewCount,
-      bestRating: 5,
-      worstRating: 1,
     },
     featureList: copy.keywords,
   };

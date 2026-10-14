@@ -10,7 +10,6 @@ import CaseHighlights from "./components/CaseHighlights";
 import BriefingForm from "./components/BriefingForm";
 import ProjectPlanner from "./components/ProjectPlanner";
 import EmpresasInvite from "./components/EmpresasInvite";
-import Testimonials from "./components/Testimonials";
 import ExitToast from "./components/ExitToast";
 import GrowthToolsInvite from "./components/GrowthToolsInvite";
 import BravusPartnership from "./components/BravusPartnership";
@@ -51,7 +50,6 @@ export default function HomeClient() {
       <ProjectPlanner />
       <BravusPartnership />
       <EmpresasInvite />
-      <Testimonials />
       <section className="growth-home"><div className="wrap"><GrowthToolsInvite /></div></section>
       <CaseHighlights />
       <ExitToast />

@@ -36,8 +36,8 @@ export type Product = {
   priceCurrency: "BRL" | "USD";
   /** oferta com trial? */
   hasFreeTrial: boolean;
-  ratingValue: number;
-  reviewCount: number;
+  /** dias de teste grátis exibidos na página do produto */
+  trialDays: number;
   /** technologies usadas (para llms.txt e knowsAbout) */
   stack: string[];
   copy: Record<Lang, ProductCopy>;
@@ -59,8 +59,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     priceBRL: "149.90",
     priceCurrency: "BRL",
     hasFreeTrial: true,
-    ratingValue: 4.8,
-    reviewCount: 37,
+    trialDays: 30,
     stack: ["Next.js", "PostgreSQL", "Row Level Security", "NFC-e", "iFood API"],
     copy: {
       pt: {
@@ -108,8 +107,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     priceBRL: "399.00",
     priceCurrency: "BRL",
     hasFreeTrial: true,
-    ratingValue: 4.7,
-    reviewCount: 21,
+    trialDays: 7,
     stack: ["Next.js", "PostgreSQL", "Postgres Full-Text Search", "LGPD"],
     copy: {
       pt: {

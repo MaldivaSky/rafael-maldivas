@@ -57,7 +57,6 @@ type ProductContent = {
   solutionTitle: string;
   features: FeatureItem[];
   stats: Stat[];
-  testimonial: { quote: string; author: string; role: string };
   cta: string;
   ctaDemo: string;
   ctaAllProducts: string;
@@ -80,16 +79,11 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
         { icon: Layers, title: "Multi-tenant", desc: "Gerencie mais de uma unidade com o mesmo login. Visão unificada ou por filial, você decide." },
       ],
       stats: [
-        { n: "37+", label: "restaurantes ativos" },
-        { n: "4.8★", label: "avaliação média" },
+        { n: "Meta", label: "Tech Provider verificado" },
+        { n: "iFood", label: "integração homologada" },
         { n: "R$149,90", label: "por mês, por unidade" },
         { n: "30 dias", label: "teste grátis" },
       ],
-      testimonial: {
-        quote: "Antes da MiseOn eu não sabia de verdade qual prato dava lucro. Hoje o CMV de cada item está ali, na tela, atualizado.",
-        author: "Chef de cozinha",
-        role: "Restaurante em São Paulo",
-      },
       cta: "Testar o sistema",
       ctaDemo: "Agendar demonstração",
       ctaAllProducts: "Ver todos os produtos",
@@ -109,16 +103,11 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
         { icon: Layers, title: "Multi-tenant", desc: "Manage more than one location with the same login. Unified view or by branch — your call." },
       ],
       stats: [
-        { n: "37+", label: "active restaurants" },
-        { n: "4.8★", label: "average rating" },
+        { n: "Meta", label: "verified Tech Provider" },
+        { n: "iFood", label: "approved integration" },
         { n: "R$149.90", label: "per month, per location" },
         { n: "30 days", label: "free trial" },
       ],
-      testimonial: {
-        quote: "Before MiseOn I never really knew which dish was profitable. Now the food cost for every item is right there on screen, always up to date.",
-        author: "Head chef",
-        role: "Restaurant in São Paulo",
-      },
       cta: "Test the system",
       ctaDemo: "Schedule a demo",
       ctaAllProducts: "All products",
@@ -141,16 +130,11 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
         { icon: Layers, title: "Multi-cliente", desc: "Separe pipelines por cliente e garanta que nenhum candidato aparece onde não deveria." },
       ],
       stats: [
-        { n: "21+", label: "agências ativas" },
-        { n: "4.7★", label: "avaliação média" },
+        { n: "BR → JP", label: "recrutamento Brasil–Japão" },
+        { n: "Fujiarte", label: "cliente com contrato" },
         { n: "R$399", label: "por mês" },
         { n: "7 dias", label: "teste grátis" },
       ],
-      testimonial: {
-        quote: "Antes perdíamos candidato bom por falta de acompanhamento. Hoje o pipeline está ali, todo mundo na agência enxerga o mesmo estado da vaga.",
-        author: "Diretora de R&S",
-        role: "Agência em São Paulo",
-      },
       cta: "Começar teste grátis",
       ctaDemo: "Conversar com Rafael",
       ctaAllProducts: "Ver todos os produtos",
@@ -170,16 +154,11 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
         { icon: Layers, title: "Multi-client", desc: "Separate pipelines per client and ensure no candidate appears where they shouldn't." },
       ],
       stats: [
-        { n: "21+", label: "active agencies" },
-        { n: "4.7★", label: "average rating" },
+        { n: "BR → JP", label: "Brazil–Japan recruitment" },
+        { n: "Fujiarte", label: "contracted client" },
         { n: "R$399", label: "per month" },
         { n: "7 days", label: "free trial" },
       ],
-      testimonial: {
-        quote: "We used to lose good candidates because nobody was following up. Now the pipeline is right there and everyone in the agency sees the same status.",
-        author: "Head of Recruitment",
-        role: "Agency in São Paulo",
-      },
       cta: "Start free trial",
       ctaDemo: "Talk to Rafael",
       ctaAllProducts: "All products",
@@ -223,11 +202,6 @@ export default function ProductPage({
       "@type": "Offer",
       price: product.priceBRL,
       priceCurrency: product.priceCurrency,
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.ratingValue,
-      reviewCount: product.reviewCount,
     },
     description: c.metaDescription,
     author: { "@type": "Organization", name: "Maldivas Tech" },
@@ -338,24 +312,6 @@ export default function ProductPage({
               );
             })}
           </div>
-        </div>
-      </section>
-
-      {/* ── DEPOIMENTO ── */}
-      <section className="prod-testimonial-section">
-        <div className="wrap">
-          <blockquote className="prod-testimonial">
-            <Star size={18} className="prod-star" />
-            <Star size={18} className="prod-star" />
-            <Star size={18} className="prod-star" />
-            <Star size={18} className="prod-star" />
-            <Star size={18} className="prod-star" />
-            <p>"{content.testimonial.quote}"</p>
-            <footer>
-              <strong>{content.testimonial.author}</strong> ·{" "}
-              {content.testimonial.role}
-            </footer>
-          </blockquote>
         </div>
       </section>
 
