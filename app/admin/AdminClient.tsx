@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 
 /**
- * Painel de leads. Os dados vêm do Notion (via /api/leads), que é usado
- * só como banco. O token do Notion mora no servidor — nunca aqui.
+ * Painel de leads. Os dados vêm de /api/leads: PostgreSQL na Oracle Cloud
+ * (principal) ou Notion (reserva). Credenciais moram no servidor — nunca aqui.
  *
  * A senha é enviada no header `x-admin-key`. No localStorage fica apenas
  * um marcador de sessão, nunca a senha.
@@ -68,6 +68,7 @@ export default function AdminClient() {
   const [logado, setLogado] = useState(false);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [statuses, setStatuses] = useState<string[]>([]);
+  const [origem, setOrigem] = useState<"oracle" | "notion">("notion");
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
   const [filtroArea, setFiltroArea] = useState("Todas");
@@ -97,6 +98,7 @@ export default function AdminClient() {
       if (d.ok) {
         setLeads(d.leads);
         setStatuses(d.statuses ?? []);
+        setOrigem(d.origem === "oracle" ? "oracle" : "notion");
       } else {
         setErro("Não consegui ler os leads agora.");
       }
@@ -123,6 +125,7 @@ export default function AdminClient() {
         localStorage.setItem(TOKEN, "1");
         setLeads(d.leads);
         setStatuses(d.statuses ?? []);
+        setOrigem(d.origem === "oracle" ? "oracle" : "notion");
         setLogado(true);
       } else {
         setErro("Senha incorreta.");
@@ -384,8 +387,9 @@ export default function AdminClient() {
         )}
 
         <p className="field-hint" style={{ marginTop: 28 }}>
-          Os dados vivem no Notion (usado apenas como banco). Para mudar de <em>status</em> aqui
-          já atualiza lá também. Você pode arrastar os cards no próprio Notion se preferir.
+          {origem === "oracle"
+            ? <>Os dados vivem no PostgreSQL da Oracle Cloud, com trilha de auditoria de cada mudança de <em>status</em>. Se a Oracle cair, novos leads vão para o Notion (reserva).</>
+            : <>Os dados vivem no Notion (usado apenas como banco). Mudar o <em>status</em> aqui já atualiza lá também.</>}
         </p>
       </div>
     </section>

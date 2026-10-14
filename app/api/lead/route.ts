@@ -1,22 +1,18 @@
 import { NextResponse } from "next/server";
 import { normalizarLead, type RawLead } from "../../lib/lead";
+import { armazenamentoConfigurado, salvarLead } from "../../lib/leads-store";
 
 /**
- * Recebe o lead do formulário e grava uma página no database do Notion.
+ * Recebe o lead do formulário e grava no banco de leads.
  *
- * Runtime Node (padrão), NÃO edge: precisamos de env vars confiáveis e de
- * um timeout decente para falar com a API do Notion na Vercel.
+ * Principal: PostgreSQL na Oracle Cloud; reserva: Notion (se a Oracle
+ * falhar, o contato não se perde). Detalhes em app/lib/leads-store.ts.
  *
- * Colunas reais da base "Leads — Maldivas Tech":
- *   Nome(title) Status(select) Area(select) Prazo(select)
- *   Servicos(multi_select) Contato(rich_text) Negocio(rich_text)
- *   Dor(rich_text) Idioma(select) Canal(select) Criado em(created_time)
+ * Runtime Node (padrão), NÃO edge: precisamos de env vars confiáveis,
+ * de node:crypto (JWT) e de um timeout decente na Vercel.
  */
 
 export const runtime = "nodejs";
-
-const NOTION_API = "https://api.notion.com/v1/pages";
-const NOTION_VERSION = "2022-06-28";
 
 /* ---------------- rate limit simples em memória ---------------- */
 const HITS = new Map<string, number[]>();
@@ -31,61 +27,10 @@ function passouDoLimite(ip: string): boolean {
   return antigos.length > LIMITE;
 }
 
-/* ---------------- monta o payload do Notion ---------------- */
-
-type Rich = { rich_text: { text: { content: string } }[] };
-const rt = (content: string): Rich => ({
-  rich_text: content ? [{ text: { content: content.slice(0, 1900) } }] : [],
-});
-const sel = (name: string) => (name ? { select: { name } } : undefined);
-
-function montarPagina(databaseId: string, lead: ReturnType<typeof normalizarLead>) {
-  const titulo = lead.negocio || lead.nome;
-
-  const properties: Record<string, unknown> = {
-    Nome: { title: [{ text: { content: titulo.slice(0, 1900) } }] },
-    Status: { select: { name: "Novo" } },
-    Area: sel(lead.area),
-    Prazo: sel(lead.prazo),
-    Servicos: lead.servicos.length
-      ? { multi_select: lead.servicos.map((name) => ({ name })) }
-      : undefined,
-    Contato: rt(lead.contato),
-    Negocio: rt(lead.negocio),
-    Dor: rt(lead.dor),
-    Idioma: sel(lead.idioma === "en" ? "EN" : "PT"),
-    Canal: sel("Site"),
-  };
-
-  for (const k of Object.keys(properties)) {
-    if (properties[k] === undefined) delete properties[k];
-  }
-
-  // corpo da página: leitura rápida, sem depender de coluna
-  const linhas = [
-    `Área: ${lead.area}`,
-    `Negócio: ${lead.negocio || "—"}`,
-    `Dor: ${lead.dor}`,
-    `Serviços: ${lead.servicos.join(", ") || "não especificado"}`,
-    `Prazo: ${lead.prazo}`,
-    `Contato: ${lead.contato || "não informado"}`,
-  ];
-  const children = linhas.map((line) => ({
-    object: "block",
-    type: "paragraph",
-    paragraph: { rich_text: [{ type: "text", text: { content: line } }] },
-  }));
-
-  return { parent: { database_id: databaseId }, properties, children };
-}
-
 /* ---------------- handler ---------------- */
 
 export async function POST(req: Request) {
-  const token = process.env.NOTION_TOKEN;
-  const databaseId = process.env.NOTION_DATABASE_ID;
-
-  if (!token || !databaseId) {
+  if (!armazenamentoConfigurado()) {
     return NextResponse.json({ ok: false, reason: "not_configured" }, { status: 500 });
   }
 
@@ -116,28 +61,10 @@ export async function POST(req: Request) {
   }
 
   try {
-    const r = await fetch(NOTION_API, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Notion-Version": NOTION_VERSION,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(montarPagina(databaseId, lead)),
-      signal: AbortSignal.timeout(9000),
-    });
-
-    if (!r.ok) {
-      const detalhe = await r.text();
-      return NextResponse.json(
-        { ok: false, reason: "notion", status: r.status, detalhe: detalhe.slice(0, 400) },
-        { status: 502 }
-      );
-    }
-
-    const page = await r.json();
-    return NextResponse.json({ ok: true, id: page?.id ?? null });
-  } catch {
-    return NextResponse.json({ ok: false, reason: "network" }, { status: 502 });
+    const destino = await salvarLead(lead);
+    return NextResponse.json({ ok: true, destino });
+  } catch (e) {
+    console.error("[lead] falha ao gravar:", String(e).slice(0, 300));
+    return NextResponse.json({ ok: false, reason: "storage" }, { status: 502 });
   }
 }

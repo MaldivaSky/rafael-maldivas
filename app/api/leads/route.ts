@@ -1,5 +1,7 @@
+import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
-import { listarLeads, atualizarStatus, STATUS_OPCOES } from "../../lib/notion-leads";
+import { STATUS_OPCOES } from "../../lib/notion-leads";
+import { atualizarStatus, listarLeads, origemLeitura } from "../../lib/leads-store";
 
 /**
  * API do painel de leads. Protegida por senha (ADMIN_PASSWORD) enviada no
@@ -12,8 +14,10 @@ export const runtime = "nodejs";
 function autorizado(req: Request): boolean {
   const esperado = process.env.ADMIN_PASSWORD;
   if (!esperado) return false;
-  const enviado = req.headers.get("x-admin-key") ?? "";
-  return enviado.length > 0 && enviado === esperado;
+  const enviado = Buffer.from(req.headers.get("x-admin-key") ?? "");
+  const certo = Buffer.from(esperado);
+  // tempo constante: não deixa medir quantos caracteres acertou
+  return enviado.length === certo.length && timingSafeEqual(enviado, certo);
 }
 
 /* ---------- GET: lista os leads ---------- */
@@ -23,10 +27,11 @@ export async function GET(req: Request) {
   }
   try {
     const leads = await listarLeads();
-    return NextResponse.json({ ok: true, leads, statuses: STATUS_OPCOES });
+    return NextResponse.json({ ok: true, leads, statuses: STATUS_OPCOES, origem: origemLeitura() });
   } catch (e) {
+    console.error("[leads] falha:", String(e).slice(0, 300));
     return NextResponse.json(
-      { ok: false, reason: "notion", detail: String(e).slice(0, 300) },
+      { ok: false, reason: "storage" },
       { status: 502 }
     );
   }
@@ -54,8 +59,9 @@ export async function PATCH(req: Request) {
     await atualizarStatus(id, status);
     return NextResponse.json({ ok: true });
   } catch (e) {
+    console.error("[leads] falha:", String(e).slice(0, 300));
     return NextResponse.json(
-      { ok: false, reason: "notion", detail: String(e).slice(0, 300) },
+      { ok: false, reason: "storage" },
       { status: 502 }
     );
   }
