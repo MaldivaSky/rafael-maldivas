@@ -22,10 +22,11 @@ export function generateStaticParams(): { lang: Lang; slug: string }[] {
 }
 
 export async function generateMetadata({
-  params,
+  params: paramsP,
 }: {
-  params: Params;
+  params: Promise<Params>;
 }): Promise<Metadata> {
+  const params = await paramsP;
   if (!isLang(params.lang)) return {};
   const tool = toolBySlug(params.slug);
   if (!tool) return {};
@@ -40,7 +41,8 @@ export async function generateMetadata({
   });
 }
 
-export default function ToolPage({ params }: { params: Params }) {
+export default async function ToolPage({ params: paramsP }: { params: Promise<Params> }) {
+  const params = await paramsP;
   if (!isLang(params.lang)) notFound();
   const lang = params.lang as Lang;
   const tool = toolBySlug(params.slug);

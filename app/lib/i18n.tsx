@@ -29,9 +29,11 @@ export function LangProvider({
   initialLang?: Lang;
 }) {
   // A URL é a fonte de verdade do idioma (é ela que o Google indexa).
-  const [lang, setLangState] = useState<Lang>(initialLang);
+  // Lida já no 1º render: o provider raiz (fora de /[lang]) também sai certo
+  // no HTML do servidor — sem menu em PT numa página /en nem "piscar" ao hidratar.
   const router = useRouter();
   const pathname = usePathname();
+  const [lang, setLangState] = useState<Lang>(() => langFromPath(pathname) ?? initialLang);
 
     // Sincroniza o estado com a rota: navegar para /en/... vira lang "en".
   useEffect(() => {

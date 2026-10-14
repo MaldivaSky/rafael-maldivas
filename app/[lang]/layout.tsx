@@ -17,13 +17,14 @@ export function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
 }
 
-export default function LangLayout({
+export default async function LangLayout({
   children,
-  params,
+  params: paramsP,
 }: {
   children: React.ReactNode;
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }) {
+  const params = await paramsP;
   if (!isLang(params.lang)) notFound();
   const lang = params.lang as Lang;
 

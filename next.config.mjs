@@ -1,8 +1,14 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   // permite compilar em outra pasta sem derrubar o `next dev` que já está no ar
   distDir: process.env.NEXT_DIST_DIR || ".next",
+  // raiz explícita: evita o Next "adivinhar" a raiz quando há outro lockfile
+  // acima (worktrees em .claude/worktrees) — vale igual na Vercel
+  outputFileTracingRoot: path.dirname(fileURLToPath(import.meta.url)),
 
   /**
    * A remoção de fundo (@imgly/background-removal) NÃO entra no bundle: o

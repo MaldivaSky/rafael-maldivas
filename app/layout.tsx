@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { ThemeProvider } from "./components/theme-provider";
 import { LangProvider } from "./lib/i18n";
 import SiteNav from "./components/SiteNav";
+import ThreeBackground from "./components/ThreeBackgroundLazy";
 import SiteFooter from "./components/SiteFooter";
 import SiteAnalytics from "./components/SiteAnalytics";
 import CookieConsent from "./components/CookieConsent";
@@ -12,9 +12,6 @@ import "./editorial.css";
 import "./growth-tools.css";
 import "./studio-home.css";
 
-const ThreeBackground = dynamic(() => import("./components/ThreeBackground"), {
-  ssr: false,
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),

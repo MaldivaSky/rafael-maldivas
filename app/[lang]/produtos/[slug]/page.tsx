@@ -27,10 +27,11 @@ export function generateStaticParams(): { lang: Lang; slug: ProductSlug }[] {
 }
 
 export async function generateMetadata({
-  params,
+  params: paramsP,
 }: {
-  params: { lang: string; slug: string };
+  params: Promise<{ lang: string; slug: string }>;
 }): Promise<Metadata> {
+  const params = await paramsP;
   if (!isLang(params.lang)) return {};
   const lang = params.lang as Lang;
   const product = productList.find((p) => p.slug === params.slug);
@@ -170,11 +171,12 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
 /* ──────────────────────────────────────────────
    Componente principal
 ─────────────────────────────────────────────── */
-export default function ProductPage({
-  params,
+export default async function ProductPage({
+  params: paramsP,
 }: {
-  params: { lang: string; slug: string };
+  params: Promise<{ lang: string; slug: string }>;
 }) {
+  const params = await paramsP;
   if (!isLang(params.lang)) return null;
   const lang = params.lang as Lang;
   const product = productList.find((p) => p.slug === params.slug);

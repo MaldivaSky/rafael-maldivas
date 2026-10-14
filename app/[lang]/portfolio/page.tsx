@@ -8,10 +8,11 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({
-  params,
+  params: paramsP,
 }: {
-  params: { lang: string };
+  params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
+  const params = await paramsP;
   if (!isLang(params.lang)) return {};
   const lang = params.lang as Lang;
   return buildMetadata({
