@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import {
   CheckCircle2,
   ArrowUpRight,
@@ -178,14 +179,14 @@ export default async function ProductPage({
   params: Promise<{ lang: string; slug: string }>;
 }) {
   const params = await paramsP;
-  if (!isLang(params.lang)) return null;
+  if (!isLang(params.lang)) notFound();
   const lang = params.lang as Lang;
   const product = productList.find((p) => p.slug === params.slug);
-  if (!product) return null;
+  if (!product) notFound();
 
   const c = product.copy[lang];
   const content = CONTENT[product.slug]?.[lang];
-  if (!content) return null;
+  if (!content) notFound();
 
   const whatsapp = `https://wa.me/5511919889233?text=${encodeURIComponent(
     lang === "pt"
