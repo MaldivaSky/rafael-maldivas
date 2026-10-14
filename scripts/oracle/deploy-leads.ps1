@@ -23,19 +23,35 @@ param(
 $ErrorActionPreference = "Stop"
 $Root = (Resolve-Path "$PSScriptRoot\..\..").Path
 $Here = $PSScriptRoot
-$Ssh = @("-i", $Key, "-o", "BatchMode=yes", "-o", "ConnectTimeout=20", "-o", "StrictHostKeyChecking=accept-new")
-
 function Step($t) { Write-Host "`n==> $t" -ForegroundColor Cyan }
 
-Step "1/4 Enviando scripts para $Server"
-& ssh @Ssh $Server "mkdir -p ~/maldivas-leads-src"
-if ($LASTEXITCODE -ne 0) { throw "SSH falhou (chave/host)." }
-& scp @Ssh "$Here\leads-schema.sql" "$Here\setup-leads.sh" "${Server}:~/maldivas-leads-src/"
-if ($LASTEXITCODE -ne 0) { throw "SCP falhou." }
+if (-not (Test-Path $Key)) { throw "Chave nao encontrada: $Key" }
 
-Step "Configurando banco, PostgREST, Caddy e backup na VM"
-$out = & ssh @Ssh $Server "sed -i 's/\r$//' ~/maldivas-leads-src/setup-leads.sh && bash ~/maldivas-leads-src/setup-leads.sh"
-if ($LASTEXITCODE -ne 0) { throw "setup-leads.sh falhou na VM (veja as linhas [leads] acima)." }
+# O OpenSSH do Windows recusa chave legivel por outros (ex.: grupo
+# CodexSandboxUsers). Usamos uma copia temporaria so do usuario atual,
+# sem alterar o arquivo original, e apagamos ao terminar.
+$me = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+$tmpKey = Join-Path $env:TEMP ("mt-ssh-" + [guid]::NewGuid().ToString("N"))
+Copy-Item -LiteralPath $Key -Destination $tmpKey
+# controle total SO do usuario atual: o OpenSSH aceita e permite apagar no fim
+& icacls $tmpKey /inheritance:r /grant:r "${me}:F" | Out-Null
+if ($LASTEXITCODE -ne 0) { Remove-Item -Force $tmpKey; throw "Nao consegui restringir a copia da chave." }
+$Ssh = @("-i", $tmpKey, "-o", "BatchMode=yes", "-o", "ConnectTimeout=20", "-o", "StrictHostKeyChecking=accept-new")
+
+try {
+  Step "1/4 Enviando scripts para $Server"
+  & ssh @Ssh $Server "mkdir -p ~/maldivas-leads-src"
+  if ($LASTEXITCODE -ne 0) { throw "SSH falhou (chave/host)." }
+  & scp @Ssh "$Here\leads-schema.sql" "$Here\setup-leads.sh" "${Server}:~/maldivas-leads-src/"
+  if ($LASTEXITCODE -ne 0) { throw "SCP falhou." }
+
+  Step "Configurando banco, PostgREST, Caddy e backup na VM"
+  $out = & ssh @Ssh $Server "sed -i 's/\r$//' ~/maldivas-leads-src/setup-leads.sh && bash ~/maldivas-leads-src/setup-leads.sh"
+  if ($LASTEXITCODE -ne 0) { throw "setup-leads.sh falhou na VM (veja as linhas [leads] acima)." }
+}
+finally {
+  Remove-Item -Force -ErrorAction SilentlyContinue $tmpKey
+}
 $url = ($out | Where-Object { $_ -like "ORACLE_LEADS_URL=*" } | Select-Object -Last 1) -replace "^ORACLE_LEADS_URL=", ""
 $secret = ($out | Where-Object { $_ -like "ORACLE_LEADS_JWT_SECRET=*" } | Select-Object -Last 1) -replace "^ORACLE_LEADS_JWT_SECRET=", ""
 if (-not $url -or -not $secret) { throw "A VM nao devolveu URL/segredo." }
@@ -68,8 +84,11 @@ if ($LASTEXITCODE -ne 0) {
   Write-Warning "  ORACLE_LEADS_JWT_SECRET = (conteudo de .env.oracle-leads.local)"
   exit 1
 }
+# PS 5.1: stderr redirecionado de comando nativo vira erro fatal com "Stop".
+# O "env rm" de uma variavel que ainda nao existe escreve no stderr - e normal.
+$ErrorActionPreference = "Continue"
 foreach ($pair in @(@("ORACLE_LEADS_URL", $url), @("ORACLE_LEADS_JWT_SECRET", $secret))) {
-  & npx --yes vercel@latest env rm $pair[0] production --yes --scope $VercelScope --cwd $link 2>$null | Out-Null
+  & npx --yes vercel@latest env rm $pair[0] production --yes --scope $VercelScope --cwd $link 2>&1 | Out-Null
   $pair[1] | & npx --yes vercel@latest env add $pair[0] production --scope $VercelScope --cwd $link | Out-Null
   if ($LASTEXITCODE -ne 0) { throw "Falha ao gravar $($pair[0]) na Vercel." }
 }
