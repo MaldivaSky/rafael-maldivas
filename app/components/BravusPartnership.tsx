@@ -15,7 +15,7 @@ export default function BravusPartnership() {
             <div className="sec-tag" style={{ marginBottom: "24px", display: "inline-block", background: "rgba(2, 126, 246, 0.1)", color: "#027ef6", padding: "8px 16px", borderRadius: "100px", fontWeight: 700, fontSize: "14px", letterSpacing: "0.05em" }}>
               PARCERIA ESTRATÉGICA
             </div>
-            <h2 style={{ fontSize: "56px", fontWeight: 900, marginBottom: "24px", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+            <h2 className="bv-title" style={{ fontWeight: 900, marginBottom: "24px", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
               Solução Completa para <br />
               <span style={{ color: "#027ef6" }}>Food Service</span>
             </h2>
@@ -27,7 +27,7 @@ export default function BravusPartnership() {
         </div>
 
         {/* Grid Principal de Apresentação */}
-        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "64px", alignItems: "center", marginBottom: "100px" }}>
+        <div className="bv-grid">
           
           {/* Lado Esquerdo: Imagens dos Terminais */}
           <Reveal>
@@ -44,7 +44,7 @@ export default function BravusPartnership() {
           {/* Lado Direito: Features da Solução Integrada */}
           <Reveal delay={0.2}>
             <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-              <div style={{ display: "flex", gap: "24px", alignItems: "center", marginBottom: "16px" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "16px 24px", alignItems: "center", marginBottom: "16px" }}>
                 <h3 style={{ fontSize: "28px", fontWeight: 900, margin: 0, letterSpacing: "-1px" }}>BRAVUS <span style={{ color: "#027ef6", fontWeight: 400 }}>CORE</span></h3>
                 <span style={{ color: "var(--line-strong)" }}>|</span>
                 <Image src="/logo-horiz-miseon.png" alt="MiseOn Logo" width={140} height={40} style={{ objectFit: "contain" }} />
@@ -83,7 +83,7 @@ export default function BravusPartnership() {
 
         {/* Street Market Showcase */}
         <Reveal>
-          <Spotlight style={{ borderRadius: "32px", border: "1px solid var(--line-strong)", padding: "64px", background: "var(--surface)", display: "flex", gap: "64px", alignItems: "center", overflow: "hidden", position: "relative" }}>
+          <Spotlight className="bv-showcase">
             <div style={{ flex: 1, zIndex: 2 }}>
               <h3 style={{ fontSize: "36px", fontWeight: 800, marginBottom: "24px" }}>Do Restaurante Fino <br />ao Street Food</h3>
               <p style={{ fontSize: "18px", color: "var(--fg-muted)", lineHeight: 1.6, marginBottom: "32px" }}>
@@ -98,7 +98,7 @@ export default function BravusPartnership() {
                 Agendar uma demonstração <ChevronRight size={18} />
               </a>
             </div>
-            <div style={{ flex: 1, position: "relative", height: "450px", borderRadius: "24px", overflow: "hidden", zIndex: 2, background: "var(--surface)", border: "1px solid var(--line)" }}>
+            <div className="bv-showcase-media" style={{ flex: 1, position: "relative", borderRadius: "24px", overflow: "hidden", zIndex: 2, background: "var(--surface)", border: "1px solid var(--line)" }}>
               <Image src="/partners/bravus-3.jpg" alt="Terminal MiseOn em ambiente" fill style={{ objectFit: "contain", padding: "16px" }} />
             </div>
             {/* Background Blob */}

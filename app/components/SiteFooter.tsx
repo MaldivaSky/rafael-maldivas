@@ -25,7 +25,6 @@ const t = {
       ["/portfolio", "Portfólio"],
       ["/about", "Sobre"],
       ["/#contato", "Contato"],
-      ["/admin", "Painel"],
     ],
     rights: "Todos os direitos reservados.",
     marks:
@@ -42,7 +41,6 @@ const t = {
       ["/portfolio", "Portfolio"],
       ["/about", "About"],
       ["/#contato", "Contact"],
-      ["/admin", "Dashboard"],
     ],
     rights: "All rights reserved.",
     marks:

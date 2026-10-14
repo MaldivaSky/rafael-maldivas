@@ -78,6 +78,18 @@ const copy = {
       "Field operation",
       "The kit and the pilot are mine: no subcontracted capture."
     ],
+    "supermarket": [
+      "Promotional video — Retail",
+      "Capture and editing built around the shopper journey in a retail (supermarket) setting."
+    ],
+    "camera_ai": [
+      "AI immersion — Scene generation",
+      "Artificial intelligence experiments applied to art direction and digital world-building."
+    ],
+    "casinhaamor": [
+      "Casinha Amor — Digital marketing",
+      "Audiovisual production focused on the institution's care work and social impact."
+    ],
     "ctaTitle": "Have a project in mind?",
     "ctaLead": "Tell me what you want to build. We can discuss the options and scope.",
     "ctaBtn": "Message on WhatsApp"
@@ -187,7 +199,7 @@ export default function PortfolioClient() {
             <p className="sec-lead">{c.mediaLead}</p>
           </Reveal>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))", gap: "24px" }}>
             
             {/* 1. Drone SP */}
             <Reveal className="media-card" delay={0.0}>

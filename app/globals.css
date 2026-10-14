@@ -1170,3 +1170,40 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   .prod-feature { flex-direction: column; gap: 14px; }
 }
 
+
+/* quatro cards em 2 x 2 (em vez de 3 + 1) no desktop */
+@media (min-width: 681px) {
+  .perks.perks-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* menu com 5 itens + controles cabe entre 901px e 1200px */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .nav-links { gap: 22px; }
+}
+
+/* ---------------- Bravus + Empresas B2B (home): responsivo ---------------- */
+.bv-title { font-size: clamp(34px, 6vw, 56px); }
+.bv-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center; margin-bottom: 100px; }
+.bv-showcase {
+  border-radius: 32px; border: 1px solid var(--line-strong); padding: 64px; background: var(--surface);
+  display: flex; gap: 64px; align-items: center; overflow: hidden; position: relative;
+}
+.bv-showcase-media { height: 450px; }
+.ei-title { font-size: clamp(32px, 5vw, 48px); }
+.ei-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+@media (max-width: 900px) {
+  .bv-grid, .ei-grid { grid-template-columns: 1fr; gap: 40px; }
+  .bv-grid { margin-bottom: 56px; }
+  .bv-showcase { flex-direction: column; align-items: stretch; padding: 28px 22px; gap: 28px; border-radius: 24px; }
+  .bv-showcase-media { flex: none !important; width: 100%; height: 300px; }
+}
+
+/* grid itens não podem ser mais largos que a coluna no celular */
+.briefing > * { min-width: 0; }
+
+/* ---------------- case Fujiarte ---------------- */
+.fj-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; }
+@media (max-width: 900px) {
+  .fj-grid { grid-template-columns: 1fr; gap: 40px; }
+  .fj-grid > * { min-width: 0; }
+}

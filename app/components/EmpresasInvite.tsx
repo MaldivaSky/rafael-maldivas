@@ -8,11 +8,11 @@ export default function EmpresasInvite() {
   return (
     <section style={{ padding: "120px 0", background: "var(--surface)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
       <div className="wrap">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "60px", alignItems: "center" }}>
+        <div className="ei-grid">
           
           <Reveal>
             <div className="sec-tag" style={{ marginBottom: "24px" }}>Para Empresas B2B</div>
-            <h2 style={{ fontSize: "48px", fontWeight: 900, marginBottom: "24px", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+            <h2 className="ei-title" style={{ fontWeight: 900, marginBottom: "24px", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
               Sua empresa está perdendo clientes para sites inferiores?
             </h2>
             <p style={{ fontSize: "20px", lineHeight: 1.6, color: "var(--fg-muted)", marginBottom: "40px" }}>

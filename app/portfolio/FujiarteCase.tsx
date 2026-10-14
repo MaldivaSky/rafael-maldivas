@@ -74,7 +74,7 @@ export default function FujiarteCase() {
             <div className="sec-tag" style={{ margin: "0 auto 24px", color: "#d91f27", border: "1px solid #d91f27", background: "transparent" }}>
               {content.tag}
             </div>
-            <h1 style={{ fontSize: "56px", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: "24px" }}>
+            <h1 style={{ fontSize: "clamp(34px, 7vw, 56px)", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: "24px" }}>
               {content.title}
             </h1>
             <p style={{ fontSize: "21px", color: "var(--fg-muted)", maxWidth: "700px", margin: "0 auto 40px" }}>
@@ -101,7 +101,7 @@ export default function FujiarteCase() {
       {/* Mission Section (Added based on user material) */}
       {/* Mission Section (Added based on user material) */}
       <section style={{ padding: "100px 0", borderBottom: "1px solid var(--line)" }}>
-        <div className="wrap" style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "80px", alignItems: "center" }}>
+        <div className="wrap fj-grid" style={{ alignItems: "center" }}>
           <Reveal>
             <div style={{ borderRadius: "24px", overflow: "hidden", border: "1px solid var(--line)", boxShadow: "0 30px 60px rgba(0,0,0,0.3)" }}>
               <img src="/clients/fujiarte-poster.png" alt="Fujiarte: Além do recrutamento, um compromisso social" style={{ width: "100%", height: "auto", display: "block" }} />
@@ -109,7 +109,7 @@ export default function FujiarteCase() {
           </Reveal>
           <Reveal delay={0.2}>
             <div className="sec-tag" style={{ marginBottom: "24px", fontSize: "14px", padding: "8px 16px" }}>{content.missionLabel}</div>
-            <h2 style={{ fontSize: "52px", fontWeight: 900, marginBottom: "32px", color: "#d91f27", lineHeight: 1.1, letterSpacing: "-0.03em" }}>
+            <h2 style={{ fontSize: "clamp(32px, 6.5vw, 52px)", fontWeight: 900, marginBottom: "32px", color: "#d91f27", lineHeight: 1.1, letterSpacing: "-0.03em" }}>
               {content.missionTitle}
             </h2>
             <p style={{ fontSize: "24px", lineHeight: 1.6, color: "var(--fg)", fontWeight: 400 }}>
@@ -127,7 +127,7 @@ export default function FujiarteCase() {
               <Reveal key={i} delay={i * 0.1}>
                 <div style={{ padding: "40px", border: "1px solid var(--line-strong)", borderRadius: "24px", background: "var(--surface)", textAlign: "center", boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}>
                   <div style={{ fontSize: "15px", textTransform: "uppercase", letterSpacing: "0.2em", color: "var(--fg-dim)", marginBottom: "16px", fontWeight: 700 }}>{stat.label}</div>
-                  <div style={{ fontSize: "48px", fontWeight: 900, color: "var(--fg)", letterSpacing: "-0.04em" }}>{stat.value}</div>
+                  <div style={{ fontSize: "clamp(34px, 6vw, 48px)", fontWeight: 900, color: "var(--fg)", letterSpacing: "-0.04em" }}>{stat.value}</div>
                 </div>
               </Reveal>
             ))}
@@ -137,16 +137,16 @@ export default function FujiarteCase() {
 
       {/* Content Section */}
       <section style={{ padding: "100px 0" }}>
-        <div className="wrap" style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "80px", alignItems: "start" }}>
+        <div className="wrap fj-grid" style={{ alignItems: "start" }}>
           <Reveal>
             <div style={{ position: "sticky", top: "120px" }}>
-              <h2 style={{ fontSize: "56px", fontWeight: 900, marginBottom: "32px", letterSpacing: "-0.04em", lineHeight: 1.1 }}>{content.challengeTitle}</h2>
+              <h2 style={{ fontSize: "clamp(34px, 7vw, 56px)", fontWeight: 900, marginBottom: "32px", letterSpacing: "-0.04em", lineHeight: 1.1 }}>{content.challengeTitle}</h2>
               <p style={{ fontSize: "24px", lineHeight: 1.6, color: "var(--fg)", fontWeight: 400 }}>{content.challengeText}</p>
             </div>
           </Reveal>
           <Reveal delay={0.2}>
-            <div style={{ background: "var(--surface)", padding: "64px", borderRadius: "32px", border: "1px solid var(--line-strong)", boxShadow: "0 20px 50px rgba(0,0,0,0.15)" }}>
-              <h2 style={{ fontSize: "44px", fontWeight: 900, marginBottom: "32px", letterSpacing: "-0.03em" }}>{content.solutionTitle}</h2>
+            <div style={{ background: "var(--surface)", padding: "clamp(24px, 6vw, 64px)", borderRadius: "32px", border: "1px solid var(--line-strong)", boxShadow: "0 20px 50px rgba(0,0,0,0.15)" }}>
+              <h2 style={{ fontSize: "clamp(28px, 5.5vw, 44px)", fontWeight: 900, marginBottom: "32px", letterSpacing: "-0.03em" }}>{content.solutionTitle}</h2>
               <p style={{ fontSize: "22px", lineHeight: 1.6, color: "var(--fg-muted)", marginBottom: "48px", fontWeight: 400 }}>{content.solutionText}</p>
               
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>

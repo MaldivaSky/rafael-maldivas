@@ -1,8 +1,10 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
-import { useLang } from "../lib/i18n";
+import Link from "next/link";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { useLang, localePath } from "../lib/i18n";
 import { t } from "../lib/content";
+import { PRODUCTS } from "../lib/products";
 import { rich } from "../lib/rich";
 import { EMAIL, LINKEDIN, WHATSAPP } from "../lib/site";
 import PersonalIntro from "../components/PersonalIntro";
@@ -14,6 +16,29 @@ const copy = {
     "h1a": "Sou Rafael. ",
     "h1b": "Prazer em conhecer você.",
     "lead": "Minha trajetória passou por vendas, qualidade, processos, marcenaria, química e gastronomia. Hoje trabalho com consultoria de tecnologia e desenvolvimento na minha empresa, a Maldivas Tech.",
+    "pmTag": "Produto, na prática",
+    "pmTitle": "Do problema ao produto em operação",
+    "pmLead": "Antes do código vem o produto: descobrir a dor com quem opera, priorizar o que gera valor e acompanhar o uso real. É o ciclo que eu rodo nos meus próprios SaaS.",
+    "pm": [
+      [
+        "Discovery no chão da operação",
+        "Seis anos em PDV, estoque e ruptura na Heineken e inteligência de mercado com CRM e Power BI. Eu converso com quem usa antes de escrever requisito."
+      ],
+      [
+        "Priorização e MVP",
+        "Escopo enxuto, entregue em ciclos curtos e ajustado com o retorno de quem trabalha com o sistema — sem over-engineering."
+      ],
+      [
+        "Integrações e homologações",
+        "MiseOn verificado pela Meta como Provedora de Tecnologia (WhatsApp Business API) e homologado no iFood em 22/08/2026."
+      ],
+      [
+        "Operação com dados",
+        "Produtos multi-tenant com controle de acesso por linha, trilha de auditoria e eventos de navegação e conversão instrumentados."
+      ]
+    ],
+    "pmProducts": "Produtos que eu construo e opero",
+    "pmOpen": "Ver produto",
     "pathTag": "Trajetória",
     "pathTitle": "De onde eu vim",
     "path": [
@@ -86,6 +111,29 @@ const copy = {
     "h1a": "I’m Rafael. ",
     "h1b": "Nice to meet you.",
     "lead": "My background spans sales, quality, processes, woodworking, chemistry and gastronomy. Today I work in technology consulting and development at my company, Maldivas Tech.",
+    "pmTag": "Product, in practice",
+    "pmTitle": "From problem to product in production",
+    "pmLead": "Product comes before code: find the pain with the people who run the operation, prioritise what creates value and follow real usage. It is the loop I run on my own SaaS.",
+    "pm": [
+      [
+        "Discovery on the shop floor",
+        "Six years of POS, inventory and stockouts at Heineken, plus market intelligence with CRM and Power BI. I talk to users before writing requirements."
+      ],
+      [
+        "Prioritisation and MVP",
+        "Lean scope, shipped in short cycles and tuned with feedback from the people using the system — no over-engineering."
+      ],
+      [
+        "Integrations and approvals",
+        "MiseOn verified by Meta as a Technology Provider (WhatsApp Business API) and approved on iFood on 2026-08-22."
+      ],
+      [
+        "Data-driven operation",
+        "Multi-tenant products with row-level access control, audit trails and instrumented navigation and conversion events."
+      ]
+    ],
+    "pmProducts": "Products I build and operate",
+    "pmOpen": "See product",
     "pathTag": "Track record",
     "pathTitle": "How I got here",
     "path": [
@@ -164,7 +212,53 @@ export default function SobreClient() {
     <>
       <PersonalIntro about />
 
+      <section id="produto">
+        <div className="wrap">
+          <Reveal>
+            <div className="sec-tag">{c.pmTag}</div>
+            <h2>{c.pmTitle}</h2>
+            <p className="sec-lead">{c.pmLead}</p>
+          </Reveal>
+          <div className="perks perks-2">
+            {c.pm.map(([h, p], i) => (
+              <Reveal key={h} delay={i * 0.05}>
+                <div className="perk">
+                  <h4>{h}</h4>
+                  <p>{p}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
 
+          <Reveal>
+            <h3 style={{ margin: "40px 0 18px" }}>{c.pmProducts}</h3>
+          </Reveal>
+          <div className="works">
+            {Object.values(PRODUCTS).map((p, i) => (
+              <Reveal key={p.slug} delay={i * 0.06}>
+                <Spotlight className="work">
+                  <h3>{p.name}</h3>
+                  <p>{p.copy[lang].tagline}</p>
+                  <div className="tags">
+                    {p.stack.map((s) => (
+                      <span className="tag" key={s}>{s}</span>
+                    ))}
+                  </div>
+                  <div className="work-foot">
+                    <Link
+                      className="plink"
+                      href={localePath(`/produtos/${p.slug}`, lang)}
+                      data-analytics="product_click"
+                    >
+                      {c.pmOpen} <ArrowUpRight size={16} />
+                    </Link>
+                  </div>
+                </Spotlight>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section>
         <div className="wrap">

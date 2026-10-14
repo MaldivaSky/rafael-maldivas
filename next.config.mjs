@@ -107,6 +107,9 @@ const nextConfig = {
       { source: "/ferramentas", destination: "/pt/ferramentas", permanent: true },
       { source: "/ferramentas/:slug", destination: "/pt/ferramentas/:slug", permanent: true },
       { source: "/sobre", destination: "/pt/about", permanent: true },
+      { source: "/about", destination: "/pt/about", permanent: true },
+      // /pt/sobre foi o link do menu até 25/09 — circula no LinkedIn e no índice
+      { source: "/:lang(pt|en)/sobre", destination: "/:lang/about", permanent: true },
       // aliases de marca → landing de produto
       { source: "/miseon", destination: "/pt/produtos/miseon", permanent: true },
       {
