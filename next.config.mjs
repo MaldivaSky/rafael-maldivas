@@ -116,6 +116,9 @@ const nextConfig = {
       { source: "/about", destination: "/pt/about", permanent: true },
       // /pt/sobre foi o link do menu até 25/09 — circula no LinkedIn e no índice
       { source: "/:lang(pt|en)/sobre", destination: "/:lang/about", permanent: true },
+      // painel de leads mora só em /admin (fora de /[lang]); atalhos levam até ele
+      { source: "/painel", destination: "/admin", permanent: true },
+      { source: "/:lang(pt|en)/:p(painel|admin)", destination: "/admin", permanent: true },
       // aliases de marca → landing de produto
       { source: "/miseon", destination: "/pt/produtos/miseon", permanent: true },
       {

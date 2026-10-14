@@ -28,6 +28,7 @@ const LEGACY_PATHS = [
   "/selectsys-jobs",
   "/produtos",
   "/about",
+  "/painel",
 ];
 
 export function middleware(req: NextRequest) {
