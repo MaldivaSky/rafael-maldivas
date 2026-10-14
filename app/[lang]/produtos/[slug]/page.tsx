@@ -13,6 +13,7 @@ import {
   Users,
   TrendingUp,
   Package,
+  type LucideIcon,
 } from "lucide-react";
 import { isLang, type Lang } from "@/app/lib/seo";
 import { buildMetadata } from "@/app/lib/metadata";
@@ -50,7 +51,7 @@ export async function generateMetadata({
 /* ──────────────────────────────────────────────
    Conteúdo editorial por produto e idioma
 ─────────────────────────────────────────────── */
-type FeatureItem = { icon: React.ElementType; title: string; desc: string };
+type FeatureItem = { icon: LucideIcon; title: string; desc: string };
 type Stat = { n: string; label: string };
 type ProductContent = {
   heroLabel: string;
