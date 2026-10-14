@@ -27,6 +27,7 @@ SERVICE=maldivas-leads
 IMAGE=postgrest/postgrest:v12.2.3
 
 log() { echo "[leads] $*" >&2; }
+trap 'log "ERRO na linha $LINENO: $BASH_COMMAND"' ERR
 
 mkdir -p "$STATE"
 
@@ -136,7 +137,9 @@ test -s "\$out.partial" && mv "\$out.partial" "\$out"
 find $STATE/backups -name '$DB-*.dump' -mtime +14 -delete
 EOF
 chmod 700 "$STATE/backup.sh"
-( crontab -l 2>/dev/null | grep -v "$STATE/backup.sh"; echo "30 3 * * * $STATE/backup.sh >> $STATE/backup.log 2>&1" ) | crontab -
+# usuário sem crontab: "crontab -l" e o grep saem com 1 — esperado, não é erro
+{ crontab -l 2>/dev/null | grep -v "$STATE/backup.sh" || true
+  echo "30 3 * * * $STATE/backup.sh >> $STATE/backup.log 2>&1"; } | crontab -
 "$STATE/backup.sh"
 log "backup ok: $(ls -t "$STATE"/backups | head -1)"
 
