@@ -109,3 +109,36 @@ export const craftStack: CraftTool[] = [
     use: { pt: "Perfil da Empresa e SEO local", en: "Business Profile and local SEO" },
   },
 ];
+
+/* ------------------------------------------------------------------ */
+/*  Certificação pessoal — verificável no Oracle CertView              */
+/*  (link público de verificação lido do QR code do eCertificate)      */
+/* ------------------------------------------------------------------ */
+
+export const ORACLE_CERT = {
+  issuer: "Oracle",
+  name: "Agentic AI Certified Foundations Associate",
+  issued: "2026-10-03",
+  validUntil: "2028-10-03",
+  id: "332142567AAI26OFA",
+  verifyUrl:
+    "https://catalog-education.oracle.com/ords/certview/sharebadge?id=f92f628ad09631f9c15a5396ccfbd8a01c05282d4d03f9b4f02971976b59e004",
+  skills: {
+    pt: [
+      "Conceitos centrais de agentes de IA",
+      "Agentes com LangChain",
+      "Model Context Protocol (MCP)",
+      "OpenAI Agents SDK",
+      "OCI Enterprise AI Agents",
+      "Oracle AI Database para IA agêntica",
+    ],
+    en: [
+      "Core AI agent concepts",
+      "Building agents with LangChain",
+      "Model Context Protocol (MCP)",
+      "OpenAI Agents SDK",
+      "OCI Enterprise AI Agents",
+      "Oracle AI Database for agentic AI",
+    ],
+  },
+} as const;

@@ -16,6 +16,7 @@ import {
   YOUTUBE,
 } from "./site";
 import { PRODUCTS, productList, type ProductSlug } from "./products";
+import { ORACLE_CERT } from "./credentials";
 
 const ORG_ID = `${SITE}/#organization`;
 const WEBSITE_ID = `${SITE}/#website`;
@@ -108,13 +109,26 @@ export function founderSchema() {
     "@id": PERSON_ID,
     name: "Rafael Maldivas",
     alternateName: "Rafael Paiva Dias da Silva",
-    jobTitle:
-      "Engenheiro de Software Fullstack, Especialista em UX e Gestor de Projetos",
+    jobTitle: "Product Owner e fundador da Maldivas Tech",
     worksFor: { "@id": ORG_ID },
     url: SITE,
     email: EMAIL,
     sameAs: [LINKEDIN, GITHUB_USER],
+    hasCredential: {
+      "@type": "EducationalOccupationalCredential",
+      name: ORACLE_CERT.name,
+      credentialCategory: "certification",
+      recognizedBy: { "@type": "Organization", name: ORACLE_CERT.issuer, url: "https://www.oracle.com" },
+      dateCreated: ORACLE_CERT.issued,
+      validUntil: ORACLE_CERT.validUntil,
+      identifier: ORACLE_CERT.id,
+      url: ORACLE_CERT.verifyUrl,
+    },
     knowsAbout: [
+      "Product Ownership",
+      "Product Discovery",
+      "Agentic AI",
+      "Model Context Protocol",
       "PostgreSQL",
       "Row Level Security",
       "TypeScript",

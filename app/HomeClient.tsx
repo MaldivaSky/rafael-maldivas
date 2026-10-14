@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpRight, Check, Code2, Film, Layers, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, BadgeCheck, Check, Code2, Film, Layers, Sparkles } from "lucide-react";
 import { useLang, localePath } from "./lib/i18n";
 import { WHATSAPP } from "./lib/site";
+import { ORACLE_CERT } from "./lib/credentials";
 import CaseHighlights from "./components/CaseHighlights";
 import BriefingForm from "./components/BriefingForm";
 import ProjectPlanner from "./components/ProjectPlanner";
@@ -35,6 +36,7 @@ export default function HomeClient() {
             <div className="studio-kicker"><span />{pt ? "TECNOLOGIA COM CABEÇA. CRIAÇÃO COM ALMA." : "THOUGHTFUL TECHNOLOGY. SOULFUL CREATION."}</div>
             <h1>{pt ? "Boas ideias" : "Good ideas"}<br />{pt ? "merecem" : "deserve"}<br /><em>{pt ? "ganhar vida." : "to come alive."}</em><Sparkles aria-hidden="true" /></h1>
             <p>{pt ? "Sou Rafael. Conecto tecnologia, negócio e criatividade para transformar o que você imagina em algo que funciona de verdade." : "I’m Rafael. I connect technology, business and creativity to turn what you imagine into something that really works."}</p>
+            <a className="cert-chip" href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click"><BadgeCheck size={17} /><span><strong>Oracle Certified</strong> · {ORACLE_CERT.name}</span><small>{pt ? "verificar" : "verify"} <ArrowUpRight size={13} /></small></a>
             <div className="studio-actions"><a href="#diagnostico" className="btn studio-primary">{pt ? "Descobrir meu próximo passo" : "Find my next step"}<ArrowUpRight size={18} /></a><a href="#produtos" className="studio-text-link">{pt ? "Conheça meu trabalho" : "Explore my work"}<ArrowDown size={16} /></a></div>
             <div className="studio-hero-note"><span className="studio-avatars">RM</span><span>{pt ? "Da primeira conversa à entrega." : "From the first conversation to delivery."}<strong>{pt ? "Você fala com quem faz." : "You talk to the person who builds it."}</strong></span></div>
           </div>

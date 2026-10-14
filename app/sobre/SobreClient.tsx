@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { ArrowUpRight, BadgeCheck, MessageCircle } from "lucide-react";
 import { useLang, localePath } from "../lib/i18n";
 import { t } from "../lib/content";
 import { PRODUCTS } from "../lib/products";
+import { ORACLE_CERT } from "../lib/credentials";
 import { rich } from "../lib/rich";
 import { EMAIL, LINKEDIN, WHATSAPP } from "../lib/site";
 import PersonalIntro from "../components/PersonalIntro";
@@ -16,25 +17,32 @@ const copy = {
     "h1a": "Sou Rafael. ",
     "h1b": "Prazer em conhecer você.",
     "lead": "Minha trajetória passou por vendas, qualidade, processos, marcenaria, química e gastronomia. Hoje trabalho com consultoria de tecnologia e desenvolvimento na minha empresa, a Maldivas Tech.",
-    "pmTag": "Produto, na prática",
+    "certTag": "Certificação",
+    "certTitle": "Certificado pela Oracle em IA agêntica",
+    "certLead": "Formação prática em agentes de IA: construir um agente do zero, usar LangChain, um servidor MCP real e a OpenAI Agents SDK, e ver como agentes rodam em produção na Oracle Cloud. É o mesmo tipo de ferramenta que eu uso para construir meus produtos.",
+    "certIssued": "Emitido em 03/10/2026",
+    "certValid": "válido até 03/10/2028",
+    "certVerify": "Verificar na Oracle",
+    "certId": "Credencial",
+    "pmTag": "Product Owner, na prática",
     "pmTitle": "Do problema ao produto em operação",
-    "pmLead": "Antes do código vem o produto: descobrir a dor com quem opera, priorizar o que gera valor e acompanhar o uso real. É o ciclo que eu rodo nos meus próprios SaaS.",
+    "pmLead": "Sou PO e construtor ao mesmo tempo. Sozinho, com agentes de IA, levo a ideia da conversa com quem opera até o produto em produção, e respondo pelo resultado.",
     "pm": [
       [
         "Discovery no chão da operação",
-        "Seis anos em PDV, estoque e ruptura na Heineken e inteligência de mercado com CRM e Power BI. Eu converso com quem usa antes de escrever requisito."
+        "Seis anos em PDV, estoque e ruptura na Heineken e inteligência de mercado com CRM e Power BI. Converso com quem usa antes de definir qualquer requisito."
       ],
       [
-        "Priorização e MVP",
-        "Escopo enxuto, entregue em ciclos curtos e ajustado com o retorno de quem trabalha com o sistema — sem over-engineering."
+        "Backlog e priorização",
+        "Decido o que entra, o que fica de fora e em que ordem, pelo impacto na operação. Entrego em ciclos curtos e ajusto com o retorno de quem usa, sem over-engineering."
       ],
       [
-        "Integrações e homologações",
-        "MiseOn verificado pela Meta como Provedora de Tecnologia (WhatsApp Business API) e homologado no iFood em 22/08/2026."
+        "Construção com agentes de IA",
+        "Agentes de IA fazem o papel de um time de engenharia: modelagem de dados, código e deploy. Cada entrega passa pela minha revisão e decisão."
       ],
       [
-        "Operação com dados",
-        "Produtos multi-tenant com controle de acesso por linha, trilha de auditoria e eventos de navegação e conversão instrumentados."
+        "Homologações e operação",
+        "MiseOn verificado pela Meta como Provedora de Tecnologia (WhatsApp Business API) e homologado no iFood. Produtos multi-tenant com acesso por linha e trilha de auditoria."
       ]
     ],
     "pmProducts": "Produtos que eu construo e opero",
@@ -69,13 +77,17 @@ const copy = {
       ],
       [
         "2026 — hoje",
-        "Maldivas Tech",
-        "CNPJ próprio, contrato firmado com agência de recrutamento Brasil–Japão, verificação como Provedora de Tecnologia pela Meta e homologação no iFood."
+        "Product Owner e fundador — Maldivas Tech",
+        "Concebo e construo sozinho, com agentes de IA, meus próprios produtos (MiseOn e SelectSys Jobs). CNPJ próprio, contrato com agência de recrutamento Brasil–Japão, Meta Tech Provider, homologação no iFood e certificação Oracle em IA agêntica."
       ]
     ],
     "stackTag": "Formação",
     "stackTitle": "Formação e certificações",
     "edu": [
+      [
+        "Agentic AI Certified Foundations Associate",
+        "Oracle — 2026 (válido até 2028)"
+      ],
       [
         "Tecnologia em Análise e Desenvolvimento de Sistemas",
         "IFSP — Instituto Federal de São Paulo"
@@ -111,25 +123,32 @@ const copy = {
     "h1a": "I’m Rafael. ",
     "h1b": "Nice to meet you.",
     "lead": "My background spans sales, quality, processes, woodworking, chemistry and gastronomy. Today I work in technology consulting and development at my company, Maldivas Tech.",
-    "pmTag": "Product, in practice",
+    "certTag": "Certification",
+    "certTitle": "Oracle certified in agentic AI",
+    "certLead": "Hands-on training in AI agents: building an agent from scratch, using LangChain, a real MCP server and the OpenAI Agents SDK, and seeing how agents run in production on Oracle Cloud. The same kind of tooling I use to build my products.",
+    "certIssued": "Issued 3 Oct 2026",
+    "certValid": "valid until 3 Oct 2028",
+    "certVerify": "Verify on Oracle",
+    "certId": "Credential",
+    "pmTag": "Product ownership, in practice",
     "pmTitle": "From problem to product in production",
-    "pmLead": "Product comes before code: find the pain with the people who run the operation, prioritise what creates value and follow real usage. It is the loop I run on my own SaaS.",
+    "pmLead": "I’m the PO and the builder at the same time. Solo, with AI agents, I take an idea from a conversation with the people who run the operation to a product in production, and I own the outcome.",
     "pm": [
       [
         "Discovery on the shop floor",
-        "Six years of POS, inventory and stockouts at Heineken, plus market intelligence with CRM and Power BI. I talk to users before writing requirements."
+        "Six years of POS, inventory and stockouts at Heineken, plus market intelligence with CRM and Power BI. I talk to users before defining any requirement."
       ],
       [
-        "Prioritisation and MVP",
-        "Lean scope, shipped in short cycles and tuned with feedback from the people using the system — no over-engineering."
+        "Backlog and prioritisation",
+        "I decide what goes in, what stays out and in which order, based on operational impact. I ship in short cycles and adjust with user feedback, without over-engineering."
       ],
       [
-        "Integrations and approvals",
-        "MiseOn verified by Meta as a Technology Provider (WhatsApp Business API) and approved on iFood on 2026-08-22."
+        "Building with AI agents",
+        "AI agents act as my engineering team: data modelling, code and deployment. Every delivery goes through my review and my decision."
       ],
       [
-        "Data-driven operation",
-        "Multi-tenant products with row-level access control, audit trails and instrumented navigation and conversion events."
+        "Approvals and operations",
+        "MiseOn verified by Meta as a Technology Provider (WhatsApp Business API) and approved on iFood. Multi-tenant products with row-level access and audit trails."
       ]
     ],
     "pmProducts": "Products I build and operate",
@@ -164,13 +183,17 @@ const copy = {
       ],
       [
         "2026 — today",
-        "Maldivas Tech",
-        "Own registered company, a signed contract with a Brazil–Japan recruitment agency, Meta Technology Provider verification and iFood approval."
+        "Product Owner and founder — Maldivas Tech",
+        "I design and build my own products (MiseOn and SelectSys Jobs) solo, with AI agents. Registered company, a signed contract with a Brazil–Japan recruitment agency, Meta Tech Provider, iFood approval and an Oracle certification in agentic AI."
       ]
     ],
     "stackTag": "Education",
     "stackTitle": "Education and certifications",
     "edu": [
+      [
+        "Agentic AI Certified Foundations Associate",
+        "Oracle — 2026 (valid until 2028)"
+      ],
       [
         "Technology in Systems Analysis and Development",
         "IFSP — Federal Institute of São Paulo"
@@ -211,6 +234,39 @@ export default function SobreClient() {
   return (
     <>
       <PersonalIntro about />
+
+      <section id="certificacao">
+        <div className="wrap">
+          <Reveal>
+            <Spotlight className="cert-card">
+              <div className="cert-card-head">
+                <BadgeCheck size={30} />
+                <div>
+                  <div className="sec-tag">{c.certTag}</div>
+                  <h2>{c.certTitle}</h2>
+                </div>
+              </div>
+              <p className="cert-name">
+                <strong>{ORACLE_CERT.issuer}</strong> · {ORACLE_CERT.name}
+              </p>
+              <p className="sec-lead">{c.certLead}</p>
+              <ul className="cert-skills">
+                {ORACLE_CERT.skills[lang].map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ul>
+              <div className="cert-foot">
+                <a className="btn btn-primary" href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click">
+                  {c.certVerify} <ArrowUpRight size={17} />
+                </a>
+                <span>
+                  {c.certIssued} · {c.certValid} · {c.certId} {ORACLE_CERT.id}
+                </span>
+              </div>
+            </Spotlight>
+          </Reveal>
+        </div>
+      </section>
 
       <section id="produto">
         <div className="wrap">

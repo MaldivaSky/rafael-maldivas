@@ -32,8 +32,8 @@ export async function generateMetadata({
         : "About Maldivas Tech — Who We Are and What We Build",
     description:
       lang === "pt"
-        ? "A Maldivas Tech é uma empresa de software de São Paulo que constrói sistemas de gestão e SaaS multi-tenant, como o MiseOn e o SelectSys Jobs. Fundada por Rafael Maldivas. Domínio oficial: maldivastech.dev."
-        : "Maldivas Tech is a software company from São Paulo, Brazil, building management systems and multi-tenant SaaS such as MiseOn and SelectSys Jobs. Founded by Rafael Maldivas. Official domain: maldivastech.dev.",
+        ? "Rafael Maldivas, Product Owner certificado pela Oracle em IA agêntica, fundou a Maldivas Tech em São Paulo e constrói com agentes de IA o MiseOn e o SelectSys Jobs, SaaS multi-tenant em produção. Domínio oficial: maldivastech.dev."
+        : "Rafael Maldivas, an Oracle-certified Product Owner in agentic AI, founded Maldivas Tech in São Paulo and builds MiseOn and SelectSys Jobs, multi-tenant SaaS in production, with AI agents. Official domain: maldivastech.dev.",
     keywords:
       lang === "pt"
         ? ["Maldivas Tech", "empresa de software São Paulo", "SaaS brasileiro"]

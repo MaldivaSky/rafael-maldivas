@@ -1207,3 +1207,36 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   .fj-grid { grid-template-columns: 1fr; gap: 40px; }
   .fj-grid > * { min-width: 0; }
 }
+
+/* ---------------- selo de certificação verificável ---------------- */
+.cert-chip {
+  display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; max-width: 100%;
+  margin: 4px 0 22px; padding: 9px 14px; border-radius: 12px;
+  border: 1px solid rgba(34, 181, 242, 0.38); background: rgba(34, 181, 242, 0.08);
+  color: var(--fg); font-size: 14px; line-height: 1.35; transition: border-color .2s, transform .2s;
+}
+.cert-chip:hover { border-color: var(--accent); transform: translateY(-2px); }
+.cert-chip svg { color: var(--accent); flex-shrink: 0; }
+.cert-chip strong { color: var(--accent); font-weight: 800; }
+.cert-chip small { display: inline-flex; align-items: center; gap: 3px; color: var(--fg-dim); font-size: 12.5px; }
+
+/* ---------------- card da certificação (página Sobre) ---------------- */
+.cert-card {
+  padding: 40px; border-radius: var(--radius); border: 1px solid rgba(34, 181, 242, 0.38);
+  background: linear-gradient(135deg, rgba(34, 181, 242, 0.09), transparent 60%), var(--bg-soft);
+}
+.cert-card-head { display: flex; align-items: flex-start; gap: 16px; }
+.cert-card-head > svg { color: var(--accent); flex-shrink: 0; margin-top: 6px; }
+.cert-card-head .sec-tag { margin-bottom: 8px; }
+.cert-name { font-size: 18px; margin: 18px 0 10px; color: var(--fg); }
+.cert-name strong { color: var(--accent); }
+.cert-skills { list-style: none; padding: 0; margin: 18px 0 26px; display: flex; flex-wrap: wrap; gap: 9px; }
+.cert-skills li {
+  font-size: 13.5px; font-weight: 600; padding: 7px 12px; border-radius: 999px;
+  border: 1px solid var(--line-strong); color: var(--fg-muted); background: var(--bg);
+}
+.cert-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; }
+.cert-foot span { font-size: 13px; color: var(--fg-dim); font-family: var(--mono); }
+@media (max-width: 680px) {
+  .cert-card { padding: 26px 20px; }
+}
