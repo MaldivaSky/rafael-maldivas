@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowUpRight, ExternalLink } from "lucide-react";
-import { works } from "../lib/projects";
+import { works, workTags } from "../lib/projects";
 import { useLang, localePath } from "../lib/i18n";
 import { Reveal, Spotlight } from "./fx";
 
@@ -46,7 +46,7 @@ export default function CaseHighlights() {
                 <p>{work.desc[lang]}</p>
                 <div className="work-proof">{work.proof[lang]}</div>
                 <div className="tags">
-                  {work.tags.map((tag) => <span className="tag" key={tag}>{tag}</span>)}
+                  {workTags(work, lang).map((tag) => <span className="tag" key={tag}>{tag}</span>)}
                 </div>
                 <div className="work-foot">
                   <a href={work.url} target="_blank" rel="noopener noreferrer" className="plink">

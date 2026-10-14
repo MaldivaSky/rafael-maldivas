@@ -2,7 +2,7 @@
 "use client";
 
 import { ExternalLink, MessageCircle, ArrowUpRight } from "lucide-react";
-import { works } from "../lib/projects";
+import { works, workTags } from "../lib/projects";
 import { useLang } from "../lib/i18n";
 import { t } from "../lib/content";
 import { CANVA_REEL, GITHUB_USER, WHATSAPP, YOUTUBE } from "../lib/site";
@@ -173,7 +173,7 @@ export default function PortfolioClient() {
                   <p>{w.desc[lang]}</p>
                   <div className="work-proof">{w.proof[lang]}</div>
                   <div className="tags">
-                    {w.tags.map((tag) => (
+                    {workTags(w, lang).map((tag) => (
                       <span className="tag" key={tag}>
                         {tag}
                       </span>

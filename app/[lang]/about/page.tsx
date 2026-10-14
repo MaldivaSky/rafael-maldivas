@@ -29,8 +29,8 @@ export async function generateMetadata({
     path: "about",
     title:
       lang === "pt"
-        ? "Sobre a Maldivas Tech — Quem Somos e o Que Construímos"
-        : "About Maldivas Tech — Who We Are and What We Build",
+        ? "Rafael Maldivas — Product Owner certificado pela Oracle em IA agêntica"
+        : "Rafael Maldivas — Product Owner, Oracle-Certified in Agentic AI",
     description:
       lang === "pt"
         ? "Rafael Maldivas, Product Owner certificado pela Oracle em IA agêntica, fundou a Maldivas Tech em São Paulo e constrói com agentes de IA o MiseOn e o SelectSys Jobs, SaaS multi-tenant em produção. Domínio oficial: maldivastech.dev."

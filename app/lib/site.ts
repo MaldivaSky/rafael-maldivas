@@ -26,7 +26,7 @@ export const PHONE_HUMAN = "(11) 91988-9233";
 export const WHATSAPP = "https://wa.me/5511919889233";
 export const LINKEDIN = "https://www.linkedin.com/in/rafael-paiva-dias/";
 export const GITHUB_USER = "https://github.com/MaldivaSky";
-export const GITHUB_ORG = "https://github.com/maldivas-tech";
+export const GITHUB_ORG = "https://github.com/Mald1vas-Tech-Solut1ons";
 export const YOUTUBE = "https://www.youtube.com/@MiseOnSISTEMA--CozinhasProfiss";
 export const CANVA_REEL = "https://canva.link/6laeoy708m17zrt";
 

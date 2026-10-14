@@ -376,9 +376,14 @@ export type Work = {
   kind: { pt: string; en: string };
   desc: { pt: string; en: string };
   proof: { pt: string; en: string };
-  tags: string[];
+  /** tecnologias (iguais nos dois idiomas) ou rótulos traduzidos */
+  tags: string[] | { pt: string[]; en: string[] };
   url: string;
 };
+
+/** tags de uma entrega no idioma da página */
+export const workTags = (w: Work, lang: "pt" | "en"): string[] =>
+  Array.isArray(w.tags) ? w.tags : w.tags[lang];
 
 export const works: Work[] = [
   {
@@ -408,7 +413,10 @@ export const works: Work[] = [
       pt: "Substituiu a agenda de papel e o vai-e-vem de WhatsApp para marcar horário.",
       en: "Replaced the paper diary and the WhatsApp back-and-forth to book a slot.",
     },
-    tags: ["React", "PWA instalável", "Agendamento", "SEO local"],
+    tags: {
+      pt: ["React", "PWA instalável", "Agendamento", "SEO local"],
+      en: ["React", "Installable PWA", "Online booking", "Local SEO"],
+    },
     url: "https://agenda-sal-o-de-beleza.vercel.app",
   },
   {
@@ -423,7 +431,10 @@ export const works: Work[] = [
       pt: "O dono passou a enxergar ruptura de estoque antes de perder a venda.",
       en: "The owner started seeing stockouts before losing the sale.",
     },
-    tags: ["Ingestão de dados", "Faturamento × meta", "Ruptura de estoque", "Funil"],
+    tags: {
+      pt: ["Ingestão de dados", "Faturamento × meta", "Ruptura de estoque", "Funil"],
+      en: ["Data ingestion", "Revenue vs. target", "Stockouts", "Sales funnel"],
+    },
     url: "https://ecommerce-analisys.vercel.app",
   },
   {
@@ -438,7 +449,10 @@ export const works: Work[] = [
       pt: "Campanha de coleção no ar em dias, sem plataforma paga por trás.",
       en: "A seasonal collection campaign live in days, with no paid platform behind it.",
     },
-    tags: ["Carrinho", "Variações de produto", "Regra de combo", "Campanha sazonal"],
+    tags: {
+      pt: ["Carrinho", "Variações de produto", "Regra de combo", "Campanha sazonal"],
+      en: ["Shopping cart", "Product variants", "Bundle pricing rule", "Seasonal campaign"],
+    },
     url: "https://animaz-glassdoor.vercel.app",
   },
   {
