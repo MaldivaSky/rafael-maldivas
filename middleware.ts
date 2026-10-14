@@ -34,7 +34,10 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // arquivos, api, assets, llms.txt, imagens, sitemap, robots...
+  // /admin é rota única (sem idioma): o painel de leads vive fora de /[lang]
   if (
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/icons") ||
