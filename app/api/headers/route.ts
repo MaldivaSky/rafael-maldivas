@@ -59,7 +59,9 @@ export async function GET(req: Request) {
       redirect: "follow",
       headers: { "user-agent": "MaldivasTech-HeaderAudit/1.0 (+https://maldivas.tech)" },
       signal: AbortSignal.timeout(9000),
-      next: { revalidate: 300 },
+      // Auditoria precisa da resposta de agora: com cache, quem acabou de corrigir um
+      // cabeçalho continuava vendo a nota antiga da última varredura.
+      cache: "no-store",
     });
   } catch {
     return NextResponse.json({ error: "unreachable" }, { status: 502 });
