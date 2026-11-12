@@ -17,8 +17,9 @@ import PainelBI from "./PainelBI";
  * Painel de leads. Os dados vêm de /api/leads: PostgreSQL na Oracle Cloud
  * (principal) ou Notion (reserva). Credenciais moram no servidor — nunca aqui.
  *
- * A senha é enviada no header `x-admin-key`. No localStorage fica apenas
- * um marcador de sessão, nunca a senha.
+ * O login troca a senha por uma sessão: um cookie HttpOnly emitido pelo
+ * servidor (/api/admin/sessao), que o JavaScript da página não consegue ler.
+ * A senha não é guardada em lugar nenhum do navegador.
  */
 
 type Lead = {
@@ -51,8 +52,8 @@ function descreverCanal(l: Lead): string {
   return partes.join(" · ");
 }
 
-const KEY = "maldivas_admin_key";
-const TOKEN = "maldivas_admin_ok"; // marcador de sessão (não é a senha)
+// chaves de versões antigas, que guardavam a senha no navegador: só para apagar
+const CHAVES_ANTIGAS = ["maldivas_admin_key", "maldivas_admin_ok"];
 
 const AREAS = ["Todas", "Software", "TI", "Marketing", "Audiovisual", "Múltiplas", "Indefinido"];
 
@@ -92,29 +93,34 @@ export default function AdminClient() {
   const [salvandoId, setSalvandoId] = useState<string | null>(null);
   const [aba, setAba] = useState<"leads" | "painel">("leads");
 
-  // a aba "Painel" lê a mesma senha guardada no login; identidade estável p/ não refazer a busca
-  const chaveAdmin = useCallback(() => (typeof window !== "undefined" ? localStorage.getItem(KEY) ?? "" : ""), []);
+  // a sessão acabou (cookie vencido ou senha trocada): volta ao login; identidade estável
   const sessaoExpirou = useCallback(() => {
-    localStorage.removeItem(TOKEN);
     setLogado(false);
     setErro("Sessão expirada. Entre de novo.");
   }, []);
 
-  // sessão: se já logou antes, pula o login
+  // sessão: o servidor diz se o cookie ainda vale. Também apaga a senha que
+  // versões antigas deste painel deixaram no navegador.
   useEffect(() => {
-    if (typeof window !== "undefined" && localStorage.getItem(TOKEN) === "1") {
-      setLogado(true);
+    try {
+      CHAVES_ANTIGAS.forEach((k) => localStorage.removeItem(k));
+    } catch {
+      // storage bloqueado: nada a apagar
     }
+    fetch("/api/admin/sessao", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok) setLogado(true);
+      })
+      .catch(() => undefined);
   }, []);
 
   const carregar = useCallback(async () => {
-    const key = typeof window !== "undefined" ? localStorage.getItem(KEY) ?? "" : "";
     setCarregando(true);
     setErro("");
     try {
-      const r = await fetch("/api/leads", { headers: { "x-admin-key": key } });
+      const r = await fetch("/api/leads", { cache: "no-store" });
       if (r.status === 401) {
-        localStorage.removeItem(TOKEN);
         setLogado(false);
         setErro("Sessão expirada. Entre de novo.");
         return;
@@ -143,15 +149,20 @@ export default function AdminClient() {
     setCarregando(true);
     setErro("");
     try {
-      const r = await fetch("/api/leads", { headers: { "x-admin-key": senha } });
-      const d = await r.json();
+      const r = await fetch("/api/admin/sessao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senha }),
+      });
+      const d = await r.json().catch(() => ({}));
       if (d.ok) {
-        localStorage.setItem(KEY, senha);
-        localStorage.setItem(TOKEN, "1");
-        setLeads(d.leads);
-        setStatuses(d.statuses ?? []);
-        setOrigem(d.origem === "oracle" ? "oracle" : "notion");
-        setLogado(true);
+        setSenha(""); // a senha não fica nem na memória da tela
+        setLogado(true); // o efeito abaixo carrega os leads com a sessão nova
+      } else if (r.status === 429) {
+        const min = Math.max(1, Math.ceil((d.retryAfter ?? 60) / 60));
+        setErro(`Muitas tentativas. Tente de novo em ${min} min.`);
+      } else if (r.status === 503) {
+        setErro("O painel não está configurado neste ambiente.");
       } else {
         setErro("Senha incorreta.");
       }
@@ -163,8 +174,7 @@ export default function AdminClient() {
   };
 
   const sair = () => {
-    localStorage.removeItem(KEY);
-    localStorage.removeItem(TOKEN);
+    fetch("/api/admin/sessao", { method: "DELETE" }).catch(() => undefined);
     setLogado(false);
     setSenha("");
     setLeads([]);
@@ -172,13 +182,12 @@ export default function AdminClient() {
 
   const mudarStatus = async (lead: Lead, novo: string) => {
     setSalvandoId(lead.id);
-    const key = localStorage.getItem(KEY) ?? "";
     // otimista: atualiza a tela antes da resposta
     setLeads((ls) => ls.map((l) => (l.id === lead.id ? { ...l, status: novo } : l)));
     try {
       const r = await fetch("/api/leads", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", "x-admin-key": key },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: lead.id, status: novo }),
       });
       const d = await r.json();
@@ -295,7 +304,7 @@ export default function AdminClient() {
         </div>
 
         {aba === "painel" ? (
-          <PainelBI chave={chaveAdmin} aoExpirar={sessaoExpirou} />
+          <PainelBI aoExpirar={sessaoExpirou} />
         ) : (
         <>
         {/* filtros */}

@@ -4,9 +4,9 @@ import { STATUS_OPCOES } from "../../lib/notion-leads";
 import { atualizarStatus, listarLeads, origemLeitura } from "../../lib/leads-store";
 
 /**
- * API do painel de leads. Protegida por senha (ADMIN_PASSWORD) enviada no
- * header `x-admin-key`. A senha vive só no servidor; o navegador guarda
- * apenas um marcador de sessão no localStorage para não pedir toda vez.
+ * API do painel de leads. Protegida por sessão: cookie HttpOnly emitido por
+ * /api/admin/sessao depois que a senha (ADMIN_PASSWORD) confere. A senha vive
+ * só no servidor; o navegador nunca a guarda (app/lib/admin-auth.ts).
  */
 
 export const runtime = "nodejs";

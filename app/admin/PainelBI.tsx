@@ -145,14 +145,7 @@ function csvEscape(v: string | number | null): string {
   return /[",;\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
-export default function PainelBI({
-  chave,
-  aoExpirar,
-}: {
-  /** devolve a senha guardada (a mesma do painel de leads) */
-  chave: () => string;
-  aoExpirar: () => void;
-}) {
+export default function PainelBI({ aoExpirar }: { aoExpirar: () => void }) {
   const [dias, setDias] = useState<number>(30);
   const [dados, setDados] = useState<Dados | null>(null);
   const [carregando, setCarregando] = useState(true);
@@ -162,7 +155,8 @@ export default function PainelBI({
     setCarregando(true);
     setErro("");
     try {
-      const r = await fetch(`/api/painel?dias=${dias}`, { headers: { "x-admin-key": chave() }, cache: "no-store" });
+      // a sessão vai no cookie HttpOnly; não há senha para anexar
+      const r = await fetch(`/api/painel?dias=${dias}`, { cache: "no-store" });
       if (r.status === 401) return aoExpirar();
       const d = await r.json();
       if (d.ok) setDados(d.dados as Dados);
@@ -173,7 +167,7 @@ export default function PainelBI({
     } finally {
       setCarregando(false);
     }
-  }, [dias, chave, aoExpirar]);
+  }, [dias, aoExpirar]);
 
   useEffect(() => {
     carregar();
@@ -263,7 +257,7 @@ export default function PainelBI({
             <Indicador rotulo="Sessões" valor={num(a.sessoes)} extra={variacao(a.sessoes, p.sessoes)} />
             <Indicador rotulo="Páginas vistas" valor={num(a.paginas)} extra={variacao(a.paginas, p.paginas)} />
             <Indicador rotulo="Leads" valor={num(a.leads)} extra={variacao(a.leads, p.leads)} />
-            <Indicador rotulo="Conversão" valor={pct(a.leads, a.sessoes)} extra={{ texto: "leads ÷ sessões", cor: "var(--fg-muted)" }} />
+            <Indicador rotulo="Conversão" valor={pct(a.leads, a.sessoes)} extra={{ texto: "leads / sessões", cor: "var(--fg-muted)" }} />
             <Indicador
               rotulo="Tempo na visita"
               valor={duracao(a.segundos_medio)}
