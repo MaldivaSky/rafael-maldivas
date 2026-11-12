@@ -1,5 +1,5 @@
-import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
+import { autorizado } from "../../lib/admin-auth";
 import { STATUS_OPCOES } from "../../lib/notion-leads";
 import { atualizarStatus, listarLeads, origemLeitura } from "../../lib/leads-store";
 
@@ -10,15 +10,6 @@ import { atualizarStatus, listarLeads, origemLeitura } from "../../lib/leads-sto
  */
 
 export const runtime = "nodejs";
-
-function autorizado(req: Request): boolean {
-  const esperado = process.env.ADMIN_PASSWORD;
-  if (!esperado) return false;
-  const enviado = Buffer.from(req.headers.get("x-admin-key") ?? "");
-  const certo = Buffer.from(esperado);
-  // tempo constante: não deixa medir quantos caracteres acertou
-  return enviado.length === certo.length && timingSafeEqual(enviado, certo);
-}
 
 /* ---------- GET: lista os leads ---------- */
 export async function GET(req: Request) {

@@ -107,6 +107,33 @@ const nextConfig = {
         destination: "https://www.maldivastech.dev/:path*",
         permanent: true,
       },
+      /* --------------------------------------------------------------- */
+      /*  Links curtos de divulgação (/r/...): redirect 307 com UTM       */
+      /*                                                                  */
+      /*  Só link com UTM prova de onde a pessoa veio (o referrer traz só  */
+      /*  o site, nunca o post). Use /r/in/<nome-do-post> em cada post do  */
+      /*  LinkedIn: o <nome-do-post> aparece no painel (/admin) por lead.  */
+      /*  307 (não 301): dá para mudar o destino depois sem cache eterno.  */
+      /*  O middleware libera /r (senão mandaria para /pt/r/...).          */
+      /*  O destino é "/" de propósito: o middleware escolhe o idioma e    */
+      /*  a query string (UTM) é preservada no redirect.                   */
+      /* --------------------------------------------------------------- */
+      {
+        source: "/r/in",
+        destination: "/?utm_source=linkedin&utm_medium=perfil&utm_campaign=maldivas-tech",
+        permanent: false,
+      },
+      {
+        source: "/r/in/:post([a-z0-9_-]{1,60})",
+        destination:
+          "/?utm_source=linkedin&utm_medium=post&utm_campaign=divulgacao&utm_content=:post",
+        permanent: false,
+      },
+      {
+        source: "/r/g",
+        destination: "/?utm_source=google&utm_medium=perfil_empresa&utm_campaign=gbp",
+        permanent: false,
+      },
       // páginas legadas → /pt/*
       { source: "/servicos", destination: "/pt/servicos", permanent: true },
       { source: "/portfolio", destination: "/pt/portfolio", permanent: true },

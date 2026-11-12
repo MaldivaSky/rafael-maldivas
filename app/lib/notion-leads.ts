@@ -22,6 +22,12 @@ export type Lead = {
   dor: string;
   idioma: string;
   canal: string;
+  /** origem do lead (só a base Oracle guarda; no Notion fica vazio) */
+  certeza: string;
+  campanha: string;
+  conteudo: string;
+  origemSite: string;
+  entrada: string;
   criadoEm: string;
   url: string;
 };
@@ -65,6 +71,11 @@ function mapPage(page: any): Lead {
     dor: rich(p.Dor),
     idioma: select(p.Idioma),
     canal: select(p.Canal),
+    certeza: "",
+    campanha: "",
+    conteudo: "",
+    origemSite: "",
+    entrada: "",
     criadoEm: page.created_time ?? p["Criado em"]?.created_time ?? "",
     url: page.url ?? "",
   };
@@ -131,7 +142,8 @@ function montarPagina(databaseId: string, lead: LeadNormalizado) {
     Negocio: rt(lead.negocio),
     Dor: rt(lead.dor),
     Idioma: sel(lead.idioma === "en" ? "EN" : "PT"),
-    Canal: sel("Site"),
+    // o Notion cria a opção do select sozinho se o nome ainda não existir
+    Canal: sel(lead.canal.rotulo),
   };
 
   for (const k of Object.keys(properties)) {
@@ -146,6 +158,10 @@ function montarPagina(databaseId: string, lead: LeadNormalizado) {
     `Serviços: ${lead.servicos.join(", ") || "não especificado"}`,
     `Prazo: ${lead.prazo}`,
     `Contato: ${lead.contato || "não informado"}`,
+    // a reserva não tem colunas de origem: vai no corpo da página
+    `Origem: ${lead.canal.rotulo} (${lead.canal.certeza})`,
+    ...(lead.origemPrimeira?.utm_content ? [`Link/post: ${lead.origemPrimeira.utm_content}`] : []),
+    ...(lead.origemPrimeira?.referrer_host ? [`Veio de: ${lead.origemPrimeira.referrer_host}`] : []),
   ];
   const children = linhas.map((line) => ({
     object: "block",

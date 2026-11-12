@@ -8,6 +8,7 @@
 /* ------------------------------------------------------------------ */
 
 import { AREAS, servicos, type Area } from "./catalog";
+import { decidirCanal, limparToque, type Canal, type Toque } from "./origem";
 
 /** serviço escolhido -> área, montado uma vez a partir do catálogo real */
 const AREA_POR_SERVICO: Record<string, Area> = Object.fromEntries(
@@ -36,6 +37,10 @@ export type RawLead = {
   idioma?: string;
   /** armadilha anti-bot: se vier preenchido, é robô */
   honey?: string;
+  /** de onde o visitante veio (lido no navegador; o canal é decidido aqui) */
+  origem?: { primeira?: unknown; ultima?: unknown };
+  /** aparelho da equipe (?interno=1): o lead entra marcado como teste */
+  interno?: boolean;
 };
 
 export type LeadNormalizado = {
@@ -47,6 +52,11 @@ export type LeadNormalizado = {
   prazo: string;
   contato: string;
   idioma: "pt" | "en";
+  /** canal decidido no servidor (nunca vem pronto do navegador) */
+  canal: Canal;
+  /** toques já limpos (só chaves conhecidas, tamanhos limitados) */
+  origemPrimeira: Toque | null;
+  origemUltima: Toque | null;
   valido: boolean;
   motivo?: string;
 };
@@ -108,6 +118,9 @@ export function normalizarLead(raw: RawLead): LeadNormalizado {
     .map((id) => servicos.find((s) => s.id === id)?.nome.pt)
     .filter(Boolean) as string[];
 
+  const origemPrimeira = limparToque(raw.origem?.primeira);
+  const origemUltima = limparToque(raw.origem?.ultima);
+
   const base = {
     nome,
     negocio,
@@ -117,6 +130,9 @@ export function normalizarLead(raw: RawLead): LeadNormalizado {
     contato,
     idioma: (raw.idioma === "en" ? "en" : "pt") as "pt" | "en",
     area: "Indefinido",
+    canal: decidirCanal(origemPrimeira, origemUltima, raw.interno === true),
+    origemPrimeira,
+    origemUltima,
   };
 
   if (dor.length < 4) {

@@ -11,6 +11,7 @@ import {
   RefreshCw,
   Search,
 } from "lucide-react";
+import PainelBI from "./PainelBI";
 
 /**
  * Painel de leads. Os dados vêm de /api/leads: PostgreSQL na Oracle Cloud
@@ -32,9 +33,23 @@ type Lead = {
   dor: string;
   idioma: string;
   canal: string;
+  certeza: string;
+  campanha: string;
+  conteudo: string;
+  origemSite: string;
+  entrada: string;
   criadoEm: string;
   url: string;
 };
+
+/** "LinkedIn · post-ats", "Google (busca) · provável". Lead antigo era só "Site". */
+function descreverCanal(l: Lead): string {
+  const canal = !l.canal || l.canal === "Site" ? "Sem rastro" : l.canal;
+  const partes = [canal];
+  if (l.conteudo) partes.push(l.conteudo);
+  else if (l.certeza === "provavel") partes.push("provável");
+  return partes.join(" · ");
+}
 
 const KEY = "maldivas_admin_key";
 const TOKEN = "maldivas_admin_ok"; // marcador de sessão (não é a senha)
@@ -72,8 +87,18 @@ export default function AdminClient() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
   const [filtroArea, setFiltroArea] = useState("Todas");
+  const [filtroCanal, setFiltroCanal] = useState("Todos");
   const [busca, setBusca] = useState("");
   const [salvandoId, setSalvandoId] = useState<string | null>(null);
+  const [aba, setAba] = useState<"leads" | "painel">("leads");
+
+  // a aba "Painel" lê a mesma senha guardada no login; identidade estável p/ não refazer a busca
+  const chaveAdmin = useCallback(() => (typeof window !== "undefined" ? localStorage.getItem(KEY) ?? "" : ""), []);
+  const sessaoExpirou = useCallback(() => {
+    localStorage.removeItem(TOKEN);
+    setLogado(false);
+    setErro("Sessão expirada. Entre de novo.");
+  }, []);
 
   // sessão: se já logou antes, pula o login
   useEffect(() => {
@@ -169,6 +194,7 @@ export default function AdminClient() {
     const q = busca.trim().toLowerCase();
     return leads.filter((l) => {
       if (filtroArea !== "Todas" && l.area !== filtroArea) return false;
+      if (filtroCanal !== "Todos" && (l.canal || "Site") !== filtroCanal) return false;
       if (!q) return true;
       return (
         l.nome.toLowerCase().includes(q) ||
@@ -177,7 +203,14 @@ export default function AdminClient() {
         l.contato.toLowerCase().includes(q)
       );
     });
-  }, [leads, filtroArea, busca]);
+  }, [leads, filtroArea, filtroCanal, busca]);
+
+  // canais que existem nos leads carregados, com contagem (mais leads primeiro)
+  const canais = useMemo(() => {
+    const cont = new Map<string, number>();
+    for (const l of leads) cont.set(l.canal || "Site", (cont.get(l.canal || "Site") ?? 0) + 1);
+    return [...cont.entries()].sort((a, b) => b[1] - a[1]);
+  }, [leads]);
 
   const porStatus = useMemo(() => {
     const lista = statuses.length ? statuses : ["Novo", "Em contato", "Proposta enviada", "Ganho", "Perdido"];
@@ -234,18 +267,37 @@ export default function AdminClient() {
         >
           <div>
             <div className="sec-tag" style={{ marginBottom: 6 }}>Painel · uso interno</div>
-            <h2 style={{ marginBottom: 0 }}>Leads</h2>
+            <h2 style={{ marginBottom: 0 }}>{aba === "leads" ? "Leads" : "Painel"}</h2>
+          </div>
+          <div className="briefing-chips" style={{ margin: 0 }} role="tablist" aria-label="Seção do painel">
+            {([["leads", "Leads"], ["painel", "Painel BI"]] as const).map(([id, nome]) => (
+              <button
+                key={id}
+                role="tab"
+                aria-selected={aba === id}
+                className={`briefing-chip ${aba === id ? "is-on" : ""}`}
+                onClick={() => setAba(id)}
+              >
+                {nome}
+              </button>
+            ))}
           </div>
           <div style={{ marginLeft: "auto", display: "flex", gap: 10, alignItems: "center" }}>
-            <button className="plink" onClick={carregar} disabled={carregando}>
-              {carregando ? <Loader2 size={15} className="spin" /> : <RefreshCw size={15} />} Atualizar
-            </button>
+            {aba === "leads" && (
+              <button className="plink" onClick={carregar} disabled={carregando}>
+                {carregando ? <Loader2 size={15} className="spin" /> : <RefreshCw size={15} />} Atualizar
+              </button>
+            )}
             <button className="plink" onClick={sair}>
               <LogOut size={15} /> Sair
             </button>
           </div>
         </div>
 
+        {aba === "painel" ? (
+          <PainelBI chave={chaveAdmin} aoExpirar={sessaoExpirou} />
+        ) : (
+        <>
         {/* filtros */}
         <div className="tool-index" style={{ marginBottom: 24 }}>
           <div className="tool-index-title">Filtrar</div>
@@ -261,6 +313,24 @@ export default function AdminClient() {
               </button>
             ))}
           </div>
+          {canais.length > 0 && (
+            <>
+              <div className="tool-index-title" style={{ marginTop: 4 }}>De onde vieram</div>
+              <div className="briefing-chips" style={{ marginBottom: 14 }}>
+                {["Todos", ...canais.map(([c]) => c)].map((c) => (
+                  <button
+                    key={c}
+                    className={`briefing-chip ${filtroCanal === c ? "is-on" : ""}`}
+                    onClick={() => setFiltroCanal(c)}
+                  >
+                    {filtroCanal === c && <Check size={13} />}
+                    {c === "Site" ? "Sem rastro" : c}
+                    {c !== "Todos" && ` (${canais.find(([n]) => n === c)?.[1] ?? 0})`}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
           <div className="field" style={{ marginBottom: 0 }}>
             <input
               value={busca}
@@ -328,9 +398,18 @@ export default function AdminClient() {
                       {l.negocio && (
                         <div className="field-hint" style={{ marginTop: 2 }}>{l.negocio}</div>
                       )}
-                      {l.area && l.area !== "Indefinido" && (
-                        <span className="tag" style={{ marginTop: 8, display: "inline-flex" }}>{l.area}</span>
-                      )}
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+                        {l.area && l.area !== "Indefinido" && (
+                          <span className="tag" style={{ display: "inline-flex" }}>{l.area}</span>
+                        )}
+                        <span
+                          className="tag"
+                          style={{ display: "inline-flex" }}
+                          title={l.origemSite ? `Veio de ${l.origemSite}` : undefined}
+                        >
+                          {descreverCanal(l)}
+                        </span>
+                      </div>
                       <p style={{ fontSize: 13.5, color: "var(--fg-muted)", margin: "10px 0", lineHeight: 1.5 }}>
                         {l.dor}
                       </p>
@@ -391,6 +470,8 @@ export default function AdminClient() {
             ? <>Os dados vivem no PostgreSQL da Oracle Cloud, com trilha de auditoria de cada mudança de <em>status</em>. Se a Oracle cair, novos leads vão para o Notion (reserva).</>
             : <>Os dados vivem no Notion (usado apenas como banco). Mudar o <em>status</em> aqui já atualiza lá também.</>}
         </p>
+        </>
+        )}
       </div>
     </section>
   );

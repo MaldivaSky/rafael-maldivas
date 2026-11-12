@@ -39,6 +39,9 @@ export function middleware(req: NextRequest) {
   if (
     pathname === "/admin" ||
     pathname.startsWith("/admin/") ||
+    // links curtos de divulgação (/r/in/<post>): redirect com UTM no next.config.mjs
+    pathname === "/r" ||
+    pathname.startsWith("/r/") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/icons") ||

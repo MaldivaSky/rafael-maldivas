@@ -66,9 +66,59 @@ export async function criarLeadOracle(lead: LeadNormalizado): Promise<void> {
       negocio: lead.negocio.slice(0, 2000),
       dor: lead.dor.slice(0, 4000),
       idioma: lead.idioma === "en" ? "EN" : "PT",
-      canal: "Site",
+      // origem: o canal foi decidido no servidor (lib/origem.ts)
+      canal: lead.canal.rotulo,
+      canal_certeza: lead.canal.certeza,
+      utm_campaign: lead.origemPrimeira?.utm_campaign ?? lead.origemUltima?.utm_campaign ?? null,
+      utm_content: lead.origemPrimeira?.utm_content ?? lead.origemUltima?.utm_content ?? null,
+      referrer_host: lead.origemPrimeira?.referrer_host ?? lead.origemUltima?.referrer_host ?? null,
+      landing: lead.origemPrimeira?.landing ?? null,
+      origem_primeira: lead.origemPrimeira,
+      origem_ultima: lead.origemUltima,
     }),
   });
+}
+
+/* ---------- telemetria (site.eventos) ---------- */
+
+export type EventoSite = {
+  evento: string;
+  caminho: string;
+  canal: string;
+  utm_content: string | null;
+  sessao: string | null;
+  dispositivo: string;
+  idioma: string | null;
+  pais: string | null;
+  segundos: number | null;
+};
+
+/** Grava um evento de visita. writer só insere; timeout curto (é só métrica). */
+export async function registrarEventoOracle(e: EventoSite): Promise<void> {
+  const base = (process.env.ORACLE_LEADS_URL ?? "").replace(/\/+$/, "");
+  const segredo = process.env.ORACLE_LEADS_JWT_SECRET ?? "";
+  if (!base || !segredo) throw new Error("oracle não configurado");
+  const r = await fetch(`${base}/eventos`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${assinarToken("site_writer", segredo)}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal",
+    },
+    body: JSON.stringify(e),
+    signal: AbortSignal.timeout(3000),
+    cache: "no-store",
+  });
+  if (!r.ok) throw new Error(`oracle ${r.status}: ${(await r.text()).slice(0, 200)}`);
+}
+
+/** Tudo que o painel BI mostra (função site.painel no banco). */
+export async function painelOracle(dias: number): Promise<unknown> {
+  const r = await chamar("site_admin", "/rpc/painel", {
+    method: "POST",
+    body: JSON.stringify({ p_dias: dias }),
+  });
+  return r.json();
 }
 
 /* ---------- listar (painel) ---------- */
@@ -86,6 +136,11 @@ type Linha = {
   dor: string;
   idioma: string;
   canal: string;
+  canal_certeza: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  referrer_host: string | null;
+  landing: string | null;
 };
 
 export async function listarLeadsOracle(): Promise<Lead[]> {
@@ -103,6 +158,11 @@ export async function listarLeadsOracle(): Promise<Lead[]> {
     dor: l.dor,
     idioma: l.idioma,
     canal: l.canal,
+    certeza: l.canal_certeza ?? "",
+    campanha: l.utm_campaign ?? "",
+    conteudo: l.utm_content ?? "",
+    origemSite: l.referrer_host ?? "",
+    entrada: l.landing ?? "",
     criadoEm: l.criado_em,
     url: "",
   }));

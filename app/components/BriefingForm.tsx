@@ -6,6 +6,7 @@ import { useLang } from "../lib/i18n";
 import { AREAS, servicos, type Area } from "../lib/catalog";
 import { EMAIL, WHATSAPP } from "../lib/site";
 import { trackSiteEvent } from "../lib/analytics";
+import { origemParaEnvio } from "../lib/origem-client";
 
 /**
  * Levantamento de requisitos + captação de lead.
@@ -130,7 +131,11 @@ export default function BriefingForm() {
       const r = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ negocio, dor, escolhas, prazo, nome, contato, idioma: lang, honey }),
+        body: JSON.stringify({
+          negocio, dor, escolhas, prazo, nome, contato, idioma: lang, honey,
+          // de onde a pessoa veio; o servidor decide o canal
+          ...origemParaEnvio(),
+        }),
       });
       const d = await r.json();
       if (d.ok) {
