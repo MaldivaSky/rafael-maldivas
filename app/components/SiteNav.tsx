@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { ChevronDown, Menu, Moon, Sun, X } from "lucide-react";
+import { ChevronDown, GraduationCap, LogIn, LogOut, Menu, Moon, Sun, User, X } from "lucide-react";
 import { useLang, localePath } from "../lib/i18n";
 import { WHATSAPP } from "../lib/site";
 import { AREAS, servicos } from "../lib/catalog";
@@ -219,18 +219,62 @@ function DesktopItem({
 /*  Navegação                                                          */
 /* ------------------------------------------------------------------ */
 
+type NavAluno = {
+  nome: string;
+  nome_certificado: string;
+  email: string;
+  avatar_url: string;
+};
+
+function initialsOf(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "A";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+}
+
 export default function SiteNav() {
   const { lang, setLang } = useLang();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [mobileSub, setMobileSub] = useState<string | null>(null);
+  const [aluno, setAluno] = useState<NavAluno | null>(null);
+  const [authLoaded, setAuthLoaded] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    let active = true;
+    const loadAluno = () => {
+      fetch("/api/aluno/me", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : { autenticado: false }))
+        .then((d: { autenticado?: boolean; aluno?: NavAluno }) => {
+          if (!active) return;
+          setAluno(d.autenticado && d.aluno ? d.aluno : null);
+        })
+        .catch(() => {
+          if (active) setAluno(null);
+        })
+        .finally(() => {
+          if (active) setAuthLoaded(true);
+        });
+    };
+    loadAluno();
+    window.addEventListener("maldivas:auth-changed", loadAluno);
+    return () => {
+      active = false;
+      window.removeEventListener("maldivas:auth-changed", loadAluno);
+    };
+  }, [pathname]);
+
   useEffect(() => {
     setOpen(false);
     setMobileSub(null);
+    setUserMenuOpen(false);
   }, [pathname]);
 
   // menu aberto não deixa a página rolar por baixo
@@ -242,10 +286,32 @@ export default function SiteNav() {
   }, [open]);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        setUserMenuOpen(false);
+      }
+    };
+    const onDown = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onDown);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onDown);
+    };
   }, []);
+
+  async function sairAluno() {
+    await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+    setAluno(null);
+    setUserMenuOpen(false);
+    setOpen(false);
+    window.dispatchEvent(new Event("maldivas:auth-changed"));
+  }
 
   const isDark = resolvedTheme !== "light";
   // pathname pode vir como /pt/servicos ou /en/servicos — normaliza antes de comparar
@@ -298,6 +364,79 @@ export default function SiteNav() {
               >
                 {isDark ? <Sun size={16} /> : <Moon size={16} />}
               </button>
+            )}
+
+            {authLoaded && (
+              <div className="nav-auth-desktop">
+                {aluno ? (
+                  <div className="nav-user-wrap" ref={userMenuRef}>
+                    <button
+                      type="button"
+                      className="nav-user-btn"
+                      aria-expanded={userMenuOpen}
+                      aria-haspopup="menu"
+                      onClick={() => setUserMenuOpen((v) => !v)}
+                    >
+                      {aluno.avatar_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={aluno.avatar_url}
+                          alt=""
+                          className="nav-user-avatar"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <span className="nav-user-avatar" aria-hidden="true">
+                          {initialsOf(aluno.nome_certificado || aluno.nome)}
+                        </span>
+                      )}
+                      <span>{(aluno.nome_certificado || aluno.nome).split(" ")[0]}</span>
+                      <ChevronDown size={14} aria-hidden="true" />
+                    </button>
+
+                    {userMenuOpen && (
+                      <div className="nav-user-menu" role="menu">
+                        <div className="nav-user-head">
+                          <strong>{aluno.nome_certificado || aluno.nome}</strong>
+                          <span>{aluno.email}</span>
+                        </div>
+                        <Link
+                          href={localePath("/trilha", lang)}
+                          className="nav-user-item"
+                          role="menuitem"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <GraduationCap size={15} aria-hidden="true" />
+                          <span>{lang === "pt" ? "Minha Trilha" : "My Track"}</span>
+                        </Link>
+                        <Link
+                          href={localePath("/perfil", lang)}
+                          className="nav-user-item"
+                          role="menuitem"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <User size={15} aria-hidden="true" />
+                          <span>{lang === "pt" ? "Meu Perfil" : "My Profile"}</span>
+                        </Link>
+                        <button
+                          type="button"
+                          className="nav-user-item is-danger"
+                          role="menuitem"
+                          onClick={sairAluno}
+                        >
+                          <LogOut size={15} aria-hidden="true" />
+                          <span>{lang === "pt" ? "Sair" : "Sign out"}</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link href={localePath("/entrar", lang)} className="nav-auth-btn">
+                    <LogIn size={14} aria-hidden="true" />
+                    <span>{lang === "pt" ? "Entrar" : "Sign in"}</span>
+                  </Link>
+                )}
+              </div>
             )}
 
             <a className="nav-cta" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">
@@ -369,6 +508,30 @@ export default function SiteNav() {
               </div>
             );
           })}
+
+          {authLoaded && (
+            aluno ? (
+              <div style={{ display: "grid", gap: 8, marginTop: 12 }}>
+                <Link href={localePath("/trilha", lang)} className="btn btn-ghost" style={{ marginTop: 0 }}>
+                  <GraduationCap size={16} aria-hidden="true" />
+                  <span>{lang === "pt" ? "Minha Trilha" : "My Track"}</span>
+                </Link>
+                <Link href={localePath("/perfil", lang)} className="btn btn-ghost" style={{ marginTop: 0 }}>
+                  <User size={16} aria-hidden="true" />
+                  <span>{lang === "pt" ? "Meu Perfil" : "My Profile"}</span>
+                </Link>
+                <button type="button" className="btn btn-ghost" style={{ marginTop: 0 }} onClick={sairAluno}>
+                  <LogOut size={16} aria-hidden="true" />
+                  <span>{lang === "pt" ? "Sair da conta" : "Sign out"}</span>
+                </button>
+              </div>
+            ) : (
+              <Link href={localePath("/entrar", lang)} className="btn btn-ghost">
+                <LogIn size={16} aria-hidden="true" />
+                <span>{lang === "pt" ? "Entrar na Área do Aluno" : "Sign in to Student Portal"}</span>
+              </Link>
+            )
+          )}
 
           <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">
             {lang === "pt" ? "Falar no WhatsApp" : "Message on WhatsApp"}

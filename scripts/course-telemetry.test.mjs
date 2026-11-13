@@ -160,3 +160,82 @@ test("normaliza slug e id da mesma aula sem rebaixar concluida para em_andamento
   assert.equal(t.alunos[0].aulas_concluidas_norm, 1);
   assert.equal(t.alunos[0].licoes_mapa[0].status, "concluida");
 });
+
+test("contabiliza total_logins, total_acessos e eventos_recentes a partir de aluno_eventos", () => {
+  const painel = {
+    eventos_disponiveis: true,
+    kpis: {
+      total_alunos: 1,
+      ativos_7d: 1,
+      total_concluidas: 1,
+      certificados_emitidos: 0,
+      alunos_com_lead: 0,
+      avaliacoes_pendentes: 0,
+    },
+    alunos: [
+      makeAluno("ev1", {
+        criado_em: isoDaysAgo(10),
+        ultimo_acesso_em: isoDaysAgo(1),
+        aulas_concluidas: 1,
+        progresso: [
+          { curso_slug: "construa-seu-marketplace", licao_id: "modulo-0-f01-o-mapa", status: "concluida", nota_quiz: 90, atualizado_em: isoDaysAgo(8), concluido_em: isoDaysAgo(8) },
+        ],
+        eventos: [
+          { aluno_id: "ev1", tipo: "login_google", criado_em: isoDaysAgo(10) },
+          { aluno_id: "ev1", tipo: "login_google", criado_em: isoDaysAgo(4) },
+          { aluno_id: "ev1", tipo: "acesso_portal", criado_em: isoDaysAgo(1) },
+          { aluno_id: "ev1", tipo: "aula_concluida", licao_id: "modulo-0-f01-o-mapa", criado_em: isoDaysAgo(8) },
+        ],
+      }),
+    ],
+  };
+
+  const t = calcularTelemetriaAlunos(painel, COURSE, NOW);
+  assert.equal(t.eventos_disponiveis, true);
+  assert.equal(t.alunos[0].total_logins, 2);
+  assert.equal(t.alunos[0].total_acessos, 3);
+  assert.equal(t.alunos[0].eventos_recentes.length, 4);
+  assert.equal(t.alunos[0].eventos_recentes[0].tipo, "acesso_portal");
+  assert.equal(t.alunos[0].estagio, "mantendo_frequencia");
+});
+
+test("respeita regras customizadas de janela, risco e abandono", () => {
+  const painel = {
+    kpis: {
+      total_alunos: 2,
+      ativos_7d: 0,
+      total_concluidas: 1,
+      certificados_emitidos: 0,
+      alunos_com_lead: 0,
+      avaliacoes_pendentes: 0,
+    },
+    alunos: [
+      // Sem estudar há 12 dias: na regra padrão é em_risco; com diasRiscoMax=10 vira abandonou
+      makeAluno("r12", {
+        criado_em: isoDaysAgo(20),
+        ultimo_acesso_em: isoDaysAgo(12),
+        aulas_concluidas: 1,
+        progresso: [
+          { curso_slug: "construa-seu-marketplace", licao_id: "modulo-0-f01-o-mapa", status: "concluida", nota_quiz: 80, atualizado_em: isoDaysAgo(12), concluido_em: isoDaysAgo(12) },
+        ],
+      }),
+      // Só login há 4 dias: padrão = nao_iniciou_recente; com diasOnboardingAbandono=3 vira abandonou_onboarding
+      makeAluno("onb4", {
+        criado_em: isoDaysAgo(4),
+        ultimo_acesso_em: isoDaysAgo(4),
+      }),
+    ],
+  };
+
+  const padrao = calcularTelemetriaAlunos(painel, COURSE, NOW);
+  assert.equal(padrao.alunos[0].estagio, "em_risco");
+  assert.equal(padrao.alunos[1].estagio, "nao_iniciou_recente");
+
+  const restrito = calcularTelemetriaAlunos(painel, COURSE, NOW, {
+    diasFrequenciaJanela: 5,
+    diasRiscoMax: 10,
+    diasOnboardingAbandono: 3,
+  });
+  assert.equal(restrito.alunos[0].estagio, "abandonou");
+  assert.equal(restrito.alunos[1].estagio, "abandonou_onboarding");
+});

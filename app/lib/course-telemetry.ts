@@ -3,6 +3,22 @@ import type { PainelAlunosAdmin } from "./oracle-students";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+export type RegraTelemetria = {
+  diasFrequenciaJanela: number;
+  diasJanelaRecorrencia: number;
+  minDiasAtivosFrequencia: number;
+  diasRiscoMax: number;
+  diasOnboardingAbandono: number;
+};
+
+export const REGRAS_TELEMETRIA_PADRAO: RegraTelemetria = {
+  diasFrequenciaJanela: 7,
+  diasJanelaRecorrencia: 14,
+  minDiasAtivosFrequencia: 2,
+  diasRiscoMax: 21,
+  diasOnboardingAbandono: 7,
+};
+
 export type EstagioAluno =
   | "mantendo_frequencia"
   | "ativo_esporadico"
@@ -87,6 +103,9 @@ export type AlunoTelemetria = PainelAlunosAdmin["alunos"][number] & {
   estagio_motivo: string;
   começou_nao_terminou: boolean;
   nunca_iniciou: boolean;
+  total_logins: number;
+  total_acessos: number;
+  eventos_recentes: Array<{ tipo: string; licao_id?: string; criado_em: string }>;
   dias_desde_cadastro: number;
   dias_sem_acesso: number;
   dias_sem_atividade: number;
@@ -113,6 +132,8 @@ export type AlunoTelemetria = PainelAlunosAdmin["alunos"][number] & {
 export type TelemetriaAlunosAdmin = {
   gerado_em: string;
   total_aulas_curso: number;
+  eventos_disponiveis: boolean;
+  regras_aplicadas: RegraTelemetria;
   resumo: {
     total_alunos: number;
     novos_7d: number;
@@ -236,16 +257,57 @@ function calcCompletude(a: PainelAlunosAdmin["alunos"][number]): number {
   return Math.round((filled / campos.length) * 100);
 }
 
+function normalizeRegras(partial?: Partial<RegraTelemetria>): RegraTelemetria {
+  const clamp = (n: number | undefined, fallback: number, min: number, max: number) => {
+    const num = typeof n === "number" && Number.isFinite(n) ? Math.round(n) : fallback;
+    return Math.min(max, Math.max(min, num));
+  };
+  const diasFrequenciaJanela = clamp(partial?.diasFrequenciaJanela, REGRAS_TELEMETRIA_PADRAO.diasFrequenciaJanela, 1, 60);
+  const diasJanelaRecorrencia = clamp(
+    partial?.diasJanelaRecorrencia,
+    REGRAS_TELEMETRIA_PADRAO.diasJanelaRecorrencia,
+    diasFrequenciaJanela,
+    90,
+  );
+  const minDiasAtivosFrequencia = clamp(
+    partial?.minDiasAtivosFrequencia,
+    REGRAS_TELEMETRIA_PADRAO.minDiasAtivosFrequencia,
+    1,
+    30,
+  );
+  const diasRiscoMax = clamp(
+    partial?.diasRiscoMax,
+    REGRAS_TELEMETRIA_PADRAO.diasRiscoMax,
+    diasFrequenciaJanela + 1,
+    180,
+  );
+  const diasOnboardingAbandono = clamp(
+    partial?.diasOnboardingAbandono,
+    REGRAS_TELEMETRIA_PADRAO.diasOnboardingAbandono,
+    1,
+    90,
+  );
+  return {
+    diasFrequenciaJanela,
+    diasJanelaRecorrencia,
+    minDiasAtivosFrequencia,
+    diasRiscoMax,
+    diasOnboardingAbandono,
+  };
+}
+
 export function calcularTelemetriaAlunos(
   painel: PainelAlunosAdmin,
   course: Course,
   nowMs: number = Date.now(),
+  regrasPartial?: Partial<RegraTelemetria>,
 ): TelemetriaAlunosAdmin {
+  const regras = normalizeRegras(regrasPartial);
   const { lessons, byKey } = buildCurriculoFromCourse(course);
   const totalAulas = lessons.length;
   const cutoff24h = nowMs - DAY_MS;
-  const cutoff7d = nowMs - 7 * DAY_MS;
-  const cutoff14d = nowMs - 14 * DAY_MS;
+  const cutoffFreq = nowMs - regras.diasFrequenciaJanela * DAY_MS;
+  const cutoffRecorrencia = nowMs - regras.diasJanelaRecorrencia * DAY_MS;
   const cutoff30d = nowMs - 30 * DAY_MS;
 
   // Mapa diário dos últimos 30 dias (YYYY-MM-DD em BRT)
@@ -295,7 +357,7 @@ export function calcularTelemetriaAlunos(
       const ms = parseMs(iso);
       if (!k || ms === null) return;
       activeDays.add(k);
-      if (ms >= cutoff14d && ms <= nowMs + DAY_MS) activeDays14d.add(k);
+      if (ms >= cutoffRecorrencia && ms <= nowMs + DAY_MS) activeDays14d.add(k);
       if (trackAccessStudentId && dailyMap.has(k)) {
         dailyMap.get(k)!.acessos_set.add(trackAccessStudentId);
       }
@@ -310,6 +372,31 @@ export function calcularTelemetriaAlunos(
     }
 
     let maxActivityMs = Math.max(criadoMs, ultimoAcessoMs);
+
+    const rawEventos = aluno.eventos ?? [];
+    let loginEventsCount = 0;
+    let portalEventsCount = 0;
+    for (const ev of rawEventos) {
+      addDay(ev.criado_em, aluno.id);
+      if (ev.tipo === "login_google") loginEventsCount += 1;
+      if (ev.tipo === "acesso_portal") portalEventsCount += 1;
+      const evMs = parseMs(ev.criado_em);
+      if (evMs && evMs > maxActivityMs) maxActivityMs = evMs;
+    }
+    const eventosRecentes = [...rawEventos]
+      .sort((a, b) => (parseMs(b.criado_em) ?? 0) - (parseMs(a.criado_em) ?? 0))
+      .slice(0, 25)
+      .map((ev) => ({
+        tipo: ev.tipo,
+        licao_id: ev.licao_id || undefined,
+        criado_em: ev.criado_em,
+      }));
+    const totalLogins = Math.max(1, loginEventsCount);
+    const fallbackAcessos = ultimoAcessoMs - criadoMs > 15 * 60 * 1000 ? 2 : 1;
+    const totalAcessos =
+      loginEventsCount + portalEventsCount > 0
+        ? loginEventsCount + portalEventsCount
+        : fallbackAcessos;
 
     for (const p of aluno.progresso ?? []) {
       const ref = byKey.get(p.licao_id);
@@ -373,7 +460,7 @@ export function calcularTelemetriaAlunos(
         tempoEstudadoMin += ref.durationMin;
         lessonStats[ref.index].concluidas += 1;
         const doneMs = parseMs(p?.concluido_em || p?.atualizado_em) ?? 0;
-        if (doneMs >= cutoff7d) aulas7d += 1;
+        if (doneMs >= cutoffFreq) aulas7d += 1;
         if (doneMs >= cutoff30d) aulas30d += 1;
         if (!ultimaConcluida || doneMs > ultimaConcluida.ms) {
           ultimaConcluida = {
@@ -430,9 +517,9 @@ export function calcularTelemetriaAlunos(
           ? "Projeto final aguardando correção do instrutor"
           : "Revisão solicitada no projeto final";
     } else if (aulasConcluidasNorm === 0 && aulasEmAndamento === 0) {
-      if (diasSemAcesso > 7) {
+      if (diasSemAcesso > regras.diasOnboardingAbandono) {
         estagio = "abandonou_onboarding";
-        estagioMotivo = `Fez login há ${diasSemAcesso} dias e nunca iniciou nenhuma aula`;
+        estagioMotivo = `Fez login há ${diasSemAcesso} dias (> ${regras.diasOnboardingAbandono}d) e nunca iniciou nenhuma aula`;
       } else {
         estagio = "nao_iniciou_recente";
         estagioMotivo =
@@ -440,20 +527,23 @@ export function calcularTelemetriaAlunos(
             ? "Fez login hoje, ainda sem aulas registradas"
             : `Fez login há ${diasSemAcesso}d, ainda não concluiu a 1ª aula`;
       }
-    } else if (diasSemAtividade <= 7) {
-      if (activeDays14d.size >= 2 || aulas7d >= 2) {
+    } else if (diasSemAtividade <= regras.diasFrequenciaJanela) {
+      if (
+        activeDays14d.size >= regras.minDiasAtivosFrequencia ||
+        aulas7d >= regras.minDiasAtivosFrequencia
+      ) {
         estagio = "mantendo_frequencia";
-        estagioMotivo = `Ativo há ${diasSemAtividade}d · ${activeDays14d.size} dias ativos/14d · ${aulas7d} aulas/7d`;
+        estagioMotivo = `Ativo há ${diasSemAtividade}d · ${activeDays14d.size} dias ativos/${regras.diasJanelaRecorrencia}d · ${aulas7d} aulas/${regras.diasFrequenciaJanela}d`;
       } else {
         estagio = "ativo_esporadico";
-        estagioMotivo = `Atividade recente (há ${diasSemAtividade}d) em sessão única`;
+        estagioMotivo = `Atividade recente (há ${diasSemAtividade}d) abaixo da recorrência mínima (${regras.minDiasAtivosFrequencia})`;
       }
-    } else if (diasSemAtividade <= 21) {
+    } else if (diasSemAtividade <= regras.diasRiscoMax) {
       estagio = "em_risco";
-      estagioMotivo = `Sem estudar há ${diasSemAtividade} dias (${aulasConcluidasNorm}/${totalAulas} aulas)`;
+      estagioMotivo = `Sem estudar há ${diasSemAtividade} dias (regra ${regras.diasFrequenciaJanela + 1}–${regras.diasRiscoMax}d · ${aulasConcluidasNorm}/${totalAulas} aulas)`;
     } else {
       estagio = "abandonou";
-      estagioMotivo = `Sem atividade há ${diasSemAtividade} dias (parou com ${aulasConcluidasNorm}/${totalAulas} aulas)`;
+      estagioMotivo = `Sem atividade há ${diasSemAtividade} dias (> ${regras.diasRiscoMax}d · parou com ${aulasConcluidasNorm}/${totalAulas} aulas)`;
     }
 
     // Aula fronteira (onde parou ou próxima a cursar)
@@ -484,6 +574,9 @@ export function calcularTelemetriaAlunos(
       estagio_motivo: estagioMotivo,
       começou_nao_terminou: comecouNaoTerminou,
       nunca_iniciou: !startedAny,
+      total_logins: totalLogins,
+      total_acessos: totalAcessos,
+      eventos_recentes: eventosRecentes,
       dias_desde_cadastro: diasDesdeCadastro,
       dias_sem_acesso: diasSemAcesso,
       dias_sem_atividade: diasSemAtividade,
@@ -522,10 +615,14 @@ export function calcularTelemetriaAlunos(
   });
 
   const totalAlunos = alunosEnriquecidos.length;
-  const novos7d = alunosEnriquecidos.filter((a) => (parseMs(a.criado_em) ?? 0) >= cutoff7d).length;
+  const novos7d = alunosEnriquecidos.filter((a) => (parseMs(a.criado_em) ?? 0) >= cutoffFreq).length;
   const novos30d = alunosEnriquecidos.filter((a) => (parseMs(a.criado_em) ?? 0) >= cutoff30d).length;
   const logins24h = alunosEnriquecidos.filter((a) => (parseMs(a.ultimo_acesso_em) ?? 0) >= cutoff24h).length;
-  const ativos7d = alunosEnriquecidos.filter((a) => a.dias_sem_acesso <= 7 || a.dias_sem_atividade <= 7).length;
+  const ativos7d = alunosEnriquecidos.filter(
+    (a) =>
+      a.dias_sem_acesso <= regras.diasFrequenciaJanela ||
+      a.dias_sem_atividade <= regras.diasFrequenciaJanela,
+  ).length;
   const ativos30d = alunosEnriquecidos.filter((a) => a.dias_sem_acesso <= 30 || a.dias_sem_atividade <= 30).length;
 
   const comAulasIniciadas = alunosEnriquecidos.filter((a) => !a.nunca_iniciou).length;
@@ -616,6 +713,8 @@ export function calcularTelemetriaAlunos(
   return {
     gerado_em: new Date(nowMs).toISOString(),
     total_aulas_curso: totalAulas,
+    eventos_disponiveis: Boolean(painel.eventos_disponiveis),
+    regras_aplicadas: regras,
     resumo: {
       total_alunos: totalAlunos,
       novos_7d: novos7d,

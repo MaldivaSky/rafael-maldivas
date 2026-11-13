@@ -17,7 +17,9 @@ import {
   LogIn,
   Mail,
   RefreshCw,
+  RotateCcw,
   Search,
+  SlidersHorizontal,
   TrendingDown,
   UserCheck,
   Users,
@@ -34,11 +36,16 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { COURSES } from "@/app/lib/courses";
 import {
+  calcularTelemetriaAlunos,
   ESTAGIO_META,
+  REGRAS_TELEMETRIA_PADRAO,
   type AlunoTelemetria,
+  type RegraTelemetria,
   type TelemetriaAlunosAdmin,
 } from "@/app/lib/course-telemetry";
+import type { PainelAlunosAdmin } from "@/app/lib/oracle-students";
 
 type FiltroCoorte =
   | "todos"
@@ -99,8 +106,22 @@ const tooltipStyle: React.CSSProperties = {
   fontSize: 12.5,
 };
 
+const REGRAS_STORAGE_KEY = "maldivas_admin_regras_lms_v1";
+
+const EVENTO_LABEL: Record<string, string> = {
+  login_google: "Login Google",
+  acesso_portal: "Acesso ao portal",
+  aula_iniciada: "Aula iniciada",
+  aula_concluida: "Aula concluída",
+  perfil_atualizado: "Perfil atualizado",
+  projeto_enviado: "Projeto final enviado",
+};
+
 export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
-  const [telemetria, setTelemetria] = useState<TelemetriaAlunosAdmin | null>(null);
+  const [dadosBrutos, setDadosBrutos] = useState<PainelAlunosAdmin | null>(null);
+  const [telemetriaServer, setTelemetriaServer] = useState<TelemetriaAlunosAdmin | null>(null);
+  const [regras, setRegras] = useState<RegraTelemetria>(REGRAS_TELEMETRIA_PADRAO);
+  const [mostrarRegras, setMostrarRegras] = useState(false);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [busca, setBusca] = useState("");
@@ -111,6 +132,38 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
   const [avaliandoId, setAvaliandoId] = useState<string | null>(null);
   const [copiadoCod, setCopiadoCod] = useState<string | null>(null);
   const [mostrarGraficos, setMostrarGraficos] = useState(true);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(REGRAS_STORAGE_KEY);
+      if (saved) {
+        setRegras({ ...REGRAS_TELEMETRIA_PADRAO, ...JSON.parse(saved) });
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  function atualizarRegra(campo: keyof RegraTelemetria, valor: number) {
+    setRegras((prev) => {
+      const next = { ...prev, [campo]: Number.isFinite(valor) ? valor : prev[campo] };
+      try {
+        localStorage.setItem(REGRAS_STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }
+
+  function restaurarRegrasPadrao() {
+    setRegras(REGRAS_TELEMETRIA_PADRAO);
+    try {
+      localStorage.removeItem(REGRAS_STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+  }
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -125,7 +178,8 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
       if (!json.ok || !json.telemetria) {
         setErro("Não foi possível carregar a telemetria dos alunos.");
       } else {
-        setTelemetria(json.telemetria as TelemetriaAlunosAdmin);
+        setDadosBrutos((json.dados as PainelAlunosAdmin) ?? null);
+        setTelemetriaServer(json.telemetria as TelemetriaAlunosAdmin);
       }
     } catch {
       setErro("Falha de conexão ao buscar telemetria dos alunos.");
@@ -137,6 +191,18 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
   useEffect(() => {
     void carregar();
   }, [carregar]);
+
+  const telemetria = useMemo<TelemetriaAlunosAdmin | null>(() => {
+    if (dadosBrutos) {
+      return calcularTelemetriaAlunos(
+        dadosBrutos,
+        COURSES["construa-seu-marketplace"],
+        Date.now(),
+        regras,
+      );
+    }
+    return telemetriaServer;
+  }, [dadosBrutos, telemetriaServer, regras]);
 
   const filtrados = useMemo(() => {
     const lista = telemetria?.alunos ?? [];
@@ -227,6 +293,8 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
       "Progresso_Pct",
       "Parou_Em",
       "Media_Quiz",
+      "Total_Logins_Google",
+      "Total_Acessos_Portal",
       "Dias_Ativos_Total",
       "Dias_Ativos_14d",
       "Aulas_7d",
@@ -250,6 +318,8 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
         a.percentual_conclusao,
         a.parou_em_licao ? `${a.parou_em_licao.shortCode} - ${a.parou_em_licao.title}` : "Concluido",
         a.media_quiz ?? "",
+        a.total_logins,
+        a.total_acessos,
         a.dias_ativos_total,
         a.dias_ativos_14d,
         a.aulas_7d,
@@ -304,14 +374,15 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
   if (!telemetria) return null;
 
   const r = telemetria.resumo;
+  const ra = telemetria.regras_aplicadas;
 
   const coortes: Array<{ id: FiltroCoorte; label: string; count: number }> = [
     { id: "todos", label: "Todos os logins", count: r.total_alunos },
-    { id: "login_7d", label: "Login recente (7d)", count: r.ativos_7d },
+    { id: "login_7d", label: `Login recente (${ra.diasFrequenciaJanela}d)`, count: r.ativos_7d },
     { id: "mantendo_frequencia", label: "Mantendo frequência", count: r.mantendo_frequencia },
     { id: "comecaram_nao_terminaram", label: "Começaram e não terminaram", count: r.comecaram_nao_terminaram },
-    { id: "em_risco", label: "Em risco (8–21d)", count: r.em_risco },
-    { id: "abandonaram", label: "Abandonaram (>21d / onb.)", count: r.abandonaram_total },
+    { id: "em_risco", label: `Em risco (${ra.diasFrequenciaJanela + 1}–${ra.diasRiscoMax}d)`, count: r.em_risco },
+    { id: "abandonaram", label: `Abandonaram (>${ra.diasRiscoMax}d / onb.)`, count: r.abandonaram_total },
     { id: "nunca_iniciaram", label: "Só login · 0 aulas", count: r.nunca_iniciaram },
     { id: "pendentes", label: "Avaliação pendente", count: r.avaliacoes_pendentes },
     { id: "concluidos", label: "Concluídos / Certificados", count: r.concluidos },
@@ -397,11 +468,18 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
       {/* Controles de visualização */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
         <div style={{ fontSize: 12.5, color: "var(--fg-dim)" }}>
-          Regras: <strong>Mantendo frequência</strong> (ativo ≤7d + ≥2 dias/aulas) ·{" "}
-          <strong>Em risco</strong> (8–21d sem estudar) ·{" "}
-          <strong>Abandonou</strong> (&gt;21d sem atividade ou &gt;7d só com login)
+          Regras ativas: <strong>Mantendo frequência</strong> (≤{ra.diasFrequenciaJanela}d + ≥{ra.minDiasAtivosFrequencia} dias/{ra.diasJanelaRecorrencia}d ou aulas) ·{" "}
+          <strong>Em risco</strong> ({ra.diasFrequenciaJanela + 1}–{ra.diasRiscoMax}d sem estudar) ·{" "}
+          <strong>Abandonou</strong> (&gt;{ra.diasRiscoMax}d sem atividade ou &gt;{ra.diasOnboardingAbandono}d só login)
         </div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button
+            type="button"
+            className="plink"
+            onClick={() => setMostrarRegras((v) => !v)}
+          >
+            <SlidersHorizontal size={14} /> {mostrarRegras ? "Fechar regras" : "Configurar regras"}
+          </button>
           <button
             type="button"
             className="plink"
@@ -417,6 +495,84 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
           </button>
         </div>
       </div>
+
+      {/* Painel Configurável de Regras de Negócio LMS */}
+      {mostrarRegras && (
+        <section
+          className="admin-panel-card"
+          aria-label="Configuração de regras de negócio LMS"
+          style={{ display: "grid", gap: 14 }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+            <div>
+              <strong style={{ fontSize: 14.5 }}>Limiares de Retenção &amp; Frequência</strong>
+              <p className="field-hint" style={{ margin: "2px 0 0" }}>
+                Ajuste em tempo real como os coortes classificam frequência, risco e abandono. Salvo no navegador.
+              </p>
+            </div>
+            <button type="button" className="plink" onClick={restaurarRegrasPadrao}>
+              <RotateCcw size={13} /> Restaurar padrão
+            </button>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+            <label style={{ display: "grid", gap: 4, fontSize: 12.5 }}>
+              <span style={{ color: "var(--fg-muted)", fontWeight: 600 }}>Janela ativo recente (dias)</span>
+              <input
+                type="number"
+                min={1}
+                max={60}
+                value={regras.diasFrequenciaJanela}
+                onChange={(e) => atualizarRegra("diasFrequenciaJanela", Number(e.target.value))}
+                style={{ padding: "7px 10px", borderRadius: 8, border: "1px solid var(--line-strong)", background: "var(--surface)", color: "var(--fg)" }}
+              />
+            </label>
+            <label style={{ display: "grid", gap: 4, fontSize: 12.5 }}>
+              <span style={{ color: "var(--fg-muted)", fontWeight: 600 }}>Janela recorrência (dias)</span>
+              <input
+                type="number"
+                min={regras.diasFrequenciaJanela}
+                max={90}
+                value={regras.diasJanelaRecorrencia}
+                onChange={(e) => atualizarRegra("diasJanelaRecorrencia", Number(e.target.value))}
+                style={{ padding: "7px 10px", borderRadius: 8, border: "1px solid var(--line-strong)", background: "var(--surface)", color: "var(--fg)" }}
+              />
+            </label>
+            <label style={{ display: "grid", gap: 4, fontSize: 12.5 }}>
+              <span style={{ color: "var(--fg-muted)", fontWeight: 600 }}>Mín. dias/aulas p/ frequência</span>
+              <input
+                type="number"
+                min={1}
+                max={30}
+                value={regras.minDiasAtivosFrequencia}
+                onChange={(e) => atualizarRegra("minDiasAtivosFrequencia", Number(e.target.value))}
+                style={{ padding: "7px 10px", borderRadius: 8, border: "1px solid var(--line-strong)", background: "var(--surface)", color: "var(--fg)" }}
+              />
+            </label>
+            <label style={{ display: "grid", gap: 4, fontSize: 12.5 }}>
+              <span style={{ color: "var(--fg-muted)", fontWeight: 600 }}>Em risco até (dias)</span>
+              <input
+                type="number"
+                min={regras.diasFrequenciaJanela + 1}
+                max={180}
+                value={regras.diasRiscoMax}
+                onChange={(e) => atualizarRegra("diasRiscoMax", Number(e.target.value))}
+                style={{ padding: "7px 10px", borderRadius: 8, border: "1px solid var(--line-strong)", background: "var(--surface)", color: "var(--fg)" }}
+              />
+            </label>
+            <label style={{ display: "grid", gap: 4, fontSize: 12.5 }}>
+              <span style={{ color: "var(--fg-muted)", fontWeight: 600 }}>Abandono onboarding (dias)</span>
+              <input
+                type="number"
+                min={1}
+                max={90}
+                value={regras.diasOnboardingAbandono}
+                onChange={(e) => atualizarRegra("diasOnboardingAbandono", Number(e.target.value))}
+                style={{ padding: "7px 10px", borderRadius: 8, border: "1px solid var(--line-strong)", background: "var(--surface)", color: "var(--fg)" }}
+              />
+            </label>
+          </div>
+        </section>
+      )}
 
       {/* Gráficos de Telemetria LMS */}
       {mostrarGraficos && (
@@ -801,6 +957,14 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
                       </div>
                       <div style={{ padding: "10px 12px", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--line)" }}>
                         <div style={{ fontSize: 11, color: "var(--fg-dim)", fontWeight: 700, textTransform: "uppercase" }}>
+                          Logins &amp; Acessos
+                        </div>
+                        <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 3 }}>
+                          {selecionado.total_logins} login(s) · {selecionado.total_acessos} acesso(s)
+                        </div>
+                      </div>
+                      <div style={{ padding: "10px 12px", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--line)" }}>
+                        <div style={{ fontSize: 11, color: "var(--fg-dim)", fontWeight: 700, textTransform: "uppercase" }}>
                           Perfil do Aluno
                         </div>
                         <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 3 }}>
@@ -1009,6 +1173,44 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
                           </div>
                         ))}
                       </div>
+                    </div>
+
+                    {/* Histórico recente de eventos / logins (site.aluno_eventos) */}
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 6 }}>
+                        <strong style={{ fontSize: 13 }}>
+                          Histórico de Logins &amp; Eventos Recentes ({selecionado.eventos_recentes.length})
+                        </strong>
+                        {!telemetria.eventos_disponiveis && (
+                          <span style={{ fontSize: 11.5, color: "var(--fg-dim)" }}>
+                            Aguardando tabela <code>site.aluno_eventos</code> no Oracle para log granular completo
+                          </span>
+                        )}
+                      </div>
+                      {selecionado.eventos_recentes.length > 0 ? (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                          {selecionado.eventos_recentes.slice(0, 12).map((ev, idx) => (
+                            <span
+                              key={`${ev.tipo}-${ev.criado_em}-${idx}`}
+                              style={{
+                                fontSize: 11.5,
+                                padding: "4px 9px",
+                                borderRadius: 8,
+                                background: "var(--surface)",
+                                border: "1px solid var(--line)",
+                                color: "var(--fg-muted)",
+                              }}
+                            >
+                              <strong style={{ color: "var(--fg)" }}>{EVENTO_LABEL[ev.tipo] ?? ev.tipo}</strong>
+                              {ev.licao_id ? ` (${ev.licao_id})` : ""} · {dataCurta(ev.criado_em)}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p style={{ margin: 0, fontSize: 12, color: "var(--fg-dim)" }}>
+                          Sem eventos granulares registrados ainda; utilizando primeiro login ({dataCurta(selecionado.criado_em)}) e último acesso ({dataCurta(selecionado.ultimo_acesso_em)}).
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}

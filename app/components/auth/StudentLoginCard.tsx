@@ -6,7 +6,7 @@ import { AlertCircle, ArrowRight, Award, CheckCircle2, Lock, ShieldCheck } from 
 import { localePath, type Lang } from "@/app/lib/seo";
 import GoogleSignInButton from "./GoogleSignInButton";
 
-type LoginContext = "perfil" | "trilha";
+type LoginContext = "perfil" | "trilha" | "entrar";
 
 const ERROR_MESSAGES: Record<string, { pt: string; en: string }> = {
   cancelled: {
@@ -49,18 +49,26 @@ export default function StudentLoginCard({
       ? pt
         ? "Entre na sua conta para gerenciar seu perfil"
         : "Sign in to manage your student profile"
-      : pt
-        ? "Acesse sua trilha e progresso do curso"
-        : "Access your course track and progress";
+      : context === "entrar"
+        ? pt
+          ? "Entre na Área do Aluno com o Google"
+          : "Sign in to the Student Portal with Google"
+        : pt
+          ? "Acesse sua trilha e progresso do curso"
+          : "Access your course track and progress";
 
   const subtitle =
     context === "perfil"
       ? pt
         ? "Use sua conta Google para definir seu nome oficial nos certificados, links profissionais e objetivo na trilha."
         : "Use your Google account to set your official certificate name, professional links, and learning goal."
-      : pt
-        ? "Entre com sua conta Google para salvar suas aulas concluídas, notas de quizzes, projeto final e certificados verificáveis na nuvem."
-        : "Sign in with Google to sync completed lessons, quiz scores, final project reviews, and verifiable certificates.";
+      : context === "entrar"
+        ? pt
+          ? "Login único com sua conta Google para acompanhar suas aulas, notas de quizzes, projeto final e certificado oficial."
+          : "Single sign-on with your Google account to track lessons, quiz scores, final project reviews, and official certificates."
+        : pt
+          ? "Entre com sua conta Google para salvar suas aulas concluídas, notas de quizzes, projeto final e certificados verificáveis na nuvem."
+          : "Sign in with Google to sync completed lessons, quiz scores, final project reviews, and verifiable certificates.";
 
   const errEntry = authError ? ERROR_MESSAGES[authError] : null;
   const errText = authError

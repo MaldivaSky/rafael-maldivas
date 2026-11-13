@@ -76,7 +76,16 @@ export type CertificadoPublico = {
   emitido_em: string;
 };
 
+export type EventoAlunoAdmin = {
+  aluno_id: string;
+  tipo: string;
+  curso_slug?: string;
+  licao_id?: string;
+  criado_em: string;
+};
+
 export type PainelAlunosAdmin = {
+  eventos_disponiveis?: boolean;
   kpis: {
     total_alunos: number;
     ativos_7d: number;
@@ -129,6 +138,7 @@ export type PainelAlunosAdmin = {
       campanha: string | null;
       criado_em: string;
     } | null;
+    eventos?: EventoAlunoAdmin[];
   }>;
 };
 
@@ -205,11 +215,14 @@ export async function touchAlunoAcesso(aluno: Aluno): Promise<void> {
 
   const now = new Date().toISOString();
   try {
-    await callOracle("site_student_api", `/alunos?id=eq.${aluno.id}`, {
-      method: "PATCH",
-      headers: { Prefer: "return=minimal" },
-      body: JSON.stringify({ ultimo_acesso_em: now }),
-    });
+    await Promise.all([
+      callOracle("site_student_api", `/alunos?id=eq.${aluno.id}`, {
+        method: "PATCH",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ ultimo_acesso_em: now }),
+      }),
+      registrarEventoAluno({ alunoId: aluno.id, tipo: "acesso_portal" }),
+    ]);
   } catch {
     /* non-blocking */
   }
@@ -304,6 +317,7 @@ export async function updateAlunoPerfil(
   });
   const rows = (await r.json()) as Aluno[];
   if (!rows[0]) throw new Error("aluno não encontrado");
+  await registrarEventoAluno({ alunoId, tipo: "perfil_atualizado" });
   return rows[0];
 }
 
@@ -554,6 +568,12 @@ export async function submeterProjetoParaAvaliacao(input: {
   );
   const rows = (await r.json()) as AvaliacaoProjeto[];
   if (!rows[0]) throw new Error("falha ao registrar entrega");
+  await registrarEventoAluno({
+    alunoId: input.alunoId,
+    tipo: "projeto_enviado",
+    cursoSlug: input.cursoSlug,
+    meta: { nota_exame: input.notaExame },
+  });
   return rows[0];
 }
 
@@ -630,10 +650,44 @@ export async function avaliarProjetoAdmin(input: {
 }
 
 export async function listarPainelAlunosAdmin(): Promise<PainelAlunosAdmin> {
-  const r = await callOracle("site_admin", "/rpc/painel_alunos", {
-    method: "POST",
-    body: JSON.stringify({}),
-  });
-  return (await r.json()) as PainelAlunosAdmin;
+  const [r, evRes] = await Promise.all([
+    callOracle("site_admin", "/rpc/painel_alunos", {
+      method: "POST",
+      body: JSON.stringify({}),
+    }),
+    callOracle(
+      "site_admin",
+      "/aluno_eventos?select=aluno_id,tipo,curso_slug,licao_id,criado_em&order=criado_em.desc&limit=2000",
+    ).catch(() => null),
+  ]);
+
+  const painel = (await r.json()) as PainelAlunosAdmin;
+  if (!evRes) {
+    return { ...painel, eventos_disponiveis: false };
+  }
+
+  let evRows: EventoAlunoAdmin[] = [];
+  try {
+    evRows = (await evRes.json()) as EventoAlunoAdmin[];
+  } catch {
+    return { ...painel, eventos_disponiveis: false };
+  }
+
+  const byAluno = new Map<string, EventoAlunoAdmin[]>();
+  for (const ev of evRows) {
+    if (!ev.aluno_id) continue;
+    const list = byAluno.get(ev.aluno_id) ?? [];
+    list.push(ev);
+    byAluno.set(ev.aluno_id, list);
+  }
+
+  return {
+    ...painel,
+    eventos_disponiveis: true,
+    alunos: painel.alunos.map((a) => ({
+      ...a,
+      eventos: byAluno.get(a.id) ?? [],
+    })),
+  };
 }
 
