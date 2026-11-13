@@ -39,6 +39,14 @@ export const localeUrl = (lang: Lang, path = "") => {
   return clean ? `${SITE}/${lang}/${clean}` : `${SITE}/${lang}`;
 };
 
+export function localePath(href: string, lang: Lang): string {
+  if (!href.startsWith("/")) return href;
+  if (href.startsWith("/pt/") || href.startsWith("/en/")) return href;
+  if (href === "/pt" || href === "/en") return href;
+  if (href === "/") return `/${lang}`;
+  return `/${lang}${href}`;
+}
+
 /**
  * hreflang / alternates por rota.
  *

@@ -13,7 +13,7 @@ import {
   ShieldAlert,
   UserCheck,
 } from "lucide-react";
-import { LOCALES, isLang, type Lang } from "@/app/lib/seo";
+import { LOCALES, isLang, localePath, type Lang } from "@/app/lib/seo";
 import { buildMetadata } from "@/app/lib/metadata";
 import {
   courseBySlug,
@@ -22,7 +22,6 @@ import {
   totalCourseMinutes,
   type CourseSlug,
 } from "@/app/lib/courses";
-import { localePath } from "@/app/lib/i18n";
 import { COMPANY, SITE } from "@/app/lib/site";
 import { ORACLE_CERT } from "@/app/lib/credentials";
 import CourseWaitlistForm from "@/app/components/curso/CourseWaitlistForm";
@@ -586,3 +585,4 @@ export default async function CourseSalesPage({
     </>
   );
 }
+

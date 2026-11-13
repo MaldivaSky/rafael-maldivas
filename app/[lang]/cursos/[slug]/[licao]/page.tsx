@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, Lock, PlayCircle } from "lucide-react";
-import { LOCALES, isLang, type Lang } from "@/app/lib/seo";
+import { LOCALES, isLang, localePath, type Lang } from "@/app/lib/seo";
 import { buildMetadata } from "@/app/lib/metadata";
 import {
   allCourseLessons,
@@ -11,7 +11,6 @@ import {
   formatDuration,
   lessonBySlug,
 } from "@/app/lib/courses";
-import { localePath } from "@/app/lib/i18n";
 import { SITE } from "@/app/lib/site";
 import ModuleOneLessonClient from "@/app/components/curso/ModuleOneLessonClient";
 
@@ -209,3 +208,4 @@ export default async function CourseLessonPage({
     </>
   );
 }
+

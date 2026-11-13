@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Clock, GraduationCap, PlayCircle } from "lucide-react";
-import { LOCALES, isLang, type Lang } from "@/app/lib/seo";
+import { LOCALES, isLang, localePath, type Lang } from "@/app/lib/seo";
 import { buildMetadata } from "@/app/lib/metadata";
 import {
   courseList,
   formatDuration,
   totalCourseMinutes,
 } from "@/app/lib/courses";
-import { localePath } from "@/app/lib/i18n";
 import { SITE } from "@/app/lib/site";
 
 export function generateStaticParams() {
@@ -198,3 +197,4 @@ export default async function CoursesIndexPage({
     </>
   );
 }
+
