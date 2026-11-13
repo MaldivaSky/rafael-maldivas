@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import QRCode from "qrcode";
-import { Award, ShieldAlert } from "lucide-react";
+import { Award, CheckCircle2, ShieldAlert } from "lucide-react";
 import { COURSES, formatDuration } from "@/app/lib/courses";
 import { isLang, localePath, type Lang } from "@/app/lib/seo";
 import { COMPANY, SITE } from "@/app/lib/site";
@@ -80,8 +80,8 @@ export default async function CertificadoPublicoPage({
   const qrSvg = await QRCode.toString(verifyUrl, {
     type: "svg",
     margin: 1,
-    width: 112,
-    color: { dark: "#0F2942", light: "#FAF8F2" },
+    width: 96,
+    color: { dark: "#0F172A", light: "#FFFFFF" },
   });
 
   const dataEmissao = new Date(cert.emitido_em).toLocaleDateString("pt-BR", {
@@ -97,428 +97,370 @@ export default async function CertificadoPublicoPage({
   );
   const cargaMin = cert.carga_horaria_min > 0 ? cert.carga_horaria_min : computedMinutes;
 
+  const leftModules = course.modules.slice(0, 3);
+  const rightModules = course.modules.slice(3);
+
   return (
     <main className="wrap curso-page-main cert-sheet-root" style={{ maxWidth: 1080 }}>
       <CertificadoActions verifyUrl={verifyUrl} codigo={cert.codigo} />
 
       {/* ================================================================ */}
-      {/*  FRENTE DO CERTIFICADO (Padrão Institucional A4 Paisagem)         */}
+      {/*  PÁGINA 1: FRENTE DO CERTIFICADO (Clean Executivo A4 Paisagem)    */}
       {/* ================================================================ */}
       <article
         className="cert-page"
         aria-label="Certificado de Conclusão — Frente"
         style={{
           position: "relative",
-          background: "#FAF8F2",
+          background: "#FFFFFF",
           color: "#0F172A",
-          padding: "16px",
-          borderRadius: "4px",
-          boxShadow: "0 24px 64px rgba(0, 0, 0, 0.45)",
-          border: "2px solid #0F2942",
+          borderRadius: "8px",
+          border: "1px solid #CBD5E1",
+          boxShadow: "0 20px 50px rgba(0, 0, 0, 0.35)",
           overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "28px 36px",
+          fontFamily: "var(--font-sans, 'Outfit', system-ui, -apple-system, sans-serif)",
         }}
       >
-        {/* Marca d'água sutil */}
+        {/* Barra superior de identidade Maldivas Tech */}
         <div
           aria-hidden="true"
           style={{
             position: "absolute",
-            inset: 0,
-            display: "grid",
-            placeItems: "center",
-            pointerEvents: "none",
-            opacity: 0.035,
-            fontSize: "4.5rem",
-            fontWeight: 900,
-            letterSpacing: "0.22em",
-            color: "#0F2942",
-            transform: "rotate(-22deg)",
-            userSelect: "none",
-            whiteSpace: "nowrap",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "6px",
+            background: "linear-gradient(90deg, #0F172A 0%, #0284C7 55%, #0EA5E9 100%)",
           }}
-        >
-          MALDIVAS TECH
-        </div>
+        />
 
-        {/* Moldura dupla interna dourada + azul-marinho */}
-        <div
+        {/* Cabeçalho */}
+        <header
           style={{
-            position: "relative",
-            border: "2px solid #B8860B",
-            padding: "2.25rem 2.75rem",
-            display: "grid",
-            gap: "1.4rem",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "16px",
+            borderBottom: "1px solid #E2E8F0",
+            paddingBottom: "14px",
           }}
         >
-          {/* Cabeçalho institucional com Selo SVG */}
-          <header
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "1rem",
-              borderBottom: "1.5px solid #CBD5E1",
-              paddingBottom: "1rem",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
-              <Image
-                src="/brand/logo-mark.png"
-                alt="Maldivas Tech"
-                width={52}
-                height={52}
-              />
-              <div>
-                <div
-                  style={{
-                    fontWeight: 800,
-                    fontSize: "1.2rem",
-                    letterSpacing: "0.08em",
-                    color: "#0F2942",
-                  }}
-                >
-                  MALDIVAS TECH
-                </div>
-                <div style={{ fontSize: "0.82rem", color: "#475569", fontWeight: 500 }}>
-                  Engenharia de Software &amp; Sistemas em Produção · CNPJ {COMPANY.cnpj}
-                </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Image src="/brand/logo-mark.png" alt="Maldivas Tech" width={44} height={44} />
+            <div>
+              <div style={{ fontWeight: 800, fontSize: "1.05rem", letterSpacing: "0.06em", color: "#0F172A" }}>
+                MALDIVAS TECH
+              </div>
+              <div style={{ fontSize: "0.78rem", color: "#64748B", fontWeight: 500 }}>
+                Engenharia de Software &amp; Sistemas em Produção · CNPJ {COMPANY.cnpj}
               </div>
             </div>
-
-            {/* Selo Institucional Vetorial */}
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <svg
-                width="54"
-                height="54"
-                viewBox="0 0 64 64"
-                fill="none"
-                aria-hidden="true"
-              >
-                <circle cx="32" cy="28" r="22" fill="#0F2942" stroke="#B8860B" strokeWidth="3" />
-                <circle cx="32" cy="28" r="17" stroke="#EAB308" strokeWidth="1" strokeDasharray="3 2" />
-                <path d="M23 47L19 60L27 55L32 61L37 55L45 60L41 47" fill="#B8860B" />
-                <path
-                  d="M25 28L30 33L40 23"
-                  stroke="#FAF8F2"
-                  strokeWidth="3.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <div style={{ textAlign: "right", fontSize: "0.76rem", color: "#334155", lineHeight: 1.35 }}>
-                <strong style={{ color: "#0F2942", display: "block", fontSize: "0.82rem" }}>
-                  REGISTRO VERIFICÁVEL
-                </strong>
-                Código: <strong style={{ color: "#0F2942" }}>{cert.codigo}</strong>
-              </div>
-            </div>
-          </header>
-
-          {/* Título e Nome do Concluinte */}
-          <div style={{ textAlign: "center", padding: "0.25rem 0" }}>
-            <div
-              style={{
-                textTransform: "uppercase",
-                letterSpacing: "0.24em",
-                fontSize: "0.88rem",
-                color: "#B8860B",
-                fontWeight: 700,
-              }}
-            >
-              Certificado de Conclusão · Curso Livre de Capacitação Profissional
-            </div>
-
-            <p style={{ margin: "0.9rem 0 0.25rem", fontSize: "1rem", color: "#334155" }}>
-              Certificamos que
-            </p>
-
-            <h1
-              style={{
-                margin: "0 auto",
-                fontFamily: 'Georgia, "Times New Roman", serif',
-                fontSize: "clamp(1.75rem, 3.1vw, 2.5rem)",
-                fontWeight: 700,
-                color: "#0F2942",
-                letterSpacing: "0.01em",
-                lineHeight: 1.2,
-                borderBottom: "1.5px solid #B8860B",
-                display: "inline-block",
-                padding: "0 1.5rem 0.35rem",
-              }}
-            >
-              {cert.nome_exibido}
-            </h1>
-
-            <p
-              style={{
-                margin: "1rem auto 0",
-                fontSize: "1.02rem",
-                lineHeight: 1.65,
-                color: "#1E293B",
-                maxWidth: 780,
-              }}
-            >
-              concluiu com êxito o programa de formação{" "}
-              <strong style={{ color: "#0F2942" }}>{course.name}</strong>, baseado na
-              arquitetura em produção do estudo de caso{" "}
-              <strong style={{ color: "#0F2942" }}>{course.studyCase}</strong>, tendo
-              cumprido integralmente a carga horária e obtido aprovação na avaliação
-              técnica final.
-            </p>
           </div>
 
-          {/* Quadro de Aproveitamento & Carga Horária */}
-          <section
-            aria-label="Resumo Acadêmico"
+          <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-              gap: "0.75rem",
-              background: "#F1EFE7",
-              border: "1px solid #CBD5E1",
-              borderRadius: "6px",
-              padding: "0.9rem 1.1rem",
-              textAlign: "center",
-            }}
-          >
-            <div>
-              <div style={{ fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#475569", fontWeight: 700 }}>
-                Carga Horária Total
-              </div>
-              <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0F2942", marginTop: "0.15rem" }}>
-                {formatDuration(cargaMin, lang)}
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#475569", fontWeight: 700 }}>
-                Aproveitamento Final
-              </div>
-              <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#15803D", marginTop: "0.15rem" }}>
-                {cert.nota_final}% · Aprovado
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#475569", fontWeight: 700 }}>
-                Estrutura Curricular
-              </div>
-              <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0F2942", marginTop: "0.2rem" }}>
-                {course.modules.length} módulos · {totalLessons} aulas
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#475569", fontWeight: 700 }}>
-                Data de Emissão
-              </div>
-              <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0F2942", marginTop: "0.25rem" }}>
-                {dataEmissao}
-              </div>
-            </div>
-          </section>
-
-          {/* Rodapé: Assinatura + Dados Legais + QR Code Real */}
-          <footer
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1.3fr 1.4fr auto",
-              gap: "1.5rem",
-              borderTop: "1.5px solid #CBD5E1",
-              paddingTop: "1.15rem",
+              display: "inline-flex",
               alignItems: "center",
+              gap: "8px",
+              padding: "6px 12px",
+              borderRadius: "6px",
+              background: "#F0FDF4",
+              border: "1px solid #BBF7D0",
+              color: "#15803D",
+              fontSize: "0.76rem",
+              fontWeight: 700,
             }}
           >
-            <div>
-              <div
-                style={{
-                  fontFamily: 'Georgia, "Times New Roman", serif',
-                  fontStyle: "italic",
-                  fontSize: "1.3rem",
-                  color: "#0F2942",
-                  borderBottom: "1px solid #64748B",
-                  paddingBottom: "0.25rem",
-                  marginBottom: "0.35rem",
-                  display: "inline-block",
-                  minWidth: 230,
-                }}
-              >
-                Rafael Paiva Dias da Silva
-              </div>
-              <div style={{ fontWeight: 700, fontSize: "0.86rem", color: "#0F2942" }}>
-                Rafael Paiva Dias da Silva
-              </div>
-              <div style={{ fontSize: "0.76rem", color: "#475569", lineHeight: 1.4 }}>
-                Tecnólogo em Análise e Desenvolvimento de Sistemas (IFSP)
-                <br />
-                Instrutor Responsável &amp; Fundador · Maldivas Tech
-              </div>
-            </div>
+            <CheckCircle2 size={15} aria-hidden="true" />
+            VERIFICADO · {cert.codigo}
+          </div>
+        </header>
 
-            <div style={{ fontSize: "0.75rem", color: "#334155", lineHeight: 1.5 }}>
-              <div>
-                <strong>Emissor:</strong> {COMPANY.legalName}
-              </div>
-              <div>
-                <strong>CNPJ:</strong> {COMPANY.cnpj} · São Paulo/SP
-              </div>
-              <div>
-                <strong>Base Legal:</strong> Curso Livre de Capacitação Profissional (Lei
-                Federal nº 9.394/1996 e Decreto nº 5.154/2004).
-              </div>
-              <div>
-                <strong>Autenticidade:</strong>{" "}
-                <span style={{ wordBreak: "break-all" }}>{verifyUrl}</span>
-              </div>
-            </div>
+        {/* Corpo Central */}
+        <div style={{ textAlign: "center", padding: "12px 0" }}>
+          <div
+            style={{
+              textTransform: "uppercase",
+              letterSpacing: "0.2em",
+              fontSize: "0.75rem",
+              color: "#0284C7",
+              fontWeight: 700,
+            }}
+          >
+            Certificado de Conclusão · Curso Livre Profissional
+          </div>
 
-            <div style={{ textAlign: "center" }}>
-              <div
-                style={{
-                  display: "inline-block",
-                  padding: "4px",
-                  background: "#FAF8F2",
-                  border: "1px solid #CBD5E1",
-                  borderRadius: "4px",
-                }}
-                dangerouslySetInnerHTML={{ __html: qrSvg }}
-              />
-              <div style={{ fontSize: "0.66rem", color: "#475569", marginTop: "2px", fontWeight: 600 }}>
-                Validar QR Code
-              </div>
-            </div>
-          </footer>
+          <p style={{ margin: "12px 0 4px", fontSize: "0.95rem", color: "#475569" }}>
+            Certificamos que
+          </p>
+
+          <h1
+            style={{
+              margin: "0 auto",
+              fontSize: "clamp(1.65rem, 2.8vw, 2.25rem)",
+              fontWeight: 800,
+              color: "#0F172A",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.15,
+            }}
+          >
+            {cert.nome_exibido}
+          </h1>
+
+          <div
+            aria-hidden="true"
+            style={{
+              width: "80px",
+              height: "3px",
+              background: "#0284C7",
+              margin: "10px auto 14px",
+              borderRadius: "999px",
+            }}
+          />
+
+          <p
+            style={{
+              margin: "0 auto",
+              fontSize: "0.96rem",
+              lineHeight: 1.55,
+              color: "#334155",
+              maxWidth: "740px",
+            }}
+          >
+            concluiu com êxito o programa de formação{" "}
+            <strong style={{ color: "#0F172A" }}>{course.name}</strong>, baseado na
+            arquitetura em produção do estudo de caso{" "}
+            <strong style={{ color: "#0F172A" }}>{course.studyCase}</strong>, tendo
+            cumprido integralmente a carga horária e obtido aprovação na avaliação
+            técnica e prática final.
+          </p>
         </div>
+
+        {/* Quadro de Métricas */}
+        <section
+          aria-label="Resumo Acadêmico"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+            gap: "12px",
+            background: "#F8FAFC",
+            border: "1px solid #E2E8F0",
+            borderRadius: "8px",
+            padding: "12px 16px",
+            textAlign: "center",
+          }}
+        >
+          <div>
+            <div style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748B", fontWeight: 700 }}>
+              Carga Horária Total
+            </div>
+            <div style={{ fontSize: "1.15rem", fontWeight: 800, color: "#0F172A", marginTop: "2px" }}>
+              {formatDuration(cargaMin, lang)}
+            </div>
+          </div>
+          <div>
+            <div style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748B", fontWeight: 700 }}>
+              Aproveitamento Final
+            </div>
+            <div style={{ fontSize: "1.15rem", fontWeight: 800, color: "#15803D", marginTop: "2px" }}>
+              {cert.nota_final}% · Aprovado
+            </div>
+          </div>
+          <div>
+            <div style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748B", fontWeight: 700 }}>
+              Estrutura Curricular
+            </div>
+            <div style={{ fontSize: "1.02rem", fontWeight: 700, color: "#0F172A", marginTop: "3px" }}>
+              {course.modules.length} módulos · {totalLessons} aulas
+            </div>
+          </div>
+          <div>
+            <div style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748B", fontWeight: 700 }}>
+              Data de Emissão
+            </div>
+            <div style={{ fontSize: "0.92rem", fontWeight: 700, color: "#0F172A", marginTop: "4px" }}>
+              {dataEmissao}
+            </div>
+          </div>
+        </section>
+
+        {/* Rodapé */}
+        <footer
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1.2fr 1.5fr auto",
+            gap: "20px",
+            borderTop: "1px solid #E2E8F0",
+            paddingTop: "14px",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <div style={{ fontWeight: 700, fontSize: "0.92rem", color: "#0F172A" }}>
+              Rafael Paiva Dias da Silva
+            </div>
+            <div style={{ fontSize: "0.74rem", color: "#475569", lineHeight: 1.4, marginTop: "2px" }}>
+              Tecnólogo em Análise e Desenvolvimento de Sistemas (IFSP)
+              <br />
+              Instrutor Responsável &amp; Fundador · Maldivas Tech
+            </div>
+          </div>
+
+          <div style={{ fontSize: "0.72rem", color: "#475569", lineHeight: 1.45 }}>
+            <div>
+              <strong style={{ color: "#0F172A" }}>Emissor:</strong> {COMPANY.legalName} · CNPJ {COMPANY.cnpj}
+            </div>
+            <div>
+              <strong style={{ color: "#0F172A" }}>Base Legal:</strong> Curso Livre (Lei nº 9.394/1996 · Decreto nº 5.154/2004)
+            </div>
+            <div>
+              <strong style={{ color: "#0F172A" }}>Verificação:</strong>{" "}
+              <span style={{ wordBreak: "break-all" }}>{verifyUrl}</span>
+            </div>
+          </div>
+
+          <div style={{ textAlign: "center" }}>
+            <div
+              style={{
+                display: "inline-block",
+                padding: "3px",
+                background: "#FFFFFF",
+                border: "1px solid #E2E8F0",
+                borderRadius: "6px",
+              }}
+              dangerouslySetInnerHTML={{ __html: qrSvg }}
+            />
+          </div>
+        </footer>
       </article>
 
       {/* ================================================================ */}
-      {/*  VERSO DO CERTIFICADO (Histórico & Matriz Curricular Completa)    */}
+      {/*  PÁGINA 2: VERSO DO CERTIFICADO (8 Módulos & 18 Aulas em 1 folha) */}
       {/* ================================================================ */}
       <section
         className="cert-page"
         style={{
-          marginTop: "2rem",
-          background: "#FAF8F2",
+          marginTop: "24px",
+          background: "#FFFFFF",
           color: "#0F172A",
-          padding: "16px",
-          borderRadius: "4px",
-          boxShadow: "0 24px 64px rgba(0, 0, 0, 0.35)",
-          border: "2px solid #0F2942",
+          borderRadius: "8px",
+          border: "1px solid #CBD5E1",
+          boxShadow: "0 20px 50px rgba(0, 0, 0, 0.25)",
+          padding: "24px 32px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          fontFamily: "var(--font-sans, 'Outfit', system-ui, -apple-system, sans-serif)",
         }}
-        aria-label="Verso do Certificado — Histórico e Conteúdo Programático"
+        aria-label="Verso do Certificado — Matriz Curricular"
       >
-        <div style={{ border: "2px solid #B8860B", padding: "1.75rem 2.25rem", display: "grid", gap: "1rem" }}>
-          <header
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              borderBottom: "1.5px solid #CBD5E1",
-              paddingBottom: "0.75rem",
-              flexWrap: "wrap",
-              gap: "0.5rem",
-            }}
-          >
-            <div>
-              <div style={{ fontSize: "0.74rem", textTransform: "uppercase", letterSpacing: "0.14em", color: "#B8860B", fontWeight: 700 }}>
-                Verso do Certificado · Histórico &amp; Matriz Curricular
-              </div>
-              <h2 style={{ margin: "0.2rem 0 0", fontSize: "1.15rem", color: "#0F2942" }}>
-                {course.name}
-              </h2>
+        <header
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderBottom: "1px solid #E2E8F0",
+            paddingBottom: "10px",
+          }}
+        >
+          <div>
+            <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.14em", color: "#0284C7", fontWeight: 700 }}>
+              Matriz Curricular &amp; Histórico de Conclusão
             </div>
-            <div style={{ textAlign: "right", fontSize: "0.8rem", color: "#334155" }}>
-              <div><strong>Concluinte:</strong> {cert.nome_exibido}</div>
-              <div><strong>Código:</strong> {cert.codigo}</div>
-            </div>
-          </header>
+            <h2 style={{ margin: "2px 0 0", fontSize: "1.05rem", color: "#0F172A", fontWeight: 700 }}>
+              {course.name}
+            </h2>
+          </div>
+          <div style={{ textAlign: "right", fontSize: "0.76rem", color: "#475569" }}>
+            <div><strong style={{ color: "#0F172A" }}>{cert.nome_exibido}</strong></div>
+            <div>Registro: <code>{cert.codigo}</code></div>
+          </div>
+        </header>
 
-          {/* Resumo por módulo */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "0.75rem" }}>
-            {course.modules.map((mod) => {
-              const modMin = mod.lessons.reduce((s, l) => s + l.durationMin, 0);
-              return (
-                <div
-                  key={mod.id}
-                  style={{
-                    background: "#F1EFE7",
-                    border: "1px solid #CBD5E1",
-                    borderRadius: "4px",
-                    padding: "0.7rem 0.9rem",
-                    fontSize: "0.82rem",
-                  }}
-                >
-                  <strong style={{ color: "#0F2942" }}>
-                    Módulo {mod.number} · {mod.title}
-                  </strong>
-                  <div style={{ color: "#475569", marginTop: "0.2rem" }}>
-                    {mod.lessons.length} componentes · Carga horária:{" "}
-                    <strong>{formatDuration(modMin, lang)}</strong> ({modMin} min)
+        {/* Grid compacto de 2 colunas para caber 100% em 1 página A4 paisagem */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "16px",
+            margin: "10px 0",
+          }}
+        >
+          {[leftModules, rightModules].map((group, idx) => (
+            <div key={idx} style={{ display: "grid", gap: "8px", alignContent: "start" }}>
+              {group.map((mod) => {
+                const modMin = mod.lessons.reduce((s, l) => s + l.durationMin, 0);
+                return (
+                  <div
+                    key={mod.id}
+                    style={{
+                      border: "1px solid #E2E8F0",
+                      borderRadius: "6px",
+                      padding: "7px 10px",
+                      background: "#F8FAFC",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        fontSize: "0.74rem",
+                        fontWeight: 700,
+                        color: "#0F172A",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      <span>Módulo {mod.number} · {mod.title}</span>
+                      <span style={{ color: "#0284C7", whiteSpace: "nowrap", marginLeft: 8 }}>
+                        {formatDuration(modMin, lang)}
+                      </span>
+                    </div>
+                    <ul
+                      style={{
+                        margin: 0,
+                        paddingLeft: "14px",
+                        fontSize: "0.68rem",
+                        color: "#334155",
+                        lineHeight: 1.38,
+                      }}
+                    >
+                      {mod.lessons.map((l) => (
+                        <li key={l.id}>
+                          {l.title} <span style={{ color: "#64748B" }}>({l.durationMin} min)</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Tabela formal de componentes curriculares */}
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                fontSize: "0.76rem",
-                color: "#1E293B",
-              }}
-            >
-              <thead>
-                <tr style={{ background: "#0F2942", color: "#FAF8F2", textAlign: "left" }}>
-                  <th style={{ padding: "6px 8px", border: "1px solid #CBD5E1" }}>Módulo</th>
-                  <th style={{ padding: "6px 8px", border: "1px solid #CBD5E1" }}>Componente Curricular / Tópico</th>
-                  <th style={{ padding: "6px 8px", border: "1px solid #CBD5E1", width: 85, textAlign: "center" }}>C.H.</th>
-                  <th style={{ padding: "6px 8px", border: "1px solid #CBD5E1", width: 95, textAlign: "center" }}>Situação</th>
-                </tr>
-              </thead>
-              <tbody>
-                {course.modules.flatMap((mod) =>
-                  mod.lessons.map((l) => (
-                    <tr key={l.id} style={{ borderBottom: "1px solid #E2E8F0" }}>
-                      <td style={{ padding: "5px 8px", border: "1px solid #CBD5E1", whiteSpace: "nowrap" }}>
-                        Módulo {mod.number}
-                      </td>
-                      <td style={{ padding: "5px 8px", border: "1px solid #CBD5E1" }}>{l.title}</td>
-                      <td style={{ padding: "5px 8px", border: "1px solid #CBD5E1", textAlign: "center", whiteSpace: "nowrap" }}>
-                        {l.durationMin} min
-                      </td>
-                      <td style={{ padding: "5px 8px", border: "1px solid #CBD5E1", textAlign: "center", color: "#15803D", fontWeight: 700 }}>
-                        Concluída
-                      </td>
-                    </tr>
-                  )),
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          <footer
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: "0.75rem",
-              borderTop: "1px solid #CBD5E1",
-              paddingTop: "0.65rem",
-              fontSize: "0.76rem",
-              color: "#334155",
-            }}
-          >
-            <div>
-              <strong>Total Cumprido:</strong> {formatDuration(cargaMin, lang)} ({cargaMin} min) ·{" "}
-              <strong>Avaliação Final:</strong> {cert.nota_final}% (Aprovado) ·{" "}
-              <strong>Stack:</strong> {course.stack.join(", ")}
+                );
+              })}
             </div>
-            <div>
-              Registro: <strong>{cert.codigo}</strong>
-            </div>
-          </footer>
+          ))}
         </div>
+
+        <footer
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderTop: "1px solid #E2E8F0",
+            paddingTop: "10px",
+            fontSize: "0.74rem",
+            color: "#475569",
+          }}
+        >
+          <div>
+            <strong style={{ color: "#0F172A" }}>Total:</strong> {course.modules.length} módulos · {totalLessons} aulas · {formatDuration(cargaMin, lang)} ({cargaMin} min) ·{" "}
+            <strong style={{ color: "#15803D" }}>Aproveitamento: {cert.nota_final}%</strong>
+          </div>
+          <div>
+            Stack: {course.stack.join(" · ")}
+          </div>
+        </footer>
       </section>
     </main>
   );

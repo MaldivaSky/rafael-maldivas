@@ -2772,6 +2772,11 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   }
 }
 
+@page {
+  size: A4 landscape;
+  margin: 6mm;
+}
+
 @media print {
   .no-print,
   nav.nav,
@@ -2779,6 +2784,7 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   canvas {
     display: none !important;
   }
+  html,
   body {
     background: #ffffff !important;
     color: #0f172a !important;
@@ -2792,28 +2798,31 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
     border: 3px solid #0284c7 !important;
     box-shadow: none !important;
   }
-  .cert-sheet-root {
+  main.cert-sheet-root {
     max-width: none !important;
+    width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
   }
   .cert-page {
+    width: 100% !important;
+    height: 192mm !important;
+    max-height: 192mm !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
     box-shadow: none !important;
     margin: 0 !important;
-    break-inside: avoid;
-    page-break-inside: avoid;
-    page-break-after: always;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    page-break-after: always !important;
+    break-after: page !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
   .cert-page:last-of-type {
-    page-break-after: auto;
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
-}
-
-@page {
-  size: A4 landscape;
-  margin: 8mm;
 }
 
 /* Copy code button & Project Submission Evaluator */
