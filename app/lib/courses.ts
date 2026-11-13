@@ -85,6 +85,111 @@ export const COURSES: Record<CourseSlug, Course> = {
     ],
     modules: [
       {
+        number: 0,
+        id: "modulo-0",
+        title: "Fundamentos (Trilha Base)",
+        description:
+          "Do zero em web, Django e API usando uma analogia única (o restaurante): cada tecnologia como posto de trabalho, preparação da bancada no Windows, primeiro projeto Django, primeira API REST com DRF, testes, Git e leitura do MySuperStore.",
+        lessons: [
+          {
+            id: "licao-f01",
+            slug: "modulo-0-f01-o-mapa",
+            moduleNumber: 0,
+            title: "F01 — O mapa: cada peça da stack como um posto do restaurante",
+            summary:
+              "Entenda o que são servidor, HTTP, API, JSON, banco de dados, framework e ORM percorrendo a viagem de um pedido — e descubra onde a analogia do restaurante quebra.",
+            durationMin: 90,
+            status: "gratuita",
+            prerequisites: [],
+            objectives: [
+              "Explicar o que são servidor, HTTP, API, JSON, banco de dados, framework e ORM",
+              "Percorrer a viagem de um pedido do toque no celular até a linha gravada no banco",
+              "Reconhecer onde a analogia do restaurante deixa de valer (concorrência e falha parcial)",
+            ],
+          },
+          {
+            id: "licao-f02",
+            slug: "modulo-0-f02-preparando-a-bancada",
+            moduleNumber: 0,
+            title: "F02 — Preparando a bancada: Python, Git e venv no Windows",
+            summary:
+              "Instale Python e Git no Windows, crie um ambiente virtual (venv), fixe versões no requirements.txt e diagnostique os erros mais comuns lendo a mensagem.",
+            durationMin: 90,
+            status: "gratuita",
+            prerequisites: ["licao-f01"],
+            objectives: [
+              "Instalar Python e Git no Windows e confirmar cada etapa com um comando",
+              "Explicar por que cada projeto usa seu próprio ambiente virtual (venv)",
+              "Fixar versões de Django e DRF no requirements.txt e diagnosticar erros de PATH",
+            ],
+          },
+          {
+            id: "licao-f03",
+            slug: "modulo-0-f03-primeiro-projeto-django",
+            moduleNumber: 0,
+            title: "F03 — Seu primeiro projeto Django: projeto × app, model e migração",
+            summary:
+              "Crie o projeto e o app, entenda o papel de cada arquivo, transforme uma classe Python em tabela com makemigrations e migrate, e use o ORM e o painel admin.",
+            durationMin: 120,
+            status: "gratuita",
+            prerequisites: ["licao-f02"],
+            objectives: [
+              "Diferenciar projeto (restaurante) de app (departamento) no Django",
+              "Explicar a função de manage.py, settings.py, urls.py, models.py, admin.py e migrations/",
+              "Transformar um model em tabela com makemigrations e migrate e ler o SQL gerado",
+            ],
+          },
+          {
+            id: "licao-f04",
+            slug: "modulo-0-f04-primeira-api-com-drf",
+            moduleNumber: 0,
+            title: "F04 — Sua primeira API com DRF: serializer, viewset, router e status HTTP",
+            summary:
+              "Monte o delivery em JSON com Django REST Framework, proteja campos read-only e provoque os códigos 200, 201, 400, 404, 405 e 409.",
+            durationMin: 120,
+            status: "gratuita",
+            prerequisites: ["licao-f03"],
+            objectives: [
+              "Relacionar verbo HTTP, rota e código de status (200, 201, 400, 404, 405, 409)",
+              "Conectar Serializer (conferente), ViewSet (cozinheiro) e Router (garçom)",
+              "Implementar baixa condicional de estoque e impedir status forjado pelo cliente",
+            ],
+          },
+          {
+            id: "licao-f05",
+            slug: "modulo-0-f05-testes-e-git",
+            moduleNumber: 0,
+            title: "F05 — Provar que funciona: testes automáticos, Git e regra dos segredos",
+            summary:
+              "Escreva testes no padrão preparar-agir-conferir, quebre o código de propósito para ver o teste gritar e use Git com .gitignore antes do primeiro commit.",
+            durationMin: 120,
+            status: "gratuita",
+            prerequisites: ["licao-f04"],
+            objectives: [
+              "Escrever testes no padrão Arrange-Act-Assert com manage.py test",
+              "Quebrar uma regra de propósito e interpretar a falha do teste",
+              "Usar Git com .gitignore protegendo .venv, banco local e segredos (.env)",
+            ],
+          },
+          {
+            id: "licao-f06",
+            slug: "modulo-0-f06-lendo-um-projeto-real",
+            moduleNumber: 0,
+            title: "F06 — Lendo um projeto de verdade: método aplicado ao MySuperStore",
+            summary:
+              "Aplique o método de leitura em 5 passos ('da porta para dentro') no repositório real do MySuperStore e compare cada peça com o exemplo mini-loja.",
+            durationMin: 120,
+            status: "gratuita",
+            prerequisites: ["licao-f05"],
+            objectives: [
+              "Aplicar os 5 passos de leitura: planta, como roda, departamentos, cardápio e fluxo",
+              "Localizar apps, rotas, serializers e models no MySuperStore sem ler tudo",
+              "Identificar o que muda do exemplo de estudo para produção (login, permissões, serviços)",
+            ],
+          },
+        ],
+      },
+      {
         number: 1,
         id: "modulo-1",
         title: "Visão do negócio e os números",
@@ -100,7 +205,7 @@ export const COURSES: Record<CourseSlug, Course> = {
               "Entenda a divisão real de um pedido entre cliente, lojista, provedor de pagamento e plataforma, com simuladores interativos, fluxo do PIX e PDF para baixar.",
             durationMin: 60,
             status: "gratuita",
-            prerequisites: [],
+            prerequisites: ["licao-f06"],
             objectives: [
               "Calcular comissão, taxa do provedor e repasse ao lojista em centavos inteiros",
               "Entender por que a comissão não incide sobre o frete no MySuperStore",
@@ -316,10 +421,10 @@ export const COURSES: Record<CourseSlug, Course> = {
         metaTitle:
           "Curso Construa seu Marketplace: Do Código ao Pagamento em Produção",
         metaDescription:
-          "Curso profissional baseado no MySuperStore (Django em produção): pedido, sub-pedido, PIX, split, repasse, estorno, deploy e operação. Comece pelo Módulo 1 gratuito.",
+          "Curso profissional baseado no MySuperStore (Django em produção): trilha Fundamentos (Módulo 0) do zero à primeira API + Módulo 1 (margem, PIX, repasse) gratuitos.",
         h1: "Construa seu marketplace: do código ao pagamento em produção",
         tagline:
-          "Curso profissional em 9 módulos usando o código real do MySuperStore como estudo de caso — da margem por pedido ao PIX, repasse, deploy e operação.",
+          "Trilha completa do zero à produção usando o código real do MySuperStore: Módulo 0 de Fundamentos (6 lições, 11h) + 9 módulos principais de pagamentos, repasse e deploy.",
         keywords: [
           "curso criar marketplace",
           "como construir um marketplace do zero",
@@ -343,7 +448,7 @@ export const COURSES: Record<CourseSlug, Course> = {
           ],
           [
             "O que está disponível hoje?",
-            "O Módulo 1 (Visão do negócio e os números) está completo e gratuito nesta página, com simuladores interativos, fluxo do PIX, quiz e PDF para baixar. Os módulos 2 a 9 estão em preparação e você pode entrar na lista de espera.",
+            "Todo o Módulo 0 de Fundamentos (6 lições: O Mapa, Bancada no Windows, Primeiro Projeto Django, Primeira API com DRF, Testes & Git e Leitura do MySuperStore — 11h) e o Módulo 1 (Visão do negócio e os números) estão completos e gratuitos nesta página, com simuladores, quizzes explicados e PDFs. Os módulos 2 a 9 estão em preparação e você pode entrar na lista de espera.",
           ],
           [
             "Como funciona o certificado verificável?",
@@ -418,3 +523,4 @@ export function formatDuration(minutes: number, lang: Lang): string {
   if (m === 0) return lang === "pt" ? `${h}h` : `${h}h`;
   return lang === "pt" ? `${h}h ${m}min` : `${h}h ${m}m`;
 }
+

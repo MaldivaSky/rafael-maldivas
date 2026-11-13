@@ -458,12 +458,12 @@ export default async function CourseSalesPage({
 
           <div className="curso-syllabus-list">
             {course.modules.map((mod) => {
-              const lesson = mod.lessons[0];
-              const isFree = lesson?.status === "gratuita";
+              const modDuration = mod.lessons.reduce((s, l) => s + l.durationMin, 0);
+              const hasFree = mod.lessons.some((l) => l.status === "gratuita");
               return (
                 <article
                   key={mod.id}
-                  className={`curso-module-card ${isFree ? "free" : ""}`}
+                  className={`curso-module-card ${hasFree ? "free" : ""}`}
                 >
                   <div className="curso-module-head">
                     <div>
@@ -473,38 +473,46 @@ export default async function CourseSalesPage({
                       <h3>{mod.title}</h3>
                     </div>
                     <div className="curso-module-badges">
-                      <span className={isFree ? "curso-badge" : "curso-pill"}>
-                        {isFree ? t.freeLabel : t.soonLabel}
+                      <span className={hasFree ? "curso-badge" : "curso-pill"}>
+                        {hasFree ? t.freeLabel : t.soonLabel}
                       </span>
-                      {lesson && (
+                      {modDuration > 0 && (
                         <span className="curso-pill">
                           <Clock size={13} aria-hidden="true" />{" "}
-                          {formatDuration(lesson.durationMin, lang)}
+                          {formatDuration(modDuration, lang)}
                         </span>
                       )}
                     </div>
                   </div>
                   <p className="curso-muted">{mod.description}</p>
-                  {lesson && (
-                    <div className="curso-module-foot">
-                      <Link
-                        href={localePath(
-                          `/cursos/${course.slug}/${lesson.slug}`,
-                          lang,
-                        )}
-                        className={
-                          isFree ? "btn btn-primary curso-btn-sm" : "btn btn-ghost curso-btn-sm"
-                        }
-                      >
-                        {isFree ? (
-                          <PlayCircle size={15} aria-hidden="true" />
-                        ) : (
-                          <Lock size={15} aria-hidden="true" />
-                        )}
-                        {isFree ? t.openLesson : t.viewSummary}
-                      </Link>
-                    </div>
-                  )}
+                  <div className="curso-module-foot" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {mod.lessons.map((lesson) => {
+                      const isFree = lesson.status === "gratuita";
+                      return (
+                        <Link
+                          key={lesson.id}
+                          href={localePath(
+                            `/cursos/${course.slug}/${lesson.slug}`,
+                            lang,
+                          )}
+                          className={
+                            isFree ? "btn btn-primary curso-btn-sm" : "btn btn-ghost curso-btn-sm"
+                          }
+                        >
+                          {isFree ? (
+                            <PlayCircle size={15} aria-hidden="true" />
+                          ) : (
+                            <Lock size={15} aria-hidden="true" />
+                          )}
+                          {mod.lessons.length > 1
+                            ? lesson.title
+                            : isFree
+                              ? t.openLesson
+                              : t.viewSummary}
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </article>
               );
             })}

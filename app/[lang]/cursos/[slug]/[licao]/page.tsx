@@ -13,6 +13,8 @@ import {
 } from "@/app/lib/courses";
 import { SITE } from "@/app/lib/site";
 import ModuleOneLessonClient from "@/app/components/curso/ModuleOneLessonClient";
+import ModuleZeroLessonClient from "@/app/components/curso/ModuleZeroLessonClient";
+import { MODULE_ZERO_LESSONS } from "@/app/lib/module-zero-content";
 
 export function generateStaticParams(): {
   lang: Lang;
@@ -66,8 +68,10 @@ export default async function CourseLessonPage({
 
   const allLessons = allCourseLessons(course);
   const idx = allLessons.findIndex((l) => l.id === lesson.id);
+  const prevLesson = idx > 0 ? allLessons[idx - 1] : undefined;
   const nextLesson = idx >= 0 ? allLessons[idx + 1] : undefined;
   const firstFree = allLessons.find((l) => l.status === "gratuita");
+  const m0Data = MODULE_ZERO_LESSONS[lesson.slug];
   const url = `${SITE}/${lang}/cursos/${course.slug}/${lesson.slug}`;
 
   const jsonLd = {
@@ -158,10 +162,27 @@ export default async function CourseLessonPage({
         </header>
 
         {lesson.status === "gratuita" ? (
-          <ModuleOneLessonClient
-            courseSlug={course.slug}
-            nextLessonSlug={nextLesson?.slug}
-          />
+          m0Data ? (
+            <ModuleZeroLessonClient
+              courseSlug={course.slug}
+              lesson={m0Data}
+              prevLesson={
+                prevLesson
+                  ? { slug: prevLesson.slug, title: prevLesson.title }
+                  : undefined
+              }
+              nextLesson={
+                nextLesson
+                  ? { slug: nextLesson.slug, title: nextLesson.title }
+                  : undefined
+              }
+            />
+          ) : (
+            <ModuleOneLessonClient
+              courseSlug={course.slug}
+              nextLessonSlug={nextLesson?.slug}
+            />
+          )
         ) : (
           <section className="curso-panel curso-soon-box">
             <div className="curso-soon-icon">
