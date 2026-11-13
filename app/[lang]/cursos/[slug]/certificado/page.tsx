@@ -67,13 +67,13 @@ export default async function CourseCertificatePage({
         </div>
         <h1>
           {lang === "pt"
-            ? "Exame Final e Emissão de Certificado"
-            : "Final Exam & Certificate"}
+            ? "Exame Final e Avaliação do Projeto"
+            : "Final Exam & Project Evaluation"}
         </h1>
         <p className="hero-lead">
           {lang === "pt"
-            ? "Prove seu domínio da trilha completa (Módulo 0 + A01 a A11 + Projeto Final). Com 80% ou mais de acertos, gere e imprima seu certificado em PDF."
-            : "Complete the 15-question assessment (delivered in pt-BR) with 80%+ to issue and print your Maldivas Tech certificate."}
+            ? "Comprove seu domínio nos 8 módulos (18 aulas · 38h 10min). Com 80% ou mais na prova técnica, envie o link do seu Projeto Final para avaliação do instrutor e receba seu certificado verificável por e-mail."
+            : "Prove your mastery across all 8 modules (18 lessons · 38h 10min). Score 80%+ on the technical exam, submit your Final Project link for instructor review, and receive your verifiable certificate by email."}
         </p>
       </header>
 

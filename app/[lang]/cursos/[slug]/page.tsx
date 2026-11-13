@@ -115,7 +115,7 @@ const SALES_COPY = {
     certPoints: [
       "Este é um curso livre de capacitação profissional — não é reconhecido, autorizado ou validado pelo MEC, e não equivale a diploma, curso técnico, graduação ou pós-graduação.",
       "Critério de emissão: conclusão das atividades, aproveitamento mínimo nos quizzes e aprovação no projeto final pela rubrica técnica.",
-      "Verificação pública: cada certificado terá código único consultável no site da Maldivas Tech (em /[lang]/certificados/[codigo]), exibindo nome, curso, carga horária real, data e status (válido ou revogado).",
+      "Verificação pública: cada certificado possui código único e QR Code consultável em /[lang]/certificado/[codigo], exibindo nome, curso, carga horária real (38h 10min), aproveitamento e data de emissão.",
     ],
     legalTitle: "Termos, cancelamento e reembolso",
     legalItems: [
@@ -190,7 +190,7 @@ const SALES_COPY = {
     certPoints: [
       "Under Brazilian education law, this is a free-standing professional training course (curso livre). It is NOT accredited by Brazil's Ministry of Education (MEC) and is not a university degree or technical diploma.",
       "Issuance criteria: completing module quizzes and passing the final project technical rubric.",
-      "Public verification: each certificate receives a unique verification code at /[lang]/certificados/[codigo] showing holder name, course, exact hours, date and status.",
+      "Public verification: each certificate receives a unique verification code and QR Code at /[lang]/certificado/[codigo] showing holder name, course, exact hours (38h 10m), score and issue date.",
     ],
     legalTitle: "Terms, cancellation and refund policy",
     legalItems: [

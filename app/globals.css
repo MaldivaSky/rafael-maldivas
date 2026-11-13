@@ -2825,6 +2825,16 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   }
 }
 
+.cert-page,
+.cert-page h1,
+.cert-page h2,
+.cert-page h3,
+.cert-page p,
+.cert-page span,
+.cert-page div {
+  text-shadow: none !important;
+}
+
 /* Copy code button & Project Submission Evaluator */
 .curso-code-head-flex {
   display: flex;
