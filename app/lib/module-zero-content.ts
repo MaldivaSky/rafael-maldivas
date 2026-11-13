@@ -4,6 +4,8 @@
 /*  Python 3.12.10, Django 5.1.4, DRF 3.15.2).                         */
 /* ------------------------------------------------------------------ */
 
+import type { NotebookLMMediaConfig } from "@/app/components/curso/NotebookLMMediaBlock";
+
 export type GlossaryTerm = {
   term: string;
   definition: string;
@@ -119,12 +121,23 @@ export type M0LessonData = {
   quizzes: M0QuizItem[];
   flashcards: { front: string; back: string }[];
   threeThings: string[];
+  notebookMedia?: NotebookLMMediaConfig;
 };
 
 export const MODULE_ZERO_LESSONS: Record<string, M0LessonData> = {
   "modulo-0-f01-o-mapa": {
     slug: "modulo-0-f01-o-mapa",
     code: "F01",
+    notebookMedia: {
+      sectionLabel: "Vídeo da lição F01 · NotebookLM",
+      video: {
+        title: "O caminho de um clique até o banco de dados",
+        src: "/cursos/midia/caminho-clique-banco-de-dados.mp4",
+        summary:
+          "Resumo visual do trajeto de um pedido: do navegador ao Caddy, urls.py, serializer, view, ORM e PostgreSQL.",
+        durationLabel: "Vídeo MP4",
+      },
+    },
     title: "O mapa: o que é cada peça e por que ela existe",
     oneSentence:
       "Um sistema como o MySuperStore é um restaurante: cada tecnologia é um posto de trabalho com uma função clara.",
@@ -231,6 +244,16 @@ export const MODULE_ZERO_LESSONS: Record<string, M0LessonData> = {
   "modulo-0-f02-preparando-a-bancada": {
     slug: "modulo-0-f02-preparando-a-bancada",
     code: "F02",
+    notebookMedia: {
+      sectionLabel: "Vídeo da lição F02 · NotebookLM",
+      video: {
+        title: "Preparando a bancada no Windows (Python, venv e Git)",
+        src: "/cursos/midia/preparando-a-bancada.mp4",
+        summary:
+          "Passo a passo em vídeo mostrando por que usar ambiente virtual (venv), fixar versões no requirements.txt e evitar erros clássicos de PATH.",
+        durationLabel: "Vídeo MP4",
+      },
+    },
     title: "Preparando a bancada: instalar Python, Git e venv no Windows",
     oneSentence:
       "Antes de cozinhar, você monta a bancada: fogão (Python), caixa de ferramentas própria (venv) e caderno de receitas (Git).",
@@ -352,6 +375,16 @@ py -3.12 -m venv .venv
   "modulo-0-f03-primeiro-projeto-django": {
     slug: "modulo-0-f03-primeiro-projeto-django",
     code: "F03",
+    notebookMedia: {
+      sectionLabel: "Slides visuais da lição F03 · NotebookLM",
+      deck: {
+        title: "Raio-X do Django: projeto, app, model e migração",
+        href: "/cursos/midia/raio-x-do-django.pdf",
+        summary:
+          "Deck visual para revisar a diferença entre projeto e app, o papel do ORM e o ciclo makemigrations → migrate.",
+        pagesLabel: "Slides PDF",
+      },
+    },
     title: "Seu primeiro projeto Django: projeto × app, model e migração",
     oneSentence:
       "Você monta a cozinha (projeto), abre um departamento (app), escreve a ficha da prateleira (model) e vê o Django construir a tabela no banco (migração).",
@@ -479,6 +512,16 @@ class Produto(models.Model):
   "modulo-0-f04-primeira-api-com-drf": {
     slug: "modulo-0-f04-primeira-api-com-drf",
     code: "F04",
+    notebookMedia: {
+      sectionLabel: "Slides visuais da lição F04 · NotebookLM",
+      deck: {
+        title: "APIs com Django REST Framework (DRF)",
+        href: "/cursos/midia/apis-com-django-rest-framework.pdf",
+        summary:
+          "Deck visual cobrindo Serializer, ViewSet, Router e os status HTTP (200, 201, 400, 404, 405, 409).",
+        pagesLabel: "Slides PDF",
+      },
+    },
     title: "Sua primeira API com DRF: serializer, viewset, router e status HTTP",
     oneSentence:
       "Até agora a cozinha servia só no salão (admin); agora montamos o delivery em JSON para qualquer site ou app pedir.",
@@ -581,6 +624,16 @@ def comprar(self, request, pk=None):
   "modulo-0-f05-testes-e-git": {
     slug: "modulo-0-f05-testes-e-git",
     code: "F05",
+    notebookMedia: {
+      sectionLabel: "Áudio da lição F05 · NotebookLM",
+      audio: {
+        title: "Como bugs em produção ensinam arquitetura",
+        src: "/cursos/midia/como-bugs-em-producao-ensinam-arquitetura.m4a",
+        summary:
+          "Conversa guiada sobre por que testes automatizados, commits pequenos e proteção de segredos evitam regressões em produção.",
+        durationLabel: "Áudio M4A",
+      },
+    },
     title: "Provar que funciona: testes automáticos, Git e regra dos segredos",
     oneSentence:
       "Teste é o degustador padrão que prova todos os pratos em segundos; Git é o caderno de receitas que guarda cada versão — sem senhas dentro.",
@@ -674,6 +727,37 @@ def comprar(self, request, pk=None):
   "modulo-0-f06-lendo-um-projeto-real": {
     slug: "modulo-0-f06-lendo-um-projeto-real",
     code: "F06",
+    notebookMedia: {
+      sectionLabel: "Slides, mapa mental e prática · NotebookLM",
+      deck: {
+        title: "Lendo projetos reais: método aplicado ao MySuperStore",
+        href: "/cursos/midia/lendo-projetos-reais.pdf",
+        summary:
+          "Guia visual em slides para ler um repositório grande sem se perder: estrutura, rotas, models e fluxo de pedidos.",
+        pagesLabel: "Slides PDF",
+      },
+      mindMap: {
+        title: "Mapa mental: MySuperStore por dentro",
+        src: "/cursos/midia/mysuperstore-mapa-mental.png",
+        alt: "Mapa mental da arquitetura do MySuperStore mostrando front-end Next.js, back-end Django, apps principais, pagamentos via Efí PIX e cartão, Redis, Celery e infraestrutura.",
+        caption:
+          "Mapa mental conferido contra o estudo da arquitetura do MySuperStore.",
+      },
+      publicLinks: [
+        {
+          tag: "Revisão · NotebookLM",
+          label: "Flashcards de Arquitetura de Software",
+          description: "Cartões interativos públicos para revisar conceitos de back-end e arquitetura.",
+          href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/f8a604cb-bd28-4519-b921-d7d0a36bd8ea",
+        },
+        {
+          tag: "Quiz · NotebookLM",
+          label: "Quiz de Arquitetura",
+          description: "Bateria aberta de perguntas no NotebookLM para testar leitura de arquitetura.",
+          href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/212b3f78-a4bd-4841-b047-3df36a96b772",
+        },
+      ],
+    },
     title: "Lendo um projeto de verdade: método aplicado ao MySuperStore",
     oneSentence:
       "Ler um repositório grande é chegar a um restaurante novo: primeiro a planta, depois o cardápio, depois seguir um pedido da mesa à cozinha.",

@@ -13,7 +13,77 @@ import MarketplaceMarginSimulator from "./MarketplaceMarginSimulator";
 import PixFlowInteractive from "./PixFlowInteractive";
 import LegalChecklistInteractive from "./LegalChecklistInteractive";
 import LessonQuiz from "./LessonQuiz";
+import NotebookLMMediaBlock, { type NotebookLMMediaConfig } from "./NotebookLMMediaBlock";
 import { localePath } from "@/app/lib/i18n";
+
+const MODULE_ONE_MEDIA: NotebookLMMediaConfig = {
+  sectionLabel: "Estúdio do Módulo 1 · Áudio, slides, mapa mental e prática",
+  audio: {
+    title: "A engenharia por trás do MySuperStore",
+    src: "/cursos/midia/a-engenharia-por-tras-do-mysuperstore.m4a",
+    summary:
+      "Episódio de abertura explicando como pedido, sub-pedido, comissão, frete e repasse se conectam em produção.",
+    durationLabel: "Áudio 18m42s",
+  },
+  deck: {
+    title: "Arquitetura de Sistemas Reais",
+    href: "/cursos/midia/arquitetura-de-sistemas-reais.pdf",
+    summary:
+      "Deck visual de 15 páginas para acompanhar a visão geral do marketplace, separação de responsabilidades e decisões de projeto.",
+    pagesLabel: "15 slides · PDF",
+  },
+  mindMap: {
+    title: "Mapa mental: MySuperStore por dentro",
+    src: "/cursos/midia/mysuperstore-mapa-mental.png",
+    alt: "Mapa mental da arquitetura do MySuperStore mostrando front-end Next.js, back-end Django, apps principais, pagamentos via Efí PIX e cartão, Redis, Celery e infraestrutura.",
+    caption:
+      "Mapa mental conferido contra o estudo da arquitetura do MySuperStore.",
+  },
+  publicLinks: [
+    {
+      tag: "Quiz · NotebookLM",
+      label: "MySuperStore Quiz",
+      description: "Perguntas públicas de revisão sobre o estudo de caso MySuperStore e modelo de dados.",
+      href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/4bf48d2a-cc20-423a-b678-715dd9fc0906",
+    },
+    {
+      tag: "Flashcards · NotebookLM",
+      label: "Arquitetura de Software (Flashcards)",
+      description: "Cartões de memória ativa abertos sem login para fixação rápida.",
+      href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/f8a604cb-bd28-4519-b921-d7d0a36bd8ea",
+    },
+    {
+      tag: "Quiz · NotebookLM",
+      label: "Arquitetura Quiz",
+      description: "Teste público geral de arquitetura e fluxo de pedidos.",
+      href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/212b3f78-a4bd-4841-b047-3df36a96b772",
+    },
+    {
+      tag: "Testes e Relatórios · NotebookLM",
+      label: "Artefato público #1 (Testes / Mapa / Relatório)",
+      description: "Material complementar público gerado no caderno oficial do curso.",
+      href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/1b3b036d-5ffb-4967-b448-0927fc2398fc",
+    },
+    {
+      tag: "Testes e Relatórios · NotebookLM",
+      label: "Artefato público #2 (Testes / Mapa / Relatório)",
+      description: "Material complementar público gerado no caderno oficial do curso.",
+      href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/934ca30e-27c5-4015-8da8-5c9a6ed743a3",
+    },
+    {
+      tag: "Testes e Relatórios · NotebookLM",
+      label: "Artefato público #3 (Testes / Mapa / Relatório)",
+      description: "Material complementar público gerado no caderno oficial do curso.",
+      href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/bc399589-f25c-4ee4-a583-f6c3aed6a7a0",
+    },
+    {
+      tag: "Testes e Relatórios · NotebookLM",
+      label: "Artefato público #4 (Testes / Mapa / Relatório)",
+      description: "Material complementar público gerado no caderno oficial do curso.",
+      href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/9198ac38-7d79-4c6c-8a94-e355ead4c510",
+    },
+  ],
+};
 
 const STORAGE_KEY = "maldivas-curso-m1-progresso-v1";
 
@@ -133,6 +203,9 @@ export default function ModuleOneLessonClient({
           <div className="curso-progress-fill" style={{ width: `${pct}%` }} />
         </div>
       </aside>
+
+      {/* Material multimídia do NotebookLM */}
+      <NotebookLMMediaBlock media={MODULE_ONE_MEDIA} />
 
       {/* Seção 1: O que muda em um marketplace */}
       <article className="curso-prose">

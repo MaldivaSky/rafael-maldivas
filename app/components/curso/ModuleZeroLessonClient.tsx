@@ -23,6 +23,7 @@ import {
 } from "@/app/lib/module-zero-content";
 import { localePath } from "@/app/lib/i18n";
 import HttpStatusLab from "./HttpStatusLab";
+import NotebookLMMediaBlock from "./NotebookLMMediaBlock";
 
 const STORAGE_KEY = "maldivas-curso-m0-done-v1";
 
@@ -147,6 +148,9 @@ export default function ModuleZeroLessonClient({
           <strong>Pergunta guia:</strong> {lesson.guideQuestion}
         </p>
       </section>
+
+      {/* Material multimídia do NotebookLM (vídeo, áudio, slides e mapa mental) */}
+      <NotebookLMMediaBlock media={lesson.notebookMedia} />
 
       {/* 1. Antes de ler: preveja */}
       <section className="curso-sim-card" aria-labelledby="predict-title">
