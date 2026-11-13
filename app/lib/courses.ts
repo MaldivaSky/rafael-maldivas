@@ -200,17 +200,17 @@ export const COURSES: Record<CourseSlug, Course> = {
             id: "licao-01",
             slug: "modulo-1-visao-do-negocio",
             moduleNumber: 1,
-            title: "Módulo 1 — Visão do negócio e os números",
+            title: "A01 — O negócio do marketplace: de onde vem o dinheiro e quanto sobra",
             summary:
-              "Entenda a divisão real de um pedido entre cliente, lojista, provedor de pagamento e plataforma, com simuladores interativos, fluxo do PIX e PDF para baixar.",
-            durationMin: 60,
+              "Entenda a divisão real de um pedido entre cliente, lojista, provedor de pagamento e plataforma, com simuladores interativos, fluxo do PIX, áudio, slides e PDF para baixar.",
+            durationMin: 120,
             status: "gratuita",
             prerequisites: ["licao-f06"],
             objectives: [
-              "Calcular comissão, taxa do provedor e repasse ao lojista em centavos inteiros",
-              "Entender por que a comissão não incide sobre o frete no MySuperStore",
-              "Simular ponto de equilíbrio mensal considerando custos fixos e ticket médio",
-              "Percorrer o fluxo de um pedido pago via PIX do checkout ao webhook",
+              "Separar o que o cliente paga, o que o lojista recebe e o que sobra para a plataforma",
+              "Calcular a margem de um pedido (comissão, frete, cupom e taxa do provedor) em centavos inteiros",
+              "Explicar por que PIX e cartão deixam margens diferentes e por que o ticket importa",
+              "Montar as hipóteses de um ponto de equilíbrio, sabendo o que ainda não se sabe",
             ],
           },
         ],
@@ -218,24 +218,42 @@ export const COURSES: Record<CourseSlug, Course> = {
       {
         number: 2,
         id: "modulo-2",
-        title: "Modelo de dados",
+        title: "Modelo de dados, carrinho, frete e cupom",
         description:
-          "Modelagem de pedido, sub-pedido por lojista, itens com snapshot de preço/endereço, pagamento, repasse e histórico de comissões em DecimalField.",
+          "Modelagem de pedido, sub-pedido por lojista e item com snapshot de preço/endereço, além do recálculo no servidor de frete e cupom sem perder centavos.",
         lessons: [
           {
             id: "licao-02",
             slug: "modulo-2-modelo-de-dados",
             moduleNumber: 2,
-            title: "Módulo 2 — Modelo de dados",
+            title: "A02 — Modelo de dados: pedido, sub-pedido e item, e por que o banco decide se o dinheiro fecha",
             summary:
-              "Por que separar Order e SubOrder, como funciona o snapshot de preço e endereço e por que dinheiro nunca vai em float.",
-            durationMin: 90,
+              "Por que um pedido com duas lojas vira três tabelas, como o snapshot evita perda de histórico fiscal e como escolher CASCADE, PROTECT ou SET_NULL.",
+            durationMin: 100,
             status: "paga",
             prerequisites: ["licao-01"],
             objectives: [
-              "Modelar Order, SubOrder, OrderItem, Payment, Payout e CommissionEntry",
-              "Aplicar snapshots para preservar histórico fiscal e comercial",
-              "Usar DecimalField e on_delete=PROTECT em registros financeiros",
+              "Desenhar o modelo Pedido, Sub-pedido, Item, Pagamento, Repasse e Comissão e justificar cada relação",
+              "Explicar o que é um snapshot e mostrar o bug que ele evita",
+              "Escolher CASCADE, PROTECT ou SET_NULL para uma relação, com o motivo",
+              "Separar o ciclo de vida do pagamento (pedido) do ciclo de vida da entrega (sub-pedido)",
+            ],
+          },
+          {
+            id: "licao-03",
+            slug: "modulo-2-carrinho-frete-cupom",
+            moduleNumber: 2,
+            title: "A03 — Carrinho, frete e cupom: o servidor decide o valor, e o desconto não perde centavo",
+            summary:
+              "Como recalcular totais no servidor, revalidar cupons dentro da transação e ratear descontos entre lojas sem erro de arredondamento.",
+            durationMin: 110,
+            status: "paga",
+            prerequisites: ["licao-01", "licao-02"],
+            objectives: [
+              "Explicar por que o total, o frete e o desconto são calculados no servidor e nunca aceitos do navegador",
+              "Descrever como um cupom é revalidado e consumido dentro da transação do pedido",
+              "Implementar o rateio de desconto entre lojas com a sobra de arredondamento na última",
+              "Prever o efeito de um cupom sobre o frete grátis",
             ],
           },
         ],
@@ -243,24 +261,76 @@ export const COURSES: Record<CourseSlug, Course> = {
       {
         number: 3,
         id: "modulo-3",
-        title: "Autenticação e acesso",
+        title: "Dinheiro com segurança: estoque, cobrança, webhook, repasse e estorno",
         description:
-          "Separação de papéis (comprador, lojista, administrador), JWT com refresh, rotação de tokens e isolamento de consultas por loja.",
+          "Transações atômicas, trava de linha, baixa condicional de estoque, cobrança PIX/cartão com mTLS, webhook idempotente, split, repasse e estorno.",
         lessons: [
           {
-            id: "licao-03",
-            slug: "modulo-3-autenticacao-e-acesso",
+            id: "licao-04",
+            slug: "modulo-3-criar-pedido-sem-vender-duas-vezes",
             moduleNumber: 3,
-            title: "Módulo 3 — Autenticação e acesso",
+            title: "A04 — Criar o pedido sem vender duas vezes: transação, trava e baixa condicional",
             summary:
-              "Trade-offs de JWT em aplicações mobile e web, permissões por loja e proteção contra acesso indevido entre lojistas.",
-            durationMin: 60,
+              "Como impedir condição de corrida quando duas pessoas clicam em 'comprar' ao mesmo tempo na última unidade em estoque.",
+            durationMin: 130,
             status: "paga",
-            prerequisites: ["licao-02"],
+            prerequisites: ["licao-02", "licao-03"],
             objectives: [
-              "Configurar autenticação JWT e entender o custo da rotação de refresh tokens",
-              "Implementar permissões de objeto para comprador e lojista",
-              "Avaliar riscos de XSS vs CSRF no armazenamento de sessão",
+              "Explicar uma condição de corrida usando uma linha do tempo de duas transações",
+              "Justificar por que a baixa de estoque é um UPDATE condicional e não 'ler, decidir e gravar'",
+              "Distinguir o papel da transação, da trava de linha e da baixa condicional",
+              "Identificar o risco de deadlock quando as travas não seguem uma ordem fixa",
+            ],
+          },
+          {
+            id: "licao-05",
+            slug: "modulo-3-cobrar-pix-e-cartao",
+            moduleNumber: 3,
+            title: "A05 — Cobrar com PIX e cartão: mTLS, QR code, split e tokenização",
+            summary:
+              "Como o dinheiro chega à plataforma e aos lojistas via Efí (PIX e cartão tokenizado), sem que o número do cartão toque o seu servidor.",
+            durationMin: 110,
+            status: "paga",
+            prerequisites: ["licao-02", "licao-03", "licao-04"],
+            objectives: [
+              "Descrever o fluxo de cobrança PIX (QR, copia-e-cola, split) e o de cartão (tokenização e cobrança)",
+              "Explicar para que serve o certificado mTLS e por que o código o converte, protege e guarda em cache",
+              "Converter reais em centavos sem erro de ponto flutuante",
+              "Reconhecer o risco do fallback de PIX local e do PIX pago depois do cancelamento",
+            ],
+          },
+          {
+            id: "licao-06",
+            slug: "modulo-3-confirmar-pagamento-webhook",
+            moduleNumber: 3,
+            title: "A06 — Confirmar o pagamento: webhook, segredo, fail-closed e idempotência",
+            summary:
+              "Como validar webhooks em URL pública com comparação em tempo constante, fail-closed, conferência de valor e trava idempotente.",
+            durationMin: 130,
+            status: "paga",
+            prerequisites: ["licao-04", "licao-05"],
+            objectives: [
+              "Explicar os três caminhos pelos quais o sistema descobre que um PIX foi pago",
+              "Justificar cada defesa do webhook (segredo, comparação em tempo constante, fail-closed e conferência do valor)",
+              "Definir idempotência e mostrar por que a trava do pedido é necessária",
+              "Reconhecer a lacuna do pedido cancelado que recebe pagamento",
+            ],
+          },
+          {
+            id: "licao-07",
+            slug: "modulo-3-repasse-e-estorno",
+            moduleNumber: 3,
+            title: "A07 — Repasse e estorno: pagar o lojista uma vez e devolver sem devolver demais",
+            summary:
+              "As três situações de repasse (split, loja da casa, PIX de saída), ID determinístico de operação e teto acumulado para estornos.",
+            durationMin: 120,
+            status: "paga",
+            prerequisites: ["licao-05", "licao-06"],
+            objectives: [
+              "Descrever as três situações de repasse (split, loja da casa, PIX de saída) e a regra de cada uma",
+              "Explicar por que o ID da operação financeira precisa ser determinístico",
+              "Listar e justificar as regras do estorno (aprovado, teto, acumulado, só depois do provedor)",
+              "Reconhecer o risco de um repasse preso em PROCESSING",
             ],
           },
         ],
@@ -268,24 +338,42 @@ export const COURSES: Record<CourseSlug, Course> = {
       {
         number: 4,
         id: "modulo-4",
-        title: "Dinheiro com segurança",
+        title: "Ciclo de vida, tempo real e mídia",
         description:
-          "Transações atômicas, trava de linha (select_for_update), baixa condicional de estoque, webhook idempotente, split, repasse e estorno.",
+          "Expiração de pedidos e estoque preso com Celery, notificações em tempo real via WebSockets com autorização e upload de mídia sem derrubar a VM.",
         lessons: [
           {
-            id: "licao-04",
-            slug: "modulo-4-dinheiro-com-seguranca",
+            id: "licao-08",
+            slug: "modulo-4-ciclo-de-vida-e-worker",
             moduleNumber: 4,
-            title: "Módulo 4 — Dinheiro com segurança",
+            title: "A08 — O ciclo de vida do pedido: expiração, estoque preso e worker",
             summary:
-              "Como evitar venda duplicada da mesma peça, processar webhooks repetidos com idempotência e executar estornos com segurança.",
+              "O que acontece com a peça reservada quando o cliente desiste no meio do pagamento e quando vale manter um worker em segundo plano.",
+            durationMin: 110,
+            status: "paga",
+            prerequisites: ["licao-04", "licao-06"],
+            objectives: [
+              "Explicar por que reservar estoque na criação do pedido exige uma regra de expiração",
+              "Aplicar as regras de cancelamento e justificar a exceção do cartão pendente",
+              "Mostrar com teste automatizado como o bug do estoque preso é prevenido",
+              "Decidir para cada tarefa em segundo plano se ela precisa mesmo de um worker",
+            ],
+          },
+          {
+            id: "licao-09",
+            slug: "modulo-4-tempo-real-e-midia",
+            moduleNumber: 4,
+            title: "A09 — Tempo real, notificações e mídia: WebSocket, push e upload enxuto",
+            summary:
+              "Autenticação e autorização em WebSockets, caminho das notificações e upload direto ao serviço de mídia para proteger a memória.",
             durationMin: 120,
             status: "paga",
-            prerequisites: ["licao-02", "licao-03"],
+            prerequisites: ["licao-02", "licao-04", "licao-08"],
             objectives: [
-              "Aplicar transaction.atomic() e select_for_update() em fluxos de pagamento",
-              "Implementar baixa condicional de estoque sem condição de corrida",
-              "Tratar webhooks idempotentes e estornos parciais/totais com o provedor",
+              "Explicar como uma conexão WebSocket é autenticada e por que autenticar não basta (autorização)",
+              "Descrever o caminho de uma mensagem do chat até a notificação do outro usuário",
+              "Justificar o upload direto de vídeo ao serviço de mídia e a conferência feita no servidor",
+              "Calcular por que um arquivo pequeno pode consumir centenas de megabytes de memória",
             ],
           },
         ],
@@ -293,24 +381,25 @@ export const COURSES: Record<CourseSlug, Course> = {
       {
         number: 5,
         id: "modulo-5",
-        title: "Tempo real e tarefas",
+        title: "Infraestrutura, deploy e operação",
         description:
-          "Notificações em tempo real com WebSockets, filas em segundo plano com Celery e expiração automática de pedidos não pagos.",
+          "Docker, Docker Compose, proxy reverso com Caddy, TLS automático, pipeline de deploy, backup testado e orçamento de memória em VM de 1 GB.",
         lessons: [
           {
-            id: "licao-05",
-            slug: "modulo-5-tempo-real-e-tarefas",
+            id: "licao-10",
+            slug: "modulo-5-infraestrutura-deploy-backup",
             moduleNumber: 5,
-            title: "Módulo 5 — Tempo real e tarefas",
+            title: "A10 — No ar e operando: Docker, deploy, backup, memória e decidir com medidas",
             summary:
-              "Como avisar comprador e lojista na hora que o PIX compensa e como devolver estoque de pedidos expirados.",
-            durationMin: 75,
+              "Do código local ao ar em produção numa máquina de 1 GB: containers, ordem segura de migração, teste real de restauração e medições.",
+            durationMin: 130,
             status: "paga",
-            prerequisites: ["licao-04"],
+            prerequisites: ["licao-04", "licao-08", "licao-09"],
             objectives: [
-              "Entregar confirmação de pagamento em tempo real via WebSocket",
-              "Orquestrar tarefas periódicas e assíncronas com Celery",
-              "Evitar estoque preso por pedidos abandonados ou cartão recusado",
+              "Ler um Dockerfile e um Compose e explicar o porquê de cada decisão (cache, limites, healthcheck)",
+              "Descrever o pipeline de deploy automático e a ordem segura (migrar antes de trocar a aplicação)",
+              "Validar que um backup funciona e não apenas que o arquivo existe",
+              "Montar um orçamento de memória e decidir com medidas reais",
             ],
           },
         ],
@@ -318,24 +407,25 @@ export const COURSES: Record<CourseSlug, Course> = {
       {
         number: 6,
         id: "modulo-6",
-        title: "Mídia e performance",
+        title: "Jurídico, fiscal e operação",
         description:
-          "Upload e otimização de imagens de produtos, prevenção de N+1 queries, índices no PostgreSQL e cache sob restrição de memória.",
+          "Pontos de verificação para operar um marketplace ou vender o software: CNPJ/CNAE, termos de uso, LGPD, política de reembolso e nota fiscal.",
         lessons: [
           {
-            id: "licao-06",
-            slug: "modulo-6-midia-e-performance",
+            id: "licao-11",
+            slug: "modulo-6-juridico-fiscal-operacao",
             moduleNumber: 6,
-            title: "Módulo 6 — Mídia e performance",
+            title: "A11 — Jurídico, fiscal e operação: o que resolver antes de cobrar de alguém",
             summary:
-              "Como manter o catálogo rápido e seguro em servidor enxuto sem estourar memória nem disco.",
-            durationMin: 60,
+              "O que depende de contador, de advogado e do desenvolvedor antes de receber dinheiro de clientes e repassar a lojistas.",
+            durationMin: 90,
             status: "paga",
-            prerequisites: ["licao-02"],
+            prerequisites: ["licao-01", "licao-05", "licao-07"],
             objectives: [
-              "Tratar upload, validação e redimensionamento de imagens de catálogo",
-              "Eliminar queries N+1 com select_related e prefetch_related",
-              "Medir latência e uso de memória antes de otimizar",
+              "Mapear o que depende de contador, de advogado e de você, sabendo fazer as perguntas certas",
+              "Identificar no código onde o sistema toca dados pessoais (LGPD) e dinheiro de terceiros",
+              "Reconhecer promessas de marketing que criam risco jurídico e reescrevê-las com honestidade",
+              "Montar o checklist 'antes de cobrar' do seu marketplace",
             ],
           },
         ],
@@ -343,74 +433,37 @@ export const COURSES: Record<CourseSlug, Course> = {
       {
         number: 7,
         id: "modulo-7",
-        title: "Infraestrutura, deploy e backup",
-        description:
-          "Docker, Docker Compose, proxy reverso com Caddy, TLS automático, CI/CD, rotina de backup e medições reais em produção.",
-        lessons: [
-          {
-            id: "licao-07",
-            slug: "modulo-7-infraestrutura-deploy-backup",
-            moduleNumber: 7,
-            title: "Módulo 7 — Infraestrutura, deploy e backup",
-            summary:
-              "Do código local ao ar em produção: containers, proxy reverso, backups testados e lições de latência de banco.",
-            durationMin: 90,
-            status: "paga",
-            prerequisites: ["licao-05", "licao-06"],
-            objectives: [
-              "Estruturar Docker Compose com banco, worker e proxy Caddy",
-              "Configurar pipeline de deploy e verificação de saúde",
-              "Planejar backups e testar restauração real do PostgreSQL",
-            ],
-          },
-        ],
-      },
-      {
-        number: 8,
-        id: "modulo-8",
-        title: "Jurídico, fiscal e operação",
-        description:
-          "Pontos de verificação para operar um marketplace ou vender o software: CNPJ/CNAE, termos de uso, LGPD, política de reembolso e nota fiscal.",
-        lessons: [
-          {
-            id: "licao-08",
-            slug: "modulo-8-juridico-fiscal-operacao",
-            moduleNumber: 8,
-            title: "Módulo 8 — Jurídico, fiscal e operação",
-            summary:
-              "Checklist prático do que alinhar com contador e advogado antes de colocar um marketplace para operar com dinheiro real.",
-            durationMin: 60,
-            status: "paga",
-            prerequisites: ["licao-01"],
-            objectives: [
-              "Mapear documentos e enquadramento necessários com contador e advogado",
-              "Entender responsabilidades de LGPD e direito de arrependimento",
-              "Organizar rotina operacional de suporte, disputa e repasse",
-            ],
-          },
-        ],
-      },
-      {
-        number: 9,
-        id: "modulo-9",
         title: "Projeto final e certificado",
         description:
-          "Construção de um mini-marketplace avaliado por rubrica técnica e emissão do certificado de conclusão de curso livre verificável.",
+          "Construção de um mini-marketplace avaliado por rubrica técnica com testes que provam o dinheiro e emissão do certificado de curso livre verificável.",
         lessons: [
           {
-            id: "licao-09",
-            slug: "modulo-9-projeto-final-certificado",
-            moduleNumber: 9,
-            title: "Módulo 9 — Projeto final e certificado",
+            id: "licao-12",
+            slug: "modulo-7-projeto-final-certificado",
+            moduleNumber: 7,
+            title: "Projeto final — O seu mini-marketplace com testes que provam o dinheiro",
             summary:
-              "Implemente um fluxo completo de pedido, sub-pedido, pagamento idempotente e testes automatizados para avaliação e certificado verificável.",
-            durationMin: 180,
+              "Reúna as regras de dinheiro, estoque, pagamento idempotente, estorno e expiração em um pacote testado para avaliação e certificado verificável.",
+            durationMin: 360,
             status: "paga",
-            prerequisites: ["licao-04", "licao-05", "licao-07"],
+            prerequisites: [
+              "licao-01",
+              "licao-02",
+              "licao-03",
+              "licao-04",
+              "licao-05",
+              "licao-06",
+              "licao-07",
+              "licao-08",
+              "licao-09",
+              "licao-10",
+              "licao-11",
+            ],
             objectives: [
-              "Entregar um mini-marketplace funcional com testes de aceitação",
-              "Passar pela rubrica técnica e pelos quizzes dos módulos",
-              "Obter certificado de conclusão de curso livre com código público verificável",
+              "Reunir as regras de dinheiro, estoque, pagamento, estorno e expiração em um pacote testado",
+              "Fechar as lacunas reais estudadas no módulo (pagamento órfão, cupom que volta, ordem das travas)",
+              "Documentar decisões, hipóteses de negócio e o checklist legal com honestidade",
+              "Explicar o projeto em uma apresentação curta para receber o certificado verificável",
             ],
           },
         ],
@@ -421,10 +474,10 @@ export const COURSES: Record<CourseSlug, Course> = {
         metaTitle:
           "Curso Construa seu Marketplace: Do Código ao Pagamento em Produção",
         metaDescription:
-          "Curso profissional baseado no MySuperStore (Django em produção): trilha Fundamentos (Módulo 0) do zero à primeira API + Módulo 1 (margem, PIX, repasse) gratuitos.",
+          "Curso profissional de 18 aulas (38h 10min) baseado no MySuperStore em produção: Módulo 0 Fundamentos (6 aulas, 11h) + Módulo 1 (2h) gratuitos.",
         h1: "Construa seu marketplace: do código ao pagamento em produção",
         tagline:
-          "Trilha completa do zero à produção usando o código real do MySuperStore: Módulo 0 de Fundamentos (6 lições, 11h) + 9 módulos principais de pagamentos, repasse e deploy.",
+          "Trilha completa de 18 aulas (38h 10min) usando o código real do MySuperStore: Módulo 0 de Fundamentos (6 aulas, 11h) + 12 aulas de modelo de dados, PIX, repasse, tempo real e deploy.",
         keywords: [
           "curso criar marketplace",
           "como construir um marketplace do zero",
@@ -440,7 +493,7 @@ export const COURSES: Record<CourseSlug, Course> = {
           ],
           [
             "Preciso saber Django antes de começar?",
-            "Você precisa de lógica de programação, noções de Python, SQL básico e HTTP/APIs. O Módulo 1 é gratuito e foca na visão do negócio e nos números antes de entrar no código.",
+            "Não. Quem está começando entra pelo Módulo 0 (Fundamentos, 6 aulas gratuitas / 11h): você aprende o mapa da stack web, prepara Python/venv/Git no Windows, cria seu primeiro projeto Django e sua primeira API com DRF, escreve testes e lê o MySuperStore passo a passo.",
           ],
           [
             "Os números do simulador garantem quanto vou ganhar?",
@@ -448,11 +501,11 @@ export const COURSES: Record<CourseSlug, Course> = {
           ],
           [
             "O que está disponível hoje?",
-            "Todo o Módulo 0 de Fundamentos (6 lições: O Mapa, Bancada no Windows, Primeiro Projeto Django, Primeira API com DRF, Testes & Git e Leitura do MySuperStore — 11h) e o Módulo 1 (Visão do negócio e os números) estão completos e gratuitos nesta página, com simuladores, quizzes explicados e PDFs. Os módulos 2 a 9 estão em preparação e você pode entrar na lista de espera.",
+            "As 7 primeiras aulas estão abertas e gratuitas agora: todo o Módulo 0 de Fundamentos (F01 a F06 — 11h com vídeos, áudios, slides em PDF, laboratório HTTP e glossário de 44 termos) e o Módulo 1 (A01 — Visão do negócio e os números, com simuladores, áudio, slides e PDF). As 11 aulas avançadas restantes (A02 a A11 e Projeto Final) estão em preparação na lista de espera.",
           ],
           [
             "Como funciona o certificado verificável?",
-            "Após a conclusão dos quizzes e aprovação do projeto final pela rubrica técnica, é emitido um certificado de conclusão de curso livre com código único que pode ser conferido publicamente no site da Maldivas Tech.",
+            "Após a conclusão dos quizzes e aprovação do projeto final pela rubrica técnica, é emitido um certificado de conclusão de curso livre com código único (carga horária real de 38h 10min) consultável publicamente no site da Maldivas Tech.",
           ],
         ],
       },
@@ -460,10 +513,10 @@ export const COURSES: Record<CourseSlug, Course> = {
         metaTitle:
           "Build a Marketplace in Production: From Data Model to PIX & Payouts",
         metaDescription:
-          "Professional engineering course based on MySuperStore (Django in production): orders, sub-orders, PIX, split payouts, refunds, WebSockets and deployment.",
+          "18-lesson (38h 10m) engineering course based on MySuperStore in production: free Module 0 Foundations (6 lessons) + Module 1 (pt-BR).",
         h1: "Build your marketplace: from code to payments in production",
         tagline:
-          "A 9-module professional course using the real MySuperStore codebase as a case study — from order unit economics to webhooks, payouts and deployment.",
+          "An 18-lesson (38h 10m) course grounded in the real MySuperStore codebase — starting with a 6-lesson Foundations track (Module 0) through PIX payments, idempotency, payouts and deployment.",
         keywords: [
           "marketplace architecture course",
           "how to build a multi-vendor marketplace",
@@ -478,7 +531,7 @@ export const COURSES: Record<CourseSlug, Course> = {
           ],
           [
             "What language are the lessons in?",
-            "The lessons, PDFs and interactive exercises are written in Brazilian Portuguese (pt-BR). This English overview describes the curriculum and structure for international visitors.",
+            "The lessons, PDFs, videos, audios and interactive exercises are written in Brazilian Portuguese (pt-BR). This English overview describes the curriculum and structure for international visitors.",
           ],
           [
             "Do simulator numbers guarantee financial results?",
@@ -486,7 +539,7 @@ export const COURSES: Record<CourseSlug, Course> = {
           ],
           [
             "What is available right now?",
-            "Module 1 (Business vision and unit economics) is complete and free in Portuguese, including interactive simulators, quiz and downloadable PDF. Modules 2–9 are in preparation; you can join the waitlist.",
+            "All 6 lessons of Module 0 Foundations (11h) and Module 1 (2h, unit economics and PIX flow) are complete and free in Portuguese — totaling 7 unlocked lessons with videos, audios, slide decks, interactive labs and PDFs. The remaining 11 advanced lessons are in preparation on the waitlist.",
           ],
         ],
       },
