@@ -84,6 +84,7 @@ const menu: MenuItem[] = [
   { href: "/servicos", pt: "Serviços", en: "Services", sub: servicesSub },
   { href: "/portfolio", pt: "Portfólio", en: "Portfolio", sub: portfolioSub },
   { href: "/produtos", pt: "Produtos", en: "Products", sub: produtosSub },
+  { href: "/cursos", pt: "Cursos", en: "Courses" },
   { href: "/ferramentas", pt: "Ferramentas", en: "Tools", groups: toolsGroups },
   { href: "/about", pt: "Sobre", en: "About" },
 ];

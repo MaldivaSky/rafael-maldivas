@@ -1,6 +1,7 @@
 import { tools, GROUP_LABEL, type ToolGroup } from "../lib/tools";
 import { SITE, COMPANY, EMAIL, LINKEDIN, WHATSAPP } from "../lib/site";
 import { productList } from "../lib/products";
+import { courseList, formatDuration, totalCourseMinutes } from "../lib/courses";
 
 /**
  * /llms.txt — resumo do site no formato proposto em llmstxt.org.
@@ -55,6 +56,30 @@ export function GET() {
       `- Tecnologias: ${p.stack.join(", ")}`,
       `- Casos de uso (pt): ${p.copy.pt.keywords.join(" · ")}`,
       `- Use cases (en): ${p.copy.en.keywords.join(" · ")}`,
+      "",
+    );
+  }
+
+  linhas.push(
+    "## Cursos",
+    "",
+  );
+
+  for (const c of courseList) {
+    const totalMin = totalCourseMinutes(c);
+    const firstFree = c.modules[0]?.lessons.find((l) => l.status === "gratuita");
+    linhas.push(
+      `### ${c.name}`,
+      "",
+      `- Modalidade: curso livre de capacitação profissional (não regulamentado pelo MEC)`,
+      `- Estudo de caso: ${c.studyCase}`,
+      `- Carga horária real: ${formatDuration(totalMin, "pt")} (${c.modules.length} módulos)`,
+      `- Descrição (pt): ${c.copy.pt.tagline}`,
+      `- Description (en): ${c.copy.en.tagline}`,
+      `- Página do curso: ${SITE}/pt/cursos/${c.slug} · ${SITE}/en/cursos/${c.slug}`,
+      ...(firstFree
+        ? [`- Módulo 1 gratuito: ${SITE}/pt/cursos/${c.slug}/${firstFree.slug}`]
+        : []),
       "",
     );
   }

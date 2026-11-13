@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { tools } from "./lib/tools";
 import { LOCALES, HTML_LANG, localeUrl } from "./lib/seo";
 import { productList } from "./lib/products";
+import { allCourseLessons, courseList } from "./lib/courses";
 
 /**
  * Sitemap dinâmico e internacionalizado.
@@ -31,6 +32,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "ferramentas", priority: 0.8, changeFrequency: "monthly" },
     { path: "ferramentas/plano-digital", priority: 0.7, changeFrequency: "monthly" },
     { path: "about", priority: 0.7, changeFrequency: "yearly" },
+    { path: "cursos", priority: 0.9, changeFrequency: "weekly" },
+    ...courseList.map(
+      (c): Route => ({
+        path: `cursos/${c.slug}`,
+        priority: 0.9,
+        changeFrequency: "weekly",
+      }),
+    ),
+    ...courseList.flatMap((c) =>
+      allCourseLessons(c).map(
+        (l): Route => ({
+          path: `cursos/${c.slug}/${l.slug}`,
+          priority: l.status === "gratuita" ? 0.8 : 0.6,
+          changeFrequency: "monthly",
+        }),
+      ),
+    ),
         ...productList.map(
       (p): Route => ({
         path: `produtos/${p.slug}`,
