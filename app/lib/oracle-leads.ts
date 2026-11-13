@@ -14,7 +14,7 @@ import { createHmac } from "node:crypto";
 import type { LeadNormalizado } from "./lead";
 import type { Lead } from "./notion-leads";
 
-type Papel = "site_writer" | "site_admin";
+export type Papel = "site_writer" | "site_admin" | "site_student_api";
 
 export const oracleConfigurado = () =>
   Boolean(process.env.ORACLE_LEADS_URL && process.env.ORACLE_LEADS_JWT_SECRET);

@@ -80,11 +80,17 @@ const produtosSub: SubItem[] = [
   { href: "/#bravus-partnership", pt: "Parceria de Hardware (Bravus Core)", en: "Hardware Partnership (Bravus Core)" },
 ];
 
+const cursosSub: SubItem[] = [
+  { href: "/cursos", pt: "Catálogo de cursos", en: "Course catalog" },
+  { href: "/trilha", pt: "Minha trilha & progresso", en: "My track & progress" },
+  { href: "/perfil", pt: "Meu perfil", en: "My profile" },
+];
+
 const menu: MenuItem[] = [
   { href: "/servicos", pt: "Serviços", en: "Services", sub: servicesSub },
   { href: "/portfolio", pt: "Portfólio", en: "Portfolio", sub: portfolioSub },
   { href: "/produtos", pt: "Produtos", en: "Products", sub: produtosSub },
-  { href: "/cursos", pt: "Cursos", en: "Courses" },
+  { href: "/cursos", pt: "Cursos", en: "Courses", sub: cursosSub },
   { href: "/ferramentas", pt: "Ferramentas", en: "Tools", groups: toolsGroups },
   { href: "/about", pt: "Sobre", en: "About" },
 ];

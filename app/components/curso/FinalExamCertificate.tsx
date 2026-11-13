@@ -279,6 +279,11 @@ export default function FinalExamCertificate() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [studentName, setStudentName] = useState("");
+  const [repoUrl, setRepoUrl] = useState("");
+  const [deployUrl, setDeployUrl] = useState("");
+  const [resumoTecnico, setResumoTecnico] = useState("");
+  const [evalStatus, setEvalStatus] = useState<"idle" | "submitting" | "submitted" | "unauth" | "error">("idle");
+  const [evalMsg, setEvalMsg] = useState("");
   const [savedCert, setSavedCert] = useState<SavedCert | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -317,23 +322,44 @@ export default function FinalExamCertificate() {
     setSubmitted(false);
   }
 
-  function handleIssueCertificate(e: React.FormEvent) {
+  async function handleSubmitProject(e: React.FormEvent) {
     e.preventDefault();
-    const trimmed = studentName.trim();
-    if (trimmed.length < 3) return;
-    const cert: SavedCert = {
-      studentName: trimmed,
-      score: correctCount,
-      total: FINAL_EXAM_QUESTIONS.length,
-      percent,
-      code: generateCertCode(trimmed, percent),
-      issuedAt: new Date().toLocaleDateString("pt-BR"),
-    };
-    setSavedCert(cert);
+    setEvalStatus("submitting");
+    setEvalMsg("");
+
     try {
-      window.localStorage.setItem(CERT_STORAGE_KEY, JSON.stringify(cert));
+      const r = await fetch("/api/aluno/avaliacao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cursoSlug: "construa-seu-marketplace",
+          nomeExibido: studentName.trim(),
+          repoUrl: repoUrl.trim(),
+          deployUrl: deployUrl.trim(),
+          resumoTecnico: resumoTecnico.trim(),
+          notaExame: percent,
+        }),
+      });
+      if (r.status === 401) {
+        setEvalStatus("unauth");
+        return;
+      }
+      const json = await r.json();
+      if (!r.ok || !json.ok) {
+        setEvalStatus("error");
+        setEvalMsg(
+          json.reason === "invalid_repo_url"
+            ? "Informe uma URL válida para o repositório (https://...)."
+            : json.reason === "summary_too_short"
+              ? "Descreva em pelo menos 20 caracteres as decisões técnicas e testes do seu projeto."
+              : "Não foi possível enviar sua entrega. Confira os campos.",
+        );
+        return;
+      }
+      setEvalStatus("submitted");
     } catch {
-      /* ignore */
+      setEvalStatus("error");
+      setEvalMsg("Falha de conexão ao enviar projeto.");
     }
   }
 
@@ -480,7 +506,7 @@ export default function FinalExamCertificate() {
               <strong>
                 Resultado: {correctCount}/{FINAL_EXAM_QUESTIONS.length} ({percent}%) —{" "}
                 {passed
-                  ? "Aprovado! Certificado liberado."
+                  ? "Aprovado no exame teórico! Agora submeta o link do seu projeto final para avaliação do instrutor."
                   : `Nota mínima é ${PASS_PERCENT}% (12 acertos). Revise os erros acima e tente novamente.`}
               </strong>
             </div>
@@ -488,106 +514,125 @@ export default function FinalExamCertificate() {
         )}
       </div>
 
-      {/* Emissor e Prévia Profissional do Certificado */}
-      {(passed || savedCert) && (
+      {/* Submissão Rigorosa do Projeto Final para Avaliação do Instrutor */}
+      {passed && (
         <div className="curso-sim-card" style={{ marginTop: 24 }}>
           <div className="curso-sim-head">
             <div>
-              <span className="curso-badge">Certificado Profissional · Curso Livre</span>
-              <h3>Emita seu certificado pela Maldivas Tech</h3>
+              <span className="curso-badge">Etapa 2 de 2 · Avaliação Prática Obrigatória</span>
+              <h3>Submeta seu Projeto Final para emissão do Certificado</h3>
+              <p className="curso-muted" style={{ marginTop: 6 }}>
+                A certificação Maldivas Tech exige aprovação teórica ({percent}%) e revisão
+                técnica do projeto pelo instrutor. Após aprovado, você receberá o link
+                exclusivo e rastreável do seu certificado por e-mail.
+              </p>
             </div>
           </div>
 
-          <form onSubmit={handleIssueCertificate} className="curso-cert-form">
-            <div className="curso-field">
-              <label htmlFor="cert-student-name">
-                Seu nome completo (como sairá no certificado)
-              </label>
-              <input
-                id="cert-student-name"
-                type="text"
-                required
-                minLength={3}
-                placeholder="Ex.: Maria Clara Oliveira"
-                value={studentName}
-                onChange={(e) => setStudentName(e.target.value)}
-              />
+          {evalStatus === "submitted" ? (
+            <div className="curso-exam-result ok" role="status">
+              <strong>
+                ✓ Projeto enviado para avaliação! Acompanhe o parecer em Minha Trilha —
+                assim que aprovado pelo instrutor, o link oficial do certificado será
+                enviado para o seu e-mail.
+              </strong>
             </div>
-            <button type="submit" className="btn btn-primary">
-              <Award size={16} aria-hidden="true" />
-              {savedCert ? "Atualizar certificado" : "Gerar certificado"}
-            </button>
-          </form>
-
-          {savedCert && (
-            <div className="curso-cert-wrapper">
-              <article
-                id="maldivas-certificate-print"
-                className="curso-cert-sheet"
-                aria-label="Certificado de conclusão de curso livre da Maldivas Tech"
-              >
-                <div className="curso-cert-top">
-                  <div className="curso-cert-brand">
-                    <ShieldCheck size={22} aria-hidden="true" />
-                    <span>MALDIVAS TECH · ENGENHARIA DE SOFTWARE</span>
-                  </div>
-                  <span className="curso-cert-tag">CURSO LIVRE · 38H 10MIN</span>
+          ) : evalStatus === "unauth" ? (
+            <div className="curso-exam-result err" role="alert">
+              <div>
+                <strong>Entre com sua conta Google antes de enviar o projeto.</strong>
+                <div style={{ marginTop: 10 }}>
+                  <a
+                    href="/api/auth/google/login?next=/pt/trilha"
+                    className="btn btn-primary"
+                  >
+                    Entrar com Google
+                  </a>
                 </div>
-
-                <p className="curso-cert-kicker">CERTIFICADO DE CONCLUSÃO</p>
-                <p className="curso-cert-intro">Certificamos que</p>
-                <h4 className="curso-cert-name">{savedCert.studentName}</h4>
-                <p className="curso-cert-body">
-                  concluiu com aproveitamento de <strong>{savedCert.percent}%</strong>{" "}
-                  ({savedCert.score}/{savedCert.total} questões no exame final) o curso livre{" "}
-                  <strong>
-                    Construa seu marketplace: do código ao pagamento em produção
-                  </strong>{" "}
-                  (estudo de caso MySuperStore), totalizando{" "}
-                  <strong>38 horas e 10 minutos</strong> distribuídas em 18 aulas
-                  (Módulo 0 Fundamentos, modelo de dados, PIX/cartão com mTLS, webhook
-                  idempotente, repasse, estorno, Celery, WebSockets, Docker/deploy e
-                  operação jurídica/LGPD).
-                </p>
-
-                <div className="curso-cert-footer">
-                  <div>
-                    <div className="curso-cert-sig-line" />
-                    <strong>Rafael Maldivas</strong>
-                    <span>Fundador & Instrutor · Maldivas Tech</span>
-                  </div>
-                  <div className="curso-cert-meta">
-                    <span>Emitido em: {savedCert.issuedAt}</span>
-                    <span>
-                      Código: <code>{savedCert.code}</code>
-                    </span>
-                    <span>Modalidade: Curso livre (não regulamentado pelo MEC)</span>
-                  </div>
-                </div>
-              </article>
-
-              <div className="curso-media-actions" style={{ marginTop: 16 }}>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => window.print()}
-                >
-                  <Printer size={16} aria-hidden="true" />
-                  Imprimir / Salvar Certificado em PDF
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-ghost"
-                  onClick={() => handleCopyCode(savedCert.code)}
-                >
-                  <Copy size={16} aria-hidden="true" />
-                  {copied ? "Código copiado!" : `Copiar código (${savedCert.code})`}
-                </button>
               </div>
             </div>
+          ) : (
+            <form onSubmit={handleSubmitProject} className="curso-cert-form" style={{ display: "grid", gap: 14 }}>
+              <div className="curso-field">
+                <label htmlFor="cert-student-name">
+                  Seu nome completo (como sairá no certificado após aprovação)
+                </label>
+                <input
+                  id="cert-student-name"
+                  type="text"
+                  required
+                  minLength={3}
+                  placeholder="Ex.: Maria Clara Oliveira"
+                  value={studentName}
+                  onChange={(e) => setStudentName(e.target.value)}
+                />
+              </div>
+
+              <div className="curso-field">
+                <label htmlFor="cert-repo-url">
+                  Link do repositório GitHub do projeto final *
+                </label>
+                <input
+                  id="cert-repo-url"
+                  type="url"
+                  required
+                  placeholder="https://github.com/seu-usuario/meu-marketplace"
+                  value={repoUrl}
+                  onChange={(e) => setRepoUrl(e.target.value)}
+                />
+              </div>
+
+              <div className="curso-field">
+                <label htmlFor="cert-deploy-url">
+                  URL em produção / demonstração (opcional)
+                </label>
+                <input
+                  id="cert-deploy-url"
+                  type="url"
+                  placeholder="https://meu-marketplace.vercel.app"
+                  value={deployUrl}
+                  onChange={(e) => setDeployUrl(e.target.value)}
+                />
+              </div>
+
+              <div className="curso-field">
+                <label htmlFor="cert-resumo">
+                  Resumo técnico e invariantes validadas nos testes *
+                </label>
+                <textarea
+                  id="cert-resumo"
+                  rows={3}
+                  required
+                  minLength={20}
+                  placeholder="Explique a modelagem (centavos/Decimal), idempotência de webhook, trava de estoque concorrente e como rodar seus testes..."
+                  value={resumoTecnico}
+                  onChange={(e) => setResumoTecnico(e.target.value)}
+                />
+              </div>
+
+              {evalStatus === "error" && evalMsg && (
+                <p className="curso-why" style={{ color: "#f87171" }} role="alert">
+                  {evalMsg}
+                </p>
+              )}
+
+              <div>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={evalStatus === "submitting"}
+                >
+                  <Award size={16} aria-hidden="true" />
+                  {evalStatus === "submitting"
+                    ? "Enviando para avaliação..."
+                    : "Enviar projeto para avaliação do instrutor"}
+                </button>
+              </div>
+            </form>
           )}
         </div>
       )}
+
     </section>
   );
 }

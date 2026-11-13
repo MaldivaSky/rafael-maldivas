@@ -269,3 +269,233 @@ GRANT UPDATE (status) ON site.leads TO site_admin;
 -- importação do Notion (feita com token de admin)
 GRANT INSERT (nome, status, area, prazo, servicos, contato, negocio, dor, idioma, canal, criado_em, notion_id)
   ON site.leads TO site_admin;
+
+-- ------------------------------------------------------------------
+--  Área do Aluno (Google OAuth, Perfil, Matrículas, Trilha e Certificados)
+-- ------------------------------------------------------------------
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'site_student_api') THEN
+    CREATE ROLE site_student_api NOLOGIN;
+  END IF;
+END
+$$;
+
+GRANT site_student_api TO maldivas_authenticator;
+GRANT USAGE ON SCHEMA site TO site_student_api;
+
+CREATE TABLE IF NOT EXISTS site.alunos (
+  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  google_sub       text NOT NULL UNIQUE CHECK (char_length(google_sub) <= 120),
+  email            text NOT NULL UNIQUE CHECK (char_length(email) <= 320),
+  nome             text NOT NULL CHECK (char_length(nome) <= 200),
+  nome_certificado text NOT NULL DEFAULT '' CHECK (char_length(nome_certificado) <= 200),
+  avatar_url       text NOT NULL DEFAULT '' CHECK (char_length(avatar_url) <= 1000),
+  headline         text NOT NULL DEFAULT '' CHECK (char_length(headline) <= 160),
+  bio              text NOT NULL DEFAULT '' CHECK (char_length(bio) <= 1000),
+  github_url       text NOT NULL DEFAULT '' CHECK (char_length(github_url) <= 300),
+  linkedin_url     text NOT NULL DEFAULT '' CHECK (char_length(linkedin_url) <= 300),
+  objetivo         text NOT NULL DEFAULT '' CHECK (char_length(objetivo) <= 160),
+  criado_em        timestamptz NOT NULL DEFAULT now(),
+  atualizado_em    timestamptz NOT NULL DEFAULT now(),
+  ultimo_acesso_em timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS site.matriculas (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  aluno_id     uuid NOT NULL REFERENCES site.alunos(id) ON DELETE CASCADE,
+  curso_slug   text NOT NULL CHECK (char_length(curso_slug) <= 120),
+  status       text NOT NULL DEFAULT 'ativo' CHECK (status IN ('ativo','concluido','pausado')),
+  iniciado_em  timestamptz NOT NULL DEFAULT now(),
+  concluido_em timestamptz,
+  UNIQUE (aluno_id, curso_slug)
+);
+
+CREATE TABLE IF NOT EXISTS site.progresso_aulas (
+  aluno_id        uuid NOT NULL REFERENCES site.alunos(id) ON DELETE CASCADE,
+  curso_slug      text NOT NULL CHECK (char_length(curso_slug) <= 120),
+  licao_id        text NOT NULL CHECK (char_length(licao_id) <= 120),
+  status          text NOT NULL DEFAULT 'concluida' CHECK (status IN ('em_andamento','concluida')),
+  nota_quiz       integer CHECK (nota_quiz IS NULL OR (nota_quiz >= 0 AND nota_quiz <= 100)),
+  tentativas_quiz integer NOT NULL DEFAULT 0 CHECK (tentativas_quiz >= 0),
+  atualizado_em   timestamptz NOT NULL DEFAULT now(),
+  concluido_em    timestamptz,
+  PRIMARY KEY (aluno_id, curso_slug, licao_id)
+);
+
+CREATE INDEX IF NOT EXISTS progresso_aulas_aluno_curso_idx
+  ON site.progresso_aulas (aluno_id, curso_slug);
+
+CREATE TABLE IF NOT EXISTS site.certificados (
+  id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  codigo_verificacao  text NOT NULL UNIQUE CHECK (char_length(codigo_verificacao) <= 64),
+  aluno_id            uuid NOT NULL REFERENCES site.alunos(id) ON DELETE CASCADE,
+  curso_slug          text NOT NULL CHECK (char_length(curso_slug) <= 120),
+  nome_exibido        text NOT NULL CHECK (char_length(nome_exibido) <= 200),
+  nota_final          integer NOT NULL CHECK (nota_final >= 0 AND nota_final <= 100),
+  carga_horaria_min   integer NOT NULL DEFAULT 0 CHECK (carga_horaria_min >= 0),
+  emitido_em          timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (aluno_id, curso_slug)
+);
+
+CREATE TABLE IF NOT EXISTS site.avaliacoes_projeto (
+  id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  aluno_id          uuid NOT NULL REFERENCES site.alunos(id) ON DELETE CASCADE,
+  curso_slug        text NOT NULL CHECK (char_length(curso_slug) <= 120),
+  repo_url          text NOT NULL CHECK (char_length(repo_url) <= 400),
+  deploy_url        text NOT NULL DEFAULT '' CHECK (char_length(deploy_url) <= 400),
+  nota_exame        integer NOT NULL CHECK (nota_exame >= 0 AND nota_exame <= 100),
+  resumo_tecnico    text NOT NULL DEFAULT '' CHECK (char_length(resumo_tecnico) <= 2000),
+  status            text NOT NULL DEFAULT 'pendente' CHECK (status IN ('pendente','aprovado','revisao_solicitada')),
+  parecer_avaliador text NOT NULL DEFAULT '' CHECK (char_length(parecer_avaliador) <= 2000),
+  avaliado_em       timestamptz,
+  criado_em         timestamptz NOT NULL DEFAULT now(),
+  atualizado_em     timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (aluno_id, curso_slug)
+);
+
+-- RPC para validação pública de certificado (não expõe e-mail nem dados pessoais sensíveis)
+CREATE OR REPLACE FUNCTION site.validar_certificado(p_codigo text) RETURNS jsonb
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = site, pg_temp AS $$
+  SELECT jsonb_build_object(
+    'valido', true,
+    'codigo', c.codigo_verificacao,
+    'nome_exibido', c.nome_exibido,
+    'curso_slug', c.curso_slug,
+    'nota_final', c.nota_final,
+    'carga_horaria_min', c.carga_horaria_min,
+    'emitido_em', c.emitido_em
+  )
+  FROM site.certificados c
+  WHERE upper(trim(c.codigo_verificacao)) = upper(trim(p_codigo))
+  LIMIT 1;
+$$;
+
+-- RPC agregada para o Superadmin (/admin -> aba Alunos & Trilhas)
+-- Correlaciona alunos com site.leads por e-mail para visão de funil completo.
+CREATE OR REPLACE FUNCTION site.painel_alunos() RETURNS jsonb
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = site, pg_temp AS $$
+  WITH resumo_prog AS (
+    SELECT
+      p.aluno_id,
+      count(*) FILTER (WHERE p.status = 'concluida') AS aulas_concluidas,
+      round(avg(p.nota_quiz))::int AS media_quiz,
+      max(p.atualizado_em) AS ultima_atividade_em,
+      (
+        SELECT p2.licao_id
+        FROM site.progresso_aulas p2
+        WHERE p2.aluno_id = p.aluno_id
+        ORDER BY p2.atualizado_em DESC
+        LIMIT 1
+      ) AS ultima_licao_id,
+      coalesce(
+        jsonb_agg(
+          jsonb_build_object(
+            'curso_slug', p.curso_slug,
+            'licao_id', p.licao_id,
+            'status', p.status,
+            'nota_quiz', p.nota_quiz,
+            'atualizado_em', p.atualizado_em,
+            'concluido_em', p.concluido_em
+          )
+          ORDER BY p.atualizado_em DESC
+        ),
+        '[]'::jsonb
+      ) AS progresso
+    FROM site.progresso_aulas p
+    GROUP BY p.aluno_id
+  ),
+  lead_match AS (
+    SELECT DISTINCT ON (a.id)
+      a.id AS aluno_id,
+      l.id AS lead_id,
+      l.status AS lead_status,
+      l.canal AS lead_canal,
+      l.utm_campaign AS lead_campanha,
+      l.criado_em AS lead_criado_em
+    FROM site.alunos a
+    JOIN site.leads l
+      ON lower(trim(l.contato)) = lower(trim(a.email))
+      OR lower(l.contato) LIKE '%' || lower(trim(a.email)) || '%'
+    ORDER BY a.id, l.criado_em DESC
+  )
+  SELECT jsonb_build_object(
+    'kpis', jsonb_build_object(
+      'total_alunos', (SELECT count(*) FROM site.alunos),
+      'ativos_7d', (SELECT count(*) FROM site.alunos WHERE ultimo_acesso_em >= now() - interval '7 days'),
+      'total_concluidas', (SELECT count(*) FROM site.progresso_aulas WHERE status = 'concluida'),
+      'certificados_emitidos', (SELECT count(*) FROM site.certificados),
+      'alunos_com_lead', (SELECT count(*) FROM lead_match),
+      'avaliacoes_pendentes', (SELECT count(*) FROM site.avaliacoes_projeto WHERE status = 'pendente')
+    ),
+    'alunos', coalesce((
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', a.id,
+          'email', a.email,
+          'nome', a.nome,
+          'nome_certificado', a.nome_certificado,
+          'avatar_url', a.avatar_url,
+          'headline', a.headline,
+          'bio', a.bio,
+          'github_url', a.github_url,
+          'linkedin_url', a.linkedin_url,
+          'objetivo', a.objetivo,
+          'criado_em', a.criado_em,
+          'ultimo_acesso_em', a.ultimo_acesso_em,
+          'aulas_concluidas', coalesce(rp.aulas_concluidas, 0),
+          'media_quiz', rp.media_quiz,
+          'ultima_licao_id', rp.ultima_licao_id,
+          'ultima_atividade_em', rp.ultima_atividade_em,
+          'progresso', coalesce(rp.progresso, '[]'::jsonb),
+          'matriculas', coalesce((
+            SELECT jsonb_agg(jsonb_build_object('curso_slug', m.curso_slug, 'status', m.status, 'iniciado_em', m.iniciado_em))
+            FROM site.matriculas m WHERE m.aluno_id = a.id
+          ), '[]'::jsonb),
+          'certificados', coalesce((
+            SELECT jsonb_agg(jsonb_build_object('codigo', c.codigo_verificacao, 'curso_slug', c.curso_slug, 'nota_final', c.nota_final, 'emitido_em', c.emitido_em))
+            FROM site.certificados c WHERE c.aluno_id = a.id
+          ), '[]'::jsonb),
+          'avaliacao', (
+            SELECT jsonb_build_object(
+              'curso_slug', av.curso_slug,
+              'repo_url', av.repo_url,
+              'deploy_url', av.deploy_url,
+              'nota_exame', av.nota_exame,
+              'resumo_tecnico', av.resumo_tecnico,
+              'status', av.status,
+              'parecer_avaliador', av.parecer_avaliador,
+              'atualizado_em', av.atualizado_em,
+              'avaliado_em', av.avaliado_em
+            )
+            FROM site.avaliacoes_projeto av
+            WHERE av.aluno_id = a.id
+            ORDER BY av.atualizado_em DESC
+            LIMIT 1
+          ),
+          'lead', CASE WHEN lm.lead_id IS NOT NULL THEN jsonb_build_object(
+            'id', lm.lead_id,
+            'status', lm.lead_status,
+            'canal', lm.lead_canal,
+            'campanha', lm.lead_campanha,
+            'criado_em', lm.lead_criado_em
+          ) ELSE NULL END
+        )
+        ORDER BY a.ultimo_acesso_em DESC
+      )
+      FROM site.alunos a
+      LEFT JOIN resumo_prog rp ON rp.aluno_id = a.id
+      LEFT JOIN lead_match lm ON lm.aluno_id = a.id
+    ), '[]'::jsonb)
+  );
+$$;
+
+GRANT SELECT, INSERT, UPDATE ON site.alunos, site.matriculas, site.progresso_aulas, site.certificados, site.avaliacoes_projeto TO site_student_api;
+GRANT SELECT ON site.alunos, site.matriculas, site.progresso_aulas, site.certificados, site.avaliacoes_projeto TO site_admin;
+GRANT UPDATE (status, parecer_avaliador, avaliado_em, atualizado_em) ON site.avaliacoes_projeto TO site_admin;
+GRANT INSERT, UPDATE ON site.certificados TO site_admin;
+GRANT UPDATE (status, concluido_em) ON site.matriculas TO site_admin;
+REVOKE EXECUTE ON FUNCTION site.validar_certificado(text), site.painel_alunos() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION site.validar_certificado(text) TO site_student_api, site_admin;
+GRANT EXECUTE ON FUNCTION site.painel_alunos() TO site_admin;

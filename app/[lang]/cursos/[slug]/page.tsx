@@ -571,6 +571,40 @@ export default async function CourseSalesPage({
         </div>
       </section>
 
+      {/* Credenciais do Instrutor */}
+      <section className="curso-section" id="instrutor">
+        <div className="wrap">
+          <div className="curso-legal-card">
+            <div className="sec-tag">
+              {lang === "pt" ? "Quem ensina & credenciais" : "Instructor & credentials"}
+            </div>
+            <h2>Rafael Paiva Dias da Silva — Maldivas Tech</h2>
+            <ul className="curso-legal-list">
+              <li>
+                {lang === "pt"
+                  ? "Tecnólogo em Análise e Desenvolvimento de Sistemas pelo IFSP (Campus Guarulhos) — TCC em E-Commerce (nota 9,00)"
+                  : "B.Tech in Systems Analysis and Development — IFSP (Campus Guarulhos) — E-Commerce Thesis (9.0/10)"}
+              </li>
+              <li>
+                {lang === "pt"
+                  ? "Diploma Digital verificável no portal do MEC/IFSP (diplomas.ifsp.edu.br/diploma_digital · código 1810.1810.1391e01ddb91)"
+                  : "Verifiable Digital Diploma at IFSP/MEC portal (diplomas.ifsp.edu.br/diploma_digital · code 1810.1810.1391e01ddb91)"}
+              </li>
+              <li>
+                {lang === "pt"
+                  ? "Oracle Agentic AI Certified Foundations Associate (2026–2028) e fundador da Maldivas Tech (CNPJ 68.923.239/0001-77)"
+                  : "Oracle Agentic AI Certified Foundations Associate (2026–2028) & founder of Maldivas Tech (CNPJ 68.923.239/0001-77)"}
+              </li>
+              <li>
+                {lang === "pt"
+                  ? "Autor de sistemas reais em produção (MySuperStore, MercadinhoSys, MiseOn e SelectSys Jobs)"
+                  : "Author of real production systems (MySuperStore, MercadinhoSys, MiseOn and SelectSys Jobs)"}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* Lista de espera */}
       <section className="curso-section" id="lista-de-espera">
         <div className="wrap">

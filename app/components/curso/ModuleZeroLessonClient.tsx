@@ -82,10 +82,20 @@ export default function ModuleZeroLessonClient({
 
   function toggleCompleted() {
     setDoneSlugs((prev) => {
-      const next = prev.includes(lesson.slug)
-        ? prev.filter((s) => s !== lesson.slug)
-        : [...prev, lesson.slug];
+      const willComplete = !prev.includes(lesson.slug);
+      const next = willComplete
+        ? [...prev, lesson.slug]
+        : prev.filter((s) => s !== lesson.slug);
       saveDoneSlugs(next);
+      fetch("/api/aluno/progresso", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cursoSlug: courseSlug,
+          licaoId: lesson.slug,
+          status: willComplete ? "concluida" : "em_andamento",
+        }),
+      }).catch(() => undefined);
       return next;
     });
   }

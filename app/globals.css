@@ -2773,33 +2773,47 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
 }
 
 @media print {
-  body * {
-    visibility: hidden;
+  .no-print,
+  nav.nav,
+  footer.site-footer,
+  canvas {
+    display: none !important;
   }
-  #maldivas-certificate-print,
-  #maldivas-certificate-print * {
-    visibility: visible;
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   #maldivas-certificate-print {
-    position: fixed;
-    left: 0;
-    top: 0;
     width: 100%;
     background: #ffffff !important;
     color: #0f172a !important;
     border: 3px solid #0284c7 !important;
     box-shadow: none !important;
   }
-  #maldivas-certificate-print .curso-cert-name,
-  #maldivas-certificate-print .curso-cert-footer strong {
-    color: #0f172a !important;
+  .cert-sheet-root {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
-  #maldivas-certificate-print .curso-cert-body,
-  #maldivas-certificate-print .curso-cert-intro,
-  #maldivas-certificate-print .curso-cert-kicker,
-  #maldivas-certificate-print .curso-cert-footer span {
-    color: #334155 !important;
+  .cert-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    page-break-after: always;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
+  .cert-page:last-of-type {
+    page-break-after: auto;
+  }
+}
+
+@page {
+  size: A4 landscape;
+  margin: 8mm;
 }
 
 /* Copy code button & Project Submission Evaluator */

@@ -6,15 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --test scripts/origem.test.mjs scripts/visita.test.mjs scripts/admin-auth.test.mjs"
+    "test": "node --test scripts/origem.test.mjs scripts/visita.test.mjs scripts/admin-auth.test.mjs scripts/student-auth.test.mjs"
   },
   "dependencies": {
     "@imgly/background-removal": "^1.7.0",
     "@react-three/fiber": "^9.8.2",
+    "@types/qrcode": "^1.5.6",
     "framer-motion": "^13.1.0",
     "lucide-react": "^1.31.0",
     "next": "^15.5.28",
     "next-themes": "^0.4.6",
+    "qrcode": "^1.5.4",
     "react": "^19.1.10",
     "react-dom": "^19.1.10",
     "recharts": "^3.10.1",

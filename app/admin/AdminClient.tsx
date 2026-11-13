@@ -12,6 +12,7 @@ import {
   Search,
 } from "lucide-react";
 import PainelBI from "./PainelBI";
+import AlunosPanel from "./AlunosPanel";
 
 /**
  * Painel de leads. Os dados vêm de /api/leads: PostgreSQL na Oracle Cloud
@@ -91,7 +92,7 @@ export default function AdminClient() {
   const [filtroCanal, setFiltroCanal] = useState("Todos");
   const [busca, setBusca] = useState("");
   const [salvandoId, setSalvandoId] = useState<string | null>(null);
-  const [aba, setAba] = useState<"leads" | "painel">("leads");
+  const [aba, setAba] = useState<"leads" | "painel" | "alunos">("leads");
 
   // a sessão acabou (cookie vencido ou senha trocada): volta ao login; identidade estável
   const sessaoExpirou = useCallback(() => {
@@ -276,10 +277,12 @@ export default function AdminClient() {
         >
           <div>
             <div className="sec-tag" style={{ marginBottom: 6 }}>Painel · uso interno</div>
-            <h2 style={{ marginBottom: 0 }}>{aba === "leads" ? "Leads" : "Painel"}</h2>
+            <h2 style={{ marginBottom: 0 }}>
+              {aba === "leads" ? "Leads" : aba === "painel" ? "Painel" : "Alunos & Trilhas"}
+            </h2>
           </div>
           <div className="briefing-chips" style={{ margin: 0 }} role="tablist" aria-label="Seção do painel">
-            {([["leads", "Leads"], ["painel", "Painel BI"]] as const).map(([id, nome]) => (
+            {([["leads", "Leads"], ["painel", "Painel BI"], ["alunos", "Alunos & Trilhas"]] as const).map(([id, nome]) => (
               <button
                 key={id}
                 role="tab"
@@ -305,6 +308,8 @@ export default function AdminClient() {
 
         {aba === "painel" ? (
           <PainelBI aoExpirar={sessaoExpirou} />
+        ) : aba === "alunos" ? (
+          <AlunosPanel aoExpirar={sessaoExpirou} />
         ) : (
         <>
         {/* filtros */}

@@ -90,7 +90,7 @@ const copy = {
       ],
       [
         "Tecnologia em Análise e Desenvolvimento de Sistemas",
-        "IFSP — Instituto Federal de São Paulo"
+        "IFSP Campus Guarulhos · TCC em E-Commerce (Nota 9,0) · Diploma Digital: 1810.1810.1391e01ddb91"
       ],
       [
         "Marketing Digital",
