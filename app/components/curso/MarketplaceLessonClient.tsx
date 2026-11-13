@@ -19,6 +19,7 @@ import {
   FillInTheBlankLab,
   PredictInteractive,
 } from "./InteractivePracticeLab";
+import FinalExamCertificate from "./FinalExamCertificate";
 
 const STORAGE_KEY = "maldivas-curso-done-v1";
 
@@ -266,6 +267,11 @@ export default function MarketplaceLessonClient({
             })}
           </div>
         </section>
+      )}
+
+      {/* Exame Final 80%+ e Certificado Profissional na aula final */}
+      {lesson.slug === "modulo-7-projeto-final-certificado" && (
+        <FinalExamCertificate />
       )}
 
       {/* 3 pontos-chave */}
