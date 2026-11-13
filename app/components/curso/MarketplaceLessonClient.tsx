@@ -20,6 +20,8 @@ import {
   PredictInteractive,
 } from "./InteractivePracticeLab";
 import FinalExamCertificate from "./FinalExamCertificate";
+import CopyCodeBlock from "./CopyCodeBlock";
+import ProjectSubmissionEvaluator from "./ProjectSubmissionEvaluator";
 
 const STORAGE_KEY = "maldivas-curso-done-v1";
 
@@ -139,14 +141,13 @@ export default function MarketplaceLessonClient({
               <p key={idx}>{p}</p>
             ))}
 
-            {sec.codeBlock && (
-              <div className="curso-code-card">
-                <div className="curso-code-head">{sec.codeBlock.title}</div>
-                <pre className="curso-code-pre">
-                  <code>{sec.codeBlock.code}</code>
-                </pre>
-              </div>
-            )}
+            {sec.codeBlocks?.map((cb, cbIdx) => (
+              <CopyCodeBlock
+                key={`${sec.heading}-cb-${cbIdx}`}
+                title={cb.title}
+                code={cb.code}
+              />
+            ))}
 
             {sec.table && (
               <div className="curso-table-wrap">
@@ -271,7 +272,10 @@ export default function MarketplaceLessonClient({
 
       {/* Exame Final 80%+ e Certificado Profissional na aula final */}
       {lesson.slug === "modulo-7-projeto-final-certificado" && (
-        <FinalExamCertificate />
+        <>
+          <ProjectSubmissionEvaluator />
+          <FinalExamCertificate />
+        </>
       )}
 
       {/* 3 pontos-chave */}

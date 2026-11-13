@@ -24,7 +24,7 @@ export type MarketplaceLessonData = {
   coreSections: {
     heading: string;
     paragraphs: string[];
-    codeBlock?: { title: string; code: string };
+    codeBlocks?: { title: string; code: string }[];
     table?: { headers: string[]; rows: string[][] };
   }[];
   breakExperiment?: {
@@ -70,10 +70,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "O cliente leva uma sacola (o pedido). Mas cada loja emitiu o seu cupom (o sub-pedido), porque cada uma envia, recebe e pode ter problema separadamente. O item é a linha do cupom.",
           "💡 Por quê o pagamento é do pedido e o repasse é do sub-pedido? O cliente paga uma vez (um Payment por Order). Mas cada loja recebe a sua parte (um Payout por SubOrder). Os dois lados do dinheiro têm granularidades diferentes, e o modelo respeita isso."
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "erDiagram\n  USER ||--o{ ORDER : compra\n  ORDER ||--o{ SUBORDER : \"divide por loja\"\n  SELLER ||--o{ SUBORDER : recebe\n  SUBORDER ||--o{ ORDERITEM : contém\n  ORDER ||--|| PAYMENT : \"é pago por\"\n  SUBORDER ||--|| PAYOUT : \"gera repasse\"\n  SUBORDER ||--|| COMMISSIONENTRY : \"gera comissão\"\n  ORDERITEM ||--o| RETURNREQUEST : \"pode ter devolução\""
-        }
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "erDiagram\n  USER ||--o{ ORDER : compra\n  ORDER ||--o{ SUBORDER : \"divide por loja\"\n  SELLER ||--o{ SUBORDER : recebe\n  SUBORDER ||--o{ ORDERITEM : contém\n  ORDER ||--|| PAYMENT : \"é pago por\"\n  SUBORDER ||--|| PAYOUT : \"gera repasse\"\n  SUBORDER ||--|| COMMISSIONENTRY : \"gera comissão\"\n  ORDERITEM ||--o| RETURNREQUEST : \"pode ter devolução\""
+          }
+        ]
       },
       {
         "heading": "2. O código, linha por linha, com o porquê",
@@ -85,10 +87,24 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "💡 Por quê o item copia nome, SKU, atributos e preço, se já tem a variant? Porque a variant é uma referência viva: ela muda de preço, muda de nome e pode ser apagada (SET_NULL). O item precisa ser o retrato do momento da compra. Sem isso, o pedido de hoje muda quando o catálogo muda.",
           "2.4 Pagamento, repasse e comissão (payments/models.py)"
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "class Order(models.Model):\n    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)\n    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name=\"orders\")\n    # Snapshot do endereço no momento da compra\n    address_recipient = models.CharField(max_length=150)\n    address_cep = models.CharField(max_length=8)\n    ...\n    order_number = models.CharField(max_length=30, unique=True)\n    subtotal = models.DecimalField(max_digits=10, decimal_places=2)\n    shipping = models.DecimalField(max_digits=10, decimal_places=2, default=0)\n    total = models.DecimalField(max_digits=10, decimal_places=2)\n    status = models.CharField(max_length=20, choices=OrderStatus.choices, default=OrderStatus.PENDING)"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "class Order(models.Model):\n    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)\n    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name=\"orders\")\n    # Snapshot do endereço no momento da compra\n    address_recipient = models.CharField(max_length=150)\n    address_cep = models.CharField(max_length=8)\n    ...\n    order_number = models.CharField(max_length=30, unique=True)\n    subtotal = models.DecimalField(max_digits=10, decimal_places=2)\n    shipping = models.DecimalField(max_digits=10, decimal_places=2, default=0)\n    total = models.DecimalField(max_digits=10, decimal_places=2)\n    status = models.CharField(max_length=20, choices=OrderStatus.choices, default=OrderStatus.PENDING)"
+          },
+          {
+            "title": "Código (python)",
+            "code": "class SubOrder(models.Model):\n    \"\"\"Sub-pedido por vendedor — permite fulfillment independente por loja.\"\"\"\n    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name=\"sub_orders\")\n    seller = models.ForeignKey(\"sellers.Seller\", on_delete=models.SET_NULL, null=True, related_name=\"sub_orders\")\n    subtotal = models.DecimalField(max_digits=10, decimal_places=2)\n    shipping = models.DecimalField(max_digits=10, decimal_places=2, default=0)\n    # Comissão da plataforma = subtotal × seller.commission_rate (não incide no frete)\n    commission = models.DecimalField(max_digits=10, decimal_places=2)\n    # Valor que o vendedor recebe = (subtotal - commission) + shipping\n    seller_amount = models.DecimalField(max_digits=10, decimal_places=2)\n    status = models.CharField(max_length=20, choices=OrderStatus.choices, default=OrderStatus.PENDING)\n    tracking_code = ..."
+          },
+          {
+            "title": "Código (python)",
+            "code": "class OrderItem(models.Model):\n    sub_order = models.ForeignKey(SubOrder, on_delete=models.CASCADE, related_name=\"items\")\n    variant = models.ForeignKey(\"catalog.ProductVariant\", on_delete=models.SET_NULL, null=True)\n    product_name = models.CharField(max_length=250)\n    variant_sku = models.CharField(max_length=100)\n    variant_attributes = models.JSONField(default=dict)\n    quantity = models.PositiveIntegerField()\n    unit_price = models.DecimalField(max_digits=10, decimal_places=2)\n    total = models.DecimalField(max_digits=10, decimal_places=2)"
+          },
+          {
+            "title": "Código (python)",
+            "code": "class Payment(models.Model):                       # linha 21\n    order = models.OneToOneField(\"orders.Order\", on_delete=models.PROTECT, related_name=\"payment\")\n    refunded_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)\n    raw_response = models.JSONField(default=dict)  # resposta completa do provedor\n\nclass Payout(models.Model):                        # linha 64\n    sub_order = models.OneToOneField(\"orders.SubOrder\", on_delete=models.PROTECT, related_name=\"payout\")"
+          }
+        ],
         "table": {
           "headers": [
             "Linha",
@@ -127,10 +143,20 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "Ciclo do sub-pedido (SubOrder): a entrega, uma por loja",
           "💡 Por quê dois ciclos? O pedido responde \"foi pago?\"; o sub-pedido responde \"foi entregue?\". Com duas lojas, não existe um único \"status de entrega\" verdadeiro: uma entregou, a outra não. O Order.status nunca vira \"enviado\".  ⚠️ Consequência prática: a tela do cliente precisa olhar os sub-pedidos para mostrar o andamento. Quem exibir só Order.status verá \"pagamento confirmado\" até o pedido ser cancelado. É uma decisão de modelagem boa, mas que precisa estar clara para o frontend."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "class OrderStatus(models.TextChoices):             # orders/models.py:6\n    PENDING = \"pending\"; CONFIRMED = \"confirmed\"; PROCESSING = \"processing\"\n    SHIPPED = \"shipped\"; DELIVERED = \"delivered\"; CANCELLED = \"cancelled\"; REFUNDED = \"refunded\""
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "class OrderStatus(models.TextChoices):             # orders/models.py:6\n    PENDING = \"pending\"; CONFIRMED = \"confirmed\"; PROCESSING = \"processing\"\n    SHIPPED = \"shipped\"; DELIVERED = \"delivered\"; CANCELLED = \"cancelled\"; REFUNDED = \"refunded\""
+          },
+          {
+            "title": "Código (mermaid)",
+            "code": "stateDiagram-v2\n  [*] --> pending\n  pending --> confirmed: pagamento aprovado\n  pending --> cancelled: expirou ou cancelou\n  confirmed --> refunded: estorno total"
+          },
+          {
+            "title": "Código (mermaid)",
+            "code": "stateDiagram-v2\n  [*] --> confirmed\n  confirmed --> processing\n  processing --> shipped\n  shipped --> delivered\n  shipped --> refunded: devolução aprovada"
+          }
+        ],
         "table": {
           "headers": [
             "Quando",
@@ -158,9 +184,55 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "O arquivo orders/tests.py (linhas 84-93) tem uma função que toda a suíte financeira usa:",
           "💡 Por quê? Esta é a invariante do dinheiro: tudo que o cliente pagou tem que estar em algum lugar: com a loja ou com a plataforma. Se a soma não fecha, um centavo sumiu ou foi inventado. Um teste que verifica uma invariante vale mais do que dez testes de exemplos."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "def assert_conserves_value(self, order):\n    subs = list(order.sub_orders.all())\n    sum_seller = sum(s.seller_amount for s in subs)\n    sum_comm = sum(s.commission for s in subs)\n    ...\n    # Repasses + comissões == total pago pelo cliente.\n    self.assertEqual(sum_seller + sum_comm, order.total)"
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "def assert_conserves_value(self, order):\n    subs = list(order.sub_orders.all())\n    sum_seller = sum(s.seller_amount for s in subs)\n    sum_comm = sum(s.commission for s in subs)\n    ...\n    # Repasses + comissões == total pago pelo cliente.\n    self.assertEqual(sum_seller + sum_comm, order.total)"
+          }
+        ]
+      },
+      {
+        "heading": "7. 🧪 Mão na massa",
+        "paragraphs": [
+          "E1 — Leia e modele (20 min)",
+          "Um cliente compra 2 bolsas da loja A (R$ 75 cada) e 1 vela da loja B (R$ 100). Fretes: loja A R$ 15, loja B R$ 12. Comissão de 12% nas duas. Sem cupom. Sem frete grátis (R$ 250 < R$ 299).",
+          "Calcule, por sub-pedido: subtotal, shipping, commission, seller_amount. Depois o total do pedido e confirme a conservação.",
+          "O subtotal da loja A é 2 × R$ 75. A comissão incide só sobre o subtotal. O seller_amount é (subtotal − comissão) + frete.",
+          "total do pedido = 250 + 27 = R$ 277,00. Conservação: 147 + 100 + 18 + 12 = 277 ✔.",
+          "E2 — Desenhe (20 min)",
+          "Sem olhar a aula, desenhe as caixas Order, SubOrder, OrderItem, Payment, Payout, CommissionEntry com as setas e a cardinalidade (1:1 ou 1:N). Depois compare com o diagrama da seção 1.",
+          "E3 — Decida o on_delete (25 min)",
+          "Para cada relação, escolha CASCADE, PROTECT ou SET_NULL e justifique em uma frase:",
+          "E4 — Rode o experimento (15 min)",
+          "Rode o experimento da seção 4. Depois, remova as colunas de snapshot (nome, preco_centavos) do item_pedido e reescreva o total usando só o JOIN. Qual é o pior cenário para o cliente? E para a empresa?",
+          "E5 — Desafio ★★★",
+          "ReturnRequest tem order_item = OneToOneField(OrderItem) (orders/models.py:135). Por que uma devolução por item, e não por pedido? Que regra de negócio isso impõe? Que regra falta (pense em devolver 2 de 3 unidades do mesmo item)?",
+          "Devolver por item permite devolver só a bolsa e ficar com a vela, e o repasse/estorno é calculado só sobre aquele item (order_item.total). O OneToOne impede abrir duas devoluções do mesmo item. O que falta: o modelo não tem quantidade devolvida; devolver 2 de 3 unidades do mesmo item não cabe (devolve-se o item inteiro). Em um produto fungível, isso seria uma limitação real, e é um bom exercício de evolução do modelo."
+        ],
+        "table": {
+          "headers": [
+            "",
+            "subtotal",
+            "frete",
+            "comissão",
+            "seller_amount"
+          ],
+          "rows": [
+            [
+              "Loja A",
+              "R$ 150,00",
+              "R$ 15,00",
+              "R$ 18,00",
+              "R$ 147,00"
+            ],
+            [
+              "Loja B",
+              "R$ 100,00",
+              "R$ 12,00",
+              "R$ 12,00",
+              "R$ 100,00"
+            ]
+          ]
         }
       }
     ],
@@ -352,10 +424,16 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "O que o cliente pode mandar (orders/serializers.py:99-113)",
           "💡 Por quê é seguro? Um serializer só lê os campos listados em fields. shipping, subtotal e total não estão na lista, então, mesmo que o navegador envie, o servidor nunca os vê. A defesa não é \"validar o total\": é não ter onde receber o total. O teste test_preco_forjado_no_navegador_e_ignorado (orders/tests.py:712) prova isso."
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "flowchart LR\n  N[\"Navegador<br/>envia: endereço, notas, código do cupom\"] --> S[\"Servidor<br/>lê o carrinho do banco,<br/>aplica cupom, decide frete,<br/>calcula o total\"]\n  S --> P[\"Pedido gravado<br/>com os valores do servidor\"]\n  N -. \"total, frete, subtotal<br/>(se vierem, são ignorados)\" .-x S"
-        }
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "flowchart LR\n  N[\"Navegador<br/>envia: endereço, notas, código do cupom\"] --> S[\"Servidor<br/>lê o carrinho do banco,<br/>aplica cupom, decide frete,<br/>calcula o total\"]\n  S --> P[\"Pedido gravado<br/>com os valores do servidor\"]\n  N -. \"total, frete, subtotal<br/>(se vierem, são ignorados)\" .-x S"
+          },
+          {
+            "title": "Código (python)",
+            "code": "class OrderCreateSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Order\n        fields = [\n            \"address_recipient\", \"address_cep\", \"address_logradouro\", \"address_numero\",\n            \"address_complemento\", \"address_bairro\", \"address_cidade\", \"address_uf\",\n            \"notes\", \"coupon_code\",\n        ]"
+          }
+        ]
       },
       {
         "heading": "2. O carrinho: tudo é calculado, nada é confiado",
@@ -365,10 +443,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "A propriedade quoted_shipping_total soma só o frete das lojas que ainda têm item no carrinho. O comentário do código conta o bug real: *cotações antigas de lojas que já saíram da sacola eram somadas e cobravam \"frete fantasma\" (ex.: R$ 53,79 de uma loja sem item)*.",
           "💡 Por quê? selected_shipping é uma memória: guarda cotações que o cliente escolheu em algum momento. Quando ele remove uma loja do carrinho, a memória continua lá. A regra certa é: a fonte da verdade é o que está no carrinho agora, e a memória só vale para as lojas presentes."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "selected_shipping = models.JSONField(default=dict, blank=True)\n# {\"seller_id\": {\"id\": 1, \"company\": \"Correios\", \"name\": \"PAC\", \"price\": \"18.50\", \"delivery_time\": 5}}\n\ndef seller_shipping_price(self, seller_id):\n    \"\"\"Frete de UMA loja. No modo fixo o servidor impõe o preço; senão vale a cotação escolhida.\"\"\"\n    if settings.SHIPPING_MODE == \"flat\":\n        return settings.FLAT_SHIPPING_PRICE\n    data = (self.selected_shipping or {}).get(str(seller_id)) or {}\n    return Decimal(str(data.get(\"price\", 0) or 0))"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "selected_shipping = models.JSONField(default=dict, blank=True)\n# {\"seller_id\": {\"id\": 1, \"company\": \"Correios\", \"name\": \"PAC\", \"price\": \"18.50\", \"delivery_time\": 5}}\n\ndef seller_shipping_price(self, seller_id):\n    \"\"\"Frete de UMA loja. No modo fixo o servidor impõe o preço; senão vale a cotação escolhida.\"\"\"\n    if settings.SHIPPING_MODE == \"flat\":\n        return settings.FLAT_SHIPPING_PRICE\n    data = (self.selected_shipping or {}).get(str(seller_id)) or {}\n    return Decimal(str(data.get(\"price\", 0) or 0))"
+          }
+        ],
         "table": {
           "headers": [
             "Trecho",
@@ -393,10 +473,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
       {
         "heading": "3. O pedido: frete grátis e total, depois do cupom (orders/serializers.py:224-231)",
         "paragraphs": [],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "free_shipping = (Decimal(str(subtotal)) - Decimal(str(discount or 0))) >= dj_settings.FREE_SHIPPING_MIN\nif free_shipping:\n    shipping = Decimal(\"0\")\n# Total final = (produtos - desconto) + frete. O desconto NÃO incide no frete.\ntotal = max(Decimal(\"0\"), Decimal(str(subtotal)) - Decimal(str(discount or 0))) + Decimal(str(shipping))"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "free_shipping = (Decimal(str(subtotal)) - Decimal(str(discount or 0))) >= dj_settings.FREE_SHIPPING_MIN\nif free_shipping:\n    shipping = Decimal(\"0\")\n# Total final = (produtos - desconto) + frete. O desconto NÃO incide no frete.\ntotal = max(Decimal(\"0\"), Decimal(str(subtotal)) - Decimal(str(discount or 0))) + Decimal(str(shipping))"
+          }
+        ],
         "table": {
           "headers": [
             "Linha",
@@ -430,10 +512,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "O que ele faz, em ordem:",
           "⚠️ Ponto de atenção (verificado): quando um pedido expira (Aula 8), o estoque volta, mas o current_uses do cupom não é devolvido. É um item do Projeto B no arquivo 06 do curso."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "coupon = Coupon.objects.select_for_update().filter(code=coupon_code).first()   # 1. trava o cupom\n...  # 2. revalida: ativo? dentro da vigência? esgotou? valor mínimo? 1ª compra? vale para a loja?\nCoupon.objects.filter(pk=coupon.pk).update(current_uses=F(\"current_uses\") + 1)  # 3. conta o uso"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "coupon = Coupon.objects.select_for_update().filter(code=coupon_code).first()   # 1. trava o cupom\n...  # 2. revalida: ativo? dentro da vigência? esgotou? valor mínimo? 1ª compra? vale para a loja?\nCoupon.objects.filter(pk=coupon.pk).update(current_uses=F(\"current_uses\") + 1)  # 3. conta o uso"
+          }
+        ],
         "table": {
           "headers": [
             "Passo",
@@ -467,12 +551,15 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "💡 Por quê \"a última pega a sobra\"? Dividir R$ 10,00 entre 3 dá 3,333... Arredondando cada parte, você obtém 3,33 + 3,33 + 3,33 = 9,99: um centavo sumiu. O cliente recebeu R$ 10,00 de desconto, mas a soma das lojas é R$ 9,99, e a conta da Aula 2 (repasses + comissões = total) não fecha mais. Em vez de espalhar o erro, o código o concentra em um só lugar (a última): 3,33 + 3,33 + 3,34 = 10,00.",
           "Exemplo completo: cupom da plataforma de 20%",
           "Loja A: R$ 150 (frete R$ 15) · Loja B: R$ 100 (frete R$ 12) · Cupom de plataforma de 20% sobre R$ 250 = R$ 50,00.",
-          "Total do cliente: R$ 200 + R$ 27 de frete = R$ 227,00. Conservação: 120,60 + 82,40 + 14,40 + 9,60 = 227,00 ✔. (O frete grátis não vale: R$ 250 − R$ 50 = R$ 200 < R$ 299.)"
+          "Total do cliente: R$ 200 + R$ 27 de frete = R$ 227,00. Conservação: 120,60 + 82,40 + 14,40 + 9,60 = 227,00 ✔. (O frete grátis não vale: R$ 250 − R$ 50 = R$ 200 < R$ 299.)",
+          "💡 Quem paga o cupom? No código, o desconto reduz o subtotal efetivo de cada loja, e a comissão e o repasse são calculados sobre o valor já descontado. Na prática, o lojista arca com o desconto (recebe menos) e a plataforma também ganha menos comissão. Isso é uma decisão de produto que você precisa comunicar aos lojistas: cupom da plataforma que não é compensado a eles gera atrito."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "if idx == last_idx:\n    alloc = discount_dec - running          # a sobra fecha exatamente\nelse:\n    alloc = (discount_dec * s_sub / Decimal(str(subtotal))).quantize(\n        Decimal(\"0.01\"), rounding=ROUND_HALF_UP)\n    running += alloc"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "if idx == last_idx:\n    alloc = discount_dec - running          # a sobra fecha exatamente\nelse:\n    alloc = (discount_dec * s_sub / Decimal(str(subtotal))).quantize(\n        Decimal(\"0.01\"), rounding=ROUND_HALF_UP)\n    running += alloc"
+          }
+        ],
         "table": {
           "headers": [
             "",
@@ -495,6 +582,47 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
               "R$ 80,00",
               "R$ 9,60",
               "R$ 82,40"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "8. 🧪 Mão na massa",
+        "paragraphs": [
+          "E1 — Na mão (20 min)",
+          "Cupom da loja A de 20% (só vale para a loja A). Loja A: R$ 150 (frete R$ 15) · Loja B: R$ 100 (frete R$ 12). Calcule o desconto, o subtotal efetivo, a comissão (12%) e o repasse de cada loja, e o total do cliente.",
+          "Cupom de loja: o desconto é 20% do subtotal só da loja A; a loja B não muda. Confira se o frete grátis vale (R$ 250 − R$ 30 = R$ 220).",
+          "Desconto = R$ 30,00 (20% de R$ 150), todo na loja A.",
+          "Total do cliente: 220 + 27 = R$ 247,00. Conservação: 120,60 + 100,00 + 14,40 + 12,00 = 247,00 ✔.",
+          "E2 — No código (45 min): laboratorio/starter/lab03_rateio.py",
+          "Implemente ratear_desconto(desconto, subtotais). Critério de aceite: python testes.py lab03 verde (6 testes, incluindo um que sorteia 300 combinações).",
+          "E3 — Teste de propriedade (20 min)",
+          "Sem olhar o teste aleatório, escreva você uma verificação com 5 casos que ache difíceis (R$ 0,01 entre 7 lojas, subtotais muito diferentes, desconto igual ao total...). Quantos o seu código resolve de primeira?",
+          "E4 — Pense como o atacante (25 min)",
+          "Liste 3 campos que o navegador poderia tentar forjar num pedido e onde, no código, cada tentativa é neutralizada.",
+          "(1) total/shipping/subtotal: não estão em fields do serializer (serializers.py:99-113). (2) Preço do item: o unit_price vem de variant.effective_price no servidor (serializers.py:314), não do carrinho do navegador. (3) coupon_code de outra loja ou vencido: revalidado dentro da transação, com o cupom travado (:198-209). (Também vale: quantidade acima do estoque, validada em validate() e na baixa condicional.)",
+          "E5 — Desafio ★★★",
+          "O código não devolve o uso do cupom quando o pedido expira. Descreva a regra (quando devolver? só se o cupom ainda estiver ativo?), onde você a colocaria e como testaria (teste que falha antes e passa depois). Esse é o Projeto B."
+        ],
+        "table": {
+          "headers": [
+            "",
+            "Subtotal efetivo",
+            "Comissão",
+            "Lojista recebe"
+          ],
+          "rows": [
+            [
+              "Loja A",
+              "R$ 120,00",
+              "R$ 14,40",
+              "R$ 120,60"
+            ],
+            [
+              "Loja B",
+              "R$ 100,00",
+              "R$ 12,00",
+              "R$ 100,00"
             ]
           ]
         }
@@ -705,10 +833,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "Duas pessoas olham o site e veem \"1 ingresso disponível\". Ambas clicam. Se o sistema só olha e depois marca como vendido, as duas passam: cada uma olhou antes de a outra marcar.",
           "💡 Por quê isso é tão perigoso? É um bug intermitente: só acontece quando duas compras coincidem no tempo. Em teste com um usuário, nunca aparece. Em produção, com campanha, aparece. É o pior tipo de bug: raro, caro e sem rastro (o log mostra duas vendas \"normais\")."
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "sequenceDiagram\n  participant Ana\n  participant Banco\n  participant Bia\n  Ana->>Banco: lê estoque (1)\n  Bia->>Banco: lê estoque (1)\n  Note over Ana,Bia: as duas \"decidem\" que podem vender\n  Ana->>Banco: grava estoque = 0\n  Bia->>Banco: grava estoque = 0\n  Note over Banco: 2 vendas, 1 peça"
-        }
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "sequenceDiagram\n  participant Ana\n  participant Banco\n  participant Bia\n  Ana->>Banco: lê estoque (1)\n  Bia->>Banco: lê estoque (1)\n  Note over Ana,Bia: as duas \"decidem\" que podem vender\n  Ana->>Banco: grava estoque = 0\n  Bia->>Banco: grava estoque = 0\n  Note over Banco: 2 vendas, 1 peça"
+          }
+        ]
       },
       {
         "heading": "2. A solução em três camadas, com o porquê de cada uma",
@@ -718,12 +848,31 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "💡 Por quê? Criar um pedido são vários passos (pedido, cada sub-pedido, cada item, cada baixa, o cupom). Se o 5º passo falhar e os 4 anteriores ficarem gravados, você tem um pedido sem item e estoque sumido. atomic garante ou os 5 acontecem, ou nenhum.",
           "Camada 2: a trava (serializers.py:168-169)",
           "select_for_update() diz ao PostgreSQL: *\"esta linha é minha até a transação acabar; quem quiser mexer, espere\"*.",
-          "💡 Por quê? Sem a trava, Ana e Bia fazem as etapas intercaladas. Com ela, Bia espera até Ana terminar (commit). Aí as coisas acontecem em fila, o que é muito mais fácil de raciocinar."
+          "💡 Por quê? Sem a trava, Ana e Bia fazem as etapas intercaladas. Com ela, Bia espera até Ana terminar (commit). Aí as coisas acontecem em fila, o que é muito mais fácil de raciocinar.",
+          "Camada 3: a baixa condicional (serializers.py:318-328)",
+          "O comentário no código explica o motivo: *\"só desconta se ainda houver unidades no banco AGORA (não no objeto lido antes). Duas compras simultâneas da mesma peça única: uma passa, a outra recebe 'esgotou' e o pedido inteiro é desfeito.\"*",
+          "💡 Por quê a trava e a baixa condicional, se a trava já faz fila? Porque o objeto item.variant foi carregado antes da trava (em validate(), :128-133) e guarda um stock velho. A trava impede a mistura, mas não atualiza o que você já tem na memória. A baixa condicional não depende da memória: ela pergunta ao banco. É defesa em profundidade: se uma camada falhar ou for removida por engano, a outra segura.",
+          "E o validate()?",
+          "Antes de tudo, validate() (:117-153) checa if variant.stock < item.quantity e devolve uma mensagem amigável (\"Restam apenas 2 unidades\"). Isso é UX, não segurança: dá um erro bonito na maioria dos casos. Mas, por não ter trava, não impede a corrida: é só a primeira linha de defesa."
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "flowchart TD\n  A[\"1. Transação atômica<br/>tudo ou nada\"] --> B[\"2. Trava de linha<br/>select_for_update<br/>um de cada vez\"]\n  B --> C[\"3. Baixa condicional<br/>UPDATE ... WHERE estoque >= qtd<br/>a verificação é a gravação\"]"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "flowchart TD\n  A[\"1. Transação atômica<br/>tudo ou nada\"] --> B[\"2. Trava de linha<br/>select_for_update<br/>um de cada vez\"]\n  B --> C[\"3. Baixa condicional<br/>UPDATE ... WHERE estoque >= qtd<br/>a verificação é a gravação\"]"
+          },
+          {
+            "title": "Código (python)",
+            "code": "with transaction.atomic():\n    ...  # criar pedido, sub-pedidos, itens, baixar estoque, consumir cupom"
+          },
+          {
+            "title": "Código (python)",
+            "code": "for item in cart_items:\n    ProductVariant.objects.select_for_update().get(id=item.variant.id)"
+          },
+          {
+            "title": "Código (python)",
+            "code": "baixou = ProductVariant.objects.filter(\n    id=item.variant_id, stock__gte=item.quantity\n).update(stock=_F(\"stock\") - item.quantity)\nif not baixou:\n    raise serializers.ValidationError(\n        {\"detail\": f\"{item.variant.product.name} acabou de esgotar. Atualize sua sacola.\"}\n    )"
+          }
+        ],
         "table": {
           "headers": [
             "Camada",
@@ -754,10 +903,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
         "paragraphs": [
           "💡 Por quê este teste é bom? Ele reproduz a corrida de forma determinística: as duas compras passam em validate() (as duas \"viram\" estoque 1) e só depois save() é chamado em sequência. Ele prova que a segunda recebe erro e não deixa pedido nenhum. Note a última linha: zero pedidos da Bia: a transação desfez tudo."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "def _serializer(self, email):\n    ...\n    s = OrderCreateSerializer(data=dict(ADDRESS), context={\"request\": request})\n    s.is_valid(raise_exception=True)  # as duas validam com estoque 1 (a corrida)\n    return s\n\ndef test_peca_unica_nao_vende_duas_vezes(self):\n    a, b = self._serializer(\"a-s4@test.com\"), self._serializer(\"b-s4@test.com\")\n    a.save()\n    with self.assertRaises(self.VE):\n        b.save()\n    self.variant.refresh_from_db()\n    self.assertEqual(self.variant.stock, 0)\n    self.assertEqual(Order.objects.filter(user__email=\"b-s4@test.com\").count(), 0)"
-        }
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "def _serializer(self, email):\n    ...\n    s = OrderCreateSerializer(data=dict(ADDRESS), context={\"request\": request})\n    s.is_valid(raise_exception=True)  # as duas validam com estoque 1 (a corrida)\n    return s\n\ndef test_peca_unica_nao_vende_duas_vezes(self):\n    a, b = self._serializer(\"a-s4@test.com\"), self._serializer(\"b-s4@test.com\")\n    a.save()\n    with self.assertRaises(self.VE):\n        b.save()\n    self.variant.refresh_from_db()\n    self.assertEqual(self.variant.stock, 0)\n    self.assertEqual(Order.objects.filter(user__email=\"b-s4@test.com\").count(), 0)"
+          }
+        ]
       },
       {
         "heading": "5. ⚠️ Um ponto de atenção real: a ordem das travas",
@@ -767,6 +918,71 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "Se isso acontece ao mesmo tempo: o Pedido 1 tem A e espera B; o Pedido 2 tem B e espera A. Ninguém avança: é um deadlock. O PostgreSQL detecta e cancela um dos dois com erro, e o cliente vê uma falha.",
           "💡 Como o MercadinhoSys resolve? Ele ordena os ids antes de travar (checkout_locking.py: ids = sorted({...}), order_by(Produto.id)): todos travam na mesma ordem (A antes de B), então um sempre espera o outro, e ninguém espera em círculo. É uma correção de uma linha no MySuperStore (sorted(...) sobre os ids) e é o Projeto B do curso."
         ]
+      },
+      {
+        "heading": "7. 🧪 Mão na massa",
+        "paragraphs": [
+          "E1 — Linha do tempo (15 min)",
+          "Desenhe, em uma tabela de tempo, o que cada transação faz nestes dois casos, com estoque 1: (a) código ingênuo; (b) UPDATE ... WHERE estoque >= 1. Marque o instante em que o bug acontece no caso (a).",
+          "No caso (b): Ana executa o UPDATE (rowcount 1, estoque 0). Bia executa o UPDATE: o WHERE estoque >= 1 não casa mais (rowcount 0). Ela recebe \"esgotou\". O bug do caso (a) acontece entre os instantes 1 e 4: o intervalo em que as duas decisões foram tomadas com o mesmo dado velho.",
+          "E2 — No código (45 min): laboratorio/starter/lab04_estoque.py",
+          "Implemente comprar_condicional. Critério de aceite: python testes.py lab04 verde (3 testes). Depois, rode cinco vezes para ver que não é sorte.",
+          "E3 — Estoque maior que 1 (25 min)",
+          "Com estoque 3, oito compradores tentam levar 1 cada. Quantas vendas devem acontecer? Qual o estoque final? E se cada comprador quiser 2 unidades?",
+          "Com 1 unidade cada: 3 vendas, estoque final 0. Com 2 unidades cada: 1 venda (2 unidades), estoque final 1 (a segunda tentativa vê estoque 1 < 2 e falha). Repare: o UPDATE condicional não deixa o estoque negativo e também não vende parcialmente.",
+          "E4 — Corrija o deadlock (30 min)",
+          "Reescreva o laço das travas (for item in cart_items: ... select_for_update()) para travar em ordem fixa. Escreva a mudança em 3 linhas e explique por que dois pedidos com carrinhos [A, B] e [B, A] não travam mais um ao outro.",
+          "Os dois pedidos pedem A e depois B. Quem chegar primeiro pega A; o outro espera A (sem ter nada travado), não B. Como não há \"espera em círculo\", não há deadlock. (Ainda é preciso um teste com PostgreSQL real: o SQLite não tem trava de linha.)",
+          "E5 — Desafio ★★★",
+          "O laboratório usa SQLite e uma peça. Em produção, o pedido tem vários itens. Descreva o que acontece se o 1º item tiver estoque e o 2º não: o que fica no banco? Por que isso não exige código extra de \"desfazer\"?",
+          "O 1º item é baixado; o 2º faz rowcount == 0 e levanta ValidationError. Como está dentro da transaction.atomic(), a exceção desfaz tudo, inclusive a baixa do 1º item, o pedido, os sub-pedidos e o uso do cupom. Não há código de \"desfazer\" porque a transação é o desfazer. (Por isso o estoque só pode ser baixado dentro dela.)"
+        ],
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "ids = sorted({item.variant_id for item in cart_items})\nfor v_id in ids:\n    ProductVariant.objects.select_for_update().get(id=v_id)"
+          }
+        ],
+        "table": {
+          "headers": [
+            "t",
+            "Ana",
+            "Bia",
+            "Estoque no banco"
+          ],
+          "rows": [
+            [
+              "1",
+              "lê estoque → 1",
+              "",
+              "1"
+            ],
+            [
+              "2",
+              "",
+              "lê estoque → 1",
+              "1"
+            ],
+            [
+              "3",
+              "decide: pode vender",
+              "decide: pode vender",
+              "1"
+            ],
+            [
+              "4",
+              "grava 0",
+              "",
+              "0"
+            ],
+            [
+              "5",
+              "",
+              "grava 0",
+              "0 → 2 vendas, 1 peça"
+            ]
+          ]
+        }
       }
     ],
     "breakExperiment": {
@@ -965,10 +1181,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
         "paragraphs": [
           "- PIX é como pedir ao banco um boleto instantâneo com um número único (txid). O cliente paga esse número; o banco avisa você. - Cartão é como um cofre: o cliente entrega o cartão ao cofre do provedor (no navegador) e você recebe só um recibo (o token). Com o recibo você pede a cobrança, mas não consegue abrir o cofre."
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "sequenceDiagram\n  participant C as Cliente (navegador)\n  participant A as API\n  participant E as Provedor (Efí)\n  C->>A: POST /payments/process/ (order_id, método pix)\n  A->>A: valida: pedido é do usuário e está pendente\n  A->>E: cria cobrança PIX (mTLS) com validade e split\n  E-->>A: txid + copia-e-cola\n  A->>A: gera a imagem do QR localmente\n  A-->>C: QR code + copia-e-cola"
-        }
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "sequenceDiagram\n  participant C as Cliente (navegador)\n  participant A as API\n  participant E as Provedor (Efí)\n  C->>A: POST /payments/process/ (order_id, método pix)\n  A->>A: valida: pedido é do usuário e está pendente\n  A->>E: cria cobrança PIX (mTLS) com validade e split\n  E-->>A: txid + copia-e-cola\n  A->>A: gera a imagem do QR localmente\n  A-->>C: QR code + copia-e-cola"
+          }
+        ]
       },
       {
         "heading": "2. O endpoint, passo a passo (payments/views.py:45-134)",
@@ -978,12 +1196,37 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "2.1 A cobrança PIX (services.py:179-238)",
           "2.2 O QR code é gerado aqui, não no provedor (services.py:56-62)",
           "💡 Por quê gerar localmente? O texto copia-e-cola já contém tudo; o QR é só uma representação gráfica dele. Pedir a imagem ao provedor exigiria mais uma chamada e mais uma permissão (cob.read). Princípio: menos permissão = menos estrago se a credencial vazar.",
-          "2.3 O certificado mTLS (services.py:19-48)"
+          "2.3 O certificado mTLS (services.py:19-48)",
+          "O provedor exige mTLS: além de usuário e senha, o seu servidor apresenta um certificado. O provedor entrega o certificado em formato .p12, mas a biblioteca de requisições precisa de .pem. O código converte uma vez por processo:",
+          "💡 Por quê o certificado nunca está no repositório? Ele é uma credencial. No servidor ele é montado como arquivo somente leitura (certs:/app/certs:ro) e, no desenho para PaaS, vem por variável base64 (settings/base.py:311-322).",
+          "2.4 Dinheiro em centavos (services.py:51-53)",
+          "💡 Por quê centavos inteiros? APIs de cartão costumam trabalhar em centavos (inteiros), e int(19.99 * 100) dá 1998, não 1999 (veja o experimento abaixo). Passar por Decimal(str(...)) evita o erro de ponto flutuante.",
+          "2.5 O cartão: tokenização e cobrança em um passo (views.py:98-134, services.py:94-142)",
+          "- O navegador usa o SDK do provedor (payment-token-efi) para trocar o cartão por um payment_token. - O backend exige token, dados do titular e endereço de cobrança (serializers.py:53-62), nunca o número. - create_one_step_charge cria e paga a cobrança numa só chamada, com o split dos lojistas (payee_code). - O resultado volta como status: approved, paid ou settled confirmam na hora (views.py:114-121); outros (waiting, unpaid) aguardam a notificação do provedor.",
+          "💡 Por quê é bom o cartão não passar pelo servidor? Quem toca em dados de cartão entra no escopo das regras de segurança do setor de cartões (PCI). Com a tokenização, o seu servidor só vê um recibo inútil para um ladrão: o escopo de conformidade é muito menor, e, se o seu banco de dados vazar, não há cartões para roubar."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "def validate_order_id(self, value):\n    order = Order.objects.get(id=value, user=user)          # é do usuário?\n    if order.status != OrderStatus.PENDING:                 # ainda está pendente?\n        raise serializers.ValidationError(\"Não é possível pagar um pedido com status ...\")"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "def validate_order_id(self, value):\n    order = Order.objects.get(id=value, user=user)          # é do usuário?\n    if order.status != OrderStatus.PENDING:                 # ainda está pendente?\n        raise serializers.ValidationError(\"Não é possível pagar um pedido com status ...\")"
+          },
+          {
+            "title": "Código (python)",
+            "code": "body = {\n    \"calendario\": {\"expiracao\": int(getattr(settings, \"EFI_PIX_EXPIRACAO\", 3600))},\n    \"valor\": {\"original\": valor},\n    \"chave\": settings.EFI_PIX_KEY,\n    \"solicitacaoPagador\": f\"{settings.STORE_PIX_LABEL} · Pedido {order.order_number}\"[:140],\n}\nsplits = []\nfor sub_order in order.sub_orders.all():\n    seller = sub_order.seller\n    if seller and seller.efi_authorized:\n        splits.append({\"recebedor\": {\"contaCorrente\": seller.efi_payee_code},\n                       \"valor\": f\"{Decimal(str(sub_order.seller_amount)):.2f}\"})\nif splits:\n    body[\"repasses\"] = splits"
+          },
+          {
+            "title": "Código (python)",
+            "code": "def _qr_png_base64(payload: str) -> str:\n    \"\"\"Gera a imagem PNG (base64) do QR Code a partir do Copia-e-Cola, localmente.\n    Evita o endpoint pix_generate_qrcode do Efí, que exige escopo cob.read.\"\"\"\n    img = qrcode.make(payload)\n    ..."
+          },
+          {
+            "title": "Código (python)",
+            "code": "_efi_pem_lock = threading.Lock()\n_efi_pem_cache: dict[str, str] = {}\n\ndef _ensure_pem_certificate(cert_path: str) -> str:\n    ...\n    with _efi_pem_lock:\n        cached = _efi_pem_cache.get(cert_path)\n        if cached and os.path.exists(cached):\n            return cached\n        ...   # lê o .p12, extrai chave e certificado\n        out = os.path.join(\"/tmp\", f\"efi_{abs(hash(cert_path))}.pem\")\n        with open(out, \"wb\") as fh:\n            fh.write(pem)\n        os.chmod(out, 0o600)\n        _efi_pem_cache[cert_path] = out\n        return out"
+          },
+          {
+            "title": "Código (python)",
+            "code": "def _cents(value) -> int:\n    \"\"\"Converte um Decimal/float de reais para centavos inteiros sem erro de ponto flutuante.\"\"\"\n    return int((Decimal(str(value)) * 100).to_integral_value())"
+          }
+        ],
         "table": {
           "headers": [
             "Trecho",
@@ -1021,12 +1264,38 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "- a chave não é a da loja; - o efi_txid fica vazio, e o webhook procura pagamentos por efi_txid (views.py:228), então o pagamento nunca é reconhecido.",
           "💡 Por quê é perigoso? O cliente vê um QR como se tudo estivesse bem, paga (para uma chave que não é sua) e o pedido nunca confirma. O correto é falhar com clareza (um erro 502 \"tente novamente\"), porque um erro visível custa menos do que um pagamento perdido.",
           "3.2 Caso real verificado: o PIX pago depois do cancelamento",
-          "Em 13/11/2026 eu escrevi um teste temporário para uma dúvida: a cobrança PIX vale 3600 s (EFI_PIX_EXPIRACAO); o pedido é cancelado após 60 min (Aula 8). Os dois relógios começam em momentos diferentes (o pedido nasce antes da cobrança) e a tarefa que cancela roda a cada 5 minutos. Existe, portanto, uma janela em que o pedido já foi cancelado e a cobrança ainda é válida."
+          "Em 13/11/2026 eu escrevi um teste temporário para uma dúvida: a cobrança PIX vale 3600 s (EFI_PIX_EXPIRACAO); o pedido é cancelado após 60 min (Aula 8). Os dois relógios começam em momentos diferentes (o pedido nasce antes da cobrança) e a tarefa que cancela roda a cada 5 minutos. Existe, portanto, uma janela em que o pedido já foi cancelado e a cobrança ainda é válida.",
+          "O teste criou um pedido, expirou-o e simulou o webhook de pagamento. Resultado:",
+          "O pedido cancelado voltou a \"confirmado\", e o estoque continua devolvido (1). A peça pode ser vendida de novo a outra pessoa, e o cliente que pagou fica com um pedido \"confirmado\" de uma peça que talvez não exista mais.",
+          "💡 Por quê acontece? process_successful_payment só se protege contra o estado CONFIRMED (processing.py:26). Ele não conhece o estado CANCELLED. E o código que cancela não cancela a cobrança no provedor, então ela segue podendo ser paga. Dois relógios e uma regra faltando.  ✅ Corrigido no PR 29 do MySuperStore (aguardando merge): só pedido PENDING confirma, o pagamento tardio vira \"órfão\" (registrado, sem reativar o pedido) e a expiração espera o QR vencer. O texto desta seção descreve o comportamento antes do PR 29.  Como corrigir (você vai projetar no desafio E6): (a) alinhar os prazos (a cobrança deve vencer antes do cancelamento); (b) recusar a confirmação de pedido CANCELLED e devolver o dinheiro (ou pôr em revisão manual); (c) cancelar a cobrança no provedor ao expirar o pedido."
         ],
-        "codeBlock": {
-          "title": "Trecho do estudo de caso",
-          "code": "apos expirar:  pedido=cancelled  estoque=1\napos webhook:  processed=True    pedido=confirmed  estoque=1  pagamento=approved"
-        }
+        "codeBlocks": [
+          {
+            "title": "Trecho do estudo de caso",
+            "code": "apos expirar:  pedido=cancelled  estoque=1\napos webhook:  processed=True    pedido=confirmed  estoque=1  pagamento=approved"
+          }
+        ]
+      },
+      {
+        "heading": "6. 🧪 Mão na massa",
+        "paragraphs": [
+          "E1 — Ordene o fluxo (10 min)",
+          "Ordene: (a) gera a imagem do QR; (b) valida que o pedido é do usuário e está pendente; (c) cria a cobrança no provedor com o split; (d) devolve QR e copia-e-cola; (e) grava txid no Payment.",
+          "b → c → e → a → d. Validar antes de gastar uma chamada; cobrar; guardar o txid (é a chave para reconhecer o pagamento depois); só então desenhar e responder.",
+          "E2 — O centavo (15 min)",
+          "Rode o experimento A. Descubra mais três valores em que int(float * 100) perde 1 centavo. Qual regra geral explica?",
+          "Muitos valores com duas casas (por exemplo, 0,57 → 56, 0,58 → 57, 9,95 → 994) caem para baixo. A regra: números decimais de duas casas geralmente não têm representação exata em binário; a multiplicação cai em x.9999... e o int() trunca. A solução é Decimal (que guarda o decimal exato), ou round() explícito.",
+          "E3 — O BR Code (30 min)",
+          "Rode o experimento B. Depois: (1) monte à mão o campo 54 para R$ 7,50; (2) diga quantos caracteres tem o campo 59 para \"LOJA EXEMPLO\"; (3) altere o nome da loja e confirme que o CRC muda.",
+          "(1) O valor 7.50 tem 4 caracteres, então o tamanho é 04 e o campo fica 54 + 04 + 7.50 = 54047.50. (2) \"LOJA EXEMPLO\" tem 12 caracteres: 5912LOJA EXEMPLO. (3) Qualquer mudança no texto muda o CRC (é essa a função dele).",
+          "E4 — Leia o mTLS (25 min)",
+          "Releia _ensure_pem_certificate. Para cada um dos 5 elementos (Lock, cache, chmod 0o600, exists, /tmp), escreva: (a) o problema que ele resolve e (b) o que quebraria sem ele.",
+          "E5 — Pense como o auditor (20 min)",
+          "Imagine que o seu endpoint recebesse o número do cartão. Liste três consequências (pense em logs, backup do banco, funcionários, vazamento, regras do setor de cartões).",
+          "E6 — Desafio ★★★ (o caso do PIX pago depois do cancelamento)",
+          "Projete a correção do caso 3.2. Responda: (1) qual prazo de validade da cobrança você usaria e por quê? (2) o que process_successful_payment deve fazer ao receber pagamento de um pedido CANCELLED? (3) o que fazer com o dinheiro que entrou? (4) como testar (um teste que falha antes e passa depois)?",
+          "(1) Validade menor que o prazo de cancelamento, com folga maior que o intervalo da tarefa (por exemplo, 50 min de validade contra 60 min de cancelamento e tarefa a cada 5 min), para a cobrança nunca viver mais que o pedido. (2) Recusar a confirmação (return False) e registrar o evento; não mudar o status do pedido. (3) Tratar como pagamento órfão: devolver pelo estorno PIX (Aula 7) ou abrir revisão manual, e avisar o cliente. (4) Um teste como o experimento: criar o pedido, expirar, chamar process_successful_payment e afirmar que o pedido continua CANCELLED e o estoque não foi reduzido. (Cancelar a cobrança no provedor ao expirar é um reforço, não substitui a regra.)"
+        ]
       }
     ],
     "breakExperiment": {
@@ -1241,10 +1510,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "O provedor (o carteiro) bate à sua porta e diz \"tem um pagamento aqui\". Você é o porteiro. Três perguntas, nesta ordem:",
           "1. Quem é você? (o carteiro é mesmo do provedor?) → origem 2. O que você trouxe? (o valor bate com o pedido?) → valor 3. Isso já entrou antes? (é a mesma encomenda de ontem?) → unicidade"
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "flowchart TD\n  A[\"Aviso chega no webhook\"] --> B{\"Segredo configurado?\"}\n  B -- \"não, e produção\" --> X1[\"503: recusa tudo (fail-closed)\"]\n  B -- sim --> C{\"hmac confere?\"}\n  C -- não --> X2[\"401: não autorizado\"]\n  C -- sim --> D{\"valor pago >= devido?\"}\n  D -- não --> X3[\"200, mas NÃO confirma\"]\n  D -- sim --> E{\"pedido já confirmado?\"}\n  E -- sim --> X4[\"não faz nada (idempotente)\"]\n  E -- não --> F[\"Confirma: comissão, repasse, e-mails\"]"
-        }
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "flowchart TD\n  A[\"Aviso chega no webhook\"] --> B{\"Segredo configurado?\"}\n  B -- \"não, e produção\" --> X1[\"503: recusa tudo (fail-closed)\"]\n  B -- sim --> C{\"hmac confere?\"}\n  C -- não --> X2[\"401: não autorizado\"]\n  C -- sim --> D{\"valor pago >= devido?\"}\n  D -- não --> X3[\"200, mas NÃO confirma\"]\n  D -- sim --> E{\"pedido já confirmado?\"}\n  E -- sim --> X4[\"não faz nada (idempotente)\"]\n  E -- não --> F[\"Confirma: comissão, repasse, e-mails\"]"
+          }
+        ]
       },
       {
         "heading": "2. Os três caminhos até a confirmação",
@@ -1284,10 +1555,16 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "⚠️ Limite conhecido: o segredo na *query string* pode aparecer em logs de proxy. Aceitável com HTTPS e URL controlada. O ideal seria um cabeçalho dedicado, se o provedor permitisse.",
           "3.2 Prova de valor (views.py:224-236)"
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "secret = getattr(settings, \"EFI_WEBHOOK_SECRET\", \"\")\nif not secret:\n    if not settings.DEBUG:\n        logger.error(\"EFI_WEBHOOK_SECRET ausente — webhook Pix recusado (fail-closed).\")\n        return Response({\"detail\": \"Webhook não configurado.\"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)\nelif not _hmac.compare_digest(request.query_params.get(\"hmac\", \"\"), secret):\n    logger.warning(\"Webhook Pix com hmac inválido (ip=%s).\", request.META.get(\"REMOTE_ADDR\"))\n    return Response({\"detail\": \"Não autorizado.\"}, status=status.HTTP_401_UNAUTHORIZED)"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "secret = getattr(settings, \"EFI_WEBHOOK_SECRET\", \"\")\nif not secret:\n    if not settings.DEBUG:\n        logger.error(\"EFI_WEBHOOK_SECRET ausente — webhook Pix recusado (fail-closed).\")\n        return Response({\"detail\": \"Webhook não configurado.\"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)\nelif not _hmac.compare_digest(request.query_params.get(\"hmac\", \"\"), secret):\n    logger.warning(\"Webhook Pix com hmac inválido (ip=%s).\", request.META.get(\"REMOTE_ADDR\"))\n    return Response({\"detail\": \"Não autorizado.\"}, status=status.HTTP_401_UNAUTHORIZED)"
+          },
+          {
+            "title": "Código (python)",
+            "code": "for pix in data.get(\"pix\", []) or []:\n    txid = pix.get(\"txid\")\n    ...\n    payment = Payment.objects.filter(efi_txid=txid, method=PaymentMethod.PIX).first()\n    if payment and payment.status != PaymentStatus.APPROVED:\n        paid = Decimal(str(pix.get(\"valor\", \"0\")))\n        if paid < payment.amount:\n            logger.error(\"Pix %s pago a menor (%s < %s) — não confirmado.\", txid, paid, payment.amount)\n            continue"
+          }
+        ],
         "table": {
           "headers": [
             "Trecho",
@@ -1326,10 +1603,16 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
         "paragraphs": [
           "💡 O que é idempotência? Uma operação é idempotente se fazê-la uma vez ou dez vezes dá o mesmo resultado. \"Ligar o interruptor para ligado\" é idempotente; \"inverter o interruptor\" não é. O webhook precisa ser idempotente, porque o provedor garante entrega pelo menos uma vez, e não exatamente uma. Sem isso, cada reenvio paga outra comissão e outro repasse."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "@transaction.atomic\ndef process_successful_payment(order, raw_response=None, charge_id=\"\") -> bool:\n    # Bloqueia a linha do pedido para evitar corrida entre webhook e confirmação manual\n    order = Order.objects.select_for_update().get(id=order.id)\n    if order.status == OrderStatus.CONFIRMED:\n        return False\n    ...  # Payment aprovado, Order e SubOrders confirmados, CommissionEntry, Payout, limpa o carrinho\n    return True"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "@transaction.atomic\ndef process_successful_payment(order, raw_response=None, charge_id=\"\") -> bool:\n    # Bloqueia a linha do pedido para evitar corrida entre webhook e confirmação manual\n    order = Order.objects.select_for_update().get(id=order.id)\n    if order.status == OrderStatus.CONFIRMED:\n        return False\n    ...  # Payment aprovado, Order e SubOrders confirmados, CommissionEntry, Payout, limpa o carrinho\n    return True"
+          },
+          {
+            "title": "Código (python)",
+            "code": "processed = process_successful_payment(payment.order, raw_response={...})\nif processed:\n    dispatch_post_payment_tasks(payment.order)     # e-mails, webhook para ERP, repasses"
+          }
+        ],
         "table": {
           "headers": [
             "Linha",
@@ -1361,9 +1644,80 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "A defesa acima só conhece o estado CONFIRMED. Como vimos na Aula 5 (caso verificado), um pedido CANCELLED que recebia pagamento era confirmado de novo. *(O PR 29 do MySuperStore corrige isso; o texto abaixo descreve o desenho antes dele e por que a correção usa a lista de permitidos.)*",
           "💡 Por quê é uma lacuna de desenho? A guarda if status == CONFIRMED responde a uma pergunta (\"já foi?\"). A pergunta certa é \"este pedido ainda pode ser confirmado?\", ou seja, status == PENDING. Lista de estados permitidos (== PENDING) é mais segura que lista de estados proibidos (!= CONFIRMED): quando surge um estado novo, a lista proibida o deixa passar por esquecimento."
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "stateDiagram-v2\n  [*] --> pending\n  pending --> confirmed: pagamento (OK)\n  pending --> cancelled: expirou\n  cancelled --> confirmed: pagamento tardio (BUG: não deveria)\n  confirmed --> confirmed: aviso repetido (idempotente, OK)"
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "stateDiagram-v2\n  [*] --> pending\n  pending --> confirmed: pagamento (OK)\n  pending --> cancelled: expirou\n  cancelled --> confirmed: pagamento tardio (BUG: não deveria)\n  confirmed --> confirmed: aviso repetido (idempotente, OK)"
+          }
+        ]
+      },
+      {
+        "heading": "8. 🧪 Mão na massa",
+        "paragraphs": [
+          "E1 — Cenários do webhook (25 min)",
+          "Preveja o status HTTP e o que muda no banco em cada cenário (segredo s3, pedido de R$ 100,00 pendente):",
+          "E2 — No código (50 min): laboratorio/starter/lab06_webhook.py",
+          "Implemente validar_webhook e confirmar_pagamento. Critério de aceite: python testes.py lab06 verde (7 testes, um deles com 20 threads).",
+          "E3 — O experimento do 1 ms (15 min)",
+          "Faça o experimento A e depois devolva a trava. Explique, em duas frases, por que a versão sem trava passa nos testes quando a pausa é zero.",
+          "E4 — Feche a lacuna do cancelado ★★★ (40 min)",
+          "Estenda o seu confirmar_pagamento: se o pedido estiver cancelled, não confirme, devolva False e incremente um contador pagamentos_orfaos (o dinheiro entrou, mas o pedido morreu). Escreva o teste que falha antes e passa depois.",
+          "Note a lista de permitidos: só pending confirma. O teste falha no gabarito original (que confirma cancelled) e passa na versão nova. Em produção, pagamentos_orfaos vira um estorno automático ou uma fila de revisão manual.",
+          "E5 — Responder sempre 200? (15 min)",
+          "O webhook devolve 200 para valor insuficiente e para txid desconhecido. Por quê não devolver erro? E qual é o risco de responder 200 a tudo?",
+          "Erro (4xx/5xx) faz o provedor reenviar o aviso por horas ou dias: ruído e carga, sem benefício (o aviso nunca ficará válido). 200 diz \"recebi, pode parar\". O risco é engolir um problema real (um pagamento a menor que precisa de ação humana): por isso o código registra (logger.error) e o ideal é alertar (Sentry/painel) e contar esses casos."
+        ],
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "@dataclass\nclass Pedido:\n    status: str = \"pending\"\n    comissoes: int = 0\n    repasses: int = 0\n    pagamentos_orfaos: int = 0\n    _trava: threading.Lock = field(default_factory=threading.Lock, repr=False)\n\ndef confirmar_pagamento(pedido):\n    with pedido._trava:\n        if pedido.status == \"cancelled\":\n            pedido.pagamentos_orfaos += 1      # dinheiro entrou para um pedido morto: estornar ou revisar\n            return False\n        if pedido.status != \"pending\":         # lista de PERMITIDOS: só pending confirma\n            return False\n        pedido.status = \"confirmed\"; pedido.comissoes += 1; pedido.repasses += 1\n        return True\n\ndef test_pagamento_de_pedido_cancelado_nao_confirma(self):\n    p = self.m.Pedido(status=\"cancelled\")\n    self.assertFalse(self.m.confirmar_pagamento(p))\n    self.assertEqual((p.status, p.comissoes, p.pagamentos_orfaos), (\"cancelled\", 0, 1))"
+          }
+        ],
+        "table": {
+          "headers": [
+            "#",
+            "O que chega",
+            "Status HTTP",
+            "Muda algo no banco?"
+          ],
+          "rows": [
+            [
+              "a",
+              "Sem hmac na URL",
+              "",
+              ""
+            ],
+            [
+              "b",
+              "hmac=errado",
+              "",
+              ""
+            ],
+            [
+              "c",
+              "hmac=s3, valor R$ 99,99",
+              "",
+              ""
+            ],
+            [
+              "d",
+              "hmac=s3, valor R$ 100,00",
+              "",
+              ""
+            ],
+            [
+              "e",
+              "O mesmo aviso (d) uma segunda vez",
+              "",
+              ""
+            ],
+            [
+              "f",
+              "Servidor sem segredo em produção, valor R$ 100,00",
+              "",
+              ""
+            ]
+          ]
         }
       }
     ],
@@ -1576,10 +1930,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
         "paragraphs": [
           "Pense em uma conta conjunta: o cliente depositou R$ 100. A plataforma precisa repartir (parte do lojista, parte dela) e, se o cliente desistir, devolver. Cada saída precisa de um número de protocolo: mandar duas vezes o mesmo protocolo é uma repetição; mandar protocolos diferentes é duas operações."
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "flowchart LR\n  P[\"Pagamento aprovado<br/>R$ 100\"] --> S{\"Lojista tem conta<br/>no provedor?\"}\n  S -- sim --> A[\"Split nativo:<br/>o provedor já pagou ao lojista<br/>Payout = COMPLETED\"]\n  S -- \"é a loja da casa\" --> H[\"Dinheiro já está na conta master<br/>Payout = COMPLETED\"]\n  S -- não --> N[\"Payout = PENDING\"]\n  N --> J[\"Tarefa a cada 30 min:<br/>PIX de saída para a chave do lojista\"]\n  J --> C[\"Payout = COMPLETED\"]"
-        }
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "flowchart LR\n  P[\"Pagamento aprovado<br/>R$ 100\"] --> S{\"Lojista tem conta<br/>no provedor?\"}\n  S -- sim --> A[\"Split nativo:<br/>o provedor já pagou ao lojista<br/>Payout = COMPLETED\"]\n  S -- \"é a loja da casa\" --> H[\"Dinheiro já está na conta master<br/>Payout = COMPLETED\"]\n  S -- não --> N[\"Payout = PENDING\"]\n  N --> J[\"Tarefa a cada 30 min:<br/>PIX de saída para a chave do lojista\"]\n  J --> C[\"Payout = COMPLETED\"]"
+          }
+        ]
       },
       {
         "heading": "2. O repasse, linha por linha, com o porquê",
@@ -1589,12 +1945,20 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "💡 Por quê um status PENDING explícito em vez de \"pagar na hora\"? O PIX de saída pode falhar (chave errada, permissão do provedor, indisponibilidade). Registrar a obrigação antes e tentar pagar depois garante que a dívida nunca some: ela fica PENDING até alguém ou o job liquidar.",
           "2.2 Como o repasse é pago (processing.py:101-163)",
           "O send_to_seller ainda limpa o id (services.py:262-264): clean_id = \"\".join(c for c in id_envio if c.isalnum())[:35]: o provedor aceita só letras e números, até 35 caracteres. Um UUID tem hífens, por isso é limpo.",
-          "💡 Por quê o id vem do Payout e não é gerado na hora? Um id gerado na hora é diferente a cada tentativa: o provedor trataria cada uma como uma operação nova. O id do registro é estável: pertence ao repasse, e não à tentativa. Regra de ouro: o identificador de uma operação financeira nasce junto com a intenção, não junto com a tentativa."
+          "💡 Por quê o id vem do Payout e não é gerado na hora? Um id gerado na hora é diferente a cada tentativa: o provedor trataria cada uma como uma operação nova. O id do registro é estável: pertence ao repasse, e não à tentativa. Regra de ouro: o identificador de uma operação financeira nasce junto com a intenção, não junto com a tentativa.",
+          "2.3 ⚠️ Um ponto de atenção real: o repasse que fica em PROCESSING",
+          "settle_pending_payouts (processing.py:166-182) só busca status=PENDING. Se o processo morrer (falta de memória, reinício) depois de marcar PROCESSING e antes de voltar a PENDING, o repasse fica preso em PROCESSING para sempre, e nenhuma tarefa o retoma. *(Conclusão a partir do código lido; um teste confirmaria.)* O desafio E5 pede o desenho da correção."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "settled_via_split = bool(seller and seller.efi_authorized)\nsettled_in_master = bool(seller and seller.receives_in_master)\npayout_status = PayoutStatus.COMPLETED if (settled_via_split or settled_in_master) else PayoutStatus.PENDING\nPayout.objects.create(sub_order=sub_order, seller=seller, amount=sub_order.seller_amount, status=payout_status, ...)"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "settled_via_split = bool(seller and seller.efi_authorized)\nsettled_in_master = bool(seller and seller.receives_in_master)\npayout_status = PayoutStatus.COMPLETED if (settled_via_split or settled_in_master) else PayoutStatus.PENDING\nPayout.objects.create(sub_order=sub_order, seller=seller, amount=sub_order.seller_amount, status=payout_status, ...)"
+          },
+          {
+            "title": "Código (python)",
+            "code": "def settle_payout(payout):\n    if payout.status == PayoutStatus.COMPLETED: return False\n    seller = payout.seller\n    if seller and seller.receives_in_master: return False         # nunca PIX da master para ela mesma\n    if not seller or not seller.pix_key: ...; return False        # sem chave, não dá\n    if not EfiPixService.is_configured(): ...; return False\n    payout.status = PayoutStatus.PROCESSING; payout.save(update_fields=[\"status\"])\n    try:\n        resp = EfiPixService.send_to_seller(pix_key=seller.pix_key, amount=payout.amount,\n                                            id_envio=str(payout.id), info=f\"Repasse {order_number}\")\n    except Exception as exc:\n        payout.status = PayoutStatus.PENDING; payout.save(update_fields=[\"status\"]); return False\n    ...  # sucesso: COMPLETED; senão volta a PENDING para nova tentativa"
+          }
+        ],
         "table": {
           "headers": [
             "Situação",
@@ -1629,10 +1993,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "💡 A ideia genial é que o id depende do estado que nós controlamos. Enquanto a nossa base diz \"devolvido R$ 0\", qualquer tentativa gera o mesmo id; assim que gravamos o sucesso, o estado muda e o próximo id é outro. Estado e id andam juntos.",
           "3.2 Os dois erros opostos (medidos no laboratório)"
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "devolution_id = f\"d{payment.pk.hex[:20]}{int(already * 100)}\""
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "devolution_id = f\"d{payment.pk.hex[:20]}{int(already * 100)}\""
+          }
+        ],
         "table": {
           "headers": [
             "#",
@@ -1679,9 +2045,66 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "Quando o lojista aprova uma devolução, o sistema reaproveita o mesmo refund_payment para estornar só o valor do item, e devolve a quantidade ao estoque do lojista, tudo na mesma transação:",
           "💡 Por quê reaproveitar? Uma só lógica de estorno no sistema inteiro. Se houvesse uma cópia para devolução e outra para cancelamento, uma delas esqueceria o teto, ou a trava, ou o id determinístico. Regra: a regra de dinheiro mora em um lugar só."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "with transaction.atomic():\n    if payment:\n        try:\n            refund_payment(payment.pk, order_item.total)     # mesmas regras do estorno do pagamento\n        except RefundError as exc:\n            raise ValidationError({\"detail\": exc.message})\n    if order_item.variant_id:\n        variant = ProductVariant.objects.select_for_update().get(id=order_item.variant_id)\n        variant.stock += order_item.quantity\n        variant.save(update_fields=[\"stock\"])\n    sub_order.status = \"refunded\""
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "with transaction.atomic():\n    if payment:\n        try:\n            refund_payment(payment.pk, order_item.total)     # mesmas regras do estorno do pagamento\n        except RefundError as exc:\n            raise ValidationError({\"detail\": exc.message})\n    if order_item.variant_id:\n        variant = ProductVariant.objects.select_for_update().get(id=order_item.variant_id)\n        variant.stock += order_item.quantity\n        variant.save(update_fields=[\"stock\"])\n    sub_order.status = \"refunded\""
+          }
+        ]
+      },
+      {
+        "heading": "7. 🧪 Mão na massa",
+        "paragraphs": [
+          "E1 — Tabela de tempo (20 min)",
+          "Pagamento de R$ 100. Preencha o id da devolução e o que o provedor faz em cada passo:",
+          "E2 — No código (50 min): laboratorio/starter/lab07_estorno.py",
+          "Implemente id_devolucao e estornar. Critério de aceite: python testes.py lab07 verde (6 testes).",
+          "E3 — As duas mutações (20 min)",
+          "Faça as mutações A e B da seção 5. Anote que teste falha, o que o provedor recebeu e o que o seu sistema acha.",
+          "E4 — Repasse com timeout (25 min)",
+          "Escreva (no papel) a sequência de um settle_payout em que o provedor paga mas a resposta se perde. Mostre como o id_envio evita o pagamento duplo na próxima rodada do job.",
+          "E5 — Desafio ★★★: o repasse preso em PROCESSING",
+          "Projete a correção. Responda: (1) que campo você acrescentaria ao Payout? (2) como o job reconheceria um repasse \"velho demais\" em PROCESSING? (3) é seguro simplesmente voltar para PENDING? Por quê? (4) como testar?",
+          "(1) processing_started_at (data/hora em que entrou em PROCESSING). (2) O job também busca PROCESSING com processing_started_at mais antigo que um limite (por exemplo, 15 min). (3) É seguro justamente por causa do id_envio: reenviar manda o mesmo id, e se o provedor já pagou ele responde \"já fiz\" (e podemos marcar COMPLETED com o e2eId devolvido). Sem o id estável, voltar a PENDING poderia pagar duas vezes. (4) Teste: criar um Payout em PROCESSING com processing_started_at antigo, rodar o job com um provedor falso e afirmar que termina em COMPLETED, sem segundo pagamento."
+        ],
+        "table": {
+          "headers": [
+            "#",
+            "Ação",
+            "Já devolvido (nosso)",
+            "Id",
+            "Provedor"
+          ],
+          "rows": [
+            [
+              "1",
+              "Estornar R$ 30 (sucesso)",
+              "",
+              "",
+              ""
+            ],
+            [
+              "2",
+              "Estornar R$ 30 (provedor processa, resposta se perde)",
+              "",
+              "",
+              ""
+            ],
+            [
+              "3",
+              "Repetir o passo 2",
+              "",
+              "",
+              ""
+            ],
+            [
+              "4",
+              "Estornar R$ 80",
+              "",
+              "",
+              ""
+            ]
+          ]
         }
       }
     ],
@@ -1884,10 +2307,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "Você reserva uma mesa e não aparece. O restaurante espera 15 minutos e libera. Sem essa regra, a mesa fica \"reservada\" a noite toda e o restaurante perde dinheiro. O estoque do marketplace é a mesma coisa:",
           "💡 Por quê o estoque é baixado no início e não no pagamento? Para uma peça única, a alternativa (baixar só depois de pago) permite vender duas vezes (Aula 4). A reserva antecipada é a escolha certa para o negócio, mas cobra um preço: precisa de prazo de validade. Toda reserva tem esse custo."
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "stateDiagram-v2\n  [*] --> pending: pedido criado (estoque baixado)\n  pending --> confirmed: pagamento aprovado\n  pending --> cancelled: 60 min sem como pagar (estoque volta)\n  confirmed --> [*]\n  cancelled --> [*]"
-        }
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "stateDiagram-v2\n  [*] --> pending: pedido criado (estoque baixado)\n  pending --> confirmed: pagamento aprovado\n  pending --> cancelled: 60 min sem como pagar (estoque volta)\n  confirmed --> [*]\n  cancelled --> [*]"
+          }
+        ]
       },
       {
         "heading": "2. As regras de cancelamento, com o porquê (orders/tasks.py, após o PR 27)",
@@ -1896,10 +2321,16 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "O laço, com as três proteções (orders/tasks.py)",
           "💡 O princípio em todas as linhas: \"reconfirme depois de travar\". Tudo que você leu antes da trava pode ter mudado. Leia, trave, releia, decida. (É a mesma lição da Aula 4: o objeto na memória está velho.)"
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "def _is_abandoned(payment) -> bool:\n    if payment is None:\n        return True                                   # o cliente desistiu antes de escolher o método\n    if payment.method == PaymentMethod.PIX:\n        return payment.status == PaymentStatus.PENDING   # o QR venceu\n    return payment.status in (PaymentStatus.REJECTED, PaymentStatus.CANCELLED)   # cartão sem cobrança em andamento"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "def _is_abandoned(payment) -> bool:\n    if payment is None:\n        return True                                   # o cliente desistiu antes de escolher o método\n    if payment.method == PaymentMethod.PIX:\n        return payment.status == PaymentStatus.PENDING   # o QR venceu\n    return payment.status in (PaymentStatus.REJECTED, PaymentStatus.CANCELLED)   # cartão sem cobrança em andamento"
+          },
+          {
+            "title": "Código (python)",
+            "code": "for order in orders_to_cancel:\n    with transaction.atomic():\n        order = Order.objects.select_for_update().get(id=order.id)\n        if order.status != OrderStatus.PENDING:\n            continue\n        payment = Payment.objects.select_for_update().filter(order=order).first()   # relê DENTRO da trava\n        if not _is_abandoned(payment):\n            continue\n        ...  # cancela pedido e sub-pedidos, cancela o pagamento pendente, devolve o estoque"
+          }
+        ],
         "table": {
           "headers": [
             "Situação (≥ 60 min)",
@@ -1948,10 +2379,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "1. Escrever o teste do problema. ExpiracaoPedidosTest (7 testes), cobrindo os casos da tabela acima. 2. Rodar no código antigo. Resultado: 3 testes falham (sem pagamento, cartão recusado, rodar duas vezes) e os outros 4 passam (são os casos que já funcionavam: PIX pendente, cartão pendente, pedido recente, pedido pago). 3. Corrigir. 4. Rodar de novo. Todos passam. Suíte completa: 107 testes passando.",
           "💡 Por quê \"falha antes\" importa tanto? Um teste que nunca falhou pode estar testando nada. Ver o teste falhar no código antigo prova que ele detecta o bug, e que a correção é o que o faz passar. Os 4 testes que passam nos dois casos não são inúteis: são proteção contra regressão (garantem que a correção não quebrou os casos que já funcionavam, como o cartão pendente)."
         ],
-        "codeBlock": {
-          "title": "Trecho do estudo de caso",
-          "code": "código antigo:  FAILED  test_pedido_sem_pagamento_iniciado_devolve_estoque\n                FAILED  test_cartao_recusado_devolve_estoque_e_mantem_status_do_pagamento\n                FAILED  test_rodar_duas_vezes_nao_devolve_estoque_em_dobro\ncódigo novo:    7 passed"
-        }
+        "codeBlocks": [
+          {
+            "title": "Trecho do estudo de caso",
+            "code": "código antigo:  FAILED  test_pedido_sem_pagamento_iniciado_devolve_estoque\n                FAILED  test_cartao_recusado_devolve_estoque_e_mantem_status_do_pagamento\n                FAILED  test_rodar_duas_vezes_nao_devolve_estoque_em_dobro\ncódigo novo:    7 passed"
+          }
+        ]
       },
       {
         "heading": "4. Quem executa isso? Celery, beat e a decisão do worker",
@@ -1961,10 +2394,16 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "E existe um endpoint de cron pronto (orders/views.py:226-242), restrito a admin, que o próprio código descreve como *\"substituindo o Celery worker em ambientes serverless\"*:",
           "💡 Por quê isso importa? Em uma VM de 1 GB, o worker tem teto de 320 MB (compose.micro.yml). As duas tarefas agendadas só precisam de um relógio externo que chame um endereço protegido (um agendador gratuito, por exemplo). Trocar o worker por um cron reduz memória, mas acrescenta uma dependência (o agendador externo) e exige autenticação para o endereço. É uma decisão com custo dos dois lados."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "app.conf.beat_schedule = {\n    \"check-pending-pix-orders-every-5-minutes\": {\"task\": \"apps.orders.tasks.check_pending_pix_orders_task\", \"schedule\": crontab(minute=\"*/5\")},\n    \"settle-pending-payouts-every-30-minutes\":  {\"task\": \"apps.payments.tasks.settle_pending_payouts_task\", \"schedule\": crontab(minute=\"*/30\")},\n}"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "app.conf.beat_schedule = {\n    \"check-pending-pix-orders-every-5-minutes\": {\"task\": \"apps.orders.tasks.check_pending_pix_orders_task\", \"schedule\": crontab(minute=\"*/5\")},\n    \"settle-pending-payouts-every-30-minutes\":  {\"task\": \"apps.payments.tasks.settle_pending_payouts_task\", \"schedule\": crontab(minute=\"*/30\")},\n}"
+          },
+          {
+            "title": "Código (python)",
+            "code": "class ExpirePendingPixCronView(viewsets.GenericViewSet):\n    permission_classes = [IsPlatformAdmin]\n    @action(detail=False, methods=[\"get\"])\n    def run(self, request):\n        result = expire_pending_pix_orders()\n        return Response({\"status\": \"success\", \"result\": result})"
+          }
+        ],
         "table": {
           "headers": [
             "Peça",
@@ -1986,6 +2425,63 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
               "Redis",
               "A fila entre o beat/servidor e o worker",
               "O correio entre os processos"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "7. 🧪 Mão na massa",
+        "paragraphs": [
+          "E1 — Classifique (20 min)",
+          "Para cada pedido pendente, diga se a tarefa cancela e por quê:",
+          "a) Não (recente). b) Não (59,9 < 60: a fronteira é >= 60). c) Sim (PIX pendente, 60 min). d) Sim (recusado). e) Não (o provedor ainda pode confirmar). f) Não cancela pela regra do pagamento: com Payment aprovado, _is_abandoned devolve False (método PIX e status ≠ pending). Esse caso é uma inconsistência (pagamento aprovado e pedido pendente) que deve ser investigada, e não cancelada.",
+          "E2 — No código (45 min): laboratorio/starter/lab08_expiracao.py",
+          "Implemente precisa_lembrete, deve_cancelar e expirar. Critério de aceite: python testes.py lab08 verde (10 testes). Atenção às fronteiras (9.9, 10, 14.9, 15, 59.9, 60).",
+          "E3 — Precisa de worker? (30 min)",
+          "Para cada tarefa, diga se precisa de um processo sempre ligado ou só de um relógio, e o que perderia se ela fosse trocada por um cron externo:",
+          "E4 — Devolva o cupom (40 min): parte do Projeto B",
+          "Quando um pedido expira, o current_uses do cupom não volta (Aula 3). Escreva: (1) a regra (quando devolver?); (2) onde colocaria o código; (3) o teste que falha antes e passa depois; (4) o que acontece se o cupom foi de 1 uso e outra pessoa já o usou nesse meio tempo.",
+          "(1) Ao cancelar por expiração, decrementar current_uses do cupom do pedido, uma vez (use F(\"current_uses\") - 1, com piso em 0). (2) Dentro do mesmo transaction.atomic() do cancelamento, junto à devolução do estoque: ou tudo volta, ou nada. Precisa guardar qual cupom o pedido usou (hoje só vai para notes; um campo coupon no Order resolve). (3) Criar pedido com cupom de 1 uso, expirar, e afirmar current_uses == 0 e que um segundo cliente consegue usar. (4) Se outra pessoa já o usou depois do cancelamento, o contador volta a refletir a realidade; e o cuidado é não decrementar duas vezes (por isso a idempotência do cancelamento, só pedidos pending).",
+          "E5 — Desafio ★★★: cancele também a cobrança",
+          "A expiração cancela o pedido, mas não a cobrança PIX no provedor (Aula 5, caso do pagamento tardio). Desenhe: (1) onde chamar o provedor; (2) o que fazer se a chamada falhar; (3) por que isso não deve ficar dentro da transação.",
+          "(1) Depois do commit do cancelamento (por exemplo, com transaction.on_commit), chamar o cancelamento da cobrança no provedor. (2) Se falhar: não desfazer o cancelamento do pedido; registrar e tentar de novo depois (a regra \"pedido cancelado não confirma\", da Aula 6, é a rede de segurança). (3) Chamada de rede demora e pode falhar: dentro da transação, ela seguraria as travas do banco enquanto espera a rede, e uma falha desfaria o cancelamento. Efeito externo vai depois do commit (a mesma lógica do on_commit da otimização de imagem)."
+        ],
+        "table": {
+          "headers": [
+            "#",
+            "Idade",
+            "Pagamento"
+          ],
+          "rows": [
+            [
+              "a",
+              "9 min",
+              "nenhum"
+            ],
+            [
+              "b",
+              "59,9 min",
+              "nenhum"
+            ],
+            [
+              "c",
+              "60 min",
+              "PIX pendente"
+            ],
+            [
+              "d",
+              "61 min",
+              "cartão recusado"
+            ],
+            [
+              "e",
+              "61 min",
+              "cartão pendente"
+            ],
+            [
+              "f",
+              "120 min",
+              "PIX aprovado (mas o pedido ainda pending, por uma falha)"
             ]
           ]
         }
@@ -2227,20 +2723,24 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "Uma requisição HTTP é como uma ligação rápida: pergunta, resposta, desliga. Um WebSocket é como uma sala de conferência que fica aberta: quem entra recebe tudo que for dito ali, enquanto estiver na sala.",
           "- Consumer: a classe que atende uma conexão (equivale a uma \"view\" do WebSocket). - Grupo: um nome (por exemplo, chat_<sala> ou user_<id>_notifications) ao qual conexões se juntam. - Channel layer: o \"correio\" (Redis) que entrega uma mensagem do grupo a todas as conexões, mesmo vindas de outro processo."
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "flowchart LR\n  B[\"Navegador<br/>abre ws://...?token=...\"] --> M[\"Middleware JWT<br/>descobre quem é\"]\n  M --> C[\"Consumer<br/>decide se pode entrar\"]\n  C --> G[\"Grupo (sala)<br/>chat_&lt;id&gt;\"]\n  V[\"Uma view qualquer<br/>(group_send)\"] --> R[(\"Redis<br/>channel layer\")]\n  R --> G\n  G --> B"
-        }
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "flowchart LR\n  B[\"Navegador<br/>abre ws://...?token=...\"] --> M[\"Middleware JWT<br/>descobre quem é\"]\n  M --> C[\"Consumer<br/>decide se pode entrar\"]\n  C --> G[\"Grupo (sala)<br/>chat_&lt;id&gt;\"]\n  V[\"Uma view qualquer<br/>(group_send)\"] --> R[(\"Redis<br/>channel layer\")]\n  R --> G\n  G --> B"
+          }
+        ]
       },
       {
         "heading": "2. A autenticação: o token na URL (sellers/middleware.py)",
         "paragraphs": [
           "⚠️ Custo conhecido: um token na URL pode aparecer em logs de proxy. Mitigações: token de curta duração, ou um ticket de uso único (a API entrega um código que vale 30 segundos e só abre o WebSocket). É o exercício E4."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "class JWTAuthMiddleware(BaseMiddleware):\n    async def __call__(self, scope, receive, send):\n        query_string = parse_qs(scope[\"query_string\"].decode())\n        token = query_string.get(\"token\")\n        if token:\n            scope[\"user\"] = await get_user_from_token(token[0])\n        else:\n            scope[\"user\"] = AnonymousUser()\n        return await super().__call__(scope, receive, send)"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "class JWTAuthMiddleware(BaseMiddleware):\n    async def __call__(self, scope, receive, send):\n        query_string = parse_qs(scope[\"query_string\"].decode())\n        token = query_string.get(\"token\")\n        if token:\n            scope[\"user\"] = await get_user_from_token(token[0])\n        else:\n            scope[\"user\"] = AnonymousUser()\n        return await super().__call__(scope, receive, send)"
+          }
+        ],
         "table": {
           "headers": [
             "Trecho",
@@ -2274,10 +2774,16 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "3.2 Depois (sellers/consumers.py)",
           "💡 A lição de arquitetura: a regra de autorização precisa existir em cada porta de entrada (REST, WebSocket, tarefas, admin). Quando a regra mora só em uma, as outras viram desvios. Uma boa prática: uma função de \"pode acessar?\" compartilhada, chamada por todas as portas."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "async def connect(self):\n    self.user = self.scope[\"user\"]\n    if self.user.is_anonymous:                      # autenticação: quem é?\n        await self.close(); return\n    room_exists = await self.check_room_exists(self.room_id)   # a sala existe?\n    if not room_exists:\n        await self.close(); return\n    await self.channel_layer.group_add(self.room_group_name, self.channel_name)\n    await self.accept()"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "async def connect(self):\n    self.user = self.scope[\"user\"]\n    if self.user.is_anonymous:                      # autenticação: quem é?\n        await self.close(); return\n    room_exists = await self.check_room_exists(self.room_id)   # a sala existe?\n    if not room_exists:\n        await self.close(); return\n    await self.channel_layer.group_add(self.room_group_name, self.channel_name)\n    await self.accept()"
+          },
+          {
+            "title": "Código (python)",
+            "code": "if not await self.user_can_access_room(self.room_id, self.user):\n    await self.close(code=4403)\n    return\n\n@database_sync_to_async\ndef user_can_access_room(self, room_id, user):\n    try:\n        return ChatRoom.objects.filter(\n            Q(id=room_id) & (Q(customer=user) | Q(seller__user=user))\n        ).exists()\n    except (ValueError, ValidationError):          # id fora do formato UUID na URL\n        return False"
+          }
+        ],
         "table": {
           "headers": [
             "Trecho",
@@ -2313,10 +2819,16 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "O Web Push usa um par de chaves VAPID (a chave privada fica no servidor) para identificar quem está enviando.",
           "💡 Por quê apagar a inscrição em 410/404? O navegador diz \"essa inscrição não existe mais\". Continuar tentando seria desperdício e poluiria o log. Limpar sozinho é parte do contrato com o serviço de push."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "channel_layer = get_channel_layer()\nasync_to_sync(channel_layer.group_send)(\n    f\"user_{target_user.id}_notifications\",\n    {\"type\": \"send_notification\", \"data\": {...}})"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "channel_layer = get_channel_layer()\nasync_to_sync(channel_layer.group_send)(\n    f\"user_{target_user.id}_notifications\",\n    {\"type\": \"send_notification\", \"data\": {...}})"
+          },
+          {
+            "title": "Código (python)",
+            "code": "except WebPushException as ex:\n    if ex.response and ex.response.status_code in (410, 404):\n        sub.delete()          # o usuário cancelou a inscrição"
+          }
+        ],
         "table": {
           "headers": [
             "Trecho",
@@ -2346,12 +2858,24 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "5.2 A solução em três camadas",
           "5.3 Upload direto assinado (sellers/media.py)",
           "O fluxo, como diz o cabeçalho do arquivo: a API assina um upload com public_id fixo para o produto → o navegador envia o arquivo ao serviço → a API confirma (existe? tamanho? formato?) e só então grava o link.",
-          "5.4 A otimização de foto em segundo plano (catalog/signals.py, catalog/tasks.py)"
+          "5.4 A otimização de foto em segundo plano (catalog/signals.py, catalog/tasks.py)",
+          "5.5 Bomba de descompressão",
+          "Uma bomba de descompressão é uma imagem pequena no disco que explode na memória. Medido: um PNG de 6000×6000 com uma cor só ocupa 117 KB, mas decodificado em RGB são 103 MB: 903 vezes maior. O limite de 40 milhões de pixels (≈ 114 MB em RGB, 152 MB em RGBA) é o teto aceitável para a VM."
         ],
-        "codeBlock": {
-          "title": "Código (python)",
-          "code": "def signed_upload(product):\n    params = {\"timestamp\": int(time.time()), \"public_id\": new_video_public_id(product),\n              \"allowed_formats\": \",\".join(settings.PRODUCT_VIDEO_FORMATS), \"tags\": VIDEO_TAG}\n    return {\"direct\": True, \"upload_url\": ..., \"signature\": cloudinary.utils.api_sign_request(params, cfg.api_secret), ...}"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (python)",
+            "code": "def signed_upload(product):\n    params = {\"timestamp\": int(time.time()), \"public_id\": new_video_public_id(product),\n              \"allowed_formats\": \",\".join(settings.PRODUCT_VIDEO_FORMATS), \"tags\": VIDEO_TAG}\n    return {\"direct\": True, \"upload_url\": ..., \"signature\": cloudinary.utils.api_sign_request(params, cfg.api_secret), ...}"
+          },
+          {
+            "title": "Código (python)",
+            "code": "if created and instance.image:\n    def _enqueue():\n        try:\n            optimize_product_image_task.delay(image_id)\n        except Exception as exc:\n            logger.warning(\"Falha ao enfileirar otimização da imagem %s: %s\", image_id, exc)\n    transaction.on_commit(_enqueue)"
+          },
+          {
+            "title": "Código (python)",
+            "code": "PRODUCT_PHOTO_MAX_BYTES = 10 * 1024 * 1024\nPRODUCT_PHOTO_MAX_PIXELS = 40_000_000     # acima disso é bomba de descompressão"
+          }
+        ],
         "table": {
           "headers": [
             "Dado",
@@ -2369,6 +2893,59 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
             [
               "Memória usada na pior versão",
               "~650 MB (13×)"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "8. 🧪 Mão na massa",
+        "paragraphs": [
+          "E1 — Modelo de ameaça do consumer (30 min)",
+          "Para o ChatConsumer, preencha o que um atacante tentaria em cada etapa e onde está a defesa:",
+          "E2 — Leia o teste real (25 min)",
+          "Abra ChatWebSocketAuthzTest em apps/sellers/tests.py. Responda: por que usa TransactionTestCase e InMemoryChannelLayer? Depois acrescente um 7º teste: um cliente de outra sala tenta entrar na sala de um terceiro.",
+          "TransactionTestCase: o consumer consulta o banco em outra thread (database_sync_to_async), que não enxerga a transação de um TestCase comum. InMemoryChannelLayer: o teste não depende do Redis. O 7º teste é uma variação do test_terceiro_autenticado_nao_entra com um usuário que tem outra sala (prova que \"ter alguma sala\" não dá acesso a qualquer sala).",
+          "E3 — Conta de memória (15 min)",
+          "(a) Um vídeo de 30 MB com o *parse* duplicado usa quanto? (b) Uma foto de 8000×5000 em RGB ocupa quanto decodificada? (c) Ela passa no limite do projeto?",
+          "(a) 30 × 13 = 390 MB. (b) 8000 × 5000 = 40.000.000 px × 3 bytes = 120.000.000 bytes ≈ 114 MB. (c) Passa: a verificação (catalog/serializers.py:78) recusa só quando pixels > 40_000_000, e ela tem exatamente 40 milhões. Em RGBA seriam ~152 MB. Um único pixel a mais, não passa.",
+          "E4 — Projete o ticket de uso único ★★★ (40 min)",
+          "Substitua o token na URL por um ticket: (1) onde o cliente o obtém? (2) quanto tempo vale? (3) onde ele é guardado e como se garante o uso único? (4) o que acontece se alguém roubar o ticket depois de usado?",
+          "(1) Um endpoint HTTP autenticado (POST /ws-ticket/) devolve um código aleatório. (2) Alguns segundos (por exemplo, 30). (3) No Redis, com expiração e apagado ao ser lido (GETDEL): a primeira leitura consome. O middleware troca ticket por usuário. (4) Nada: já foi consumido. E mesmo o ticket não usado vence logo. Ganho: o JWT (que vale horas) nunca vai para a URL nem para os logs de proxy.",
+          "E5 — Desafio ★★★: uma função só de \"pode acessar?\"",
+          "Hoje a regra existe duas vezes (ChatRoomViewSet.get_queryset e ChatConsumer.user_can_access_room). Proponha uma função compartilhada: assinatura, onde mora, quem a chama e o teste que garante que as duas portas nunca divergem.",
+          "ChatRoom.objects.for_user(user) (um *QuerySet* personalizado) devolve as salas do usuário (customer=user | seller__user=user). O get_queryset da API usa .for_user(request.user); o consumer usa .for_user(user).filter(id=room_id).exists(). Teste de paridade: para um conjunto de usuários e salas, afirmar que o resultado da API e do consumer é o mesmo. Assim, mudar a regra em um lugar muda as duas portas."
+        ],
+        "table": {
+          "headers": [
+            "Etapa",
+            "Ataque possível",
+            "Defesa"
+          ],
+          "rows": [
+            [
+              "Conectar sem token",
+              "",
+              ""
+            ],
+            [
+              "Conectar com token de outro usuário",
+              "",
+              ""
+            ],
+            [
+              "Entrar em sala alheia",
+              "",
+              ""
+            ],
+            [
+              "Enviar mensagem enorme",
+              "",
+              ""
+            ],
+            [
+              "Passar um id de sala inválido",
+              "",
+              ""
             ]
           ]
         }
@@ -2604,18 +3181,22 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
         "paragraphs": [
           "Um restaurante que funciona quando o dono está ausente precisa de: uma cozinha padronizada (Docker), um gerente que organiza as estações (Compose), um porteiro (Caddy), um inspetor que confere se tudo está de pé (healthcheck) e um procedimento de abertura (CI/CD) com uma saída de emergência (rollback)."
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "flowchart LR\n  M[\"Merge na master\"] --> W[\"GitHub Actions\"]\n  W --> S[\"SSH na VM<br/>chave temporária,<br/>servidor conhecido\"]\n  S --> B[\"Build da imagem\"]\n  B --> G[\"Migrações<br/>ANTES de trocar a app\"]\n  G --> U[\"Sobe os containers\"]\n  U --> H{\"/api/health/<br/>responde?\"}\n  H -- sim --> OK[\"No ar\"]\n  H -- não --> E[\"Falha: versão anterior<br/>continua disponível\"]"
-        }
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "flowchart LR\n  M[\"Merge na master\"] --> W[\"GitHub Actions\"]\n  W --> S[\"SSH na VM<br/>chave temporária,<br/>servidor conhecido\"]\n  S --> B[\"Build da imagem\"]\n  B --> G[\"Migrações<br/>ANTES de trocar a app\"]\n  G --> U[\"Sobe os containers\"]\n  U --> H{\"/api/health/<br/>responde?\"}\n  H -- sim --> OK[\"No ar\"]\n  H -- não --> E[\"Falha: versão anterior<br/>continua disponível\"]"
+          }
+        ]
       },
       {
         "heading": "2. Docker: a receita (backend/Dockerfile.prod)",
         "paragraphs": [],
-        "codeBlock": {
-          "title": "Código (dockerfile)",
-          "code": "FROM python:3.12-slim\nCOPY backend/requirements/ requirements/         # 1º as dependências\nRUN pip install -r requirements/prod.txt\nCOPY backend/ .                                  # 2º o código\nRUN ... python manage.py collectstatic --noinput --upload-unhashed-files   # sem \"|| true\""
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (dockerfile)",
+            "code": "FROM python:3.12-slim\nCOPY backend/requirements/ requirements/         # 1º as dependências\nRUN pip install -r requirements/prod.txt\nCOPY backend/ .                                  # 2º o código\nRUN ... python manage.py collectstatic --noinput --upload-unhashed-files   # sem \"|| true\""
+          }
+        ],
         "table": {
           "headers": [
             "Decisão",
@@ -2650,10 +3231,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "Lendo os limites de todos os containers da VM pública (docker stats, 12/11/2026):",
           "💡 Por quê isso não é, por si só, um erro? O teto é um limite de proteção, não uma reserva: cada container usa bem menos que o teto na maior parte do tempo. Mas a soma ser 2,1× a RAM significa que a máquina vive de aposta: funciona enquanto os picos não coincidem. Na medida de 12/11: 728 MB em uso, 225 MB disponíveis, 1,06 GB de swap em uso. A aposta já estava custando: processos ociosos jogados para o disco. Orçamento de memória é uma conta que se faz antes, não uma surpresa que se descobre depois."
         ],
-        "codeBlock": {
-          "title": "Código (yaml)",
-          "code": "x-backend: &backend\n  image: mysuperstore-backend:${RELEASE:-latest}\n  restart: unless-stopped\n  env_file: ${SHARED_DIR}/.env.prod\nmss-api:\n  <<: *backend\n  command: daphne -b 0.0.0.0 -p 8000 --proxy-headers config.asgi:application\n  healthcheck: { test: [...], interval: 60s, timeout: 10s, retries: 3, start_period: 90s }\n  mem_limit: 640m\nmss-worker:\n  <<: *backend\n  command: celery -A config worker -B --pool=solo -l info\n  mem_limit: 320m"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (yaml)",
+            "code": "x-backend: &backend\n  image: mysuperstore-backend:${RELEASE:-latest}\n  restart: unless-stopped\n  env_file: ${SHARED_DIR}/.env.prod\nmss-api:\n  <<: *backend\n  command: daphne -b 0.0.0.0 -p 8000 --proxy-headers config.asgi:application\n  healthcheck: { test: [...], interval: 60s, timeout: 10s, retries: 3, start_period: 90s }\n  mem_limit: 640m\nmss-worker:\n  <<: *backend\n  command: celery -A config worker -B --pool=solo -l info\n  mem_limit: 320m"
+          }
+        ],
         "table": {
           "headers": [
             "Elemento",
@@ -2742,10 +3325,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
         "paragraphs": [
           "⚠️ O ponto fraco: os backups ficam na própria VM. Se a VM se perder, perde-se o banco e o backup. Falta uma cópia fora do local (outro provedor, criptografada) e um teste periódico de restauração. Regra: *backup que nunca foi restaurado é uma esperança*."
         ],
-        "codeBlock": {
-          "title": "Código (bash)",
-          "code": "pg_dump ... -Fc > \"$out.tmp\"                          # 1. grava num arquivo temporário\nif ! check < \"$out.tmp\" >/dev/null; then              # 2. valida com pg_restore --list\n  rm -f \"$out.tmp\"; echo \"Dump inválido, descartado\" >&2; exit 1\nfi\nmv \"$out.tmp\" \"$out\"                                  # 3. só renomeia se válido\nfind \"$BACKUP_DIR\" -name 'mysuperstore-*.dump' -mtime +\"$KEEP_DAYS\" -delete   # 4. retenção"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (bash)",
+            "code": "pg_dump ... -Fc > \"$out.tmp\"                          # 1. grava num arquivo temporário\nif ! check < \"$out.tmp\" >/dev/null; then              # 2. valida com pg_restore --list\n  rm -f \"$out.tmp\"; echo \"Dump inválido, descartado\" >&2; exit 1\nfi\nmv \"$out.tmp\" \"$out\"                                  # 3. só renomeia se válido\nfind \"$BACKUP_DIR\" -name 'mysuperstore-*.dump' -mtime +\"$KEEP_DAYS\" -delete   # 4. retenção"
+          }
+        ],
         "table": {
           "headers": [
             "Passo",
@@ -2811,6 +3396,27 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
             ]
           ]
         }
+      },
+      {
+        "heading": "9. 🧪 Mão na massa",
+        "paragraphs": [
+          "E1 — Orçamento de memória (25 min)",
+          "Refaça o experimento A para o seu sistema (ou para um exemplo): liste os containers, os tetos e a RAM. (1) quanto vale a soma dos tetos? (2) qual é o cenário em que o teto de dois containers coincide? (3) que limite você baixaria primeiro, e por quê?",
+          "(1) 2.048 MB (2,1×). (2) Um upload de vídeo (API sobe a centenas de MB) enquanto o outro sistema processa um relatório pesado (o backend dele sobe). (3) Não baixaria o teto da API (ela precisa do pico do upload; o teto de 640 MB foi dimensionado depois do incidente de 16/10). O candidato é o worker (320 MB, para tarefas que são só de relógio, Aula 8), e o ganho real viria de eliminá-lo, não de baixar o teto.",
+          "E2 — Leia o workflow (25 min)",
+          "Abra .github/workflows/deploy-backend.yml. Liste cinco proteções e, para cada uma, o ataque ou falha que ela evita.",
+          "E3 — Teste de restauração (45 min)",
+          "Escreva o roteiro (comandos e conferências) de um teste periódico de restauração do backup. Ele precisa responder: o arquivo restaura? Os dados batem?",
+          "1. Pegar o último .dump. 2. Subir um PostgreSQL descartável (container). 3. pg_restore --no-owner --no-acl no banco descartável. 4. Contar linhas por tabela no banco restaurado e comparar com a produção no momento do dump (ou com uma contagem registrada no dia do backup). 5. Rodar uma consulta de sanidade (pedidos do dia, soma dos pagamentos). 6. Registrar data, resultado e tempo de restauração; apagar o banco descartável. 7. Alertar se algo divergir. (É o mesmo princípio do script de migração do Neon, que compara contagens de todas as tabelas dos dois lados.)",
+          "E3b — Meça a sua latência (10 min)",
+          "Rode o experimento B contra o seu banco. Anote mínimo, mediana e máximo. Que tela do seu sistema faz mais consultas em sequência? Quanto tempo de latência pura isso soma?",
+          "E4 — Duas etapas para remover uma coluna ★★★ (30 min)",
+          "O Product tem uma coluna legacy_code que não se usa mais. Escreva o plano em duas etapas, dizendo o que vai em cada deploy e por que não pode ser um só.",
+          "Deploy 1: remover todo o uso de legacy_code do código (leitura, escrita, filtros, serializers); a coluna continua no banco. Deploy 2 (depois de o 1 estar estável): a migração que remove a coluna. Por quê não juntos: durante a troca de containers, a versão antiga ainda roda e continua lendo legacy_code; se a migração já removeu a coluna, ela quebra. Em duas etapas, quando a coluna some, nenhuma versão em execução a usa. (Reverter o Deploy 1 também fica seguro: a coluna ainda existe.)",
+          "E5 — Desafio ★★★: o workflow de testes",
+          "Escreva (em pseudo-YAML) um workflow que rode a suíte do marketplace em pull request e bloqueie o merge se falhar. O que ele precisa (banco, dependências, variáveis)? Quanto tempo leva? O que não deve entrar (segredos reais)?",
+          "Gatilho pull_request; ubuntu-latest; setup-python 3.12; pip install -r backend/requirements/dev.txt; variável DJANGO_SECRET_KEY=teste (valor fictício, nunca um segredo real); banco: SQLite padrão do projeto (a suíte usa isso) ou um PostgreSQL de serviço, se quiser testar travas; pytest dentro de backend/. Tempo: ~2,5 min (medido: 142 s). Para bloquear o merge, marcar o job como check obrigatório na proteção de branch. Não entram: certificados, chaves do provedor, .env real. Observação: travas de linha (select_for_update) não se comportam como em PostgreSQL no SQLite, então um teste de concorrência real precisa de PostgreSQL."
+        ]
       }
     ],
     "breakExperiment": {
@@ -3015,10 +3621,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "Construir o prédio (o software) é uma coisa. Abrir a loja é outra: alvará, nota fiscal, contrato com os lojistas, regras de troca e o cuidado com os dados de quem entra. Nenhum teste automatizado verifica isso.",
           "Quem responde o quê"
         ],
-        "codeBlock": {
-          "title": "Código (mermaid)",
-          "code": "flowchart TD\n  A[\"Código pronto\"] --> B[\"Empresa e enquadramento\"]\n  A --> C[\"Nota fiscal e tributos\"]\n  A --> D[\"Termos e política de reembolso\"]\n  A --> E[\"Dados pessoais (LGPD)\"]\n  A --> F[\"Dinheiro de terceiros\"]\n  B & C & D & E & F --> G[\"Pronto para cobrar\"]"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (mermaid)",
+            "code": "flowchart TD\n  A[\"Código pronto\"] --> B[\"Empresa e enquadramento\"]\n  A --> C[\"Nota fiscal e tributos\"]\n  A --> D[\"Termos e política de reembolso\"]\n  A --> E[\"Dados pessoais (LGPD)\"]\n  A --> F[\"Dinheiro de terceiros\"]\n  B & C & D & E & F --> G[\"Pronto para cobrar\"]"
+          }
+        ],
         "table": {
           "headers": [
             "Tema",
@@ -3235,6 +3843,71 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
             ]
           ]
         }
+      },
+      {
+        "heading": "9. 🧪 Mão na massa",
+        "paragraphs": [
+          "E1 — Mapa de dados (30 min)",
+          "Monte a tabela para os cinco lugares da seção 4.1. Para cada um: finalidade, por quanto tempo guardar (proposta), quem acessa e o que apagar/anonimizar se o usuário pedir exclusão.",
+          "E2 — Onde o dinheiro de terceiros fica parado? (20 min)",
+          "Usando o código (Aula 7), responda: (1) em que momento exato o dinheiro de um lojista sem conta entra na conta da plataforma? (2) em que momento sai? (3) quanto tempo, no máximo, pode ficar parado (considere a tarefa de 30 minutos e falhas do provedor)?",
+          "(1) No pagamento: o valor inteiro cai na conta master (processing.py:57-67, comentário \"o valor inteiro cai na conta master\"). (2) No PIX de saída do settle_payout, na rodada da tarefa (a cada 30 min) ou logo após a confirmação (dispatch_post_payment_tasks tenta na hora). (3) Sem limite superior no código: se o provedor falhar, ou a chave PIX do lojista estiver ausente, ou o repasse ficar preso em PROCESSING (Aula 7), o dinheiro continua retido. Essa ausência de prazo máximo e de alerta é o que mais interessa a um advogado.",
+          "E3 — Reescreva a promessa (15 min)",
+          "Reescreva cinco frases de venda (do seu curso ou do seu marketplace) trocando a promessa por algo verificável.",
+          "\"Ganhe dinheiro vendendo online\" → \"Veja, com os seus números, quantos pedidos por mês cobrem os seus custos.\" · \"Plataforma 100% segura\" → \"O cartão nunca passa pelo nosso servidor, e as regras de acesso são testadas.\" · \"Você vai aprender tudo\" → \"Nove módulos com código real e exercícios corrigidos.\" · \"Resultados garantidos\" → \"Certificado de conclusão de curso livre, com critérios publicados.\" · \"Todos os nossos alunos ganham dinheiro\" → *(não escreva isso sem prova; omita)*.",
+          "E4 — Perguntas para o contador e o advogado ★★★ (30 min)",
+          "Escreva 10 perguntas objetivas (5 para cada), no formato situação → decisão que preciso tomar. Ex.: \"Eu recebo R$ 100, repasso R$ 88 ao lojista; o que entra na minha receita para fins de imposto?\"",
+          "Contador: (1) Qual CNAE e regime se aplicam à intermediação? (2) A comissão tem ISS em qual município? (3) Como contabilizar o valor dos repasses? (4) A plataforma emite nota da comissão? (5) O que muda no regime se o faturamento passar de X? Advogado: (1) Posso manter o ramo \"recebe e repassa depois\", ou preciso exigir conta no provedor? (2) Qual a minha responsabilidade perante o consumidor pelos lojistas? (3) Quais cláusulas devo ter nos termos para lojistas (comissão, cupom, devolução)? (4) Qual o texto mínimo da política de reembolso e de privacidade? (5) Qual o prazo de retenção de dados por tipo? *(Cada pergunta nasce de uma decisão que o código já força você a tomar.)*",
+          "E5 — Desafio ★★★: o prazo de arrependimento no código",
+          "O código tem o rótulo REMORSE mas não impõe o prazo. Desenhe a regra: (1) a partir de que data conta (confirmação? entrega?) ⚖️; (2) onde colocar a validação; (3) como testar; (4) o que fazer fora do prazo.",
+          "(1) Defina com o advogado: a lei costuma contar da assinatura do contrato ou do recebimento, o que se traduz em delivered_at/dispatched_at ⚖️ (o SubOrder só tem dispatched_at, então talvez falte um campo de entrega confirmada). (2) No create do ReturnRequestViewSet (orders/views.py:129-156), junto das outras validações, só para reason == \"remorse\". (3) Teste que cria um sub-pedido delivered há 8 dias e afirma que o remorse é recusado, e outro há 6 dias que é aceito (falha antes, passa depois). (4) Fora do prazo, não recusar o motivo \"defeito\" (\"defect\"): a lei trata vício de outra forma ⚖️; só o arrependimento tem o prazo curto."
+        ],
+        "table": {
+          "headers": [
+            "Dado",
+            "Finalidade",
+            "Retenção (proposta)",
+            "Quem acessa",
+            "Se o titular pedir exclusão"
+          ],
+          "rows": [
+            [
+              "Endereço do pedido",
+              "Entregar e provar a entrega",
+              "Enquanto houver obrigação fiscal/disputa ⚖️",
+              "Lojista do sub-pedido, suporte",
+              "Manter o necessário, anonimizar o resto depois do prazo"
+            ],
+            [
+              "IP do pedido",
+              "Antifraude, auditoria",
+              "Prazo curto (definir)",
+              "Suporte/segurança",
+              "Apagar ao fim do prazo"
+            ],
+            [
+              "raw_response",
+              "Prova em disputa de pagamento",
+              "Prazo da disputa",
+              "Financeiro",
+              "Reduzir ao mínimo; não guardar o que não precisa"
+            ],
+            [
+              "Vínculo Order.user",
+              "Histórico do cliente",
+              "Até a exclusão da conta",
+              "O próprio usuário",
+              "SET_NULL (já é o desenho)"
+            ],
+            [
+              "Chat",
+              "Atendimento",
+              "Prazo do atendimento",
+              "Participantes",
+              "Apagar ou anonimizar"
+            ]
+          ]
+        }
       }
     ],
     "breakExperiment": {
@@ -3395,10 +4068,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "São 13 testes: margem (com conservação em 200 casos sorteados), rateio, última peça com 8 compradores, ordem das travas, os cenários do webhook, 20 avisos simultâneos, pedido cancelado, estorno com timeout, expiração com cupom e um fluxo completo de duas lojas (do preço ao estorno).",
           "💡 Por quê \"testes de aceitação\" e não só os dos laboratórios? Os laboratórios provam cada peça. A aceitação prova que as peças se encaixam e que as invariantes (o dinheiro fecha, a peça não vende duas vezes, o aviso não confirma duas vezes) valem no conjunto."
         ],
-        "codeBlock": {
-          "title": "Código (bash)",
-          "code": "cd modulo-marketplace/projeto\npython testes_aceitacao.py caminho/para/a/pasta/que/contem/minimarket"
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (bash)",
+            "code": "cd modulo-marketplace/projeto\npython testes_aceitacao.py caminho/para/a/pasta/que/contem/minimarket"
+          }
+        ],
         "table": {
           "headers": [
             "Módulo",
@@ -3447,7 +4122,10 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "Para três decisões do seu projeto, escreva: Contexto → Decisão → Ganho → Custo → Alternativa descartada → Evidência (arquivo e teste). Pelo menos uma deve ser uma decisão em que você escolheu não fazer algo.",
           "B2. O negócio, com as suas hipóteses",
           "- A tabela de cinco hipóteses da Aula 1 (E4), preenchida. - O ponto de equilíbrio calculado com o seu pedidos_para_equilibrio. - Qual hipótese, se errada, mais muda a conclusão? E qual o teste mais barato para ela? - ⚠️ Sem promessa de renda. Mostre a conta e as suposições.",
-          "B3. O checklist \"antes de cobrar\" (Aula 11)"
+          "B3. O checklist \"antes de cobrar\" (Aula 11)",
+          "Preencha a tabela da seção 12 da Aula 11 com responsável e estado (feito, pendente, não se aplica) e uma frase de justificativa.",
+          "B4. Onde o seu sistema ainda é frágil",
+          "Liste cinco fragilidades reais do seu projeto, ordenadas por risco, cada uma com o plano e o gatilho (quando você a corrigiria). Honestidade aqui vale mais do que um sistema \"perfeito\"."
         ]
       },
       {
@@ -3456,10 +4134,12 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
           "🎬 Vídeo — Como entregar o projeto (5 min)",
           "Roteiro da sua apresentação (use esta estrutura):"
         ],
-        "codeBlock": {
-          "title": "Código (video)",
-          "code": "id: mk-projeto-v1\ntitulo: \"Como entregar o projeto final\"\ntipo: resumo\nduracao_min: 5\nstatus: roteiro-pronto\nurl: \"\"\nlegenda_arquivo: \"\"\ncapitulos:\n  - { tempo: \"0:00\", titulo: \"Os testes\" }\n  - { tempo: \"1:00\", titulo: \"As invariantes\" }\n  - { tempo: \"2:15\", titulo: \"As extensões\" }\n  - { tempo: \"3:30\", titulo: \"O documento\" }\n  - { tempo: \"4:30\", titulo: \"A entrega\" }\nnotebooklm: \"Resumo em Vídeo: o que o projeto final avalia e como entregar.\""
-        },
+        "codeBlocks": [
+          {
+            "title": "Código (video)",
+            "code": "id: mk-projeto-v1\ntitulo: \"Como entregar o projeto final\"\ntipo: resumo\nduracao_min: 5\nstatus: roteiro-pronto\nurl: \"\"\nlegenda_arquivo: \"\"\ncapitulos:\n  - { tempo: \"0:00\", titulo: \"Os testes\" }\n  - { tempo: \"1:00\", titulo: \"As invariantes\" }\n  - { tempo: \"2:15\", titulo: \"As extensões\" }\n  - { tempo: \"3:30\", titulo: \"O documento\" }\n  - { tempo: \"4:30\", titulo: \"A entrega\" }\nnotebooklm: \"Resumo em Vídeo: o que o projeto final avalia e como entregar.\""
+          }
+        ],
         "table": {
           "headers": [
             "Tempo",
