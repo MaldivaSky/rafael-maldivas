@@ -2422,3 +2422,382 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
     padding: 14px;
   }
 }
+
+/* Interactive Practice Lab (Predict, Fill-in-the-Blank, Visual Diagrams, Quiz) */
+.curso-predict-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 14.5px;
+  resize: vertical;
+}
+
+.curso-predict-textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.curso-predict-feedback {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+}
+
+.curso-self-eval {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.curso-eval-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--fg-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.curso-eval-btn.ok {
+  border-color: #22c55e;
+  color: #4ade80;
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.curso-eval-btn.learn {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.curso-word-bank {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.curso-word-chip {
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.curso-word-chip:hover {
+  filter: brightness(1.15);
+}
+
+.curso-blank-box {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 2;
+  overflow-x: auto;
+}
+
+.curso-blank-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 4px;
+  vertical-align: middle;
+}
+
+.curso-blank-input {
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1.5px solid var(--accent);
+  background: var(--surface);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.curso-blank-input.ok {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+}
+
+.curso-blank-input.err {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.curso-blank-badge.ok {
+  color: #4ade80;
+  font-weight: 700;
+}
+
+.curso-blank-badge.err {
+  color: #f87171;
+  font-weight: 700;
+}
+
+.curso-blank-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.curso-blank-score.ok {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.curso-blank-score.err {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.curso-blank-feedback {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+}
+
+.curso-blank-feedback.ok {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.curso-blank-feedback.err {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.curso-quiz-opts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.curso-quiz-opt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.curso-diagram-detail {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--accent);
+  background: var(--bg);
+  font-size: 14.5px;
+  color: var(--fg);
+}
+
+/* Exame Final e Certificado Profissional Maldivas Tech */
+.curso-exam-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.curso-exam-result {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+}
+
+.curso-exam-result.ok {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+}
+
+.curso-exam-result.err {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.curso-cert-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.curso-cert-form .curso-field {
+  flex: 1 1 280px;
+}
+
+.curso-cert-wrapper {
+  margin-top: 22px;
+}
+
+.curso-cert-sheet {
+  background: linear-gradient(145deg, #0b1324 0%, #101b33 100%);
+  border: 2px solid var(--accent);
+  box-shadow: inset 0 0 0 6px rgba(56, 189, 248, 0.12);
+  border-radius: var(--radius);
+  padding: 36px 32px;
+  color: #f8fafc;
+}
+
+.curso-cert-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.curso-cert-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-size: 13px;
+  color: #38bdf8;
+}
+
+.curso-cert-tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #bae6fd;
+}
+
+.curso-cert-kicker {
+  margin-top: 26px;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.curso-cert-intro {
+  margin-top: 12px;
+  font-size: 15px;
+  color: #cbd5e1;
+}
+
+.curso-cert-name {
+  margin: 8px 0 14px;
+  font-size: clamp(26px, 4vw, 36px);
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.curso-cert-body {
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: #cbd5e1;
+  max-width: 72ch;
+}
+
+.curso-cert-footer {
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.curso-cert-sig-line {
+  width: 210px;
+  border-bottom: 1px solid #94a3b8;
+  margin-bottom: 8px;
+}
+
+.curso-cert-footer strong {
+  display: block;
+  color: #ffffff;
+}
+
+.curso-cert-footer span {
+  display: block;
+  font-size: 12.5px;
+  color: #94a3b8;
+}
+
+.curso-cert-meta {
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .curso-cert-sheet {
+    padding: 24px 18px;
+  }
+  .curso-cert-meta {
+    text-align: left;
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #maldivas-certificate-print,
+  #maldivas-certificate-print * {
+    visibility: visible;
+  }
+  #maldivas-certificate-print {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 3px solid #0284c7 !important;
+    box-shadow: none !important;
+  }
+  #maldivas-certificate-print .curso-cert-name,
+  #maldivas-certificate-print .curso-cert-footer strong {
+    color: #0f172a !important;
+  }
+  #maldivas-certificate-print .curso-cert-body,
+  #maldivas-certificate-print .curso-cert-intro,
+  #maldivas-certificate-print .curso-cert-kicker,
+  #maldivas-certificate-print .curso-cert-footer span {
+    color: #334155 !important;
+  }
+}

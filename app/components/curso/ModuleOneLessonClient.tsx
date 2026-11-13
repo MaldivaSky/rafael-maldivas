@@ -14,6 +14,8 @@ import PixFlowInteractive from "./PixFlowInteractive";
 import LegalChecklistInteractive from "./LegalChecklistInteractive";
 import LessonQuiz from "./LessonQuiz";
 import NotebookLMMediaBlock, { type NotebookLMMediaConfig } from "./NotebookLMMediaBlock";
+import { FillInTheBlankLab } from "./InteractivePracticeLab";
+import { M1_FILL_BLANKS } from "@/app/lib/module-zero-practice";
 import { localePath } from "@/app/lib/i18n";
 
 const MODULE_ONE_MEDIA: NotebookLMMediaConfig = {
@@ -406,6 +408,8 @@ export default function ModuleOneLessonClient({
         onInteract={() => updateProgress({ checklistUsed: true })}
       />
 
+      <FillInTheBlankLab exercises={M1_FILL_BLANKS} />
+
       <LessonQuiz
         onComplete={(score) => updateProgress({ quizScore: score })}
       />
@@ -445,10 +449,9 @@ export default function ModuleOneLessonClient({
           {nextLessonSlug && (
             <Link
               href={localePath(`/cursos/${courseSlug}/${nextLessonSlug}`, "pt")}
-              className="btn btn-ghost"
+              className="btn btn-primary"
             >
-              <Lock size={16} aria-hidden="true" />
-              Próximo: Módulo 2 — Modelo de dados (em breve)
+              Próxima: A02 — Modelo de dados do pedido
             </Link>
           )}
         </div>

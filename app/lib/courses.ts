@@ -230,7 +230,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "Por que um pedido com duas lojas vira três tabelas, como o snapshot evita perda de histórico fiscal e como escolher CASCADE, PROTECT ou SET_NULL.",
             durationMin: 100,
-            status: "paga",
+            status: "gratuita",
             prerequisites: ["licao-01"],
             objectives: [
               "Desenhar o modelo Pedido, Sub-pedido, Item, Pagamento, Repasse e Comissão e justificar cada relação",
@@ -247,7 +247,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "Como recalcular totais no servidor, revalidar cupons dentro da transação e ratear descontos entre lojas sem erro de arredondamento.",
             durationMin: 110,
-            status: "paga",
+            status: "gratuita",
             prerequisites: ["licao-01", "licao-02"],
             objectives: [
               "Explicar por que o total, o frete e o desconto são calculados no servidor e nunca aceitos do navegador",
@@ -273,7 +273,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "Como impedir condição de corrida quando duas pessoas clicam em 'comprar' ao mesmo tempo na última unidade em estoque.",
             durationMin: 130,
-            status: "paga",
+            status: "gratuita",
             prerequisites: ["licao-02", "licao-03"],
             objectives: [
               "Explicar uma condição de corrida usando uma linha do tempo de duas transações",
@@ -290,7 +290,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "Como o dinheiro chega à plataforma e aos lojistas via Efí (PIX e cartão tokenizado), sem que o número do cartão toque o seu servidor.",
             durationMin: 110,
-            status: "paga",
+            status: "gratuita",
             prerequisites: ["licao-02", "licao-03", "licao-04"],
             objectives: [
               "Descrever o fluxo de cobrança PIX (QR, copia-e-cola, split) e o de cartão (tokenização e cobrança)",
@@ -307,7 +307,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "Como validar webhooks em URL pública com comparação em tempo constante, fail-closed, conferência de valor e trava idempotente.",
             durationMin: 130,
-            status: "paga",
+            status: "gratuita",
             prerequisites: ["licao-04", "licao-05"],
             objectives: [
               "Explicar os três caminhos pelos quais o sistema descobre que um PIX foi pago",
@@ -324,7 +324,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "As três situações de repasse (split, loja da casa, PIX de saída), ID determinístico de operação e teto acumulado para estornos.",
             durationMin: 120,
-            status: "paga",
+            status: "gratuita",
             prerequisites: ["licao-05", "licao-06"],
             objectives: [
               "Descrever as três situações de repasse (split, loja da casa, PIX de saída) e a regra de cada uma",
@@ -350,7 +350,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "O que acontece com a peça reservada quando o cliente desiste no meio do pagamento e quando vale manter um worker em segundo plano.",
             durationMin: 110,
-            status: "paga",
+            status: "gratuita",
             prerequisites: ["licao-04", "licao-06"],
             objectives: [
               "Explicar por que reservar estoque na criação do pedido exige uma regra de expiração",
@@ -367,7 +367,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "Autenticação e autorização em WebSockets, caminho das notificações e upload direto ao serviço de mídia para proteger a memória.",
             durationMin: 120,
-            status: "paga",
+            status: "gratuita",
             prerequisites: ["licao-02", "licao-04", "licao-08"],
             objectives: [
               "Explicar como uma conexão WebSocket é autenticada e por que autenticar não basta (autorização)",
@@ -393,7 +393,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "Do código local ao ar em produção numa máquina de 1 GB: containers, ordem segura de migração, teste real de restauração e medições.",
             durationMin: 130,
-            status: "paga",
+            status: "gratuita",
             prerequisites: ["licao-04", "licao-08", "licao-09"],
             objectives: [
               "Ler um Dockerfile e um Compose e explicar o porquê de cada decisão (cache, limites, healthcheck)",
@@ -419,7 +419,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "O que depende de contador, de advogado e do desenvolvedor antes de receber dinheiro de clientes e repassar a lojistas.",
             durationMin: 90,
-            status: "paga",
+            status: "gratuita",
             prerequisites: ["licao-01", "licao-05", "licao-07"],
             objectives: [
               "Mapear o que depende de contador, de advogado e de você, sabendo fazer as perguntas certas",
@@ -445,7 +445,7 @@ export const COURSES: Record<CourseSlug, Course> = {
             summary:
               "Reúna as regras de dinheiro, estoque, pagamento idempotente, estorno e expiração em um pacote testado para avaliação e certificado verificável.",
             durationMin: 360,
-            status: "paga",
+            status: "gratuita",
             prerequisites: [
               "licao-01",
               "licao-02",
@@ -501,7 +501,7 @@ export const COURSES: Record<CourseSlug, Course> = {
           ],
           [
             "O que está disponível hoje?",
-            "As 7 primeiras aulas estão abertas e gratuitas agora: todo o Módulo 0 de Fundamentos (F01 a F06 — 11h com vídeos, áudios, slides em PDF, laboratório HTTP e glossário de 44 termos) e o Módulo 1 (A01 — Visão do negócio e os números, com simuladores, áudio, slides e PDF). As 11 aulas avançadas restantes (A02 a A11 e Projeto Final) estão em preparação na lista de espera.",
+            "Todas as 18 aulas do curso (38h 10min) estão 100% abertas e gratuitas: Módulo 0 Fundamentos (F01 a F06 — 11h), Módulo 1 (A01 — 2h) e toda a trilha principal até o Projeto Final (A02 a A11 + Projeto Final — 25h 10min), com diagramas visuais interativos, exercícios de lacunas, quizzes explicados, vídeos, áudios, slides e PDFs.",
           ],
           [
             "Como funciona o certificado verificável?",
@@ -539,7 +539,7 @@ export const COURSES: Record<CourseSlug, Course> = {
           ],
           [
             "What is available right now?",
-            "All 6 lessons of Module 0 Foundations (11h) and Module 1 (2h, unit economics and PIX flow) are complete and free in Portuguese — totaling 7 unlocked lessons with videos, audios, slide decks, interactive labs and PDFs. The remaining 11 advanced lessons are in preparation on the waitlist.",
+            "All 18 lessons (38h 10m) are 100% open and free in Portuguese — Module 0 Foundations (6 lessons, 11h) plus the full 12-lesson production track (A01–A11 and Final Project), with interactive visual diagrams, fill-in-the-blank labs, explained quizzes, videos, audios, slide decks and PDFs.",
           ],
         ],
       },

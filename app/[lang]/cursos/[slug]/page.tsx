@@ -63,7 +63,7 @@ const SALES_COPY = {
     statsModules: "módulos",
     statsDuration: "carga horária real",
     statsCase: "sistema em produção",
-    statsFree: "Módulos 0 e 1 abertos (7 aulas)",
+    statsFree: "100% gratuito · 18 aulas abertas",
     forWhoTag: "Para quem é",
     forWhoTitle: "Público-alvo e pré-requisitos",
     forWhoList: [
@@ -138,7 +138,7 @@ const SALES_COPY = {
     statsModules: "modules",
     statsDuration: "total course hours",
     statsCase: "production codebase",
-    statsFree: "Modules 0 & 1 unlocked (7 lessons)",
+    statsFree: "100% free · 18 lessons open",
     forWhoTag: "Audience",
     forWhoTitle: "Who this course is for & prerequisites",
     forWhoList: [
@@ -307,6 +307,15 @@ export default async function CourseSalesPage({
                 {t.ctaFree}
               </Link>
             )}
+            <Link
+              href={localePath(`/cursos/${course.slug}/certificado`, lang)}
+              className="btn btn-ghost"
+            >
+              <Award size={17} aria-hidden="true" />
+              {lang === "pt"
+                ? "Exame Final (80%+) e Certificado"
+                : "Final Exam (80%+) & Certificate"}
+            </Link>
             <a href="#lista-de-espera" className="btn btn-ghost">
               {t.ctaWaitlist}
               <ArrowRight size={16} aria-hidden="true" />
