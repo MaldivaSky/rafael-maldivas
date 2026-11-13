@@ -2218,3 +2218,93 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
     flex-wrap: wrap;
   }
 }
+
+/* Convite do curso na Home */
+.curso-home-invite {
+  padding: 64px 0;
+}
+
+.curso-invite-card {
+  background: var(--bg-soft);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-glow);
+  border-radius: var(--radius);
+  padding: 36px;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.curso-invite-main h2 {
+  font-size: clamp(24px, 3.2vw, 34px);
+  line-height: 1.2;
+  margin: 10px 0 12px;
+}
+
+.curso-invite-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.curso-invite-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.curso-invite-list li svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.curso-invite-proof {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.curso-proof-box {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.curso-proof-box.warn {
+  border-left-color: var(--gold);
+}
+
+.curso-proof-box p {
+  font-size: 13.5px;
+  color: var(--fg-muted);
+}
+
+.curso-proof-net {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.curso-proof-net.warn {
+  color: var(--gold);
+}
+
+@media (max-width: 860px) {
+  .curso-invite-card {
+    grid-template-columns: 1fr;
+    padding: 24px 18px;
+  }
+}

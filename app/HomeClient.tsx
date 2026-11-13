@@ -13,6 +13,7 @@ import EmpresasInvite from "./components/EmpresasInvite";
 import ExitToast from "./components/ExitToast";
 import GrowthToolsInvite from "./components/GrowthToolsInvite";
 import BravusPartnership from "./components/BravusPartnership";
+import CourseInvite from "./components/curso/CourseInvite";
 
 export default function HomeClient() {
   const { lang } = useLang();
@@ -49,6 +50,7 @@ export default function HomeClient() {
       </div></section>
       <ProjectPlanner />
       <BravusPartnership />
+      <CourseInvite />
       <EmpresasInvite />
       <section className="growth-home"><div className="wrap"><GrowthToolsInvite /></div></section>
       <CaseHighlights />
