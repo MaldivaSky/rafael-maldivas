@@ -124,6 +124,14 @@ export default function ModuleZeroLessonClient({
               <Download size={15} aria-hidden="true" />
               Baixar PDF do Módulo 0
             </a>
+            <a
+              href="/cursos/kits/mini-loja-kit.zip"
+              download="mini-loja-kit.zip"
+              className="btn btn-ghost curso-btn-sm"
+            >
+              <Download size={15} aria-hidden="true" />
+              Baixar mini-loja (.zip)
+            </a>
             <button
               type="button"
               className={`btn curso-btn-sm ${isCompleted ? "btn-primary" : "btn-ghost"}`}
