@@ -26,13 +26,6 @@ export default async function TrilhaPage({
 
   return (
     <main className="wrap curso-page-main">
-      <header className="curso-catalog-head">
-        <div className="sec-tag">Área do Aluno</div>
-        <h1>Meu Curso e Trajetória</h1>
-        <p className="hero-lead">
-          Seu progresso sincronizado na nuvem, próxima aula recomendada e certificados verificáveis.
-        </p>
-      </header>
       <TrilhaClient lang={lang} authError={searchParams.auth_error} />
     </main>
   );

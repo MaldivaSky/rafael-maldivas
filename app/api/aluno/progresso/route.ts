@@ -51,6 +51,7 @@ export async function POST(req: Request) {
 
     const status = body.status === "em_andamento" ? "em_andamento" : "concluida";
     const notaQuiz = typeof body.notaQuiz === "number" ? body.notaQuiz : null;
+    const ifNotExists = body.ifNotExists === true;
 
     await salvarProgressoAula({
       alunoId: session.sub,
@@ -58,6 +59,7 @@ export async function POST(req: Request) {
       licaoId,
       status,
       notaQuiz,
+      ifNotExists,
     });
 
     return NextResponse.json({ ok: true });

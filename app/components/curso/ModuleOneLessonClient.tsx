@@ -140,13 +140,42 @@ export default function ModuleOneLessonClient({
   const [progress, setProgress] = useState<ProgressState>(INITIAL_PROGRESS);
 
   useEffect(() => {
-    setProgress(loadProgress());
-  }, []);
+    const loaded = loadProgress();
+    setProgress(loaded);
+    if (!loaded.completed) {
+      fetch("/api/aluno/progresso", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cursoSlug: courseSlug,
+          licaoId: "modulo-1-visao-do-negocio",
+          status: "em_andamento",
+          ifNotExists: true,
+        }),
+      }).catch(() => undefined);
+    }
+  }, [courseSlug]);
 
   function updateProgress(patch: Partial<ProgressState>) {
     setProgress((prev) => {
       const next = { ...prev, ...patch };
       saveProgress(next);
+      if (patch.completed !== undefined || patch.quizScore !== undefined) {
+        const notaQuiz =
+          typeof next.quizScore === "number"
+            ? Math.round((next.quizScore / 9) * 100)
+            : null;
+        fetch("/api/aluno/progresso", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cursoSlug: courseSlug,
+            licaoId: "modulo-1-visao-do-negocio",
+            status: next.completed ? "concluida" : "em_andamento",
+            notaQuiz,
+          }),
+        }).catch(() => undefined);
+      }
       return next;
     });
   }

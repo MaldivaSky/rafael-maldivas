@@ -12,13 +12,14 @@ import {
   ExternalLink,
   Flame,
   GraduationCap,
+  Loader2,
   LogOut,
   PlayCircle,
-  Sparkles,
   UserCheck,
 } from "lucide-react";
 import { COURSES, formatDuration } from "@/app/lib/courses";
 import { localePath, type Lang } from "@/app/lib/seo";
+import StudentLoginCard from "@/app/components/auth/StudentLoginCard";
 
 type AlunoView = {
   id: string;
@@ -229,67 +230,40 @@ export default function TrilhaClient({
 
   if (loading) {
     return (
-      <div className="curso-catalog-card" style={{ padding: "2rem", textAlign: "center" }}>
-        <p className="curso-muted">Carregando sua trilha...</p>
+      <div className="auth-shell">
+        <div
+          className="curso-catalog-card"
+          style={{
+            padding: "2rem 2.5rem",
+            textAlign: "center",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.75rem",
+          }}
+        >
+          <Loader2 size={18} className="spin" aria-hidden="true" />
+          <span className="curso-muted">Carregando sua trilha...</span>
+        </div>
       </div>
     );
   }
 
   if (unauth || !data) {
-    const loginHref = `/api/auth/google/login?next=${encodeURIComponent(localePath("/trilha", lang))}`;
-    return (
-      <section className="curso-catalog-card" style={{ padding: "2.25rem", maxWidth: 720, margin: "0 auto" }}>
-        <div className="curso-card-badges">
-          <span className="curso-badge">Área do Aluno · Google OAuth</span>
-          <span className="curso-pill">Progresso na nuvem</span>
-        </div>
-
-        <h2 style={{ marginTop: "1rem", fontSize: "1.65rem" }}>
-          Salve sua trilha, perfil e certificados na sua conta Google
-        </h2>
-        <p className="curso-muted" style={{ marginTop: "0.75rem", lineHeight: 1.6 }}>
-          Ao entrar com sua conta Google, seu progresso das aulas, notas de quizzes,
-          perfil profissional e certificados verificáveis ficam salvos com segurança no
-          servidor — e sincronizam automaticamente com o que você já estudou neste navegador.
-        </p>
-
-        {authError && (
-          <p
-            role="alert"
-            style={{
-              marginTop: "1rem",
-              padding: "0.75rem 1rem",
-              borderRadius: "8px",
-              background: "rgba(239, 68, 68, 0.12)",
-              color: "#f87171",
-              fontSize: "0.9rem",
-            }}
-          >
-            Não foi possível concluir o login ({authError}). Tente novamente.
-          </p>
-        )}
-
-        <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-          <a
-            href={loginHref}
-            className="btn-p"
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem" }}
-          >
-            <Sparkles size={18} aria-hidden="true" />
-            Entrar com Google
-          </a>
-          <Link href={localePath("/cursos/construa-seu-marketplace", lang)} className="btn-g">
-            Ver ementa do curso
-          </Link>
-        </div>
-      </section>
-    );
+    return <StudentLoginCard lang={lang} context="trilha" authError={authError} />;
   }
 
   const { aluno, completude, certificados } = data;
 
   return (
-    <div style={{ display: "grid", gap: "1.75rem" }}>
+    <>
+      <header className="curso-catalog-head">
+        <div className="sec-tag">Área do Aluno</div>
+        <h1>Meu Curso e Trajetória</h1>
+        <p className="hero-lead">
+          Seu progresso sincronizado na nuvem, próxima aula recomendada e certificados verificáveis.
+        </p>
+      </header>
+      <div style={{ display: "grid", gap: "1.75rem" }}>
       {/* Cabeçalho do Aluno */}
       <section
         className="curso-catalog-card"
@@ -338,15 +312,14 @@ export default function TrilhaClient({
         </div>
 
         <div style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap" }}>
-          <Link href={localePath("/perfil", lang)} className="btn-g" style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem" }}>
+          <Link href={localePath("/perfil", lang)} className="btn btn-ghost curso-btn-sm">
             <UserCheck size={16} aria-hidden="true" />
             Meu Perfil
           </Link>
           <button
             type="button"
             onClick={handleLogout}
-            className="btn-g"
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem" }}
+            className="btn btn-ghost curso-btn-sm"
           >
             <LogOut size={16} aria-hidden="true" />
             Sair
@@ -423,8 +396,7 @@ export default function TrilhaClient({
           </div>
           <Link
             href={localePath(`/cursos/${course.slug}/${nextLesson.slug}`, lang)}
-            className="btn-p"
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
+            className="btn btn-primary"
           >
             <PlayCircle size={18} aria-hidden="true" />
             Continuar agora
@@ -557,8 +529,7 @@ export default function TrilhaClient({
                 </div>
                 <Link
                   href={localePath(`/certificado/${c.codigo_verificacao}`, lang)}
-                  className="btn-g"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
+                  className="btn btn-ghost curso-btn-sm"
                 >
                   Validar / Imprimir
                   <ExternalLink size={15} aria-hidden="true" />
@@ -569,6 +540,7 @@ export default function TrilhaClient({
         )}
       </section>
     </div>
+    </>
   );
 }
 

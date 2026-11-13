@@ -2,14 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ArrowLeft,
   Check,
   Loader2,
+  LogIn,
   LogOut,
   Mail,
   MessageCircle,
   RefreshCw,
-  Search,
 } from "lucide-react";
 import PainelBI from "./PainelBI";
 import AlunosPanel from "./AlunosPanel";
@@ -230,19 +229,25 @@ export default function AdminClient() {
   /* ---------------- tela de login ---------------- */
   if (!logado) {
     return (
-      <section className="hero" style={{ paddingBottom: 80 }}>
-        <div className="wrap" style={{ maxWidth: 520 }}>
-          <div className="sec-tag">Painel · uso interno</div>
-          <h1 style={{ fontSize: 40 }}>
-            Seu <span className="hl">funil de leads</span>.
+      <section className="auth-shell">
+        <div className="auth-card" style={{ maxWidth: 460 }}>
+          <div className="auth-top-row">
+            <div className="auth-brand-text">
+              <strong>Maldivas Tech · Superadmin</strong>
+              <span>Acesso restrito</span>
+            </div>
+            <span className="auth-sec-badge">Sessão HttpOnly</span>
+          </div>
+          <h1 className="auth-title" style={{ fontSize: 26 }}>
+            Central de Operação e Telemetria
           </h1>
-          <p className="hero-lead" style={{ fontSize: 18 }}>
-            Entre para ver os pedidos que chegaram pelo site, já por área e status.
+          <p className="auth-subtitle" style={{ marginBottom: 18 }}>
+            Leads comerciais, painel BI de tráfego e telemetria completa da plataforma de cursos.
           </p>
 
-          <form className="briefing-form" onSubmit={entrar} style={{ marginTop: 24 }}>
-            <div className="field">
-              <label htmlFor="a-senha">Senha de administrador</label>
+          <form onSubmit={entrar} style={{ display: "grid", gap: 14 }}>
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label htmlFor="a-senha">Senha de superadmin</label>
               <input
                 id="a-senha"
                 type="password"
@@ -252,9 +257,10 @@ export default function AdminClient() {
                 autoComplete="current-password"
               />
             </div>
-            {erro && <p className="field-hint result-warn">{erro}</p>}
-            <button className="plink solid" type="submit" disabled={carregando} style={{ marginTop: 8 }}>
-              {carregando ? <Loader2 size={16} className="spin" /> : <ArrowLeft size={16} />} Ver os leads
+            {erro && <p className="field-hint result-warn" style={{ margin: 0 }}>{erro}</p>}
+            <button className="btn btn-primary" type="submit" disabled={carregando} style={{ width: "100%", justifyContent: "center" }}>
+              {carregando ? <Loader2 size={16} className="spin" /> : <LogIn size={16} />}
+              {carregando ? "Validando acesso..." : "Entrar no Superadmin"}
             </button>
           </form>
         </div>
@@ -276,13 +282,23 @@ export default function AdminClient() {
           }}
         >
           <div>
-            <div className="sec-tag" style={{ marginBottom: 6 }}>Painel · uso interno</div>
+            <div className="sec-tag" style={{ marginBottom: 6 }}>Superadmin · Operação &amp; Telemetria</div>
             <h2 style={{ marginBottom: 0 }}>
-              {aba === "leads" ? "Leads" : aba === "painel" ? "Painel" : "Alunos & Trilhas"}
+              {aba === "leads"
+                ? "Funil de Leads"
+                : aba === "painel"
+                  ? "Painel BI · Tráfego"
+                  : "Telemetria LMS & Alunos"}
             </h2>
           </div>
           <div className="briefing-chips" style={{ margin: 0 }} role="tablist" aria-label="Seção do painel">
-            {([["leads", "Leads"], ["painel", "Painel BI"], ["alunos", "Alunos & Trilhas"]] as const).map(([id, nome]) => (
+            {(
+              [
+                ["leads", "Leads"],
+                ["painel", "Painel BI"],
+                ["alunos", "Telemetria LMS & Alunos"],
+              ] as const
+            ).map(([id, nome]) => (
               <button
                 key={id}
                 role="tab"

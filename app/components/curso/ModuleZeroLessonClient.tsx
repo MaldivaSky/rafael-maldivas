@@ -75,8 +75,21 @@ export default function ModuleZeroLessonClient({
   const [glossaryQuery, setGlossaryQuery] = useState("");
 
   useEffect(() => {
-    setDoneSlugs(loadDoneSlugs());
-  }, []);
+    const slugs = loadDoneSlugs();
+    setDoneSlugs(slugs);
+    if (!slugs.includes(lesson.slug)) {
+      fetch("/api/aluno/progresso", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cursoSlug: courseSlug,
+          licaoId: lesson.slug,
+          status: "em_andamento",
+          ifNotExists: true,
+        }),
+      }).catch(() => undefined);
+    }
+  }, [courseSlug, lesson.slug]);
 
   const isCompleted = doneSlugs.includes(lesson.slug);
 

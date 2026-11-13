@@ -355,6 +355,21 @@ CREATE TABLE IF NOT EXISTS site.avaliacoes_projeto (
   UNIQUE (aluno_id, curso_slug)
 );
 
+CREATE TABLE IF NOT EXISTS site.aluno_eventos (
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  aluno_id   uuid NOT NULL REFERENCES site.alunos(id) ON DELETE CASCADE,
+  tipo       text NOT NULL CHECK (tipo IN ('login_google','acesso_portal','aula_iniciada','aula_concluida','perfil_atualizado','projeto_enviado')),
+  curso_slug text NOT NULL DEFAULT 'construa-seu-marketplace' CHECK (char_length(curso_slug) <= 120),
+  licao_id   text NOT NULL DEFAULT '' CHECK (char_length(licao_id) <= 120),
+  meta       jsonb NOT NULL DEFAULT '{}'::jsonb,
+  criado_em  timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS aluno_eventos_aluno_criado_idx
+  ON site.aluno_eventos (aluno_id, criado_em DESC);
+CREATE INDEX IF NOT EXISTS aluno_eventos_tipo_criado_idx
+  ON site.aluno_eventos (tipo, criado_em DESC);
+
 -- RPC para validação pública de certificado (não expõe e-mail nem dados pessoais sensíveis)
 CREATE OR REPLACE FUNCTION site.validar_certificado(p_codigo text) RETURNS jsonb
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = site, pg_temp AS $$
@@ -492,7 +507,8 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = site, pg_temp AS $$
 $$;
 
 GRANT SELECT, INSERT, UPDATE ON site.alunos, site.matriculas, site.progresso_aulas, site.certificados, site.avaliacoes_projeto TO site_student_api;
-GRANT SELECT ON site.alunos, site.matriculas, site.progresso_aulas, site.certificados, site.avaliacoes_projeto TO site_admin;
+GRANT SELECT, INSERT ON site.aluno_eventos TO site_student_api;
+GRANT SELECT ON site.alunos, site.matriculas, site.progresso_aulas, site.certificados, site.avaliacoes_projeto, site.aluno_eventos TO site_admin;
 GRANT UPDATE (status, parecer_avaliador, avaliado_em, atualizado_em) ON site.avaliacoes_projeto TO site_admin;
 GRANT INSERT, UPDATE ON site.certificados TO site_admin;
 GRANT UPDATE (status, concluido_em) ON site.matriculas TO site_admin;

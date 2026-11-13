@@ -41,8 +41,7 @@ export default function CertificadoActions({
         <button
           type="button"
           onClick={copyLink}
-          className="btn-g"
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem" }}
+          className="btn btn-ghost curso-btn-sm"
         >
           {copied ? <Check size={16} color="#22C55E" /> : <Copy size={16} />}
           {copied ? "Link copiado!" : "Copiar link verificável"}
@@ -51,8 +50,7 @@ export default function CertificadoActions({
           href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verifyUrl)}`}
           target="_blank"
           rel="noreferrer"
-          className="btn-g"
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem" }}
+          className="btn btn-ghost curso-btn-sm"
         >
           <Share2 size={16} />
           Compartilhar no LinkedIn
@@ -60,8 +58,7 @@ export default function CertificadoActions({
         <button
           type="button"
           onClick={() => window.print()}
-          className="btn-p"
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem" }}
+          className="btn btn-primary curso-btn-sm"
         >
           <Printer size={16} />
           Imprimir / Salvar PDF

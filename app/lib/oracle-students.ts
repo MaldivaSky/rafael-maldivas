@@ -173,6 +173,48 @@ export function calcularCompletudePerfil(a: Aluno): number {
   return Math.round((preenchidos / campos.length) * 100);
 }
 
+export async function registrarEventoAluno(input: {
+  alunoId: string;
+  tipo: "login_google" | "acesso_portal" | "aula_iniciada" | "aula_concluida" | "perfil_atualizado" | "projeto_enviado";
+  cursoSlug?: string;
+  licaoId?: string;
+  meta?: Record<string, unknown>;
+}): Promise<void> {
+  if (!UUID_RE.test(input.alunoId)) return;
+  try {
+    await callOracle("site_student_api", "/aluno_eventos", {
+      method: "POST",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({
+        aluno_id: input.alunoId,
+        tipo: input.tipo,
+        curso_slug: (input.cursoSlug ?? "construa-seu-marketplace").slice(0, 120),
+        licao_id: (input.licaoId ?? "").slice(0, 120),
+        meta: input.meta ?? {},
+      }),
+    });
+  } catch {
+    // Tabela opcional: não bloqueia o fluxo se o SQL ainda não foi aplicado no Oracle
+  }
+}
+
+export async function touchAlunoAcesso(aluno: Aluno): Promise<void> {
+  const prevMs = Date.parse(aluno.ultimo_acesso_em || "");
+  const elapsedMs = Number.isFinite(prevMs) ? Date.now() - prevMs : Infinity;
+  if (elapsedMs < 15 * 60 * 1000) return;
+
+  const now = new Date().toISOString();
+  try {
+    await callOracle("site_student_api", `/alunos?id=eq.${aluno.id}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({ ultimo_acesso_em: now }),
+    });
+  } catch {
+    /* non-blocking */
+  }
+}
+
 export async function upsertAlunoGoogle(input: {
   googleSub: string;
   email: string;
@@ -199,17 +241,20 @@ export async function upsertAlunoGoogle(input: {
   if (!aluno) throw new Error("falha ao salvar aluno");
 
   // Garante matrícula automática no curso principal na primeira entrada
-  await callOracle("site_student_api", "/matriculas?on_conflict=aluno_id,curso_slug", {
-    method: "POST",
-    headers: {
-      Prefer: "resolution=ignore-duplicates,return=minimal",
-    },
-    body: JSON.stringify({
-      aluno_id: aluno.id,
-      curso_slug: "construa-seu-marketplace",
-      status: "ativo",
+  await Promise.all([
+    callOracle("site_student_api", "/matriculas?on_conflict=aluno_id,curso_slug", {
+      method: "POST",
+      headers: {
+        Prefer: "resolution=ignore-duplicates,return=minimal",
+      },
+      body: JSON.stringify({
+        aluno_id: aluno.id,
+        curso_slug: "construa-seu-marketplace",
+        status: "ativo",
+      }),
     }),
-  });
+    registrarEventoAluno({ alunoId: aluno.id, tipo: "login_google" }),
+  ]);
 
   return aluno;
 }
@@ -302,6 +347,7 @@ export async function salvarProgressoAula(input: {
   licaoId: string;
   status: "em_andamento" | "concluida";
   notaQuiz?: number | null;
+  ifNotExists?: boolean;
 }): Promise<void> {
   if (!UUID_RE.test(input.alunoId)) throw new Error("aluno inválido");
   const now = new Date().toISOString();
@@ -318,17 +364,21 @@ export async function salvarProgressoAula(input: {
     payload.tentativas_quiz = 1;
   }
 
+  const prefer = input.ifNotExists
+    ? "resolution=ignore-duplicates,return=minimal"
+    : "resolution=merge-duplicates,return=minimal";
+
   await callOracle(
     "site_student_api",
     "/progresso_aulas?on_conflict=aluno_id,curso_slug,licao_id",
     {
       method: "POST",
-      headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+      headers: { Prefer: prefer },
       body: JSON.stringify(payload),
     },
   );
 
-  // Garante matrícula e atualiza ultimo_acesso_em em paralelo
+  // Garante matrícula, atualiza ultimo_acesso_em e registra evento em paralelo
   await Promise.all([
     callOracle("site_student_api", "/matriculas?on_conflict=aluno_id,curso_slug", {
       method: "POST",
@@ -343,6 +393,12 @@ export async function salvarProgressoAula(input: {
       method: "PATCH",
       headers: { Prefer: "return=minimal" },
       body: JSON.stringify({ ultimo_acesso_em: now }),
+    }),
+    registrarEventoAluno({
+      alunoId: input.alunoId,
+      tipo: input.status === "concluida" ? "aula_concluida" : "aula_iniciada",
+      cursoSlug: input.cursoSlug,
+      licaoId: input.licaoId,
     }),
   ]);
 }

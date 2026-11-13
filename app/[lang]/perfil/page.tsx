@@ -22,13 +22,6 @@ export default async function PerfilPage({
 
   return (
     <main className="wrap curso-page-main">
-      <header className="curso-catalog-head">
-        <div className="sec-tag">Área do Aluno</div>
-        <h1>Meu Perfil</h1>
-        <p className="hero-lead">
-          Complete seus dados profissionais e defina o nome exibido nos seus certificados.
-        </p>
-      </header>
       <PerfilClient lang={lang} />
     </main>
   );

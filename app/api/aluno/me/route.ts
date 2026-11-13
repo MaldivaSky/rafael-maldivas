@@ -4,6 +4,7 @@ import {
   calcularCompletudePerfil,
   getAlunoById,
   oracleConfigurado,
+  touchAlunoAcesso,
   updateAlunoPerfil,
 } from "@/app/lib/oracle-students";
 
@@ -22,6 +23,7 @@ export async function GET(req: Request) {
     if (!aluno) {
       return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
     }
+    void touchAlunoAcesso(aluno);
     return NextResponse.json(
       { ok: true, aluno, completude: calcularCompletudePerfil(aluno) },
       { headers: { "Cache-Control": "no-store" } },

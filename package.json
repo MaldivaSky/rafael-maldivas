@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --test scripts/origem.test.mjs scripts/visita.test.mjs scripts/admin-auth.test.mjs scripts/student-auth.test.mjs"
+    "test": "node --test scripts/origem.test.mjs scripts/visita.test.mjs scripts/admin-auth.test.mjs scripts/student-auth.test.mjs scripts/course-telemetry.test.mjs"
   },
   "dependencies": {
     "@imgly/background-removal": "^1.7.0",

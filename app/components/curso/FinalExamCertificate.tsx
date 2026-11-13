@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   XCircle,
 } from "lucide-react";
+import GoogleSignInButton from "@/app/components/auth/GoogleSignInButton";
 
 type ExamQuestion = {
   id: string;
@@ -541,14 +542,14 @@ export default function FinalExamCertificate() {
             <div className="curso-exam-result err" role="alert">
               <div>
                 <strong>Entre com sua conta Google antes de enviar o projeto.</strong>
-                <div style={{ marginTop: 10 }}>
-                  <a
-                    href="/api/auth/google/login?next=/pt/trilha"
-                    className="btn btn-primary"
-                  >
-                    Entrar com Google
-                  </a>
-                </div>
+                <p className="curso-muted" style={{ marginTop: 6, marginBottom: 12, fontSize: "0.9rem" }}>
+                  Sua conta Google vincula a entrega do projeto final e emite o certificado verificável no seu nome.
+                </p>
+                <GoogleSignInButton
+                  href="/api/auth/google/login?next=/pt/cursos/construa-seu-marketplace/modulo-7-projeto-final-certificado"
+                  label="Continuar com o Google"
+                  compact
+                />
               </div>
             </div>
           ) : (

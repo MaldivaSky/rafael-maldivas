@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import AdminClient from "./AdminClient";
 
 export const metadata: Metadata = {
-  title: "Painel de leads",
+  title: "Superadmin · Telemetria, BI e Leads",
   robots: { index: false, follow: false },
 };
 

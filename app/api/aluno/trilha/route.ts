@@ -5,6 +5,7 @@ import {
   getAlunoById,
   getTrilhaAluno,
   oracleConfigurado,
+  touchAlunoAcesso,
 } from "@/app/lib/oracle-students";
 
 export const runtime = "nodejs";
@@ -26,6 +27,7 @@ export async function GET(req: Request) {
     if (!aluno) {
       return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
     }
+    void touchAlunoAcesso(aluno);
     return NextResponse.json(
       {
         ok: true,

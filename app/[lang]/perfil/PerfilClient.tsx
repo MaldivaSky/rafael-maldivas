@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Loader2, Save, Sparkles } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Loader2, Save } from "lucide-react";
 import { localePath, type Lang } from "@/app/lib/seo";
+import StudentLoginCard from "@/app/components/auth/StudentLoginCard";
 
 type AlunoPerfil = {
   id: string;
@@ -29,6 +30,7 @@ const OBJETIVOS = [
 export default function PerfilClient({ lang }: { lang: Lang }) {
   const [loading, setLoading] = useState(true);
   const [unauth, setUnauth] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [savedMsg, setSavedMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -43,6 +45,13 @@ export default function PerfilClient({ lang }: { lang: Lang }) {
   const [linkedinUrl, setLinkedinUrl] = useState("");
 
   useEffect(() => {
+    try {
+      const errParam = new URLSearchParams(window.location.search).get("auth_error");
+      if (errParam) setAuthError(errParam);
+    } catch {
+      /* ignore */
+    }
+
     fetch("/api/aluno/me", { cache: "no-store" })
       .then(async (r) => {
         if (r.status === 401) {
@@ -102,53 +111,50 @@ export default function PerfilClient({ lang }: { lang: Lang }) {
 
   if (loading) {
     return (
-      <div className="curso-catalog-card" style={{ padding: "2rem", textAlign: "center" }}>
-        <p className="curso-muted">Carregando perfil...</p>
-      </div>
-    );
-  }
-
-  if (unauth || !aluno) {
-    const loginHref = `/api/auth/google/login?next=${encodeURIComponent(localePath("/perfil", lang))}`;
-    return (
-      <div className="curso-catalog-card" style={{ padding: "2rem", maxWidth: 640, margin: "0 auto" }}>
-        <h2>Entre com sua conta Google para editar seu perfil</h2>
-        <p className="curso-muted" style={{ marginTop: "0.5rem" }}>
-          Seu perfil reúne seus dados para emissão de certificados, links profissionais e objetivo na trilha.
-        </p>
-        <div style={{ marginTop: "1.25rem" }}>
-          <a href={loginHref} className="btn-p" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-            <Sparkles size={18} aria-hidden="true" />
-            Entrar com Google
-          </a>
+      <div className="auth-shell">
+        <div className="curso-catalog-card" style={{ padding: "2rem 2.5rem", textAlign: "center", display: "inline-flex", alignItems: "center", gap: "0.75rem" }}>
+          <Loader2 size={18} className="spin" aria-hidden="true" />
+          <span className="curso-muted">Verificando sessão...</span>
         </div>
       </div>
     );
   }
 
+  if (unauth || !aluno) {
+    return <StudentLoginCard lang={lang} context="perfil" authError={authError} />;
+  }
+
   const inputStyle: React.CSSProperties = {
     width: "100%",
-    padding: "0.7rem 0.85rem",
-    borderRadius: "8px",
-    border: "1px solid rgba(148,163,184,0.28)",
-    background: "rgba(15, 23, 42, 0.35)",
-    color: "inherit",
+    padding: "0.75rem 0.9rem",
+    borderRadius: "10px",
+    border: "1px solid var(--line-strong)",
+    background: "var(--surface)",
+    color: "var(--fg)",
     fontSize: "0.95rem",
+    fontFamily: "inherit",
   };
 
   return (
-    <div style={{ display: "grid", gap: "1.5rem", maxWidth: 780 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
-        <Link
-          href={localePath("/trilha", lang)}
-          className="btn-g"
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem" }}
-        >
-          <ArrowLeft size={16} aria-hidden="true" />
-          Voltar para Minha Trilha
-        </Link>
-        <span className="curso-badge">Completude do perfil: {completude}%</span>
-      </div>
+    <>
+      <header className="curso-catalog-head">
+        <div className="sec-tag">Área do Aluno</div>
+        <h1>Meu Perfil</h1>
+        <p className="hero-lead">
+          Complete seus dados profissionais e defina o nome exibido nos seus certificados.
+        </p>
+      </header>
+      <div style={{ display: "grid", gap: "1.5rem", maxWidth: 780 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
+          <Link
+            href={localePath("/trilha", lang)}
+            className="btn btn-ghost curso-btn-sm"
+          >
+            <ArrowLeft size={16} aria-hidden="true" />
+            Voltar para Minha Trilha
+          </Link>
+          <span className="curso-badge">Completude do perfil: {completude}%</span>
+        </div>
 
       <section className="curso-catalog-card" style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
         {aluno.avatar_url && (
@@ -280,15 +286,15 @@ export default function PerfilClient({ lang }: { lang: Lang }) {
           <button
             type="submit"
             disabled={saving}
-            className="btn-p"
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
+            className="btn btn-primary"
           >
-            {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} aria-hidden="true" />}
+            {saving ? <Loader2 size={16} className="spin" /> : <Save size={16} aria-hidden="true" />}
             {saving ? "Salvando..." : "Salvar perfil"}
           </button>
         </div>
       </form>
     </div>
+    </>
   );
 }
 

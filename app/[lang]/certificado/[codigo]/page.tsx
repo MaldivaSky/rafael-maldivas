@@ -65,8 +65,7 @@ export default async function CertificadoPublicoPage({
           <div style={{ marginTop: "1.5rem" }}>
             <Link
               href={localePath("/cursos", lang)}
-              className="btn-p"
-              style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem" }}
+              className="btn btn-primary"
             >
               <Award size={16} aria-hidden="true" />
               Ver cursos
