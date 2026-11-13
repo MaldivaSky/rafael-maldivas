@@ -6,22 +6,22 @@ import { useLang, localePath } from "@/app/lib/i18n";
 
 const COPY = {
   pt: {
-    tag: "Novo curso livre · Módulo 1 aberto sem cadastro",
+    tag: "Novo curso livre · Módulos 0 e 1 abertos sem cadastro",
     title: "A conta de R$ 100 que quase ninguém faz antes de criar um marketplace",
-    lead: "Em vez de promessas vazias, abrimos o código real do MySuperStore em produção. Veja quanto realmente sobra por pedido, teste o simulador em centavos e baixe o PDF do Módulo 1 gratuitamente.",
+    lead: "Do zero absoluto em Django/DRF (Módulo 0 — Fundamentos, 6 lições / 11h) até a conta real do MySuperStore em produção (Módulo 1). Comece de graça agora, com simuladores, quizzes explicados e PDFs.",
     pixLabel: "Pedido de R$ 100,00 no PIX",
     pixMath: "Comissão 12% (R$ 12,00) − Taxa 0,99% (R$ 0,99)",
     pixNet: "Sobra: R$ 11,01",
     cardLabel: "Pedido de R$ 100,00 no Cartão",
     cardMath: "Comissão 12% (R$ 12,00) − Taxa 3,99% + R$ 0,39 (R$ 4,38)",
     cardNet: "Sobra: R$ 7,62",
-    ctaFree: "Abrir Módulo 1 gratuito agora",
-    ctaSyllabus: "Ver ementa dos 9 módulos",
+    ctaFree: "Começar pelo Módulo 0 (Fundamentos)",
+    ctaSyllabus: "Ver ementa completa",
     note: "Curso livre de capacitação profissional (não regulamentado pelo MEC). Valores de exemplo extraídos do código em 12/11/2026; simulação não é garantia de resultado.",
     highlights: [
-      "Simulador de margem + ponto de equilíbrio",
-      "Fluxo do PIX e idempotência passo a passo",
-      "PDF completo do Módulo 1 + quiz com explicação",
+      "Módulo 0: do zero à primeira API DRF e testes (6 lições, 11h)",
+      "Módulo 1: simulador de margem em centavos + fluxo do PIX",
+      "Quizzes explicando cada erro + PDFs gratuitos para baixar",
     ],
   },
   en: {
@@ -70,7 +70,7 @@ export default function CourseInvite() {
             <div className="cta-row" style={{ marginTop: 22 }}>
               <Link
                 href={localePath(
-                  "/cursos/construa-seu-marketplace/modulo-1-visao-do-negocio",
+                  "/cursos/construa-seu-marketplace/modulo-0-f01-o-mapa",
                   lang,
                 )}
                 className="btn btn-primary"
