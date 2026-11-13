@@ -1249,6 +1249,9 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
 .curso-page-main {
   padding-top: 48px;
   padding-bottom: 84px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .curso-catalog-head {
@@ -1279,6 +1282,9 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
   padding: 28px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .curso-catalog-card h2 {
@@ -1627,6 +1633,8 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   display: flex;
   flex-direction: column;
   gap: 32px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .curso-progress-bar-box {
@@ -1634,6 +1642,8 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   padding: 18px 20px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .curso-progress-top {
@@ -1670,6 +1680,9 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
   padding: 32px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .curso-prose h2 {
@@ -1964,6 +1977,8 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   padding: 18px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .curso-flow-meta {
@@ -2179,11 +2194,27 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
 }
 
 @media (max-width: 480px) {
+  .wrap {
+    padding: 0 16px;
+  }
+
   .curso-catalog-card,
   .curso-panel,
   .curso-sim-card,
   .curso-waitlist-card,
-  .curso-prose {
-    padding: 20px 16px;
+  .curso-prose,
+  .curso-progress-bar-box,
+  .curso-flow-detail {
+    padding: 18px 14px;
+  }
+
+  .curso-flow-btn,
+  .curso-flow-step-wrap {
+    width: 100%;
+  }
+
+  .curso-result-row,
+  .curso-result-highlight {
+    flex-wrap: wrap;
   }
 }
