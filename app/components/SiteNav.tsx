@@ -336,7 +336,6 @@ export default function SiteNav() {
             />
             <span className="brand-txt">
               <span className="brand-name">Maldivas Tech</span>
-              <span className="brand-sub">Rafael Maldivas</span>
             </span>
           </Link>
 

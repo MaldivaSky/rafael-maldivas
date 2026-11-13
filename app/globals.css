@@ -118,9 +118,9 @@ img { max-width: 100%; display: block; }
   border-bottom: 1px solid var(--line);
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
-.nav-in { display: flex; align-items: center; gap: 24px; height: 68px; }
+.nav-in { display: flex; align-items: center; gap: 20px; height: 68px; }
 
-.brand { display: flex; align-items: center; gap: 11px; margin-right: auto; }
+.brand { display: flex; align-items: center; gap: 11px; margin-right: auto; flex-shrink: 0; white-space: nowrap; }
 .brand-mark {
   width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
   background: linear-gradient(140deg, var(--accent) 0%, var(--accent-deep) 55%, #1E3A5F 100%);
@@ -129,11 +129,11 @@ img { max-width: 100%; display: block; }
   box-shadow: 0 4px 20px -4px var(--accent-glow);
 }
 .brand-txt { display: flex; flex-direction: column; line-height: 1.15; }
-.brand-name { font-weight: 800; font-size: 20px; letter-spacing: -0.4px; }
+.brand-name { font-weight: 800; font-size: 20px; letter-spacing: -0.4px; white-space: nowrap; }
 .brand-sub { font-size: 13px; color: var(--fg-dim); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
 
-.nav-links { display: flex; gap: 40px; align-items: center; }
-.nav-links a { font-size: 17px; font-weight: 600; color: var(--fg-muted); transition: all .2s; }
+.nav-links { display: flex; gap: 26px; align-items: center; }
+.nav-links a { font-size: 16.5px; font-weight: 600; color: var(--fg-muted); transition: all .2s; white-space: nowrap; }
 .nav-links a:hover { color: var(--fg); text-shadow: 0 0 16px var(--accent-glow); }
 
 .lang { display: flex; border: 1px solid var(--line-strong); border-radius: 999px; overflow: hidden; }
@@ -521,8 +521,8 @@ footer { border-top: 1px solid var(--line); padding: 34px 0; position: relative;
 }
 
 /* ---------------- navegação ---------------- */
-.brand-logo { border-radius: 11px; width: 44px; height: 44px; }
-.nav-controls { display: flex; gap: 12px; align-items: center; }
+.brand-logo { border-radius: 11px; width: 40px; height: 40px; flex-shrink: 0; }
+.nav-controls { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
 .nav-links a.on { color: var(--accent); }
 .nav-cta {
   padding: 9px 18px; border-radius: 10px; font-size: 15px; font-weight: 700;
@@ -587,8 +587,8 @@ footer { border-top: 1px solid var(--line); padding: 34px 0; position: relative;
 .nav-item { position: relative; display: flex; align-items: center; }
 .nav-link {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 17px; font-weight: 600; color: var(--fg-muted);
-  transition: color .2s, text-shadow .2s;
+  font-size: 16.5px; font-weight: 600; color: var(--fg-muted);
+  white-space: nowrap; transition: color .2s, text-shadow .2s;
 }
 .nav-link:hover, .nav-item.is-open .nav-link, .nav-link.on { color: var(--fg); }
 .nav-link.on { color: var(--accent); }
@@ -1218,9 +1218,11 @@ h1, h2 { text-shadow: 0 2px 18px var(--bg); }
   .perks.perks-2 { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* menu com 5 itens + controles cabe entre 901px e 1200px */
-@media (min-width: 901px) and (max-width: 1200px) {
-  .nav-links { gap: 22px; }
+/* menu + controles cabem confortavelmente sem quebra entre 901px e 1220px */
+@media (min-width: 901px) and (max-width: 1220px) {
+  .nav-links { gap: 16px; }
+  .nav-links a, .nav-link { font-size: 15.5px; }
+  .nav-cta { padding: 8px 14px; font-size: 14px; }
 }
 
 /* ---------------- Bravus + Empresas B2B (home): responsivo ---------------- */
