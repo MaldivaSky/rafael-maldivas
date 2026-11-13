@@ -24,6 +24,15 @@ import {
 import { localePath } from "@/app/lib/i18n";
 import HttpStatusLab from "./HttpStatusLab";
 import NotebookLMMediaBlock from "./NotebookLMMediaBlock";
+import LessonVisualDiagram from "./LessonVisualDiagram";
+import {
+  FillInTheBlankLab,
+  PredictInteractive,
+} from "./InteractivePracticeLab";
+import {
+  M0_DIAGRAM_BY_SLUG,
+  M0_FILL_BLANKS,
+} from "@/app/lib/module-zero-practice";
 
 const STORAGE_KEY = "maldivas-curso-m0-done-v1";
 
@@ -152,51 +161,11 @@ export default function ModuleZeroLessonClient({
       {/* Material multimídia do NotebookLM (vídeo, áudio, slides e mapa mental) */}
       <NotebookLMMediaBlock media={lesson.notebookMedia} />
 
-      {/* 1. Antes de ler: preveja */}
-      <section className="curso-sim-card" aria-labelledby="predict-title">
-        <div className="curso-sim-head">
-          <div>
-            <span className="curso-badge">Passo 1 · Antes de ler: preveja</span>
-            <h2 id="predict-title">
-              <Lightbulb size={20} aria-hidden="true" /> Tente responder antes de abrir o gabarito
-            </h2>
-          </div>
-        </div>
-        <p className="curso-muted">
-          Errar uma previsão mostra exatamente onde está a lacuna. Chute mentalmente ou no papel
-          antes de revelar a resposta do professor.
-        </p>
+      {/* 1. Antes de ler: preveja (com campo de resposta do aluno) */}
+      <PredictInteractive items={lesson.predict} />
 
-        <div className="curso-quiz-list">
-          {lesson.predict.map((p, idx) => {
-            const open = Boolean(revealedPredicts[idx]);
-            return (
-              <div key={p.question} className="curso-quiz-item">
-                <p>
-                  <strong>{p.question}</strong>
-                </p>
-                <button
-                  type="button"
-                  className="btn btn-ghost curso-btn-sm"
-                  style={{ marginTop: 10 }}
-                  aria-expanded={open}
-                  onClick={() =>
-                    setRevealedPredicts((prev) => ({ ...prev, [idx]: !prev[idx] }))
-                  }
-                >
-                  <Eye size={15} aria-hidden="true" />
-                  {open ? "Esconder resposta" : "Ver resposta do professor"}
-                </button>
-                {open && (
-                  <p className="curso-why" style={{ marginTop: 10 }}>
-                    {p.answer}
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
+      {/* Esquema visual interativo da lição */}
+      <LessonVisualDiagram diagramId={M0_DIAGRAM_BY_SLUG[lesson.slug]} />
 
       {/* Mapa interativo do restaurante na F01 */}
       {lesson.slug === "modulo-0-f01-o-mapa" && (
@@ -367,6 +336,9 @@ export default function ModuleZeroLessonClient({
           </div>
         ))}
       </section>
+
+      {/* Preenchimento de lacunas com feedback visual */}
+      <FillInTheBlankLab exercises={M0_FILL_BLANKS[lesson.slug] ?? []} />
 
       {/* Quiz explicando cada alternativa errada */}
       <section className="curso-sim-card" aria-labelledby="m0-quiz-title">

@@ -14,7 +14,9 @@ import {
 import { SITE } from "@/app/lib/site";
 import ModuleOneLessonClient from "@/app/components/curso/ModuleOneLessonClient";
 import ModuleZeroLessonClient from "@/app/components/curso/ModuleZeroLessonClient";
+import MarketplaceLessonClient from "@/app/components/curso/MarketplaceLessonClient";
 import { MODULE_ZERO_LESSONS } from "@/app/lib/module-zero-content";
+import { MARKETPLACE_LESSONS } from "@/app/lib/marketplace-lessons-content";
 
 export function generateStaticParams(): {
   lang: Lang;
@@ -72,6 +74,7 @@ export default async function CourseLessonPage({
   const nextLesson = idx >= 0 ? allLessons[idx + 1] : undefined;
   const firstFree = allLessons.find((l) => l.status === "gratuita");
   const m0Data = MODULE_ZERO_LESSONS[lesson.slug];
+  const mpData = MARKETPLACE_LESSONS[lesson.slug];
   const url = `${SITE}/${lang}/cursos/${course.slug}/${lesson.slug}`;
 
   const jsonLd = {
@@ -133,11 +136,7 @@ export default async function CourseLessonPage({
 
         <header className="curso-lesson-header">
           <div className="curso-card-badges">
-            <span className={lesson.status === "gratuita" ? "curso-badge" : "curso-pill"}>
-              {lesson.status === "gratuita"
-                ? "Módulo gratuito"
-                : "Em breve · Conteúdo pago"}
-            </span>
+            <span className="curso-badge">Aula gratuita · Curso livre</span>
             <span className="curso-pill">
               <Clock size={14} aria-hidden="true" />{" "}
               {formatDuration(lesson.durationMin, lang)}
@@ -161,28 +160,42 @@ export default async function CourseLessonPage({
           )}
         </header>
 
-        {lesson.status === "gratuita" ? (
-          m0Data ? (
-            <ModuleZeroLessonClient
-              courseSlug={course.slug}
-              lesson={m0Data}
-              prevLesson={
-                prevLesson
-                  ? { slug: prevLesson.slug, title: prevLesson.title }
-                  : undefined
-              }
-              nextLesson={
-                nextLesson
-                  ? { slug: nextLesson.slug, title: nextLesson.title }
-                  : undefined
-              }
-            />
-          ) : (
-            <ModuleOneLessonClient
-              courseSlug={course.slug}
-              nextLessonSlug={nextLesson?.slug}
-            />
-          )
+        {m0Data ? (
+          <ModuleZeroLessonClient
+            courseSlug={course.slug}
+            lesson={m0Data}
+            prevLesson={
+              prevLesson
+                ? { slug: prevLesson.slug, title: prevLesson.title }
+                : undefined
+            }
+            nextLesson={
+              nextLesson
+                ? { slug: nextLesson.slug, title: nextLesson.title }
+                : undefined
+            }
+          />
+        ) : mpData ? (
+          <MarketplaceLessonClient
+            courseSlug={course.slug}
+            lesson={mpData}
+            totalLessons={allLessons.length}
+            prevLesson={
+              prevLesson
+                ? { slug: prevLesson.slug, title: prevLesson.title }
+                : undefined
+            }
+            nextLesson={
+              nextLesson
+                ? { slug: nextLesson.slug, title: nextLesson.title }
+                : undefined
+            }
+          />
+        ) : lesson.slug === "modulo-1-visao-do-negocio" ? (
+          <ModuleOneLessonClient
+            courseSlug={course.slug}
+            nextLessonSlug={nextLesson?.slug}
+          />
         ) : (
           <section className="curso-panel curso-soon-box">
             <div className="curso-soon-icon">
@@ -190,39 +203,19 @@ export default async function CourseLessonPage({
             </div>
             <h2>Este módulo está em preparação</h2>
             <p className="curso-muted">
-              O conteúdo completo, vídeos, áudios e PDF deste módulo serão disponibilizados
-              na área paga do curso. Enquanto isso, você pode estudar o Módulo 1 completo e
-              entrar na lista de espera.
+              Enquanto esta aula é finalizada, você pode estudar as aulas anteriores.
             </p>
-
-            {lesson.objectives.length > 0 && (
-              <div className="curso-soon-objectives">
-                <h3>O que este módulo vai cobrir:</h3>
-                <ul>
-                  {lesson.objectives.map((obj) => (
-                    <li key={obj}>{obj}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <div className="cta-row" style={{ marginTop: 24 }}>
-              {firstFree && (
+            {firstFree && (
+              <div className="cta-row" style={{ marginTop: 24 }}>
                 <Link
                   href={localePath(`/cursos/${course.slug}/${firstFree.slug}`, lang)}
                   className="btn btn-primary"
                 >
                   <PlayCircle size={16} aria-hidden="true" />
-                  Ir para o Módulo 1 gratuito
+                  Ir para a primeira aula
                 </Link>
-              )}
-              <Link
-                href={localePath(`/cursos/${course.slug}#lista-de-espera`, lang)}
-                className="btn btn-ghost"
-              >
-                Entrar na lista de espera
-              </Link>
-            </div>
+              </div>
+            )}
           </section>
         )}
       </main>
