@@ -625,7 +625,7 @@ def comprar(self, request, pk=None):
     slug: "modulo-0-f05-testes-e-git",
     code: "F05",
     notebookMedia: {
-      sectionLabel: "Áudio da lição F05 · NotebookLM",
+      sectionLabel: "Áudio e quiz da lição F05 · NotebookLM",
       audio: {
         title: "Como bugs em produção ensinam arquitetura",
         src: "/cursos/midia/como-bugs-em-producao-ensinam-arquitetura.m4a",
@@ -633,6 +633,14 @@ def comprar(self, request, pk=None):
           "Conversa guiada sobre por que testes automatizados, commits pequenos e proteção de segredos evitam regressões em produção.",
         durationLabel: "Áudio M4A",
       },
+      publicLinks: [
+        {
+          tag: "Quiz · NotebookLM",
+          label: "Teste Automatizado Quiz",
+          description: "Quiz público focado em testes automatizados, Arrange-Act-Assert e prevenção de regressões.",
+          href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/1b3b036d-5ffb-4967-b448-0927fc2398fc",
+        },
+      ],
     },
     title: "Provar que funciona: testes automáticos, Git e regra dos segredos",
     oneSentence:
@@ -744,6 +752,24 @@ def comprar(self, request, pk=None):
           "Mapa mental conferido contra o estudo da arquitetura do MySuperStore.",
       },
       publicLinks: [
+        {
+          tag: "Quiz · NotebookLM",
+          label: "Arquitetura Backend Quiz",
+          description: "Quiz público sobre camadas do back-end, fluxos e responsabilidades do sistema.",
+          href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/934ca30e-27c5-4015-8da8-5c9a6ed743a3",
+        },
+        {
+          tag: "Relatório · NotebookLM",
+          label: "Decisões de Arquitetura e Engenharia de Software",
+          description: "Relatório público sintetizando escolhas técnicas e trade-offs do estudo de caso.",
+          href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/bc399589-f25c-4ee4-a583-f6c3aed6a7a0",
+        },
+        {
+          tag: "Mapa Mental · NotebookLM",
+          label: "Arquitetura Mapa Mental",
+          description: "Mapa mental interativo público conectando módulos e fluxos da arquitetura.",
+          href: "https://notebook.google.com/notebook/67ad63e1-46fb-4f82-bf91-386993aa3c89/artifact/9198ac38-7d79-4c6c-8a94-e355ead4c510",
+        },
         {
           tag: "Revisão · NotebookLM",
           label: "Flashcards de Arquitetura de Software",
