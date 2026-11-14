@@ -7,6 +7,7 @@ import SiteFooter from "./components/SiteFooter";
 import SiteAnalytics from "./components/SiteAnalytics";
 import CookieConsent from "./components/CookieConsent";
 import { COMPANY, SITE, VERIFICATION } from "./lib/site";
+import { maldivasTechKnowledgeGraph } from "./lib/structured-data";
 import "./globals.css";
 import "./editorial.css";
 import "./growth-tools.css";
@@ -25,6 +26,35 @@ export const metadata: Metadata = {
   authors: [{ name: "Rafael Maldivas", url: SITE }],
   creator: "Rafael Maldivas",
   publisher: "Maldivas Tech",
+  alternates: {
+    canonical: `${SITE}/`,
+  },
+  openGraph: {
+    title:
+      "Maldivas Tech — Sistemas de gestão e software sob medida | Rafael Maldivas",
+    description:
+      "Sistemas de gestão e software sob medida para organizar operações, integrar ferramentas e reduzir trabalho manual. Desenvolvimento e consultoria com Rafael Maldivas, em São Paulo e a distância.",
+    url: `${SITE}/`,
+    siteName: "Maldivas Tech",
+    locale: "pt_BR",
+    type: "website",
+    images: [
+      {
+        url: `${SITE}/opengraph-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Maldivas Tech",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "Maldivas Tech — Sistemas de gestão e software sob medida | Rafael Maldivas",
+    description:
+      "Sistemas de gestão e software sob medida para organizar operações, integrar ferramentas e reduzir trabalho manual. Desenvolvimento e consultoria com Rafael Maldivas, em São Paulo e a distância.",
+    images: [`${SITE}/opengraph-image.png`],
+  },
   // Keep the favicon at the conventional, stable root URL for search crawlers.
   icons: {
     icon: [{ url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" }],
@@ -57,6 +87,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(maldivasTechKnowledgeGraph),
+          }}
+        />
         {/*
           <html lang> correto por idioma SEM perder o SSG.
 

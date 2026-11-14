@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { HTML_LANG, LOCALES, isLang, type Lang } from "@/app/lib/seo";
-import { siteGraph } from "@/app/lib/structured-data";
 import { LangProvider } from "@/app/lib/i18n";
 
 /**
@@ -30,11 +29,6 @@ export default async function LangLayout({
 
   return (
     <LangProvider initialLang={lang}>
-      <script
-        type="application/ld+json"
-        // grafo único: Organization + WebSite + Person + SoftwareApplication x2
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraph(lang)) }}
-      />
       <div lang={HTML_LANG[lang]}>{children}</div>
     </LangProvider>
   );
