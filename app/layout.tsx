@@ -130,6 +130,7 @@ export default function RootLayout({
             <SiteNav />
             <main>{children}</main>
             <SiteFooter />
+            <CookieConsent />
           </LangProvider>
         </ThemeProvider>
       </body>
