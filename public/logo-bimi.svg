@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>Maldivas Tech</title>
+  <rect width="512" height="512" fill="#030816" />
+  <defs>
+    <linearGradient id="mLeft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00FBFF" />
+      <stop offset="0.5" stop-color="#0095FF" />
+      <stop offset="1" stop-color="#0040CC" />
+    </linearGradient>
+    <linearGradient id="mRight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00E5FF" />
+      <stop offset="0.6" stop-color="#0066FF" />
+      <stop offset="1" stop-color="#002B99" />
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#00FBFF" />
+      <stop offset="0.6" stop-color="#0088FF" />
+      <stop offset="1" stop-color="#0044CC" />
+    </linearGradient>
+  </defs>
+  <path fill="url(#mRight)" d="M312 232 L364 202 L364 334 L312 302 Z" />
+  <path fill="url(#mRight)" d="M256 202 L364 132 L364 188 L256 258 Z" />
+  <path fill="url(#mLeft)" d="M150 132 L256 202 L256 258 L202 222 L202 282 L150 296 Z" />
+  <path fill="#0033AA" d="M202 222 L256 258 L286 238 L256 202 Z" />
+  <path fill="url(#ring)" d="M368 158 C416 158 430 182 396 208 C350 244 236 290 154 304 C102 312 88 290 138 252 C146 246 148 250 142 256 C106 284 118 296 164 288 C238 274 338 232 378 200 C402 180 394 166 368 164 Z" />
+  <g fill="#FFFFFF">
+    <path d="M58 394V348h16l18 24 18-24h16v46h-14v-26l-20 26-20-26v26H58z" />
+    <path d="M134 394l22-46h16l22 46h-15l-15-32-15 32h-15z" />
+    <path d="M202 394V348h15v34h28v12h-43z" />
+    <path d="M254 394V348h28c16 0 26 9 26 23s-10 23-26 23h-28zm15-12h12c8 0 13-4 13-11s-5-11-13-11h-12v22z" />
+    <path d="M318 394V348h15v46h-15z" />
+    <path d="M342 348h16l14 32 14-32h16l-22 46h-16l-22-46z" />
+    <path d="M398 394l22-46h16l22 46h-15l-15-32-15 32h-15z" />
+    <path d="M462 394v-11h26c3 0 5-1 5-3s-2-3-5-3h-14c-9 0-14-5-14-13 0-9 6-16 16-16h26v11h-24c-3 0-5 1-5 3s2 3 5 3h14c9 0 14 5 14 13 0 9-6 16-16 16h-28z" />
+  </g>
+  <rect x="58" y="430" width="84" height="4" rx="2" fill="#00D2FF" />
+  <rect x="370" y="430" width="84" height="4" rx="2" fill="#00D2FF" />
+  <g fill="#00D2FF">
+    <path d="M166 420h26v5h-10v19h-6v-19h-10v-5z" />
+    <path d="M218 420h22v5h-22v-5zm0 10h22v5h-22v-5zm0 9h22v5h-22v-5z" />
+    <path d="M276 420h18v5h-16c-3 0-5 2-5 7s2 7 5 7h16v5h-18c-7 0-11-5-11-12s4-12 11-12z" />
+    <path d="M320 420h6v9h14v-9h6v24h-6v-10h-14v10h-6v-24z" />
+  </g>
+</svg>
