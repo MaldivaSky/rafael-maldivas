@@ -472,10 +472,10 @@ export const COURSES: Record<CourseSlug, Course> = {
     copy: {
       pt: {
         metaTitle:
-          "Curso Construa seu Marketplace: Do Código ao Pagamento em Produção",
+          "Curso Gratuito Construa seu Marketplace: Do Código ao Pagamento em Produção",
         metaDescription:
-          "Curso profissional de 18 aulas (38h 10min) baseado no MySuperStore em produção: Módulo 0 Fundamentos (6 aulas, 11h) + Módulo 1 (2h) gratuitos.",
-        h1: "Construa seu marketplace: do código ao pagamento em produção",
+          "Curso interativo 100% gratuito (18 aulas · 38h 10min) com simulador de terminal, Casa Pré-Moldada no VS Code, deploy R$ 0 e certificado verificável.",
+        h1: "Construa seu marketplace: do código ao pagamento em produção (100% Gratuito)",
         tagline:
           "Trilha completa de 18 aulas (38h 10min) usando o código real do MySuperStore: Módulo 0 de Fundamentos (6 aulas, 11h) + 12 aulas de modelo de dados, PIX, repasse, tempo real e deploy.",
         keywords: [
@@ -511,10 +511,10 @@ export const COURSES: Record<CourseSlug, Course> = {
       },
       en: {
         metaTitle:
-          "Build a Marketplace in Production: From Data Model to PIX & Payouts",
+          "Free Course — Build a Marketplace in Production: From Data Model to PIX & Payouts",
         metaDescription:
-          "18-lesson (38h 10m) engineering course based on MySuperStore in production: free Module 0 Foundations (6 lessons) + Module 1 (pt-BR).",
-        h1: "Build your marketplace: from code to payments in production",
+          "100% free 18-lesson (38h 10m) interactive engineering course with browser terminal simulator, VS Code starter kit, free cloud deploy and verifiable certificate.",
+        h1: "Build your marketplace: from code to payments in production (100% Free)",
         tagline:
           "An 18-lesson (38h 10m) course grounded in the real MySuperStore codebase — starting with a 6-lesson Foundations track (Module 0) through PIX payments, idempotency, payouts and deployment.",
         keywords: [

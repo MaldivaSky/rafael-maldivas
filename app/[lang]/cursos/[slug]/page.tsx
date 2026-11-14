@@ -24,7 +24,6 @@ import {
 } from "@/app/lib/courses";
 import { COMPANY, SITE } from "@/app/lib/site";
 import { ORACLE_CERT } from "@/app/lib/credentials";
-import CourseWaitlistForm from "@/app/components/curso/CourseWaitlistForm";
 import CourseLevelSelector from "@/app/components/curso/CourseLevelSelector";
 import CourseFreeDeployShowcase from "@/app/components/curso/CourseFreeDeployShowcase";
 
@@ -59,9 +58,9 @@ export async function generateMetadata({
 
 const SALES_COPY = {
   pt: {
-    heroTag: "Curso livre profissional · Estudo de caso MySuperStore",
-    ctaFree: "Começar pelo Módulo 0 gratuito",
-    ctaWaitlist: "Entrar na lista de espera",
+    heroTag: "Curso livre 100% gratuito · Estudo de caso MySuperStore",
+    ctaFree: "Começar Fase 1 Agora (100% Grátis)",
+    ctaWaitlist: "Baixar Casa Pré-Moldada (.zip) & Arena",
     statsModules: "módulos",
     statsDuration: "carga horária real",
     statsCase: "sistema em produção",
@@ -119,11 +118,11 @@ const SALES_COPY = {
       "Critério de emissão: conclusão das atividades, aproveitamento mínimo nos quizzes e aprovação no projeto final pela rubrica técnica.",
       "Verificação pública: cada certificado possui código único e QR Code consultável em /[lang]/certificado/[codigo], exibindo nome, curso, carga horária real (38h 10min), aproveitamento e data de emissão.",
     ],
-    legalTitle: "Termos, cancelamento e reembolso",
+    legalTitle: "Acesso 100% gratuito, licença aberta e privacidade (LGPD)",
     legalItems: [
-      "Política de reembolso e direito de arrependimento (CDC art. 49): [A DEFINIR COM ADVOGADO]",
-      "Termos de uso do curso e licença do material didático: [A DEFINIR COM ADVOGADO]",
-      "Política de privacidade e guarda de registros de certificação (LGPD): [A DEFINIR COM ADVOGADO]",
+      "Acesso 100% gratuito e aberto: todas as 18 aulas, simuladores, kits (.zip) e emissão de certificado verificável são gratuitos, sem mensalidade ou cobrança oculta.",
+      "Licença dos projetos do aluno: os códigos dos kits (Casa Pré-Moldada e Mini-Loja) podem ser modificados, publicados e usados livremente em seu portfólio ou negócio próprio.",
+      "Privacidade e proteção de dados (LGPD — Lei 13.709/2018): seu login Google é utilizado exclusivamente para sincronizar seu progresso na trilha e emitir seu certificado público verificável.",
     ],
     instructorTag: "Instrutor",
     instructorTitle: "Rafael Maldivas",
@@ -134,9 +133,9 @@ const SALES_COPY = {
     backToCatalog: "Voltar para todos os cursos",
   },
   en: {
-    heroTag: "Professional training course · MySuperStore Case Study",
-    ctaFree: "Start free Module 0 (pt-BR)",
-    ctaWaitlist: "Join the waitlist",
+    heroTag: "100% Free Interactive Course · MySuperStore Case Study",
+    ctaFree: "Start Phase 1 Free (pt-BR)",
+    ctaWaitlist: "Open Practice Arena & Starter Kit (.zip)",
     statsModules: "modules",
     statsDuration: "total course hours",
     statsCase: "production codebase",
@@ -194,11 +193,11 @@ const SALES_COPY = {
       "Issuance criteria: completing module quizzes and passing the final project technical rubric.",
       "Public verification: each certificate receives a unique verification code and QR Code at /[lang]/certificado/[codigo] showing holder name, course, exact hours (38h 10m), score and issue date.",
     ],
-    legalTitle: "Terms, cancellation and refund policy",
+    legalTitle: "100% free access, open starter kits & privacy (LGPD)",
     legalItems: [
-      "Refund policy & cooling-off period: [A DEFINIR COM ADVOGADO]",
-      "Course terms of use & content license: [A DEFINIR COM ADVOGADO]",
-      "Privacy policy & certificate record retention: [A DEFINIR COM ADVOGADO]",
+      "100% free and open access: all 18 lessons, interactive simulators, downloadable starter kits (.zip) and verifiable certificate issuance are completely free.",
+      "Student project license: you are free to customize, publish and use the starter storefront and marketplace templates in your portfolio or business.",
+      "Privacy & data protection (Brazilian LGPD): Google Sign-In is used strictly to sync your learning progress and issue your verifiable certificate.",
     ],
     instructorTag: "Instructor",
     instructorTitle: "Rafael Maldivas",
@@ -318,10 +317,13 @@ export default async function CourseSalesPage({
                 ? "Exame Final (80%+) e Certificado"
                 : "Final Exam (80%+) & Certificate"}
             </Link>
-            <a href="#lista-de-espera" className="btn btn-ghost">
+            <Link
+              href={`${localePath(`/cursos/${course.slug}/pratica`, lang)}?estacao=bancada`}
+              className="btn btn-ghost"
+            >
               {t.ctaWaitlist}
               <ArrowRight size={16} aria-hidden="true" />
-            </a>
+            </Link>
           </div>
 
           <div className="prod-stats">
@@ -614,13 +616,6 @@ export default async function CourseSalesPage({
               </li>
             </ul>
           </div>
-        </div>
-      </section>
-
-      {/* Lista de espera */}
-      <section className="curso-section" id="lista-de-espera">
-        <div className="wrap">
-          <CourseWaitlistForm lang={lang} courseName={course.name} />
         </div>
       </section>
 

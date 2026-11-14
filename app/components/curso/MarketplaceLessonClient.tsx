@@ -58,7 +58,7 @@ export default function MarketplaceLessonClient({
     updatePreferences,
   } = useCourseWorkspace(courseSlug);
 
-  const [activeStage, setActiveStage] = useState<IdeLessonStage>("all");
+  const [activeStage, setActiveStage] = useState<IdeLessonStage>("predict");
   const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
 
   const canonicalLesson = useMemo(() => {

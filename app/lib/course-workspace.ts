@@ -11,7 +11,7 @@ export const LEGACY_M1_STORAGE_KEY = "maldivas-curso-m1-progresso-v1";
 export const LEGACY_M2_STORAGE_KEY = "maldivas-curso-done-v1";
 
 export type IdeWorkbenchTab = "terminal" | "lab" | "http" | "deploy" | "notes";
-export type IdeLessonStage = "all" | "predict" | "concept" | "practice" | "quiz";
+export type IdeLessonStage = "all" | "predict" | "concept" | "practice" | "quiz" | "deploy";
 export type SrsRating = 1 | 2 | 3 | 4; // 1=Again, 2=Hard, 3=Good, 4=Easy
 export type WorkspaceDifficultyLevel = "facil" | "mediano" | "dificil";
 
@@ -561,5 +561,65 @@ export function computeLessonMastery(slug: string, workspace: WorkspaceState): L
     noteSaved,
     completed,
     readyForCompletion,
+  };
+}
+
+export interface CourseGamificationSummary {
+  xp: number;
+  levelNumber: number;
+  rankTitle: string;
+  nextLevelXp: number;
+  trackCompleted: number;
+  trackTotal: number;
+  trackPct: number;
+  terminalStepsDone: number;
+}
+
+export function computeCourseGamification(
+  workspace: WorkspaceState,
+  trackSlugs: string[],
+): CourseGamificationSummary {
+  const lessonsDoneXp = workspace.completedSlugs.length * 100;
+  const terminalXp = workspace.terminalSteps.length * 25;
+  const labsXp =
+    Object.values(workspace.labsPassed).filter((entry) => entry.passed).length * 50;
+  const quizzesXp =
+    Object.values(workspace.quizScores).filter((q) => q.pct >= 70).length * 40;
+  const deployXp =
+    Object.values(workspace.deployChecklist).filter(Boolean).length * 50;
+
+  const xp = lessonsDoneXp + terminalXp + labsXp + quizzesXp + deployXp;
+
+  let levelNumber = 1;
+  let rankTitle = "Aprendiz";
+  let nextLevelXp = 250;
+  if (xp >= 1200) {
+    levelNumber = 4;
+    rankTitle = "Arquiteto";
+    nextLevelXp = 2000;
+  } else if (xp >= 600) {
+    levelNumber = 3;
+    rankTitle = "Engenheiro";
+    nextLevelXp = 1200;
+  } else if (xp >= 250) {
+    levelNumber = 2;
+    rankTitle = "Construtor";
+    nextLevelXp = 600;
+  }
+
+  const trackSet = new Set(trackSlugs);
+  const trackCompleted = workspace.completedSlugs.filter((s) => trackSet.has(s)).length;
+  const trackTotal = Math.max(1, trackSlugs.length);
+  const trackPct = Math.min(100, Math.round((trackCompleted / trackTotal) * 100));
+
+  return {
+    xp,
+    levelNumber,
+    rankTitle,
+    nextLevelXp,
+    trackCompleted,
+    trackTotal,
+    trackPct,
+    terminalStepsDone: workspace.terminalSteps.length,
   };
 }

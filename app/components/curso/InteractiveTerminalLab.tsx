@@ -31,6 +31,7 @@ interface InteractiveTerminalLabProps {
   onRecordProgress: (stepIds: string[], missionIds: string[]) => void;
   onUnlockContinue?: () => void;
   continueLabel?: string;
+  initialMissionId?: TerminalMissionId;
 }
 
 export function InteractiveTerminalLab({
@@ -39,9 +40,10 @@ export function InteractiveTerminalLab({
   onRecordProgress,
   onUnlockContinue,
   continueLabel = "Avançar para Lab & Publicação R$ 0",
+  initialMissionId = "mission-1-git-basics",
 }: InteractiveTerminalLabProps) {
   const [selectedMissionId, setSelectedMissionId] =
-    useState<TerminalMissionId>("mission-1-git-basics");
+    useState<TerminalMissionId>(initialMissionId);
   const [simState, setSimState] = useState<TerminalSimState>(() => {
     const base = createInitialTerminalState();
     return {
@@ -49,10 +51,18 @@ export function InteractiveTerminalLab({
       completedStepIds: [...completedStepIds],
       completedMissions: completedMissions.filter(
         (m): m is TerminalMissionId =>
-          m === "mission-1-git-basics" || m === "mission-2-django-env",
+          m === "mission-1-git-basics" ||
+          m === "mission-2-django-env" ||
+          m === "mission-3-deploy-check",
       ),
     };
   });
+
+  useEffect(() => {
+    if (initialMissionId) {
+      setSelectedMissionId(initialMissionId);
+    }
+  }, [initialMissionId]);
   const [inputCmd, setInputCmd] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [historyCursor, setHistoryCursor] = useState<number | null>(null);
@@ -184,7 +194,9 @@ export function InteractiveTerminalLab({
         new Set([...completedMissions, ...simState.completedMissions]),
       ).filter(
         (m): m is TerminalMissionId =>
-          m === "mission-1-git-basics" || m === "mission-2-django-env",
+          m === "mission-1-git-basics" ||
+          m === "mission-2-django-env" ||
+          m === "mission-3-deploy-check",
       ),
     });
     setTranscript([
@@ -233,7 +245,9 @@ export function InteractiveTerminalLab({
                 {done ? "✓ " : ""}
                 {mission.id === "mission-1-git-basics"
                   ? "Missão 1: Pastas + Git"
-                  : "Missão 2: Python + Django"}
+                  : mission.id === "mission-2-django-env"
+                    ? "Missão 2: Python + Django"
+                    : "Missão 3: Auditoria + Deploy"}
               </button>
             );
           })}

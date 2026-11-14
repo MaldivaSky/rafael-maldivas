@@ -65,7 +65,7 @@ export default function ModuleZeroLessonClient({
     updatePreferences,
   } = useCourseWorkspace(courseSlug);
 
-  const [activeStage, setActiveStage] = useState<IdeLessonStage>("all");
+  const [activeStage, setActiveStage] = useState<IdeLessonStage>("predict");
   const [activeStationId, setActiveStationId] = useState<string>(RESTAURANT_STATIONS[0].id);
   const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({});
   const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
@@ -164,6 +164,14 @@ export default function ModuleZeroLessonClient({
                 Baixar PDF do Módulo 0
               </a>
               <a
+                href="/cursos/kits/casa-pre-moldada-marketplace.zip"
+                download="casa-pre-moldada-marketplace.zip"
+                className="btn btn-ghost curso-btn-sm"
+              >
+                <Download size={15} aria-hidden="true" />
+                Baixar Casa Pré-Moldada (.zip)
+              </a>
+              <a
                 href="/cursos/kits/mini-loja-kit.zip"
                 download="mini-loja-kit.zip"
                 className="btn btn-ghost curso-btn-sm"
@@ -185,8 +193,8 @@ export default function ModuleZeroLessonClient({
 
           {!isCompleted && !mastery.readyForCompletion && (
             <p className="ide-mastery-hint">
-              Checklist de domínio recomendado: passe nos testes do Lab Python à direita e acerte
-              pelo menos 70% do Quiz desta lição.
+              Missão desta Fase: avance pelas 4 etapas acima, cumpra o desafio na Arena Prática e
+              acerte pelo menos 70% do Boss Quiz (+100 XP).
             </p>
           )}
 

@@ -8,7 +8,10 @@
  * Zero sibling runtime imports so Node 24 --test can import directly.
  */
 
-export type TerminalMissionId = "mission-1-git-basics" | "mission-2-django-env";
+export type TerminalMissionId =
+  | "mission-1-git-basics"
+  | "mission-2-django-env"
+  | "mission-3-deploy-check";
 
 export interface TerminalMissionStep {
   id: string;
@@ -145,7 +148,56 @@ export const TERMINAL_MISSIONS: TerminalMissionSpec[] = [
       },
     ],
   },
+  {
+    id: "mission-3-deploy-check",
+    title: "Missão 3 · Auditoria de Produção & Deploy Seguro (Render / Vercel)",
+    subtitle:
+      "Confira o estado do repositório, rode a auditoria de segurança do Django para produção e publique na branch main.",
+    steps: [
+      {
+        id: "m3-status",
+        title: "Inspecione o estado do repositório antes do deploy",
+        expectedExample: "git status",
+        explanation: "Garante que nenhum arquivo de senha (.env) ou rascunho sujo está pendente.",
+      },
+      {
+        id: "m3-check-deploy",
+        title: "Rode o verificador de segurança de produção do Django",
+        expectedExample: "python manage.py check --deploy",
+        explanation:
+          "Confere DEBUG=False, SECRET_KEY forte, ALLOWED_HOSTS e cabeçalhos HTTPS antes de expor na internet.",
+      },
+      {
+        id: "m3-push",
+        title: "Envie o código validado para o GitHub disparar o deploy",
+        expectedExample: "git push origin main",
+        explanation:
+          "Publica seus commits no GitHub; a Vercel e o Render detectam o push e atualizam sua loja automaticamente.",
+      },
+    ],
+  },
 ];
+
+export function getRecommendedTerminalMission(lessonSlug?: string | null): TerminalMissionId {
+  if (!lessonSlug) return "mission-1-git-basics";
+  if (
+    lessonSlug.includes("f01") ||
+    lessonSlug.includes("f02") ||
+    lessonSlug.includes("f05") ||
+    lessonSlug.includes("carrinho")
+  ) {
+    return "mission-1-git-basics";
+  }
+  if (
+    lessonSlug.includes("infraestrutura") ||
+    lessonSlug.includes("deploy") ||
+    lessonSlug.includes("webhook") ||
+    lessonSlug.includes("projeto-final")
+  ) {
+    return "mission-3-deploy-check";
+  }
+  return "mission-2-django-env";
+}
 
 export function createInitialTerminalState(): TerminalSimState {
   return {
@@ -503,14 +555,10 @@ export function executeTerminalCommand(
 
   if (normalizedLower === "git status") {
     if (!next.gitInitialized) {
-      return {
-        nextState: next,
-        lines: [
-          { kind: "err", text: "fatal: not a git repository (pasta ainda não é controlada pelo Git)." },
-          { kind: "mentor", text: "Mentor: Rode 'git init' primeiro dentro de ~/minha-loja." },
-        ],
-      };
+      next.gitInitialized = true;
+      next.gitIgnoredEnv = true;
     }
+    const res = markStep(next, "m3-status");
     const untracked = Object.keys(next.filesByDir[next.cwd] ?? {}).filter(
       (f) => (!next.gitIgnoredEnv || f !== ".env") && !next.stagedFiles.includes(f),
     );
@@ -523,13 +571,19 @@ export function executeTerminalCommand(
           text:
             next.stagedFiles.length > 0
               ? `Changes to be committed: ${next.stagedFiles.join(", ")}`
-              : "No changes added to commit yet.",
+              : "nothing to commit, working tree clean (ou pronto para auditoria)",
         },
         {
           kind: next.gitIgnoredEnv ? "out" : "warn",
           text: `Untracked files: ${untracked.join(", ") || "(nenhum)"}${next.gitIgnoredEnv ? "" : "  <-- ATENCAO: .env exposto!"}`,
         },
+        {
+          kind: "mentor",
+          text: "Mentor: Estado conferido! Para auditar a segurança de produção, rode 'python manage.py check --deploy'.",
+        },
       ],
+      newlyCompletedStepId: res.stepAdded ? "m3-status" : undefined,
+      newlyCompletedMissionId: res.missionAdded,
     };
   }
 
@@ -780,6 +834,51 @@ export function executeTerminalCommand(
         },
       ],
       newlyCompletedStepId: res.stepAdded ? "m2-test" : undefined,
+      newlyCompletedMissionId: res.missionAdded,
+    };
+  }
+
+  if (
+    normalizedLower === "python manage.py check --deploy" ||
+    normalizedLower === "python3 manage.py check --deploy"
+  ) {
+    const res = markStep(next, "m3-check-deploy");
+    return {
+      nextState: next,
+      lines: [
+        { kind: "out", text: "System check identified no issues (0 silenced)." },
+        { kind: "ok", text: "  ✓ DEBUG=False verificado" },
+        { kind: "ok", text: "  ✓ SECRET_KEY carregada de variável de ambiente" },
+        { kind: "ok", text: "  ✓ ALLOWED_HOSTS e SECURE_SSL_REDIRECT ativos" },
+        {
+          kind: "mentor",
+          text: "Mentor: Auditoria aprovada! Agora envie para produção com 'git push origin main'.",
+        },
+      ],
+      newlyCompletedStepId: res.stepAdded ? "m3-check-deploy" : undefined,
+      newlyCompletedMissionId: res.missionAdded,
+    };
+  }
+
+  if (
+    normalizedLower === "git push origin main" ||
+    normalizedLower === "git push -u origin main" ||
+    normalizedLower === "git push"
+  ) {
+    const res = markStep(next, "m3-push");
+    return {
+      nextState: next,
+      lines: [
+        { kind: "out", text: "Enumerating objects: 12, done." },
+        { kind: "out", text: "Writing objects: 100% (12/12), 4.18 KiB | 4.18 MiB/s, done." },
+        { kind: "ok", text: "To https://github.com/aluno/minha-loja.git" },
+        { kind: "ok", text: "   a1b2c3d..f9e8d7c  main -> main" },
+        {
+          kind: "mentor",
+          text: "DEPLOY DISPARADO! O GitHub recebeu seu código e acionou o deploy automático na Vercel e no Render.",
+        },
+      ],
+      newlyCompletedStepId: res.stepAdded ? "m3-push" : undefined,
       newlyCompletedMissionId: res.missionAdded,
     };
   }

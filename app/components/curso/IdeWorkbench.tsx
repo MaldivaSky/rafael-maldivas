@@ -55,6 +55,8 @@ interface IdeWorkbenchProps {
   onToggleDeployStep: (stepId: string) => void;
   onRecordTerminalProgress?: (stepIds: string[], missionIds: string[]) => void;
   onChangeLevel: (level: WorkspaceDifficultyLevel) => void;
+  forcedTab?: IdeWorkbenchTab;
+  hideTabBar?: boolean;
 }
 
 function formatCents(cents: number): string {
@@ -72,9 +74,11 @@ export function IdeWorkbench({
   onToggleDeployStep,
   onRecordTerminalProgress,
   onChangeLevel,
+  forcedTab,
+  hideTabBar = false,
 }: IdeWorkbenchProps) {
   const lab = COURSE_LABS[lessonSlug] ?? Object.values(COURSE_LABS)[0];
-  const activeTab = workspace.preferences.activeTab;
+  const activeTab = forcedTab ?? workspace.preferences.activeTab;
   const selectedLevel = workspace.preferences.selectedLevel;
   const deployDoneCount = getDeployCardsForLevel(selectedLevel).filter(
     (c) => workspace.deployChecklist[c.id],
@@ -189,6 +193,7 @@ export function IdeWorkbench({
 
   return (
     <section className="ide-workbench" aria-label="Bancada Pratica da IDE">
+      {!hideTabBar && (
       <div className="ide-workbench-tabs" role="tablist" aria-label="Ferramentas da bancada">
         <button
           type="button"
@@ -257,6 +262,7 @@ export function IdeWorkbench({
           )}
         </button>
       </div>
+      )}
 
       {activeTab === "terminal" && (
         <div className="ide-workbench-panel">

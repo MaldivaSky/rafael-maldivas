@@ -124,7 +124,7 @@ export default function ModuleOneLessonClient({
     updatePreferences,
   } = useCourseWorkspace(courseSlug);
 
-  const [activeStage, setActiveStage] = useState<IdeLessonStage>("all");
+  const [activeStage, setActiveStage] = useState<IdeLessonStage>("predict");
   const [simState, setSimState] = useState<LocalSimState>({
     simulatorUsed: false,
     pixFlowUsed: false,
@@ -251,8 +251,8 @@ export default function ModuleOneLessonClient({
 
           {!completed && !mastery.readyForCompletion && (
             <p className="ide-mastery-hint">
-              Checklist de domínio recomendado: conclua o Lab de Split em centavos na bancada direita
-              e faça pelo menos 70% no Quiz.
+              Missão desta Fase: avance pelas 4 etapas acima, conclua o Lab de Split em centavos na
+              Arena Prática e faça pelo menos 70% no Boss Quiz (+100 XP).
             </p>
           )}
 

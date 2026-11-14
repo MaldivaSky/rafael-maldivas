@@ -6,6 +6,7 @@ import path from "node:path";
 import { COURSES, allCourseLessons } from "../app/lib/courses.ts";
 import {
   COURSE_SRS_CARDS,
+  computeCourseGamification,
   computeLessonMastery,
   countDueSrsCards,
   createEmptyWorkspaceState,
@@ -31,6 +32,7 @@ import {
 import {
   createInitialTerminalState,
   executeTerminalCommand,
+  getRecommendedTerminalMission,
 } from "../app/lib/terminal-sim.ts";
 import { MYSUPERSTORE_REPO_FILES, findRepoFilesForLesson } from "../app/lib/mysuperstore-repo.ts";
 
@@ -325,5 +327,33 @@ describe("Interactive Black Terminal Simulator (Tela Preta Primeiro)", () => {
     term = executeTerminalCommand(term, "python manage.py test").nextState;
     assert.equal(term.testsPassed, true);
     assert.ok(term.completedMissions.includes("mission-2-django-env"));
+
+    // Missao 3: Auditoria de Producao & Deploy Seguro
+    term = executeTerminalCommand(term, "git status").nextState;
+    assert.ok(term.completedStepIds.includes("m3-status"));
+    term = executeTerminalCommand(term, "python manage.py check --deploy").nextState;
+    assert.ok(term.completedStepIds.includes("m3-check-deploy"));
+    term = executeTerminalCommand(term, "git push origin main").nextState;
+    assert.ok(term.completedMissions.includes("mission-3-deploy-check"));
+  });
+
+  it("mapeia licoes para a missao do terminal recomendada, calcula XP/patente e possui o kit Casa Pre-Moldada", () => {
+    assert.equal(getRecommendedTerminalMission("modulo-0-f01-o-mapa"), "mission-1-git-basics");
+    assert.equal(getRecommendedTerminalMission("modulo-0-f03-primeiro-projeto-django"), "mission-2-django-env");
+    assert.equal(getRecommendedTerminalMission("modulo-5-infraestrutura-deploy-backup"), "mission-3-deploy-check");
+
+    const ws = createEmptyWorkspaceState();
+    ws.completedSlugs = ["modulo-0-f01-o-mapa", "modulo-0-f02-preparando-a-bancada"];
+    ws.terminalSteps = ["m1-pwd", "m1-ls", "m1-mkdir", "m1-cd"];
+    const game = computeCourseGamification(ws, COURSE_LEVELS.facil.recommendedSlugs);
+    assert.equal(game.xp, 300);
+    assert.equal(game.levelNumber, 2);
+    assert.equal(game.rankTitle, "Construtor");
+    assert.equal(game.trackCompleted, 2);
+    assert.equal(game.trackTotal, 6);
+
+    const zipPath = path.join(process.cwd(), "public/cursos/kits/casa-pre-moldada-marketplace.zip");
+    assert.ok(fs.existsSync(zipPath), "casa-pre-moldada-marketplace.zip deve existir");
+    assert.ok(fs.statSync(zipPath).size > 2000, "casa-pre-moldada-marketplace.zip nao pode estar vazio");
   });
 });

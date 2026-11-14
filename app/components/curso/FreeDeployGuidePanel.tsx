@@ -30,6 +30,8 @@ interface FreeDeployGuidePanelProps {
   deployChecklist: Record<string, boolean>;
   onToggleDeployStep: (stepId: string) => void;
   onChangeLevel?: (level: CourseDifficultyLevel) => void;
+  sectionMode?: "all" | "builder" | "deploy";
+  initialProviderId?: string;
 }
 
 interface CartEntry {
@@ -72,12 +74,19 @@ export function FreeDeployGuidePanel({
   deployChecklist,
   onToggleDeployStep,
   onChangeLevel,
+  sectionMode = "all",
+  initialProviderId,
 }: FreeDeployGuidePanelProps) {
   const levelSpec = getCourseLevelSpec(selectedLevel);
   const deployCards = getDeployCardsForLevel(selectedLevel);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [flippedProviderCards, setFlippedProviderCards] = useState<Record<string, boolean>>({});
   const [activeStepByCard, setActiveStepByCard] = useState<Record<string, number>>({});
+  const [selectedProviderIdx, setSelectedProviderIdx] = useState<number>(() => {
+    if (!initialProviderId) return 0;
+    const idx = deployCards.findIndex((c) => c.id === initialProviderId);
+    return idx >= 0 ? idx : 0;
+  });
 
   // Custom Storefront Builder state
   const [storeName, setStoreName] = useState("Vitrine Jovem Store");
@@ -173,6 +182,11 @@ export function FreeDeployGuidePanel({
   }
 
   const completedDeployCount = deployCards.filter((c) => Boolean(deployChecklist[c.id])).length;
+  const safeProviderIdx = Math.min(selectedProviderIdx, Math.max(0, deployCards.length - 1));
+  const visibleDeployCards =
+    deployCards.length > 0 ? [deployCards[safeProviderIdx]] : [];
+  const showBuilder = sectionMode === "all" || sectionMode === "builder";
+  const showDeploy = sectionMode === "all" || sectionMode === "deploy";
 
   return (
     <div className="ide-deploy-wrap">
@@ -184,9 +198,11 @@ export function FreeDeployGuidePanel({
             Plano Mínimo Gratuito — {levelSpec.name}
           </h3>
           <p className="ide-lab-objective">
-            Personalize sua loja abaixo, baixe o código pronto e siga os{" "}
-            <strong>Flip Cards interativos</strong> para abrir conta gratuita no GitHub, Neon, Render e
-            Vercel ({completedDeployCount}/{deployCards.length} etapas concluídas).
+            {sectionMode === "builder"
+              ? "Personalize sua vitrine de roupas abaixo, teste o carrinho e baixe seu arquivo index.html pronto para publicar."
+              : sectionMode === "deploy"
+                ? `Siga uma etapa por vez para abrir conta gratuita e publicar (${completedDeployCount}/${deployCards.length} etapas concluídas).`
+                : `Personalize sua loja abaixo, baixe o código pronto e siga uma etapa por vez para publicar (${completedDeployCount}/${deployCards.length} etapas concluídas).`}
           </p>
         </div>
 
@@ -203,7 +219,10 @@ export function FreeDeployGuidePanel({
                 key={id}
                 type="button"
                 className={`ide-preset-chip${selectedLevel === id ? " is-selected-chip" : ""}`}
-                onClick={() => onChangeLevel(id)}
+                onClick={() => {
+                  setSelectedProviderIdx(0);
+                  onChangeLevel(id);
+                }}
               >
                 {label}
               </button>
@@ -213,6 +232,7 @@ export function FreeDeployGuidePanel({
       </div>
 
       {/* Interactive Custom Storefront Builder + Live Preview + Export */}
+      {showBuilder && (
       <section className="ide-vitrine-box" aria-label="Construtor Ao Vivo da Sua Loja">
         <div className="ide-vitrine-head">
           <div className="flex items-center gap-2">
@@ -411,10 +431,36 @@ export function FreeDeployGuidePanel({
           )}
         </div>
       </section>
+      )}
 
-      {/* Dynamic Flip-Capable Provider Cards */}
+      {/* Dynamic Focused 1-Provider-at-a-Time Deploy Cards */}
+      {showDeploy && (
       <div className="ide-deploy-cards">
-        {deployCards.map((card) => {
+        <div
+          className="ide-deploy-provider-stepper"
+          role="tablist"
+          aria-label="Escolher provedor de publicação gratuita"
+        >
+          {deployCards.map((c, idx) => {
+            const isCurrent = idx === safeProviderIdx;
+            const isDone = Boolean(deployChecklist[c.id]);
+            return (
+              <button
+                key={c.id}
+                type="button"
+                role="tab"
+                aria-selected={isCurrent}
+                className={`ide-preset-chip${isCurrent ? " is-selected-chip" : ""}`}
+                onClick={() => setSelectedProviderIdx(idx)}
+              >
+                {isDone ? "✓ " : `Passo ${idx + 1}: `}
+                {c.provider}
+              </button>
+            );
+          })}
+        </div>
+
+        {visibleDeployCards.map((card) => {
           const done = Boolean(deployChecklist[card.id]);
           const isFlipped = Boolean(flippedProviderCards[card.id]);
           const visuals = card.stepVisuals ?? [];
@@ -588,12 +634,42 @@ export function FreeDeployGuidePanel({
                       <strong>Segredo do plano R$ 0,00:</strong> {card.warningNote}
                     </div>
                   )}
+
+                  {deployCards.length > 1 && (
+                    <div
+                      className="flex flex-wrap items-center justify-between gap-2"
+                      style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid rgba(148,163,184,0.16)" }}
+                    >
+                      <button
+                        type="button"
+                        className="ide-btn ide-btn-ghost ide-btn-xs"
+                        disabled={safeProviderIdx === 0}
+                        onClick={() => setSelectedProviderIdx((i) => Math.max(0, i - 1))}
+                      >
+                        ← Provedor Anterior
+                      </button>
+                      <span className="ide-muted-xs">
+                        Etapa {safeProviderIdx + 1} de {deployCards.length} ({card.provider})
+                      </span>
+                      <button
+                        type="button"
+                        className="ide-btn ide-btn-primary ide-btn-xs"
+                        disabled={safeProviderIdx >= deployCards.length - 1}
+                        onClick={() =>
+                          setSelectedProviderIdx((i) => Math.min(deployCards.length - 1, i + 1))
+                        }
+                      >
+                        Próximo Provedor →
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </article>
           );
         })}
       </div>
+      )}
     </div>
   );
 }
