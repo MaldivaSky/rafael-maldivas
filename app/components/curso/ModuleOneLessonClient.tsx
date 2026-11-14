@@ -124,7 +124,7 @@ export default function ModuleOneLessonClient({
     updatePreferences,
   } = useCourseWorkspace(courseSlug);
 
-  const [activeStage, setActiveStage] = useState<IdeLessonStage>("predict");
+  const [activeStage, setActiveStage] = useState<IdeLessonStage>("all");
   const [simState, setSimState] = useState<LocalSimState>({
     simulatorUsed: false,
     pixFlowUsed: false,

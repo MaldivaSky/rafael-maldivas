@@ -27,6 +27,7 @@ import {
 import { localePath } from "@/app/lib/i18n";
 import { useCourseWorkspace } from "@/app/hooks/useCourseWorkspace";
 import { CourseIdeShell } from "./CourseIdeShell";
+import { SoftwareSkeletonMasterclass } from "./SoftwareSkeletonMasterclass";
 import HttpStatusLab from "./HttpStatusLab";
 import NotebookLMMediaBlock from "./NotebookLMMediaBlock";
 import LessonVisualDiagram from "./LessonVisualDiagram";
@@ -65,7 +66,7 @@ export default function ModuleZeroLessonClient({
     updatePreferences,
   } = useCourseWorkspace(courseSlug);
 
-  const [activeStage, setActiveStage] = useState<IdeLessonStage>("predict");
+  const [activeStage, setActiveStage] = useState<IdeLessonStage>("all");
   const [activeStationId, setActiveStationId] = useState<string>(RESTAURANT_STATIONS[0].id);
   const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({});
   const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
@@ -161,23 +162,7 @@ export default function ModuleZeroLessonClient({
                 className="btn btn-ghost curso-btn-sm"
               >
                 <Download size={15} aria-hidden="true" />
-                Baixar PDF do Módulo 0
-              </a>
-              <a
-                href="/cursos/kits/casa-pre-moldada-marketplace.zip"
-                download="casa-pre-moldada-marketplace.zip"
-                className="btn btn-ghost curso-btn-sm"
-              >
-                <Download size={15} aria-hidden="true" />
-                Baixar Casa Pré-Moldada (.zip)
-              </a>
-              <a
-                href="/cursos/kits/mini-loja-kit.zip"
-                download="mini-loja-kit.zip"
-                className="btn btn-ghost curso-btn-sm"
-              >
-                <Download size={15} aria-hidden="true" />
-                Baixar mini-loja (.zip)
+                Apostila de Apoio (PDF)
               </a>
               <button
                 type="button"
@@ -269,6 +254,12 @@ export default function ModuleZeroLessonClient({
             )}
 
             <article className="curso-prose">
+              {(lesson.slug === "modulo-0-f01-o-mapa" ||
+                lesson.slug === "modulo-0-f03-primeiro-projeto-django" ||
+                lesson.slug === "modulo-0-f06-lendo-um-projeto-real") && (
+                <SoftwareSkeletonMasterclass courseSlug={courseSlug} compact />
+              )}
+
               {lesson.coreSections.map((sec) => (
                 <div key={sec.heading} style={{ marginBottom: 28 }}>
                   <h2>{sec.heading}</h2>

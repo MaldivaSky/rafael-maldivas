@@ -35,6 +35,11 @@ import {
   getRecommendedTerminalMission,
 } from "../app/lib/terminal-sim.ts";
 import { MYSUPERSTORE_REPO_FILES, findRepoFilesForLesson } from "../app/lib/mysuperstore-repo.ts";
+import {
+  ENGINEERING_ACTS,
+  LESSON_QUEST_BRIEFINGS,
+  getLessonQuestBriefing,
+} from "../app/lib/course-game-engine.ts";
 
 describe("Course IDE Labs, SRS & Workspace State", () => {
   it("cobre todas as 18 aulas do marketplace com labs e flashcards SRS", () => {
@@ -355,5 +360,49 @@ describe("Interactive Black Terminal Simulator (Tela Preta Primeiro)", () => {
     const zipPath = path.join(process.cwd(), "public/cursos/kits/casa-pre-moldada-marketplace.zip");
     assert.ok(fs.existsSync(zipPath), "casa-pre-moldada-marketplace.zip deve existir");
     assert.ok(fs.statSync(zipPath).size > 2000, "casa-pre-moldada-marketplace.zip nao pode estar vazio");
+  });
+
+  it("respeita a ordem de engenharia em 6 Atos, briefings por aula e diagramas SVG de modelagem/esqueleto", () => {
+    assert.equal(ENGINEERING_ACTS.length, 6);
+    assert.deepEqual(
+      ENGINEERING_ACTS.map((a) => a.actNumber),
+      [1, 2, 3, 4, 5, 6],
+    );
+
+    const lessons = allCourseLessons(COURSES["construa-seu-marketplace"]);
+    for (const lesson of lessons) {
+      const brief = getLessonQuestBriefing(lesson.slug);
+      assert.ok(LESSON_QUEST_BRIEFINGS[lesson.slug], `Briefing ausente para ${lesson.slug}`);
+      assert.ok(brief.actNumber >= 1 && brief.actNumber <= 6);
+      assert.ok(brief.whyBeforeCode.length > 30);
+      assert.ok(brief.whatYouWillBuild.length > 20);
+      assert.ok(brief.primaryStationTitle.length > 10);
+    }
+
+    // F01 (Ato 1) introduz a planta, NAO despeja download de .zip sem explicacao
+    const f01 = getLessonQuestBriefing("modulo-0-f01-o-mapa");
+    assert.equal(f01.actNumber, 1);
+    assert.equal(f01.unlocksDownloadKit, undefined);
+
+    // F02 (Ato 2) treina primeiro no terminal e desbloqueia a Casa Pre-Moldada explicada
+    const f02 = getLessonQuestBriefing("modulo-0-f02-preparando-a-bancada");
+    assert.equal(f02.actNumber, 2);
+    assert.equal(f02.primaryStation, "terminal");
+    assert.ok(f02.unlocksDownloadKit);
+    assert.equal(f02.unlocksDownloadKit.howToUseSteps.length, 3);
+
+    // F03 e A02 ensinam o Alicerce e Modelagem de Dados (Ato 3)
+    assert.equal(getLessonQuestBriefing("modulo-0-f03-primeiro-projeto-django").actNumber, 3);
+    assert.equal(getLessonQuestBriefing("modulo-2-modelo-de-dados").actNumber, 3);
+
+    for (const svgFile of [
+      "public/cursos/guias/esqueleto-ordem-implementacao.svg",
+      "public/cursos/guias/modelagem-dados-marketplace.svg",
+      "public/cursos/guias/anatomia-casa-pre-moldada.svg",
+    ]) {
+      const fullSvg = path.join(process.cwd(), svgFile);
+      assert.ok(fs.existsSync(fullSvg), `${svgFile} deve existir`);
+      assert.ok(fs.statSync(fullSvg).size > 1500, `${svgFile} deve ter conteudo`);
+    }
   });
 });

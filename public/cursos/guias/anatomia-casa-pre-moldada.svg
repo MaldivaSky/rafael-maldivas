@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620">
+  <defs>
+    <linearGradient id="bgHouse" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#070d19"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="620" fill="url(#bgHouse)"/>
+
+  <!-- Header -->
+  <rect x="40" y="24" width="1120" height="72" rx="14" fill="#0b1528" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="65" y="52" fill="#fbbf24" font-family="system-ui, sans-serif" font-size="13" font-weight="800" letter-spacing="1.4">
+    ANALOGIA DIDÁTICA · A CASA PRÉ-MOLDADA DO SEU PROJETO (.ZIP)
+  </text>
+  <text x="65" y="79" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="21" font-weight="800">
+    Como os 4 Cômodos do Esqueleto se Conectam na Ordem Certa de Construção
+  </text>
+
+  <!-- STEP 1: ALICERCE (BANCO) -->
+  <g transform="translate(40, 130)">
+    <rect width="260" height="440" rx="14" fill="#0f172a" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="16" y="16" width="228" height="42" rx="8" fill="#78350f"/>
+    <text x="130" y="42" text-anchor="middle" fill="#fef08a" font-family="system-ui, sans-serif" font-size="14" font-weight="800">
+      1º PASSO · O ALICERCE
+    </text>
+    <text x="20" y="86" fill="#f8fafc" font-family="monospace" font-size="14" font-weight="800">
+      02-alicerce-banco/
+    </text>
+    <text x="20" y="108" fill="#fde68a" font-family="monospace" font-size="13">
+      models_esqueleto.py
+    </text>
+    <text x="20" y="144" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • Define a estrutura do Produto e do Pedido.
+    </text>
+    <text x="20" y="172" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • Converte Reais para centavos inteiros (R$ 129,90 → 12990).
+    </text>
+    <text x="20" y="200" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • Congela o preço no Snapshot do recibo.
+    </text>
+    <rect x="16" y="340" width="228" height="80" rx="10" fill="#1e293b"/>
+    <text x="28" y="366" fill="#fde68a" font-family="system-ui, sans-serif" font-size="12" font-weight="700">
+      Por que é o 1º a ser feito?
+    </text>
+    <text x="28" y="388" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="12">
+      Sem tabela e sem regra de centavos, a API não tem onde guardar nada!
+    </text>
+  </g>
+
+  <!-- STEP 2: PAREDES (API) -->
+  <g transform="translate(326, 130)">
+    <rect width="260" height="440" rx="14" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+    <rect x="16" y="16" width="228" height="42" rx="8" fill="#0c4a6e"/>
+    <text x="130" y="42" text-anchor="middle" fill="#7dd3fc" font-family="system-ui, sans-serif" font-size="14" font-weight="800">
+      2º PASSO · AS PAREDES
+    </text>
+    <text x="20" y="86" fill="#f8fafc" font-family="monospace" font-size="14" font-weight="800">
+      03-paredes-api/
+    </text>
+    <text x="20" y="108" fill="#7dd3fc" font-family="monospace" font-size="13">
+      api_esqueleto.py
+    </text>
+    <text x="20" y="144" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • Valida se a quantidade pedida é maior que zero.
+    </text>
+    <text x="20" y="172" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • Trava o estoque para impedir venda dupla (Status 409).
+    </text>
+    <text x="20" y="200" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • Calcula comissão da plataforma e repasse líquido.
+    </text>
+    <rect x="16" y="340" width="228" height="80" rx="10" fill="#1e293b"/>
+    <text x="28" y="366" fill="#7dd3fc" font-family="system-ui, sans-serif" font-size="12" font-weight="700">
+      Por que é o 2º a ser feito?
+    </text>
+    <text x="28" y="388" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="12">
+      Protege o alicerce contra cliques duplos e fraudes vindas da rua!
+    </text>
+  </g>
+
+  <!-- STEP 3: MÓVEIS (VITRINE) -->
+  <g transform="translate(612, 130)">
+    <rect width="260" height="440" rx="14" fill="#0f172a" stroke="#34d399" stroke-width="2"/>
+    <rect x="16" y="16" width="228" height="42" rx="8" fill="#064e3b"/>
+    <text x="130" y="42" text-anchor="middle" fill="#6ee7b7" font-family="system-ui, sans-serif" font-size="14" font-weight="800">
+      3º PASSO · OS MÓVEIS
+    </text>
+    <text x="20" y="86" fill="#f8fafc" font-family="monospace" font-size="14" font-weight="800">
+      01-acabamento-vitrine/
+    </text>
+    <text x="20" y="108" fill="#6ee7b7" font-family="monospace" font-size="13">
+      index.html
+    </text>
+    <text x="20" y="144" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • Mostra os cards de produtos, fotos e preços formatados.
+    </text>
+    <text x="20" y="172" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • Soma a sacola de compras em tempo real no navegador.
+    </text>
+    <text x="20" y="200" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • Dispara o pedido para a API ou WhatsApp.
+    </text>
+    <rect x="16" y="340" width="228" height="80" rx="10" fill="#1e293b"/>
+    <text x="28" y="366" fill="#6ee7b7" font-family="system-ui, sans-serif" font-size="12" font-weight="700">
+      Por que vem depois da regra?
+    </text>
+    <text x="28" y="388" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="12">
+      Porque a tela apenas exibe e envia pedidos; quem decide é o servidor!
+    </text>
+  </g>
+
+  <!-- STEP 4: INSPETOR & TELHADO (TESTES + DEPLOY) -->
+  <g transform="translate(898, 130)">
+    <rect width="262" height="440" rx="14" fill="#0f172a" stroke="#a7f3d0" stroke-width="2"/>
+    <rect x="16" y="16" width="230" height="42" rx="8" fill="#115e59"/>
+    <text x="131" y="42" text-anchor="middle" fill="#99f6e4" font-family="system-ui, sans-serif" font-size="14" font-weight="800">
+      4º PASSO · HABITE-SE
+    </text>
+    <text x="20" y="86" fill="#f8fafc" font-family="monospace" font-size="14" font-weight="800">
+      testar_minha_casa.py
+    </text>
+    <text x="20" y="108" fill="#99f6e4" font-family="monospace" font-size="13">
+      + 04-telhado-deploy/
+    </text>
+    <text x="20" y="144" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • O robô inspetor testa seus 4 cômodos em 1 segundo.
+    </text>
+    <text x="20" y="172" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • .gitignore protege seu .env de vazar no GitHub.
+    </text>
+    <text x="20" y="200" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="13">
+      • Procfile e requirements.txt publicam no Render e Vercel.
+    </text>
+    <rect x="16" y="340" width="230" height="80" rx="10" fill="#1e293b"/>
+    <text x="28" y="366" fill="#99f6e4" font-family="system-ui, sans-serif" font-size="12" font-weight="700">
+      Resultado Final:
+    </text>
+    <text x="28" y="388" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="12">
+      4/4 Testes Aprovados + Loja publicada na internet com custo R$ 0!
+    </text>
+  </g>
+</svg>

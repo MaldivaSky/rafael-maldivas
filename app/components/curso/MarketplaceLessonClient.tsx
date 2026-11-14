@@ -19,6 +19,7 @@ import type { MarketplaceLessonData } from "@/app/lib/marketplace-lessons-conten
 import { localePath } from "@/app/lib/i18n";
 import { useCourseWorkspace } from "@/app/hooks/useCourseWorkspace";
 import { CourseIdeShell } from "./CourseIdeShell";
+import { SoftwareSkeletonMasterclass } from "./SoftwareSkeletonMasterclass";
 import NotebookLMMediaBlock from "./NotebookLMMediaBlock";
 import LessonVisualDiagram from "./LessonVisualDiagram";
 import {
@@ -58,7 +59,7 @@ export default function MarketplaceLessonClient({
     updatePreferences,
   } = useCourseWorkspace(courseSlug);
 
-  const [activeStage, setActiveStage] = useState<IdeLessonStage>("predict");
+  const [activeStage, setActiveStage] = useState<IdeLessonStage>("all");
   const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
 
   const canonicalLesson = useMemo(() => {
@@ -167,6 +168,10 @@ export default function MarketplaceLessonClient({
         {showConcept && (
           <>
             <LessonVisualDiagram diagramId={lesson.diagramId} />
+
+            {lesson.slug === "modulo-2-modelo-de-dados" && (
+              <SoftwareSkeletonMasterclass courseSlug={courseSlug} compact />
+            )}
 
             <article className="curso-prose">
               {lesson.coreSections.map((sec) => (

@@ -49,6 +49,27 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
     "guideQuestion": "por que um pedido com duas lojas vira três tabelas, e o que o desenho do banco já impede você de errar?",
     "metaNote": "100 min · Estudo de caso MySuperStore",
     "diagramId": "a02-modelo-dados",
+    "notebookMedia": {
+      "sectionLabel": "Estúdio da Aula A02 · Podcast, Mapa Mental e Slides de Arquitetura",
+      "audio": {
+        "title": "Bastidores do código: por que Order e SubOrder são separados",
+        "src": "/cursos/midia/bastidores-codigo-marketplace.m4a",
+        "summary": "Como o desenho das tabelas no PostgreSQL protege o histórico fiscal (snapshot) e separa pagamento único de entrega por lojista.",
+        "durationLabel": "Podcast M4A"
+      },
+      "deck": {
+        "title": "Arquitetura de Sistemas Reais (Modelo de Dados)",
+        "href": "/cursos/midia/arquitetura-de-sistemas-reais.pdf",
+        "summary": "Slides visuais mostrando as relações entre Order, SubOrder, OrderItem, Payment e Payout.",
+        "pagesLabel": "15 slides · PDF"
+      },
+      "mindMap": {
+        "title": "Mapa mental completo do MySuperStore",
+        "src": "/cursos/midia/mysuperstore-mapa-mental.png",
+        "alt": "Mapa mental conectando front-end Next.js, back-end Django e tabelas do banco PostgreSQL.",
+        "caption": "Visão integrada de onde cada tabela do banco se conecta aos apps do sistema."
+      }
+    },
     "predict": [
       {
         "question": "Quantos \"pedidos\" a loja A enxerga? Quantos o cliente enxerga?",
@@ -402,6 +423,27 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
     "oneSentence": "o navegador sugere, o servidor decide. Qualquer número que vem do cliente pode ser forjado, então o valor final nasce sempre no backend, e cada centavo de desconto precisa ter um dono.",
     "guideQuestion": "se o navegador pode mandar qualquer número, como o sistema garante que o cliente paga o valor certo e que cada loja recebe a sua parte?",
     "metaNote": "110 min · Estudo de caso MySuperStore",
+    "notebookMedia": {
+      "sectionLabel": "Estúdio da Aula A03 · Vídeo, Podcast e Slides",
+      "video": {
+        "title": "Do clique no carrinho até a gravação segura no banco",
+        "src": "/cursos/midia/caminho-clique-banco-de-dados.mp4",
+        "summary": "Por que o navegador apenas sugere e o servidor recalcula subtotal, frete e rateio de cupom em centavos.",
+        "durationLabel": "Vídeo MP4"
+      },
+      "audio": {
+        "title": "A engenharia por trás do MySuperStore (Centavos e Rateio)",
+        "src": "/cursos/midia/a-engenharia-por-tras-do-mysuperstore.m4a",
+        "summary": "Como evitar perder 1 centavo quando um cupom de desconto é dividido entre 3 lojas.",
+        "durationLabel": "Podcast M4A"
+      },
+      "deck": {
+        "title": "APIs com Django REST Framework e Validação no Servidor",
+        "href": "/cursos/midia/apis-com-django-rest-framework.pdf",
+        "summary": "Deck explicando campos read-only no Serializer e recálculo transacional.",
+        "pagesLabel": "Slides PDF"
+      }
+    },
     "predict": [
       {
         "question": "Um cliente abre o DevTools e envia o pedido com \"shipping\": 0 e \"total\": 1.00. O que o servidor faz?",
@@ -2282,6 +2324,21 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
     "guideQuestion": "o cliente desistiu no meio do pagamento. O que acontece com a peça reservada, e quem faz isso quando ninguém está olhando?",
     "metaNote": "110 min · Estudo de caso MySuperStore",
     "diagramId": "a08-estados-pedido",
+    "notebookMedia": {
+      "sectionLabel": "Estúdio da Aula A08 · Podcast de Produção e Caderno Técnico",
+      "audio": {
+        "title": "Como bugs reais em produção ensinam arquitetura (Estoque Preso & Workers)",
+        "src": "/cursos/midia/como-bugs-em-producao-ensinam-arquitetura.m4a",
+        "summary": "A história real do bug de estoque preso quando o cliente desistia do pagamento e como a tarefa agendada resolveu.",
+        "durationLabel": "Podcast M4A"
+      },
+      "deck": {
+        "title": "Caderno do Sênior: Ciclo de Vida, Expiração e Workers",
+        "href": "/cursos/midia/caderno-do-senior.pdf",
+        "summary": "Decisões de engenharia sobre quando usar Celery/Redis e como devolver estoque com segurança.",
+        "pagesLabel": "Slides PDF"
+      }
+    },
     "predict": [
       {
         "question": "Na Aula 4 vimos que o estoque é baixado ao criar o pedido. Uma cliente cria o pedido e fecha a aba sem escolher como pagar. O que acontece com a peça?",
@@ -3596,6 +3653,21 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
     "oneSentence": "software pronto não é negócio pronto: antes de cobrar, alguém precisa responder quem é a empresa, como emite nota, o que promete, o que faz com os dados e o que acontece quando o cliente desiste.",
     "guideQuestion": "o código está pronto. O que mais precisa existir para que você possa, de verdade, receber dinheiro de um cliente e repassar a um lojista?",
     "metaNote": "90 min · Estudo de caso MySuperStore",
+    "notebookMedia": {
+      "sectionLabel": "Estúdio da Aula A11 · Podcast Segurança, LGPD e Operação Real",
+      "audio": {
+        "title": "Segurança versus pragmatismo: o que resolver antes de operar",
+        "src": "/cursos/midia/seguranca-versus-pragmatismo.m4a",
+        "summary": "Onde o código encontra o mundo jurídico e fiscal: dados pessoais (LGPD), split nativo e responsabilidade operacional.",
+        "durationLabel": "Podcast M4A"
+      },
+      "deck": {
+        "title": "Anatomia e Operação do MySuperStore",
+        "href": "/cursos/midia/anatomia-infraestrutura-mysuperstore.pdf",
+        "summary": "Visão completa da operação segura em produção.",
+        "pagesLabel": "Slides PDF"
+      }
+    },
     "predict": [
       {
         "question": "Na Aula 7 vimos que, para um lojista sem conta no provedor, o dinheiro cai na conta da plataforma e o repasse fica PENDING até um PIX de saída. Do ponto de vista jurídico, o que esse desenho cria?",
@@ -4024,7 +4096,37 @@ export const MARKETPLACE_LESSONS: Record<string, MarketplaceLessonData> = {
     "oneSentence": "juntar o que você aprendeu em um pacote pequeno, testado, e acompanhar com um documento honesto.",
     "guideQuestion": "você consegue provar, com testes e com um documento honesto, que o seu marketplace não perde, não duplica e não promete o que não pode cumprir?",
     "metaNote": "360 min · Estudo de caso MySuperStore",
-    "predict": [],
+    "notebookMedia": {
+      "sectionLabel": "Estúdio do Projeto Final · Vídeo, Podcast e Guia de Leitura de Projetos Reais",
+      "video": {
+        "title": "Por que travas e testes provam que o dinheiro fecha",
+        "src": "/cursos/midia/por-que-travas-evitam-erros.mp4",
+        "summary": "Revisão visual das invariantes financeiras e de estoque que o seu projeto final deve comprovar nos testes.",
+        "durationLabel": "Vídeo MP4"
+      },
+      "audio": {
+        "title": "Bastidores do código: juntando todas as peças do marketplace",
+        "src": "/cursos/midia/bastidores-codigo-marketplace.m4a",
+        "summary": "Como revisar cada módulo antes de submeter para avaliação e emitir seu certificado verificável.",
+        "durationLabel": "Podcast M4A"
+      },
+      "deck": {
+        "title": "Lendo e Entregando Projetos Reais",
+        "href": "/cursos/midia/lendo-projetos-reais.pdf",
+        "summary": "Guia visual de organização, testes de aceitação e documentação honesta do projeto.",
+        "pagesLabel": "Slides PDF"
+      }
+    },
+    "predict": [
+      {
+        "question": "Por que a entrega do projeto final exige que os testes automatizados provem que `comissao + repasse_lojista == total_pago`?",
+        "answer": "Porque em sistemas financeiros não basta a tela parecer bonita: os testes automatizados são a prova matemática de que nenhum centavo foi criado ou perdido em arredondamentos."
+      },
+      {
+        "question": "O que acontece se o seu receptor de webhook PIX processar duas vezes a mesma notificação do banco?",
+        "answer": "Sem chave de idempotência, o lojista receberia repasse duplicado. O teste de aceitação dispara o mesmo evento duas vezes para provar que o segundo é ignorado com segurança."
+      }
+    ],
     "coreSections": [
       {
         "heading": "1. O que você entrega",

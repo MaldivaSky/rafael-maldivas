@@ -362,18 +362,113 @@ export default function CoursePracticeStationClient({
         {/* ================================================================ */}
         {activeStation === "bancada" && (
           <section className="ide-station-stage" aria-label="Casa Pré-Moldada e Instalação do VS Code">
+            {/* Step 0: Visual Blueprint + Studio Video before any download */}
+            <div
+              className="ide-prefab-card"
+              style={{
+                marginBottom: 20,
+                border: "1px solid rgba(56, 189, 248, 0.35)",
+                background: "rgba(15, 23, 42, 0.9)",
+              }}
+            >
+              <span className="ide-file-badge">
+                🎬 Briefing de Engenharia · Entenda Antes de Baixar
+              </span>
+              <h2 style={{ marginTop: 8 }}>
+                Como um Engenheiro Organiza o Esqueleto do Sistema (Os 4 Cômodos)
+              </h2>
+              <p className="ide-lab-objective" style={{ marginTop: 6 }}>
+                Antes de baixar qualquer arquivo, entenda a regra de ouro: todo sistema real é
+                dividido em <strong>4 cômodos independentes</strong> e construído na ordem certa:{" "}
+                <strong>1º Alicerce (Modelagem em Centavos)</strong> →{" "}
+                <strong>2º Paredes (API e Trava de Estoque)</strong> →{" "}
+                <strong>3º Móveis (Vitrine HTML)</strong> →{" "}
+                <strong>4º Inspetor &amp; Telhado (Testes e Deploy)</strong>.
+              </p>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                  gap: 16,
+                  marginTop: 14,
+                }}
+              >
+                <figure
+                  style={{
+                    margin: 0,
+                    borderRadius: 12,
+                    overflow: "hidden",
+                    border: "1px solid rgba(251, 191, 36, 0.3)",
+                    background: "#070d19",
+                  }}
+                >
+                  <img
+                    src="/cursos/guias/anatomia-casa-pre-moldada.svg"
+                    alt="Diagrama mostrando os 4 cômodos da Casa Pré-Moldada na ordem de construção: 1. Alicerce, 2. Paredes, 3. Móveis e 4. Habite-se."
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                  />
+                </figure>
+
+                <div
+                  style={{
+                    padding: 14,
+                    borderRadius: 12,
+                    background: "rgba(2, 6, 23, 0.7)",
+                    border: "1px solid rgba(148, 163, 184, 0.2)",
+                  }}
+                >
+                  <strong style={{ display: "block", fontSize: "0.92rem", color: "#f8fafc" }}>
+                    🎥 Assista: Preparando a Bancada &amp; Terminal (Estúdio .mp4)
+                  </strong>
+                  <p style={{ fontSize: "0.8rem", color: "#cbd5e1", margin: "4px 0 10px" }}>
+                    Veja em 2 minutos como o terminal, o VS Code, o ambiente virtual Python e o Git
+                    trabalham juntos sem bagunçar seu computador.
+                  </p>
+                  <video
+                    controls
+                    preload="metadata"
+                    style={{ width: "100%", borderRadius: 8, background: "#020617" }}
+                  >
+                    <source src="/cursos/midia/preparando-a-bancada.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </div>
+            </div>
+
             <div className="ide-prefab-grid">
               <div className="ide-prefab-card ide-prefab-highlight">
                 <span className="ide-file-badge">
-                  <Home className="w-3.5 h-3.5" aria-hidden="true" /> Passo 1 · Baixe o Esqueleto Pronto
+                  <Home className="w-3.5 h-3.5" aria-hidden="true" /> Passo 1 · Escolha o Kit da Sua Etapa Atual
                 </span>
-                <h2>Sua Casa Pré-Moldada (Você não começa do zero!)</h2>
+                <h2>Sua Casa Pré-Moldada (Explicada Item por Item)</h2>
                 <p className="ide-lab-objective">
-                  Em vez de encarar uma pasta vazia sem saber por onde começar, baixe nossa{" "}
-                  <strong>Casa Pré-Moldada (.zip)</strong>. Ela já vem com os 4 cômodos criados, comentários
-                  exatos (<code>[MÓVEL 1]</code>, <code>[TIJOLO 1]</code>, <code>[PAREDE 1]</code>) indicando
-                  onde escrever seu código e um inspetor automático (<code>testar_minha_casa.py</code>).
+                  Não jogamos arquivos soltos! Veja abaixo para que serve cada pacote antes de baixar:
                 </p>
+                <ul
+                  style={{
+                    marginTop: 10,
+                    marginBottom: 14,
+                    paddingLeft: 18,
+                    fontSize: "0.85rem",
+                    color: "#cbd5e1",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  <li>
+                    <strong>1. Casa Pré-Moldada (.zip Recomendado):</strong> Esqueleto didático com os 4
+                    cômodos marcados com <code>[TIJOLO 1]</code>, <code>[PAREDE 1]</code>,{" "}
+                    <code>[MÓVEL 1]</code> e o robô avaliador <code>testar_minha_casa.py</code>.
+                  </li>
+                  <li>
+                    <strong>2. Mini-Loja Django (.zip):</strong> Gabarito do Módulo 0 (F03–F05) com
+                    Django + DRF configurado.
+                  </li>
+                  <li>
+                    <strong>3. Kit Projeto Final (.zip):</strong> Estrutura base para a entrega do
+                    Certificado (Módulo 7).
+                  </li>
+                </ul>
 
                 <div className="flex flex-wrap gap-3" style={{ marginTop: 14 }}>
                   <a
@@ -383,7 +478,7 @@ export default function CoursePracticeStationClient({
                     onClick={() => setVscodeChecks((p) => ({ ...p, zip: true }))}
                   >
                     <Download className="w-4 h-4" aria-hidden="true" />
-                    <span>Baixar Casa Pré-Moldada (.zip)</span>
+                    <span>1. Baixar Casa Pré-Moldada (.zip)</span>
                   </a>
                   <a
                     href="/cursos/kits/mini-loja-kit.zip"
@@ -391,7 +486,7 @@ export default function CoursePracticeStationClient({
                     className="ide-btn ide-btn-ghost"
                   >
                     <FolderGit2 className="w-4 h-4" aria-hidden="true" />
-                    <span>Baixar Mini-Loja Django Pronta (Gabarito .zip)</span>
+                    <span>2. Baixar Mini-Loja Django (.zip)</span>
                   </a>
                   <a
                     href="/cursos/kits/projeto-final-minimarket-kit.zip"
@@ -399,7 +494,7 @@ export default function CoursePracticeStationClient({
                     className="ide-btn ide-btn-ghost"
                   >
                     <Wrench className="w-4 h-4" aria-hidden="true" />
-                    <span>Baixar Kit do Projeto Final (.zip)</span>
+                    <span>3. Baixar Kit do Projeto Final (.zip)</span>
                   </a>
                 </div>
               </div>
@@ -508,37 +603,17 @@ export default function CoursePracticeStationClient({
               </div>
             </div>
 
-            {/* Planta Arquitetônica dos 4 Cômodos */}
+            {/* Planta Arquitetônica dos 4 Cômodos na Ordem Oficial de Implementação */}
             <div className="ide-prefab-rooms-grid" style={{ marginTop: 20 }}>
               <article className="ide-prefab-room">
-                <span className="ide-file-badge">Cômodo 1 · Móveis &amp; Fachada (Nível Fácil)</span>
-                <h3>
-                  <code>01-acabamento-vitrine/index.html</code>
-                </h3>
-                <p>
-                  A vitrine de roupas já vem desenhada! Você abre no VS Code, procura pelos marcadores{" "}
-                  <code>[MÓVEL 1]</code>, <code>[MÓVEL 2]</code> e <code>[MÓVEL 3]</code> e coloca o nome da sua
-                  loja, seu WhatsApp e suas peças.
-                </p>
-                <button
-                  type="button"
-                  className="ide-btn ide-btn-ghost ide-btn-xs"
-                  onClick={() => navigateToStation("loja")}
-                >
-                  <ShoppingBag className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Personalizar também na Fábrica Online →</span>
-                </button>
-              </article>
-
-              <article className="ide-prefab-room">
-                <span className="ide-file-badge">Cômodo 2 · Alicerce &amp; Tijolos (Nível Mediano)</span>
+                <span className="ide-file-badge">1º na Ordem · Alicerce &amp; Modelagem</span>
                 <h3>
                   <code>02-alicerce-banco/models_esqueleto.py</code>
                 </h3>
                 <p>
-                  A fundação do banco de dados: aqui você preenche <code>[TIJOLO 1]</code> (preço em centavos
-                  inteiros para nunca perder 1 centavo) e <code>[TIJOLO 2]</code> (snapshot do preço no momento da
-                  compra).
+                  Tudo começa pela Modelagem de Dados! Aqui você preenche <code>[TIJOLO 1]</code> (preço em
+                  centavos inteiros para nunca perder 1 centavo) e <code>[TIJOLO 2]</code> (snapshot imutável do
+                  preço no segundo da compra).
                 </p>
                 <button
                   type="button"
@@ -548,19 +623,19 @@ export default function CoursePracticeStationClient({
                   }
                 >
                   <Code2 className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Praticar este Tijolo no Sandbox →</span>
+                  <span>1º Praticar Modelagem no Sandbox →</span>
                 </button>
               </article>
 
               <article className="ide-prefab-room">
-                <span className="ide-file-badge">Cômodo 3 · Paredes &amp; Estoque (Nível Mediano/Difícil)</span>
+                <span className="ide-file-badge">2º na Ordem · Paredes &amp; Estoque</span>
                 <h3>
                   <code>03-paredes-api/api_esqueleto.py</code>
                 </h3>
                 <p>
-                  As paredes que protegem seu dinheiro: em <code>[PAREDE 1]</code> você trava o estoque para
-                  ninguém comprar a última peça duas vezes; em <code>[PAREDE 2]</code> você calcula o split exato do
-                  lojista.
+                  Com o banco modelado, levantamos as paredes: em <code>[PAREDE 1]</code> você trava o estoque
+                  para ninguém comprar a última peça duas vezes; em <code>[PAREDE 2]</code> você calcula o split
+                  exato do lojista.
                 </p>
                 <button
                   type="button"
@@ -572,18 +647,38 @@ export default function CoursePracticeStationClient({
                   }
                 >
                   <Layers className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Testar Parede de Estoque no Sandbox →</span>
+                  <span>2º Testar Parede de Estoque no Sandbox →</span>
                 </button>
               </article>
 
               <article className="ide-prefab-room">
-                <span className="ide-file-badge">Cômodo 4 · Telhado &amp; Rua (Publicação R$ 0)</span>
+                <span className="ide-file-badge">3º na Ordem · Móveis &amp; Fachada</span>
                 <h3>
-                  <code>04-telhado-deploy/ (.gitignore + Procfile)</code>
+                  <code>01-acabamento-vitrine/index.html</code>
                 </h3>
                 <p>
-                  Os arquivos que blindam suas senhas (<code>.env</code> fora do Git) e ligam sua loja gratuitamente
-                  no GitHub, Neon PostgreSQL, Render e Vercel.
+                  Com alicerce e paredes prontos, colocamos os móveis! Você abre no VS Code, procura pelos
+                  marcadores <code>[MÓVEL 1]</code>, <code>[MÓVEL 2]</code> e <code>[MÓVEL 3]</code> e personaliza sua
+                  vitrine de roupas.
+                </p>
+                <button
+                  type="button"
+                  className="ide-btn ide-btn-ghost ide-btn-xs"
+                  onClick={() => navigateToStation("loja")}
+                >
+                  <ShoppingBag className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>3º Personalizar também na Fábrica Online →</span>
+                </button>
+              </article>
+
+              <article className="ide-prefab-room">
+                <span className="ide-file-badge">4º na Ordem · Testes &amp; Publicação R$ 0</span>
+                <h3>
+                  <code>testar_minha_casa.py + 04-telhado-deploy/</code>
+                </h3>
+                <p>
+                  Rode <code>python testar_minha_casa.py</code> para validar seus 4 cômodos e use os arquivos de
+                  deploy (<code>.gitignore</code> + <code>Procfile</code>) para publicar no GitHub, Neon, Render e Vercel.
                 </p>
                 <button
                   type="button"

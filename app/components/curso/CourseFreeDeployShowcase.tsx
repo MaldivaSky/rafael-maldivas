@@ -6,7 +6,6 @@ import {
   Award,
   CheckCircle2,
   Code2,
-  Download,
   FlipHorizontal2,
   Globe,
   Home,
@@ -22,6 +21,7 @@ import {
 } from "@/app/lib/course-levels";
 import { computeCourseGamification } from "@/app/lib/course-workspace";
 import { TERMINAL_MISSIONS } from "@/app/lib/terminal-sim";
+import { SoftwareSkeletonMasterclass } from "./SoftwareSkeletonMasterclass";
 
 export default function CourseFreeDeployShowcase({
   courseSlug,
@@ -50,94 +50,100 @@ export default function CourseFreeDeployShowcase({
 
   const stations = [
     {
-      id: "bancada",
-      stepLabel: "Estação 0 · Alicerce & Bancada",
-      title: "Casa Pré-Moldada (.zip) + VS Code Passo a Passo",
+      id: "http",
+      stepLabel: "Ato 1 · Planta & Arquitetura",
+      title: "1. Simulador de Requisições HTTP, Estoque & Webhook",
       description:
-        "Você não começa de uma tela em branco: baixe o esqueleto pronto com os 4 cômodos da loja, instale VS Code, Python e Git e saiba exatamente onde pôr cada tijolo, parede e móvel.",
-      statusText: "Kit .zip pronto para baixar",
-      done: workspace.terminalSteps.length > 0,
-      href: `/pt/cursos/${courseSlug}/pratica?estacao=bancada`,
-      cta: "Abrir Casa Pré-Moldada & VS Code",
-      icon: Home,
+        "Antes de instalar qualquer programa: veja como o Garçom (Rota) conversa com a Cozinha (Servidor) e teste status 200, 201, 401 e 409.",
+      statusText: "Planta viva do sistema",
+      done: workspace.completedSlugs.includes("modulo-0-f01-o-mapa"),
+      href: `/pt/cursos/${courseSlug}/pratica?estacao=http&aula=modulo-0-f01-o-mapa`,
+      cta: "1º Explorar Planta & Rotas HTTP",
+      icon: Globe,
     },
     {
       id: "terminal",
-      stepLabel: "Estação 1 · Antes do Código",
-      title: "Tela Preta Simulada (Zero Medo do Terminal)",
+      stepLabel: "Ato 2 (Parte A) · Perder o Medo da Tela Preta",
+      title: "2. Terminal Simulado Guiado (Antes do VS Code)",
       description:
-        "Treine pwd, ls, mkdir, git init, .gitignore, venv e migrate num ambiente seguro que bloqueia erros graves (como vazar o .env) antes de abrir o terminal real.",
+        "Treine pwd, ls, mkdir, git init, .gitignore, venv e migrate num simulador seguro que explica cada comando antes de usar o seu PC.",
       statusText: `${workspace.terminalSteps.length}/${terminalTotalSteps} comandos dominados`,
       done: workspace.terminalMissions.includes("mission-1-git-basics"),
-      href: `/pt/cursos/${courseSlug}/pratica?estacao=terminal&missao=mission-1-git-basics`,
-      cta: "Entrar na Arena do Terminal",
+      href: `/pt/cursos/${courseSlug}/pratica?estacao=terminal&aula=modulo-0-f02-preparando-a-bancada&missao=mission-1-git-basics`,
+      cta: "2º Treinar na Tela Preta Simulada",
       icon: TerminalSquare,
     },
     {
-      id: "sandbox",
-      stepLabel: "Estação 2 · Tijolos & Paredes",
-      title: "Oficina Python 3.12, SQLite & Simulador HTTP/PIX",
+      id: "bancada",
+      stepLabel: "Ato 2 (Parte B) · Esqueleto Guiado",
+      title: "3. Bancada VS Code + Casa Pré-Moldada (.zip Explicada)",
       description:
-        "Construa a lógica de cada aula (centavos inteiros, trava de estoque concorrente, webhook idempotente) e rode os testes automatizados direto no navegador.",
+        "Agora que você entende a planta e o terminal, baixe o projeto-esqueleto com os 4 cômodos já separados (Alicerce, Paredes, Móveis e Telhado) e siga o guia do VS Code.",
+      statusText: "4 cômodos + testar_minha_casa.py",
+      done: workspace.terminalSteps.length >= 4,
+      href: `/pt/cursos/${courseSlug}/pratica?estacao=bancada&aula=modulo-0-f02-preparando-a-bancada`,
+      cta: "3º Montar VS Code & Casa Pré-Moldada",
+      icon: Home,
+    },
+    {
+      id: "sandbox",
+      stepLabel: "Atos 3 & 4 · Alicerce SQL & Paredes da API",
+      title: "4. Oficina de Modelagem (Order/SubOrder), Centavos & Python",
+      description:
+        "Construa a modelagem de dados em centavos inteiros, congele preços com Snapshot, programe a trava de estoque concorrente e rode os testes no navegador.",
       statusText: `${labsPassedCount}/18 laboratórios aprovados`,
       done: labsPassedCount > 0,
-      href: `/pt/cursos/${courseSlug}/pratica?estacao=sandbox&aula=${levelSpec.recommendedSlugs[0] ?? "modulo-0-f01-o-mapa"}`,
-      cta: "Abrir Oficina de Código",
+      href: `/pt/cursos/${courseSlug}/pratica?estacao=sandbox&aula=modulo-2-modelo-de-dados`,
+      cta: "4º Construir Modelagem & Regras",
       icon: Code2,
     },
     {
       id: "loja",
-      stepLabel: "Estação 3 · Acabamento & Móveis",
-      title: "Fábrica Visual da Sua Vitrine de Roupas",
+      stepLabel: "Ato 5 · Acabamento Visual & Testes",
+      title: "5. Fábrica Visual da Vitrine (Móveis da Sua Loja)",
       description:
-        "Troque o nome da sua loja, escolha cores, cadastre produtos, teste o carrinho com envio para o seu WhatsApp e baixe o index.html pronto para publicar.",
+        "Com o alicerce e as paredes prontos, personalize o nome da sua loja, cores, produtos e WhatsApp e baixe o index.html pronto.",
       statusText: "Gerador ao vivo liberado",
       done: deployDoneCount > 0,
-      href: `/pt/cursos/${courseSlug}/pratica?estacao=loja`,
-      cta: "Personalizar Minha Loja",
+      href: `/pt/cursos/${courseSlug}/pratica?estacao=loja&aula=modulo-0-f05-testes-e-git`,
+      cta: "5º Personalizar Móveis da Vitrine",
       icon: ShoppingBag,
     },
     {
       id: "deploy",
-      stepLabel: "Estação 4 · Publicação R$ 0,00",
-      title: "Guia Passo a Passo na Nuvem (1 Provedor por Vez)",
+      stepLabel: "Ato 6 · Inauguração na Rua (R$ 0,00)",
+      title: "6. Publicação Cloud Passo a Passo (1 Provedor por Vez)",
       description:
-        "Sem despejar tudo na tela: siga um provedor por etapa (GitHub → Neon PostgreSQL → Render → Vercel) com fotos indicando onde clicar no plano gratuito.",
+        "Siga um provedor por etapa (GitHub → Neon PostgreSQL → Render → Vercel) com fotos reais indicando onde clicar no plano gratuito.",
       statusText: `${deployDoneCount}/${deployCards.length} provedores publicados`,
       done: deployDoneCount === deployCards.length && deployCards.length > 0,
-      href: `/pt/cursos/${courseSlug}/pratica?estacao=deploy`,
-      cta: "Publicar Minha Loja R$ 0",
+      href: `/pt/cursos/${courseSlug}/pratica?estacao=deploy&aula=modulo-5-infraestrutura-deploy-backup`,
+      cta: "6º Publicar na Internet (R$ 0)",
       icon: Rocket,
-    },
-    {
-      id: "cards",
-      stepLabel: "Estação 5 · Memória Ativa",
-      title: "Baralho 3D Flip Cards & Simulador de API",
-      description:
-        "Vire os cartões dinâmicos 3D filtrados para o seu nível (Fácil, Mediano ou Difícil) e fixe cada conceito sem decorar.",
-      statusText: "12 cartas 3D interativas",
-      done: gamification.xp >= 250,
-      href: `/pt/cursos/${courseSlug}/pratica?estacao=cards`,
-      cta: "Jogar com os Flip Cards 3D",
-      icon: FlipHorizontal2,
     },
   ];
 
   return (
     <section className="curso-section" aria-labelledby="quest-map-heading">
-      <div className="wrap" style={{ display: "grid", gap: 24 }}>
+      <div className="wrap" style={{ display: "grid", gap: 28 }}>
+        {/* Masterclass Interativa: Esqueleto do Sistema, Modelagem de Dados, Ordem de Implementação & NotebookLM Studio */}
+        <SoftwareSkeletonMasterclass courseSlug={courseSlug} />
+
+        {/* Gamified 6-Act Practice Stations Map */}
         <div className="ide-quest-map-hero">
           <div>
             <div className="sec-tag">
-              Jornada Gamificada · 100% Gratuita · Uma Fase por Vez
+              Progressão Gamificada em 6 Atos · 100% Gratuita · Na Ordem da Engenharia
             </div>
             <h2 id="quest-map-heading">
-              Mapa de Estações Práticas: Da Casa Pré-Moldada ao Site no Ar
+              As 6 Arenas Práticas na Ordem Certa de Construção
             </h2>
             <p className="curso-muted" style={{ maxWidth: 760, marginTop: 6 }}>
-              Em vez de misturar teoria, terminal e deploy na mesma tela, cada etapa da trilha leva
-              você para a <strong>Arena Dedicada</strong> daquela missão. Você cumpre o desafio em tela
-              cheia, ganha XP e destrava o próximo passo.
+              Respeitamos o processo real de engenharia de software:{" "}
+              <strong>1º Planta &amp; Rotas</strong> → <strong>2º Terminal Seguro</strong> →{" "}
+              <strong>3º VS Code &amp; Casa Pré-Moldada</strong> →{" "}
+              <strong>4º Modelagem SQL &amp; API</strong> → <strong>5º Vitrine &amp; Testes</strong>{" "}
+              → <strong>6º Deploy Cloud R$ 0,00</strong>.
             </p>
           </div>
 
@@ -159,20 +165,19 @@ export default function CourseFreeDeployShowcase({
               {gamification.trackTotal} fases concluídas · {gamification.trackPct}%)
             </p>
             <div className="flex flex-wrap gap-2" style={{ marginTop: 10 }}>
-              <a
-                href="/cursos/kits/casa-pre-moldada-marketplace.zip"
-                download
+              <Link
+                href={`/pt/cursos/${courseSlug}/${levelSpec.recommendedSlugs[0] ?? "modulo-0-f01-o-mapa"}`}
                 className="ide-btn ide-btn-primary ide-btn-xs"
               >
-                <Download className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Baixar Casa Pré-Moldada (.zip)</span>
-              </a>
+                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Começar Fase 1 da Trilha →</span>
+              </Link>
               <Link
-                href={`/pt/cursos/${courseSlug}/pratica?estacao=bancada`}
+                href={`/pt/cursos/${courseSlug}/pratica?estacao=cards`}
                 className="ide-btn ide-btn-ghost ide-btn-xs"
               >
-                <Globe className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Abrir Arena em Tela Cheia</span>
+                <FlipHorizontal2 className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Baralho 3D Flip Cards</span>
               </Link>
             </div>
           </div>
@@ -201,11 +206,9 @@ export default function CourseFreeDeployShowcase({
                     {st.statusText}
                   </span>
                 </div>
-
                 <h3>{st.title}</h3>
-                <p className="curso-muted">{st.description}</p>
-
-                <div style={{ marginTop: "auto", paddingTop: 14 }}>
+                <p>{st.description}</p>
+                <div className="ide-quest-station-footer">
                   <Link href={st.href} className="ide-btn ide-btn-primary">
                     <span>{st.cta}</span>
                     <ArrowRight className="w-4 h-4" aria-hidden="true" />
