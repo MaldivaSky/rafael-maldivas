@@ -291,14 +291,25 @@ export function CourseAdmissionGate({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  function handleSelect(questionId: string, optionIndex: number) {
+    setItAnswers((prev) => ({
+      ...prev,
+      [questionId]: optionIndex,
+    }));
+    if (errorMsg) {
+      setErrorMsg(null);
+    }
+  }
+
   async function handleSubmitAdmission() {
     setErrorMsg(null);
-    const answeredCount = FUNDAMENTAL_IT_QUESTIONS.filter(
-      (q) => typeof itAnswers[q.id] === "number",
-    ).length;
-    if (answeredCount < FUNDAMENTAL_IT_QUESTIONS.length) {
+    const missingQuestions = FUNDAMENTAL_IT_QUESTIONS.map((q, idx) =>
+      typeof itAnswers[q.id] === "number" ? null : idx + 1,
+    ).filter((n): n is number => n !== null);
+
+    if (Object.keys(itAnswers).length < FUNDAMENTAL_IT_QUESTIONS.length || missingQuestions.length > 0) {
       setErrorMsg(
-        `Responda todas as ${FUNDAMENTAL_IT_QUESTIONS.length} perguntas rápidas de informática antes de finalizar.`,
+        `Responda todas as ${FUNDAMENTAL_IT_QUESTIONS.length} perguntas rápidas de informática antes de finalizar (faltam: questão ${missingQuestions.join(", ")}).`,
       );
       return;
     }
@@ -354,9 +365,15 @@ export function CourseAdmissionGate({
     "1. Identificação",
     "2. Região & Perfil",
     "3. Bagagem & Motivação",
-    "4. Teste Rápido (5 questões)",
+    "4. Teste Rápido",
     "5. Ativação por E-mail",
   ];
+
+  const answeredQuestionsCount = Object.keys(itAnswers).length;
+  const allQuestionsAnswered = answeredQuestionsCount === FUNDAMENTAL_IT_QUESTIONS.length;
+  const missingQuestionNumbers = FUNDAMENTAL_IT_QUESTIONS.map((q, idx) =>
+    typeof itAnswers[q.id] === "number" ? null : idx + 1,
+  ).filter((n): n is number => n !== null);
 
   return (
     <div className="admission-gate-shell">
@@ -371,13 +388,13 @@ export function CourseAdmissionGate({
             <span className="admission-step-counter">Etapa {step} de 5</span>
           </div>
 
-          <h1 className="admission-gate-title">
+          <h2 className="admission-gate-title tracking-normal font-semibold leading-snug text-slate-100">
             {step === 1 && "Identificação & Cadastro Gratuito"}
             {step === 2 && "Seu Perfil Regional & Demográfico"}
             {step === 3 && "Sua Bagagem Técnica & Motivação"}
             {step === 4 && "Teste Rápido de Nivelamento em Informática"}
             {step === 5 && "Ative seu Acesso pelo Link do E-mail"}
-          </h1>
+          </h2>
 
           <p className="admission-gate-subtitle">
             {step === 1 &&
@@ -393,7 +410,13 @@ export function CourseAdmissionGate({
           </p>
 
           {/* Progress Stepper */}
-          <div className="admission-stepper-bar" role="progressbar" aria-valuenow={step * 20}>
+          <div
+            className="admission-stepper-bar flex flex-wrap gap-2"
+            role="progressbar"
+            aria-valuenow={step * 20}
+            aria-valuemin={20}
+            aria-valuemax={100}
+          >
             {stepLabels.map((lbl, idx) => {
               const sNum = idx + 1;
               const isActive = sNum === step;
@@ -401,7 +424,7 @@ export function CourseAdmissionGate({
               return (
                 <div
                   key={lbl}
-                  className={`admission-step-dot${isActive ? " is-active" : ""}${isDone ? " is-done" : ""}`}
+                  className={`admission-step-dot px-3 py-2 text-xs${isActive ? " is-active" : ""}${isDone ? " is-done" : ""}`}
                 >
                   <span className="admission-step-num">{isDone ? "✓" : sNum}</span>
                   <span className="admission-step-text">{lbl.split(". ")[1]}</span>
@@ -832,24 +855,38 @@ export function CourseAdmissionGate({
                 const isCorrect = chosen === q.correctIndex;
                 return (
                   <div key={q.id} className="admission-quiz-card">
-                    <span className="admission-quiz-topic">{q.topic}</span>
-                    <h3 className="admission-quiz-question">{q.question}</h3>
+                    <span className="admission-quiz-topic text-xs font-semibold tracking-wider">
+                      {q.topic}
+                    </span>
+                    <h3 className="admission-quiz-question font-medium leading-relaxed text-slate-200">
+                      {q.question}
+                    </h3>
                     <div className="admission-quiz-options">
                       {q.options.map((optText, idx) => {
+                        const optionKey = String.fromCharCode(65 + idx);
                         const isPicked = chosen === idx;
                         return (
                           <button
-                            key={optText}
+                            key={`${q.id}-${optionKey}`}
                             type="button"
-                            onClick={() =>
-                              setItAnswers((prev) => ({ ...prev, [q.id]: idx }))
-                            }
-                            className={`admission-quiz-option${isPicked ? " is-picked" : ""}`}
+                            aria-pressed={isPicked}
+                            onClick={() => handleSelect(q.id, idx)}
+                            className={`admission-quiz-option cursor-pointer transition-all ${
+                              isPicked
+                                ? "is-selected is-picked bg-cyan-950/50 border-cyan-500 text-white ring-1 ring-cyan-500/50"
+                                : "bg-slate-900/60 border-slate-800 text-slate-300 hover:border-slate-600 hover:bg-slate-800/60"
+                            }`}
                           >
-                            <span className="admission-quiz-letter">
-                              {String.fromCharCode(65 + idx)}
+                            <span
+                              className={`admission-quiz-letter ${
+                                isPicked
+                                  ? "is-selected bg-cyan-500 text-slate-950 font-bold"
+                                  : "bg-slate-800 text-slate-300 font-semibold"
+                              }`}
+                            >
+                              {optionKey}
                             </span>
-                            <span>{optText}</span>
+                            <span className="admission-quiz-option-text">{optText}</span>
                           </button>
                         );
                       })}
@@ -858,7 +895,7 @@ export function CourseAdmissionGate({
                     {showItExplanations && typeof chosen === "number" && (
                       <div
                         className={`admission-quiz-feedback ${
-                          isCorrect ? "is-correct" : "is-wrong"
+                          isCorrect ? "is-correct is-pass" : "is-wrong is-fail"
                         }`}
                       >
                         <strong>
@@ -872,6 +909,16 @@ export function CourseAdmissionGate({
               })}
             </div>
 
+            {!allQuestionsAnswered && (
+              <div className="admission-quiz-progress-hint" role="status">
+                <span>
+                  Você respondeu <strong>{answeredQuestionsCount}</strong> de{" "}
+                  <strong>{FUNDAMENTAL_IT_QUESTIONS.length}</strong> perguntas. Faltam as questões:{" "}
+                  <strong>{missingQuestionNumbers.join(", ")}</strong>.
+                </span>
+              </div>
+            )}
+
             <div className="admission-footer-actions">
               <button
                 type="button"
@@ -883,9 +930,9 @@ export function CourseAdmissionGate({
               </button>
               <button
                 type="button"
-                disabled={submitting}
+                disabled={submitting || !allQuestionsAnswered}
                 onClick={handleSubmitAdmission}
-                className="admission-btn-primary"
+                className="admission-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <>
