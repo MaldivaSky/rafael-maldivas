@@ -1,4 +1,6 @@
+import { createHash } from "node:crypto";
 import { assinarToken, oracleConfigurado, type Papel } from "./oracle-leads";
+import type { AdmissionRecord } from "./course-admission";
 
 /* ------------------------------------------------------------------ */
 /*  Persistência de Alunos, Trilha e Certificados (Oracle PostgREST)   */
@@ -81,6 +83,7 @@ export type EventoAlunoAdmin = {
   tipo: string;
   curso_slug?: string;
   licao_id?: string;
+  meta?: Record<string, unknown>;
   criado_em: string;
 };
 
@@ -139,6 +142,7 @@ export type PainelAlunosAdmin = {
       criado_em: string;
     } | null;
     eventos?: EventoAlunoAdmin[];
+    admissao?: AdmissionRecord | null;
   }>;
 };
 
@@ -700,27 +704,63 @@ export async function upsertWorkspaceAluno(
 }
 
 export async function listarPainelAlunosAdmin(): Promise<PainelAlunosAdmin> {
-  const [r, evRes] = await Promise.all([
+  const [r, evRes, wsRes] = await Promise.all([
     callOracle("site_admin", "/rpc/painel_alunos", {
       method: "POST",
       body: JSON.stringify({}),
     }),
     callOracle(
       "site_admin",
-      "/aluno_eventos?select=aluno_id,tipo,curso_slug,licao_id,criado_em&order=criado_em.desc&limit=2000",
+      "/aluno_eventos?select=aluno_id,tipo,curso_slug,licao_id,meta,criado_em&order=criado_em.desc&limit=2000",
+    ).catch(() => null),
+    callOracle(
+      "site_admin",
+      "/aluno_workspace?select=aluno_id,dados&limit=2000",
     ).catch(() => null),
   ]);
 
   const painel = (await r.json()) as PainelAlunosAdmin;
+
+  const byAlunoAdmissao = new Map<string, AdmissionRecord>();
+  if (wsRes) {
+    try {
+      const wsRows = (await wsRes.json()) as Array<{
+        aluno_id: string;
+        dados?: Record<string, unknown>;
+      }>;
+      for (const row of wsRows) {
+        if (row.aluno_id && row.dados && typeof row.dados.admissionRecord === "object") {
+          byAlunoAdmissao.set(row.aluno_id, row.dados.admissionRecord as AdmissionRecord);
+        }
+      }
+    } catch {
+      /* ignore optional workspace parse */
+    }
+  }
+
   if (!evRes) {
-    return { ...painel, eventos_disponiveis: false };
+    return {
+      ...painel,
+      eventos_disponiveis: false,
+      alunos: painel.alunos.map((a) => ({
+        ...a,
+        admissao: byAlunoAdmissao.get(a.id) ?? null,
+      })),
+    };
   }
 
   let evRows: EventoAlunoAdmin[] = [];
   try {
     evRows = (await evRes.json()) as EventoAlunoAdmin[];
   } catch {
-    return { ...painel, eventos_disponiveis: false };
+    return {
+      ...painel,
+      eventos_disponiveis: false,
+      alunos: painel.alunos.map((a) => ({
+        ...a,
+        admissao: byAlunoAdmissao.get(a.id) ?? null,
+      })),
+    };
   }
 
   const byAluno = new Map<string, EventoAlunoAdmin[]>();
@@ -729,6 +769,25 @@ export async function listarPainelAlunosAdmin(): Promise<PainelAlunosAdmin> {
     const list = byAluno.get(ev.aluno_id) ?? [];
     list.push(ev);
     byAluno.set(ev.aluno_id, list);
+
+    // Fallback: se aluno_workspace ainda não existir na VM, extrai admissionRecord de aluno_eventos.meta
+    const metaRec = ev.meta?.admissionRecord as AdmissionRecord | undefined;
+    if (metaRec && typeof metaRec === "object" && "questionnaire" in metaRec) {
+      const prev = byAlunoAdmissao.get(ev.aluno_id);
+      if (!prev || (metaRec.emailActivated && !prev.emailActivated)) {
+        byAlunoAdmissao.set(ev.aluno_id, metaRec);
+      }
+    }
+    if (ev.meta?.evento === "email_ativado_com_sucesso") {
+      const prev = byAlunoAdmissao.get(ev.aluno_id);
+      if (prev && !prev.emailActivated) {
+        byAlunoAdmissao.set(ev.aluno_id, {
+          ...prev,
+          emailActivated: true,
+          activatedAt: ev.criado_em,
+        });
+      }
+    }
   }
 
   return {
@@ -737,7 +796,66 @@ export async function listarPainelAlunosAdmin(): Promise<PainelAlunosAdmin> {
     alunos: painel.alunos.map((a) => ({
       ...a,
       eventos: byAluno.get(a.id) ?? [],
+      admissao: a.admissao ?? byAlunoAdmissao.get(a.id) ?? null,
     })),
   };
+}
+
+export async function upsertAlunoAdmissao(input: {
+  email: string;
+  nome: string;
+  headline: string;
+  bio: string;
+  objetivo: string;
+  admissao?: AdmissionRecord;
+}): Promise<Aluno> {
+  const cleanEmail = input.email.toLowerCase().trim().slice(0, 320);
+  const emailSub = `email:${createHash("sha256").update(cleanEmail).digest("hex").slice(0, 32)}`;
+  const now = new Date().toISOString();
+
+  // Verifica se já existe aluno com esse email para preservar google_sub/avatar_url se houver
+  const existRes = await callOracle(
+    "site_student_api",
+    `/alunos?email=eq.${encodeURIComponent(cleanEmail)}&select=*&limit=1`,
+  ).catch(() => null);
+  const existingRows = existRes ? ((await existRes.json()) as Aluno[]) : [];
+  const existing = existingRows[0];
+
+  const r = await callOracle("site_student_api", "/alunos?on_conflict=email", {
+    method: "POST",
+    headers: {
+      Prefer: "resolution=merge-duplicates,return=representation",
+    },
+    body: JSON.stringify({
+      google_sub: existing?.google_sub || emailSub,
+      email: cleanEmail,
+      nome: input.nome.trim().slice(0, 200) || existing?.nome || "Aluno",
+      nome_certificado: input.nome.trim().slice(0, 200),
+      avatar_url: existing?.avatar_url || "",
+      headline: input.headline.slice(0, 160),
+      bio: input.bio.slice(0, 1000),
+      objetivo: input.objetivo.slice(0, 160),
+      ...(input.admissao ? { admissao: input.admissao } : {}),
+      ultimo_acesso_em: now,
+      atualizado_em: now,
+    }),
+  });
+  const rows = (await r.json()) as Aluno[];
+  const aluno = rows[0];
+  if (!aluno) throw new Error("falha ao registrar admissão do aluno");
+
+  await callOracle("site_student_api", "/matriculas?on_conflict=aluno_id,curso_slug", {
+    method: "POST",
+    headers: {
+      Prefer: "resolution=ignore-duplicates,return=minimal",
+    },
+    body: JSON.stringify({
+      aluno_id: aluno.id,
+      curso_slug: "construa-seu-marketplace",
+      status: "ativo",
+    }),
+  }).catch(() => null);
+
+  return aluno;
 }
 

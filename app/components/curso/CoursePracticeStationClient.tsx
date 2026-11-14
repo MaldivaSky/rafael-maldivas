@@ -15,6 +15,7 @@ import {
   Globe,
   Home,
   Layers,
+  Loader2,
   Rocket,
   ShoppingBag,
   Sparkles,
@@ -42,6 +43,7 @@ import {
 import { localePath } from "@/app/lib/i18n";
 import type { Lang } from "@/app/lib/seo";
 import { useCourseWorkspace } from "@/app/hooks/useCourseWorkspace";
+import { CourseAdmissionGate } from "./CourseAdmissionGate";
 import { FreeDeployGuidePanel } from "./FreeDeployGuidePanel";
 import { IdeWorkbench } from "./IdeWorkbench";
 import { InteractiveFlipDeck } from "./InteractiveFlipDeck";
@@ -161,6 +163,9 @@ export default function CoursePracticeStationClient({
 
   const {
     workspace,
+    isAdmissionActivated,
+    admissionLoading,
+    studentProfile,
     setCodeDraft,
     recordLabResult,
     setNote,
@@ -229,6 +234,24 @@ export default function CoursePracticeStationClient({
     if (opts?.provedor) params.set("provedor", opts.provedor);
     router.push(
       `${localePath(`/cursos/${courseSlug}/pratica`, lang)}?${params.toString()}`,
+    );
+  }
+
+  if (admissionLoading) {
+    return (
+      <div className="clean-lesson-loading">
+        <Loader2 className="w-6 h-6 animate-spin ide-text-cyan" aria-hidden="true" />
+        <p>Verificando habilitação do aluno...</p>
+      </div>
+    );
+  }
+
+  if (!isAdmissionActivated) {
+    return (
+      <CourseAdmissionGate
+        targetPath={`${localePath(`/cursos/${courseSlug}/pratica`, lang)}?estacao=${activeStation}&aula=${effectiveLessonSlug}`}
+        initialStudent={studentProfile}
+      />
     );
   }
 

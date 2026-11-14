@@ -48,6 +48,9 @@ export default function MarketplaceLessonClient({
     workspace,
     syncStatus,
     isAuthenticated,
+    isAdmissionActivated,
+    admissionLoading,
+    studentProfile,
     setCodeDraft,
     recordLabResult,
     recordQuizScore,
@@ -59,7 +62,8 @@ export default function MarketplaceLessonClient({
     updatePreferences,
   } = useCourseWorkspace(courseSlug);
 
-  const [activeStage, setActiveStage] = useState<IdeLessonStage>("all");
+  const [activeStage, setActiveStage] = useState<IdeLessonStage>("predict");
+  const [conceptTopicIdx, setConceptTopicIdx] = useState(0);
   const [flippedCards, setFlippedCards] = useState<Record<number, boolean>>({});
 
   const canonicalLesson = useMemo(() => {
@@ -100,6 +104,9 @@ export default function MarketplaceLessonClient({
       workspace={workspace}
       syncStatus={syncStatus}
       isAuthenticated={isAuthenticated}
+      isAdmissionActivated={isAdmissionActivated}
+      admissionLoading={admissionLoading}
+      studentProfile={studentProfile}
       activeStage={activeStage}
       onChangeStage={setActiveStage}
       onUpdatePreferences={updatePreferences}
@@ -111,52 +118,22 @@ export default function MarketplaceLessonClient({
       onRecordTerminalProgress={recordTerminalProgress}
     >
       <div className="curso-lesson-body">
-        <aside className="curso-progress-bar-box" aria-label="Progresso no curso">
-          <div className="curso-progress-top">
-            <div>
-              <strong>
-                Aula {lesson.code} · {doneSlugs.length}/{totalLessons} aulas concluídas ({pct}%)
-              </strong>
-              <p className="curso-fine">{lesson.metaNote}</p>
-            </div>
-            <div className="curso-progress-actions">
-              <button
-                type="button"
-                className={`btn curso-btn-sm ${isCompleted ? "btn-primary" : "btn-ghost"}`}
-                onClick={() => toggleLessonCompleted(lesson.slug, canonicalLesson.id)}
-                aria-pressed={isCompleted}
-              >
-                <CheckCircle2 size={15} aria-hidden="true" />
-                {isCompleted ? "Aula concluída" : "Marcar como concluída"}
-              </button>
-            </div>
+        <div className="clean-lesson-inline-bar">
+          <div className="clean-lesson-summary-text">
+            <strong>Síntese:</strong> {lesson.oneSentence}
           </div>
-
-          {!isCompleted && !mastery.readyForCompletion && (
-            <p className="ide-mastery-hint">
-              Checklist de domínio recomendado: passe nos testes do Lab na bancada direita e faça
-              pelo menos 70% no Quiz desta aula.
-            </p>
-          )}
-
-          <div
-            className="curso-progress-track"
-            role="progressbar"
-            aria-valuenow={pct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            <div className="curso-progress-fill" style={{ width: `${pct}%` }} />
+          <div className="clean-lesson-inline-actions">
+            <button
+              type="button"
+              className={`clean-btn-sm ${isCompleted ? "is-done" : ""}`}
+              onClick={() => toggleLessonCompleted(lesson.slug, canonicalLesson.id)}
+              aria-pressed={isCompleted}
+            >
+              <CheckCircle2 size={14} aria-hidden="true" />
+              <span>{isCompleted ? "Concluída" : "Marcar concluída"}</span>
+            </button>
           </div>
-        </aside>
-
-        <section className="curso-panel">
-          <p className="curso-assumption" style={{ marginBottom: 0 }}>
-            <strong>Em uma frase:</strong> {lesson.oneSentence}
-            <br />
-            <strong>Pergunta guia:</strong> {lesson.guideQuestion}
-          </p>
-        </section>
+        </div>
 
         {showPredict && (
           <>
@@ -174,45 +151,94 @@ export default function MarketplaceLessonClient({
             )}
 
             <article className="curso-prose">
-              {lesson.coreSections.map((sec) => (
-                <section key={sec.heading} style={{ marginBottom: 28 }}>
-                  <h2>{sec.heading}</h2>
-                  {sec.paragraphs.map((p, idx) => (
-                    <p key={idx}>{p}</p>
+              {lesson.coreSections.length > 1 && (
+                <div className="clean-topic-pills" role="tablist" aria-label="Tópicos do conceito">
+                  {lesson.coreSections.map((sec, idx) => (
+                    <button
+                      key={sec.heading}
+                      type="button"
+                      role="tab"
+                      aria-selected={conceptTopicIdx === idx}
+                      onClick={() => setConceptTopicIdx(idx)}
+                      className={`clean-topic-pill${conceptTopicIdx === idx ? " is-active" : ""}`}
+                    >
+                      <span>Tópico {idx + 1} de {lesson.coreSections.length}</span>
+                    </button>
                   ))}
+                </div>
+              )}
 
-                  {sec.codeBlocks?.map((cb, cbIdx) => (
-                    <CopyCodeBlock
-                      key={`${sec.heading}-cb-${cbIdx}`}
-                      title={cb.title}
-                      code={cb.code}
-                    />
-                  ))}
+              {lesson.coreSections
+                .filter((_, idx) => idx === Math.min(conceptTopicIdx, lesson.coreSections.length - 1))
+                .map((sec) => (
+                  <section key={sec.heading} className="clean-topic-card">
+                    <h2>{sec.heading}</h2>
+                    {sec.paragraphs.map((p, idx) => (
+                      <p key={idx}>{p}</p>
+                    ))}
 
-                  {sec.table && (
-                    <div className="curso-table-wrap">
-                      <table className="curso-table">
-                        <thead>
-                          <tr>
-                            {sec.table.headers.map((h) => (
-                              <th key={h}>{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {sec.table.rows.map((row, rIdx) => (
-                            <tr key={rIdx}>
-                              {row.map((cell, cIdx) => (
-                                <td key={cIdx}>{cell}</td>
+                    {sec.codeBlocks?.map((cb, cbIdx) => (
+                      <CopyCodeBlock
+                        key={`${sec.heading}-cb-${cbIdx}`}
+                        title={cb.title}
+                        code={cb.code}
+                      />
+                    ))}
+
+                    {sec.table && (
+                      <div className="curso-table-wrap">
+                        <table className="curso-table">
+                          <thead>
+                            <tr>
+                              {sec.table.headers.map((h) => (
+                                <th key={h}>{h}</th>
                               ))}
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </section>
-              ))}
+                          </thead>
+                          <tbody>
+                            {sec.table.rows.map((row, rIdx) => (
+                              <tr key={rIdx}>
+                                {row.map((cell, cIdx) => (
+                                  <td key={cIdx}>{cell}</td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+
+                    {lesson.coreSections.length > 1 && (
+                      <div className="clean-topic-nav-row">
+                        <button
+                          type="button"
+                          disabled={conceptTopicIdx === 0}
+                          onClick={() => setConceptTopicIdx((i) => Math.max(0, i - 1))}
+                          className="clean-btn-ghost"
+                        >
+                          ← Tópico Anterior
+                        </button>
+                        {conceptTopicIdx + 1 < lesson.coreSections.length ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setConceptTopicIdx((i) =>
+                                Math.min(lesson.coreSections.length - 1, i + 1),
+                              )
+                            }
+                            className="clean-btn-primary"
+                          >
+                            Próximo Tópico ({conceptTopicIdx + 2}/{lesson.coreSections.length}) →
+                          </button>
+                        ) : (
+                          <span className="clean-topic-done-badge">
+                            ✓ Todos os tópicos lidos
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </section>
+                ))}
 
               {lesson.breakExperiment && (
                 <section className="curso-break-box" aria-labelledby="break-title">

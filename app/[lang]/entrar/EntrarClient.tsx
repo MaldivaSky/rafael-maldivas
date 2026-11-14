@@ -4,33 +4,42 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, Loader2, LogOut, User } from "lucide-react";
 import { localePath, type Lang } from "@/app/lib/seo";
-import StudentLoginCard from "@/app/components/auth/StudentLoginCard";
+import { CourseAdmissionGate } from "@/app/components/curso/CourseAdmissionGate";
 
-type MeResponse = {
-  autenticado: boolean;
-  aluno?: {
-    nome: string;
-    nome_certificado: string;
+type AdmissionStatusResponse = {
+  ok: boolean;
+  authenticated: boolean;
+  activated: boolean;
+  student: {
+    id: string;
     email: string;
-    avatar_url: string;
-  };
+    nome: string;
+    recommendedLevel?: string;
+  } | null;
 };
 
 export default function EntrarClient({ lang }: { lang: Lang }) {
   const pt = lang === "pt";
   const [loading, setLoading] = useState(true);
-  const [me, setMe] = useState<MeResponse | null>(null);
-  const [authError, setAuthError] = useState<string | null>(null);
+  const [adm, setAdm] = useState<AdmissionStatusResponse | null>(null);
+  const [nextPath, setNextPath] = useState(
+    "/pt/cursos/construa-seu-marketplace/modulo-0-f01-o-mapa",
+  );
   const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setAuthError(params.get("auth_error"));
+    const n = params.get("next");
+    if (n && n.startsWith("/")) {
+      setNextPath(n);
+    }
 
-    fetch("/api/aluno/me", { cache: "no-store" })
+    fetch("/api/aluno/admissao", { cache: "no-store" })
       .then((r) => r.json())
-      .then((d: MeResponse) => setMe(d))
-      .catch(() => setMe({ autenticado: false }))
+      .then((d: AdmissionStatusResponse) => setAdm(d))
+      .catch(() =>
+        setAdm({ ok: false, authenticated: false, activated: false, student: null }),
+      )
       .finally(() => setLoading(false));
   }, []);
 
@@ -38,7 +47,7 @@ export default function EntrarClient({ lang }: { lang: Lang }) {
     setLoggingOut(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      setMe({ autenticado: false });
+      setAdm({ ok: true, authenticated: false, activated: false, student: null });
       window.dispatchEvent(new Event("maldivas:auth-changed"));
     } finally {
       setLoggingOut(false);
@@ -51,37 +60,53 @@ export default function EntrarClient({ lang }: { lang: Lang }) {
         <div className="auth-card" style={{ textAlign: "center", padding: "56px 24px" }}>
           <Loader2 size={24} className="spin" />
           <p className="auth-subtitle" style={{ margin: "12px auto 0" }}>
-            {pt ? "Verificando sua sessão..." : "Checking your session..."}
+            {pt ? "Verificando sua credencial de aluno..." : "Checking your student session..."}
           </p>
         </div>
       </div>
     );
   }
 
-  if (me?.autenticado && me.aluno) {
-    const displayName = me.aluno.nome_certificado || me.aluno.nome;
+  if (adm?.activated && adm.student) {
+    const displayName = adm.student.nome || adm.student.email;
     return (
       <div className="auth-shell">
         <section className="auth-card" aria-labelledby="already-signed-in-title">
           <div className="auth-sec-badge" style={{ marginBottom: 14 }}>
             <CheckCircle2 size={13} aria-hidden="true" />
-            {pt ? "Sessão ativa" : "Active session"}
+            {pt ? "Matrícula Ativada & Verificada" : "Active Enrollment"}
           </div>
           <h1 id="already-signed-in-title" className="auth-title">
             {pt ? `Olá, ${displayName}` : `Welcome, ${displayName}`}
           </h1>
           <p className="auth-subtitle">
             {pt
-              ? `Você está conectado com ${me.aluno.email}. Escolha por onde continuar:`
-              : `Signed in as ${me.aluno.email}. Choose where to go next:`}
+              ? `Conectado com ${adm.student.email}. Seu acesso às aulas e laboratórios está liberado:`
+              : `Signed in as ${adm.student.email}. Choose where to continue:`}
           </p>
 
           <div style={{ display: "grid", gap: 10 }}>
-            <Link href={localePath("/trilha", lang)} className="btn btn-primary" style={{ justifyContent: "space-between" }}>
-              <span>{pt ? "Ir para Minha Trilha" : "Go to My Learning Track"}</span>
+            <Link
+              href={nextPath}
+              className="btn btn-primary"
+              style={{ justifyContent: "space-between" }}
+            >
+              <span>{pt ? "Continuar Curso Agora" : "Continue Course Now"}</span>
               <ArrowRight size={16} />
             </Link>
-            <Link href={localePath("/perfil", lang)} className="btn btn-ghost" style={{ justifyContent: "space-between" }}>
+            <Link
+              href={localePath("/trilha", lang)}
+              className="btn btn-ghost"
+              style={{ justifyContent: "space-between" }}
+            >
+              <span>{pt ? "Ver Minha Trilha" : "My Learning Track"}</span>
+              <ArrowRight size={16} />
+            </Link>
+            <Link
+              href={localePath("/perfil", lang)}
+              className="btn btn-ghost"
+              style={{ justifyContent: "space-between" }}
+            >
               <span>{pt ? "Gerenciar Meu Perfil" : "Manage My Profile"}</span>
               <User size={16} />
             </Link>
@@ -93,7 +118,15 @@ export default function EntrarClient({ lang }: { lang: Lang }) {
               style={{ justifyContent: "center" }}
             >
               <LogOut size={15} />
-              <span>{loggingOut ? (pt ? "Saindo..." : "Signing out...") : pt ? "Sair da conta" : "Sign out"}</span>
+              <span>
+                {loggingOut
+                  ? pt
+                    ? "Saindo..."
+                    : "Signing out..."
+                  : pt
+                    ? "Sair da conta"
+                    : "Sign out"}
+              </span>
             </button>
           </div>
         </section>
@@ -101,5 +134,5 @@ export default function EntrarClient({ lang }: { lang: Lang }) {
     );
   }
 
-  return <StudentLoginCard lang={lang} context="entrar" authError={authError} />;
+  return <CourseAdmissionGate targetPath={nextPath} initialStudent={adm?.student} />;
 }

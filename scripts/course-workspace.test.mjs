@@ -40,6 +40,21 @@ import {
   LESSON_QUEST_BRIEFINGS,
   getLessonQuestBriefing,
 } from "../app/lib/course-game-engine.ts";
+import {
+  FUNDAMENTAL_IT_QUESTIONS,
+  calculateAgeAndBracket,
+  computeEthnographicDashboardStats,
+  deriveMacroRegion,
+  gradeItAssessment,
+  recommendCourseLevelFromAdmission,
+  validateAdmissionQuestionnaire,
+} from "../app/lib/course-admission.ts";
+import {
+  issueAdmissionCompletedToken,
+  issueEmailActivationToken,
+  verifyAdmissionCompletedToken,
+  verifyEmailActivationToken,
+} from "../app/lib/student-auth.ts";
 
 describe("Course IDE Labs, SRS & Workspace State", () => {
   it("cobre todas as 18 aulas do marketplace com labs e flashcards SRS", () => {
@@ -404,5 +419,134 @@ describe("Interactive Black Terminal Simulator (Tela Preta Primeiro)", () => {
       assert.ok(fs.existsSync(fullSvg), `${svgFile} deve existir`);
       assert.ok(fs.statSync(fullSvg).size > 1500, `${svgFile} deve ter conteudo`);
     }
+  });
+});
+
+describe("Course Admission Gate, Ethnographic Census & Email Activation", () => {
+  it("valida questionario etnografico-regional-cultural, corrige prova de informatica e agrega dashboard", () => {
+    assert.equal(FUNDAMENTAL_IT_QUESTIONS.length, 5);
+    assert.equal(deriveMacroRegion("SP"), "Sudeste");
+    assert.equal(deriveMacroRegion("BA"), "Nordeste");
+    assert.equal(deriveMacroRegion("AM"), "Norte");
+    assert.equal(deriveMacroRegion("RS"), "Sul");
+    assert.equal(deriveMacroRegion("DF"), "Centro-Oeste");
+
+    const ageInfo = calculateAgeAndBracket("2000-05-15", new Date("2026-11-13T12:00:00Z"));
+    assert.equal(ageInfo.ageYears, 26);
+    assert.equal(ageInfo.ageBracket, "25 a 34 anos");
+
+    const questionnaire = {
+      fullName: "Maria Silva",
+      email: "maria@exemplo.com",
+      birthDate: "2000-05-15",
+      authMethod: "email",
+      educationLevel: "Ensino Superior Completo (Graduação)",
+      howFoundSite: "LinkedIn (Post ou Perfil do Rafael Maldivas)",
+      knowsProgramming: "sim_iniciante",
+      programmingLanguages: ["Python", "SQL / Banco de Dados"],
+      motivation: "Conseguir meu 1º emprego ou estágio como Desenvolvedor(a)",
+      stateUf: "SP",
+      city: "São Paulo",
+      urbanZone: "Capital (Centro ou Bairros Centrais)",
+      ethnicityIbge: "Parda",
+      gender: "Mulher Cisgênero",
+      employmentStatus: "Empregado(a) fora da área de TI (buscando transição)",
+      incomeBracket: "De 2 a 4 salários mínimos",
+      deviceAccess: "Notebook / PC próprio em casa com internet fibra/banda larga",
+      learningStyle: "Prático / Hands-on (aprendo fazendo, digitando código e testando)",
+      englishLevel: "Intermediário (leio documentação técnica com alguma ajuda)",
+      aiUsage: "Uso quase todo dia para estudar, tirar dúvidas ou trabalhar",
+    };
+
+    const validQ = validateAdmissionQuestionnaire(questionnaire);
+    assert.equal(validQ.valid, true);
+
+    // Prova de informatica: 4 acertos de 5 -> aprovado (>= 60%)
+    const gradePass = gradeItAssessment({
+      "it-q1-zip": 0,
+      "it-q2-browser": 0,
+      "it-q3-extensions": 0,
+      "it-q4-security": 0,
+      "it-q5-logic": 2,
+    });
+    assert.equal(gradePass.passed, true);
+    assert.equal(gradePass.correctCount, 4);
+    assert.equal(gradePass.scorePct, 80);
+
+    // Prova de informatica: 2 acertos de 5 -> reprovado (< 60%)
+    const gradeFail = gradeItAssessment({
+      "it-q1-zip": 0,
+      "it-q2-browser": 0,
+      "it-q3-extensions": 2,
+      "it-q4-security": 2,
+      "it-q5-logic": 2,
+    });
+    assert.equal(gradeFail.passed, false);
+    assert.equal(gradeFail.correctCount, 2);
+
+    const recLevel = recommendCourseLevelFromAdmission(questionnaire, gradePass.scorePct);
+    assert.equal(recLevel, "mediano");
+
+    // Agregacao do Censo Etnografico-Regional-Cultural
+    const stats = computeEthnographicDashboardStats([
+      {
+        version: 1,
+        questionnaire,
+        macroRegion: "Sudeste",
+        ageBracket: "25 a 34 anos",
+        ageYears: 26,
+        itTestAnswers: {
+          "it-q1-browser-ide": 0,
+          "it-q2-folders": 0,
+          "it-q3-extensions": 0,
+          "it-q4-security": 0,
+          "it-q5-logic": 0,
+        },
+        itTestScore: 100,
+        itTestPassed: true,
+        recommendedLevel: "mediano",
+        submittedAt: "2026-11-13T12:00:00.000Z",
+        emailActivated: true,
+        activatedAt: "2026-11-13T12:05:00.000Z",
+      },
+    ]);
+    assert.equal(stats.totalRespondents, 1);
+    assert.equal(stats.activatedCount, 1);
+    assert.equal(stats.averageItScore, 100);
+    assert.equal(stats.averageAge, 26);
+    assert.equal(stats.byRegion[0].name, "Sudeste");
+    assert.equal(stats.byEthnicity[0].name, "Parda");
+  });
+
+  it("emite e verifica tokens HMAC de ativacao por e-mail e admissao concluida", () => {
+    const secret = "segredo-de-teste-hmac-256-maldivas-tech-2026";
+    const actToken = issueEmailActivationToken(
+      {
+        email: "aluno@maldivastech.dev",
+        nome: "Aluno Teste",
+        sub: "email:123456",
+        recommendedLevel: "facil",
+        next: "/pt/cursos/construa-seu-marketplace/modulo-0-f01-o-mapa",
+      },
+      secret,
+    );
+    const verifiedAct = verifyEmailActivationToken(actToken, secret);
+    assert.ok(verifiedAct);
+    assert.equal(verifiedAct.email, "aluno@maldivastech.dev");
+    assert.equal(verifiedAct.recommendedLevel, "facil");
+
+    const admToken = issueAdmissionCompletedToken(
+      {
+        sub: "email:123456",
+        email: "aluno@maldivastech.dev",
+        nome: "Aluno Teste",
+        recommendedLevel: "facil",
+      },
+      secret,
+    );
+    const verifiedAdm = verifyAdmissionCompletedToken(admToken, secret);
+    assert.ok(verifiedAdm);
+    assert.equal(verifiedAdm.email, "aluno@maldivastech.dev");
+    assert.equal(verifiedAdm.activated, true);
   });
 });

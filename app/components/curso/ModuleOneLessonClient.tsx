@@ -113,6 +113,9 @@ export default function ModuleOneLessonClient({
     workspace,
     syncStatus,
     isAuthenticated,
+    isAdmissionActivated,
+    admissionLoading,
+    studentProfile,
     setCodeDraft,
     recordLabResult,
     recordQuizScore,
@@ -124,7 +127,7 @@ export default function ModuleOneLessonClient({
     updatePreferences,
   } = useCourseWorkspace(courseSlug);
 
-  const [activeStage, setActiveStage] = useState<IdeLessonStage>("all");
+  const [activeStage, setActiveStage] = useState<IdeLessonStage>("predict");
   const [simState, setSimState] = useState<LocalSimState>({
     simulatorUsed: false,
     pixFlowUsed: false,
@@ -206,6 +209,9 @@ export default function ModuleOneLessonClient({
       workspace={workspace}
       syncStatus={syncStatus}
       isAuthenticated={isAuthenticated}
+      isAdmissionActivated={isAdmissionActivated}
+      admissionLoading={admissionLoading}
+      studentProfile={studentProfile}
       activeStage={activeStage}
       onChangeStage={setActiveStage}
       onUpdatePreferences={updatePreferences}
@@ -217,55 +223,22 @@ export default function ModuleOneLessonClient({
       onRecordTerminalProgress={recordTerminalProgress}
     >
       <div className="curso-lesson-body">
-        <aside className="curso-progress-bar-box" aria-label="Progresso no Módulo 1">
-          <div className="curso-progress-top">
-            <div>
-              <strong>Progresso do Módulo 1 (IDE sincronizada)</strong>
-              <p className="curso-fine">
-                {stepsDone} de 4 atividades práticas interagidas ·{" "}
-                {quizEntry
-                  ? `Quiz: ${quizEntry.score}/${quizEntry.total} (${quizEntry.pct}%)`
-                  : "Quiz pendente"}
-              </p>
-            </div>
-            <div className="curso-progress-actions">
-              <a
-                href="/cursos/construa-seu-marketplace-modulo-1.pdf"
-                download="construa-seu-marketplace-modulo-1.pdf"
-                className="btn btn-ghost curso-btn-sm"
-              >
-                <Download size={15} aria-hidden="true" />
-                Baixar PDF do Módulo 1
-              </a>
-              <button
-                type="button"
-                className={`btn curso-btn-sm ${completed ? "btn-primary" : "btn-ghost"}`}
-                onClick={() => toggleLessonCompleted(M1_SLUG, canonicalLesson.id)}
-                aria-pressed={completed}
-              >
-                <CheckCircle2 size={15} aria-hidden="true" />
-                {completed ? "Módulo concluído" : "Marcar como concluído"}
-              </button>
-            </div>
+        <div className="clean-lesson-inline-bar">
+          <div className="clean-lesson-summary-text">
+            <strong>Síntese:</strong> {canonicalLesson.summary}
           </div>
-
-          {!completed && !mastery.readyForCompletion && (
-            <p className="ide-mastery-hint">
-              Missão desta Fase: avance pelas 4 etapas acima, conclua o Lab de Split em centavos na
-              Arena Prática e faça pelo menos 70% no Boss Quiz (+100 XP).
-            </p>
-          )}
-
-          <div
-            className="curso-progress-track"
-            role="progressbar"
-            aria-valuenow={pct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            <div className="curso-progress-fill" style={{ width: `${pct}%` }} />
+          <div className="clean-lesson-inline-actions">
+            <button
+              type="button"
+              className={`clean-btn-sm ${completed ? "is-done" : ""}`}
+              onClick={() => toggleLessonCompleted(M1_SLUG, canonicalLesson.id)}
+              aria-pressed={completed}
+            >
+              <CheckCircle2 size={14} aria-hidden="true" />
+              <span>{completed ? "Concluída" : "Marcar concluída"}</span>
+            </button>
           </div>
-        </aside>
+        </div>
 
         {showPredict && <NotebookLMMediaBlock media={MODULE_ONE_MEDIA} />}
 

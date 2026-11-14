@@ -11,21 +11,16 @@ import {
   Circle,
   Code2,
   Compass,
-  FlipHorizontal2,
   FolderTree,
-  Globe,
   Home,
   Layers,
-  Maximize2,
-  Minimize2,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Rocket,
+  Loader2,
+  Menu,
   Search,
-  ShoppingBag,
   Sparkles,
-  TerminalSquare,
+  UserCheck,
   Wrench,
+  X,
 } from "lucide-react";
 import {
   allCourseLessons,
@@ -37,7 +32,6 @@ import {
   getCourseLevelSpec,
   type CourseDifficultyLevel,
 } from "@/app/lib/course-levels";
-import { COURSE_LABS } from "@/app/lib/course-labs";
 import {
   ENGINEERING_ACTS,
   getLessonQuestBriefing,
@@ -55,7 +49,7 @@ import { GLOSSARY_TERMS } from "@/app/lib/module-zero-content";
 import { MYSUPERSTORE_REPO_FILES, type RepoFileNode } from "@/app/lib/mysuperstore-repo";
 import { getRecommendedTerminalMission } from "@/app/lib/terminal-sim";
 import type { SyncStatus } from "@/app/hooks/useCourseWorkspace";
-import GoogleSignInButton from "@/app/components/auth/GoogleSignInButton";
+import { CourseAdmissionGate } from "./CourseAdmissionGate";
 import { IdeCodeEditor } from "./IdeCodeEditor";
 
 interface CourseIdeShellProps {
@@ -64,6 +58,14 @@ interface CourseIdeShellProps {
   workspace: WorkspaceState;
   syncStatus: SyncStatus;
   isAuthenticated: boolean;
+  isAdmissionActivated?: boolean;
+  admissionLoading?: boolean;
+  studentProfile?: {
+    id: string;
+    email: string;
+    nome: string;
+    recommendedLevel?: string;
+  } | null;
   activeStage: IdeLessonStage;
   onChangeStage: (stage: IdeLessonStage) => void;
   onUpdatePreferences: (patch: Partial<WorkspacePreferences>) => void;
@@ -85,26 +87,26 @@ const STAGE_SEQUENCE: Array<{
   {
     id: "predict",
     stepNum: 1,
-    label: "1. Desafio Inicial",
-    shortDesc: "Pense antes da resposta",
+    label: "1. Contexto & Vídeo",
+    shortDesc: "Visão geral, multimídia e hipótese",
   },
   {
     id: "concept",
     stepNum: 2,
-    label: "2. Conceito, Vídeo & Planta",
-    shortDesc: "Estúdio multimídia, diagramas e código",
+    label: "2. Arquitetura & Código",
+    shortDesc: "Diagrama visual e explicação guiada",
   },
   {
     id: "practice",
     stepNum: 3,
-    label: "3. Lab & Quebra-Código",
-    shortDesc: "Teste hipóteses e experimente",
+    label: "3. Prática & Arena",
+    shortDesc: "Experimento prático e simulador",
   },
   {
     id: "quiz",
     stepNum: 4,
-    label: "4. Boss Quiz (+100 XP)",
-    shortDesc: "Valide e desbloqueie a próxima fase",
+    label: "4. Desafio (+100 XP)",
+    shortDesc: "Validação rápida para avançar",
   },
 ];
 
@@ -112,8 +114,9 @@ export function CourseIdeShell({
   courseSlug,
   lesson,
   workspace,
-  syncStatus,
-  isAuthenticated,
+  isAdmissionActivated = false,
+  admissionLoading = false,
+  studentProfile = null,
   activeStage,
   onChangeStage,
   onUpdatePreferences,
@@ -126,7 +129,8 @@ export function CourseIdeShell({
   );
   const centerPaneRef = useRef<HTMLDivElement | null>(null);
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // Clean UX: Sidebar drawer starts closed so 100% of attention is on the current step
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarMode, setSidebarMode] = useState<"curriculum" | "repo" | "glossary">(
     "curriculum",
   );
@@ -136,7 +140,6 @@ export function CourseIdeShell({
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteQuery, setPaletteQuery] = useState("");
 
-  const focusMode = workspace.preferences.focusMode;
   const selectedLevel = workspace.preferences.selectedLevel;
   const levelSpec = getCourseLevelSpec(selectedLevel);
   const gamification = useMemo(
@@ -158,7 +161,6 @@ export function CourseIdeShell({
     [briefing.actNumber],
   );
 
-  // Track-specific ordered lessons vs extra lessons
   const trackLessons = useMemo(() => {
     const map = new Map(allLessons.map((l) => [l.slug, l]));
     return levelSpec.recommendedSlugs
@@ -176,11 +178,7 @@ export function CourseIdeShell({
     currentTrackIndex >= 0 && currentTrackIndex + 1 < trackLessons.length
       ? trackLessons[currentTrackIndex + 1]
       : null;
-  const prevTrackLesson =
-    currentTrackIndex > 0 ? trackLessons[currentTrackIndex - 1] : null;
 
-  const labForLesson =
-    COURSE_LABS[lesson.slug] ?? Object.values(COURSE_LABS)[0];
   const recommendedMission = getRecommendedTerminalMission(lesson.slug);
 
   function buildStationHref(station: ArenaStationType) {
@@ -196,13 +194,14 @@ export function CourseIdeShell({
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setPaletteOpen((v) => !v);
-      } else if (e.key === "Escape" && paletteOpen) {
-        setPaletteOpen(false);
+      } else if (e.key === "Escape") {
+        if (paletteOpen) setPaletteOpen(false);
+        if (sidebarOpen) setSidebarOpen(false);
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [paletteOpen]);
+  }, [paletteOpen, sidebarOpen]);
 
   function selectStageAndScroll(nextStage: IdeLessonStage) {
     onChangeStage(nextStage);
@@ -231,189 +230,136 @@ export function CourseIdeShell({
     return { lessonsMatched, termsMatched };
   }, [allLessons, paletteQuery]);
 
-  const activeStageSpec = STAGE_SEQUENCE.find((s) => s.id === activeStage);
+  // 1. Loading state while checking admission cookie/session
+  if (admissionLoading) {
+    return (
+      <div className="clean-lesson-loading">
+        <Loader2 className="w-6 h-6 animate-spin ide-text-cyan" aria-hidden="true" />
+        <p>Carregando ambiente de estudo...</p>
+      </div>
+    );
+  }
+
+  // 2. Mandatory Admission & Email Activation Gate (No unauthenticated access allowed)
+  if (!isAdmissionActivated) {
+    return (
+      <CourseAdmissionGate
+        targetPath={`/pt/cursos/${courseSlug}/${lesson.slug}`}
+        initialStudent={studentProfile}
+      />
+    );
+  }
 
   return (
-    <div className={`ide-shell${focusMode ? " is-focus-mode" : ""}`}>
-      {/* Top Game HUD Bar */}
-      <header className="ide-topbar" role="banner">
-        <div className="ide-topbar-left">
+    <div className="clean-course-workspace">
+      {/* Single-Row Minimalist Topbar (56px, zero clutter) */}
+      <header className="clean-topbar" role="banner">
+        <div className="clean-topbar-left">
           <button
             type="button"
-            className="ide-icon-btn"
+            className="clean-topbar-btn"
             onClick={() => setSidebarOpen((v) => !v)}
-            title={sidebarOpen ? "Recolher mapa da trilha" : "Abrir mapa da trilha"}
-            aria-label="Alternar barra lateral"
+            aria-label="Abrir mapa de aulas e arquivos"
           >
             {sidebarOpen ? (
-              <PanelLeftClose className="w-4 h-4" aria-hidden="true" />
+              <X className="w-4 h-4" aria-hidden="true" />
             ) : (
-              <PanelLeftOpen className="w-4 h-4" aria-hidden="true" />
+              <Menu className="w-4 h-4" aria-hidden="true" />
             )}
+            <span>Trilha ({gamification.trackCompleted}/{gamification.trackTotal})</span>
           </button>
 
           <Link
             href={`/pt/cursos/${courseSlug}`}
-            className="ide-brand-pill"
-            title="Voltar ao Mapa Geral do Curso"
+            className="clean-topbar-back"
+            title="Voltar à página inicial do curso"
           >
-            <Sparkles className="w-3.5 h-3.5 ide-text-cyan" aria-hidden="true" />
-            <span>Trilha Game · {levelSpec.shortTitle}</span>
+            <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>Mapa</span>
           </Link>
 
-          <div className="ide-breadcrumb" aria-label="Fase atual">
-            <span className="ide-breadcrumb-module">
-              {currentTrackIndex >= 0
-                ? `Fase ${currentTrackIndex + 1} de ${trackLessons.length}`
-                : `Módulo ${lesson.moduleNumber}`}
-            </span>
-            <span className="ide-breadcrumb-sep">/</span>
-            <strong className="ide-breadcrumb-lesson">{lesson.title}</strong>
-          </div>
+          <span className="clean-topbar-divider" aria-hidden="true" />
+
+          <strong className="clean-topbar-title">{lesson.title}</strong>
         </div>
 
-        <div className="ide-topbar-right">
-          {/* Level Switcher */}
-          <div
-            className="ide-level-pills"
-            role="group"
-            aria-label="Nível de complexidade da jornada"
-          >
-            {Object.values(COURSE_LEVELS).map((lvl) => {
-              const isSelected = lvl.id === selectedLevel;
-              return (
-                <button
-                  key={lvl.id}
-                  type="button"
-                  onClick={() =>
-                    onUpdatePreferences({
-                      selectedLevel: lvl.id as CourseDifficultyLevel,
-                    })
-                  }
-                  className={`ide-level-pill${isSelected ? " is-active" : ""}`}
-                  title={lvl.name}
-                  aria-pressed={isSelected}
-                >
-                  <span>{lvl.badge}</span>
-                </button>
-              );
-            })}
-          </div>
+        <div className="clean-topbar-right">
+          <label className="clean-level-select-wrap" title="Alterar nível da trilha">
+            <span className="sr-only">Nível da trilha</span>
+            <select
+              value={selectedLevel}
+              onChange={(e) =>
+                onUpdatePreferences({
+                  selectedLevel: e.target.value as CourseDifficultyLevel,
+                })
+              }
+              className="clean-level-select"
+            >
+              {Object.values(COURSE_LEVELS).map((lvl) => (
+                <option key={lvl.id} value={lvl.id}>
+                  Trilha: {lvl.shortTitle}
+                </option>
+              ))}
+            </select>
+          </label>
 
-          {/* Direct Portal to Practice Station of THIS Lesson */}
           <Link
             href={buildStationHref(briefing.primaryStation)}
-            className="ide-btn ide-btn-xs ide-btn-primary"
-            title={briefing.primaryStationTitle}
+            className="clean-topbar-arena-btn"
           >
             <Wrench className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Arena Desta Fase</span>
+            <span>Arena Prática</span>
           </Link>
 
-          {/* XP & Track Progress Badge */}
-          <div
-            className="ide-xp-badge"
-            title={`Patente: ${gamification.rankTitle} · ${gamification.xp} XP · ${gamification.trackPct}% da trilha`}
-          >
+          <div className="clean-xp-pill" title={`Patente: ${gamification.rankTitle}`}>
             <Award className="w-3.5 h-3.5 ide-text-amber" aria-hidden="true" />
-            <span>
-              <strong>{gamification.xp} XP</strong> · {gamification.trackPct}%
-            </span>
+            <span>{gamification.xp} XP</span>
           </div>
 
           <button
             type="button"
-            className="ide-search-trigger"
+            className="clean-topbar-icon-btn"
             onClick={() => setPaletteOpen(true)}
-            title="Buscar lição ou termo (Ctrl+K)"
+            title="Buscar (Ctrl+K)"
+            aria-label="Buscar no curso"
           >
-            <Search className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Buscar</span>
-            <kbd>Ctrl K</kbd>
+            <Search className="w-4 h-4" aria-hidden="true" />
           </button>
 
-          <button
-            type="button"
-            className="ide-icon-btn"
-            onClick={() => onUpdatePreferences({ focusMode: !focusMode })}
-            title={focusMode ? "Sair do modo foco" : "Modo foco (tela limpa)"}
-            aria-label="Alternar modo foco"
-          >
-            {focusMode ? (
-              <Minimize2 className="w-4 h-4" aria-hidden="true" />
-            ) : (
-              <Maximize2 className="w-4 h-4" aria-hidden="true" />
-            )}
-          </button>
-
-          <div className="ide-auth-slot">
-            {isAuthenticated ? (
-              <span className="ide-sync-pill" title={`Status: ${syncStatus}`}>
-                ● Salvo na nuvem
+          {studentProfile && (
+            <span className="clean-verified-student" title={studentProfile.email}>
+              <UserCheck className="w-3.5 h-3.5 ide-text-emerald" aria-hidden="true" />
+              <span className="hidden sm:inline">
+                {studentProfile.nome.split(" ")[0] || "Aluno"}
               </span>
-            ) : (
-              <GoogleSignInButton
-                href={`/pt/cursos/${courseSlug}/${lesson.slug}`}
-                compact
-              />
-            )}
-          </div>
+            </span>
+          )}
         </div>
       </header>
 
-      {/* Secondary Stepper Bar: Full Journey ("Jornada Completa") first, plus optional focused stage filters */}
-      <nav
-        className="ide-stage-stepper"
-        aria-label="Modo de visualização da aula"
-      >
-        <div className="ide-stage-pills">
-          <button
-            type="button"
-            className={`ide-stage-pill${activeStage === "all" ? " is-active" : ""}`}
-            onClick={() => selectStageAndScroll("all")}
-            title="Ver toda a aula passo a passo (Briefing + Estúdio Multimídia + Conceito + Lab + Quiz)"
+      {/* Slide-Over Curriculum / Repo / Glossary Drawer (Only visible when clicked) */}
+      {sidebarOpen && (
+        <div
+          className="clean-drawer-backdrop"
+          onClick={() => setSidebarOpen(false)}
+        >
+          <aside
+            className="clean-drawer"
+            aria-label="Navegação do Curso"
+            onClick={(e) => e.stopPropagation()}
           >
-            ★ Jornada Completa Passo a Passo
-          </button>
-          {STAGE_SEQUENCE.map((st) => {
-            const isCurrent = activeStage === st.id;
-            const completedStep =
-              (st.id === "predict" && mastery.completed) ||
-              (st.id === "concept" && mastery.completed) ||
-              (st.id === "practice" && mastery.labPassed) ||
-              (st.id === "quiz" && mastery.quizPassed);
-
-            return (
+            <div className="clean-drawer-head">
+              <strong>Menu da Jornada</strong>
               <button
-                key={st.id}
                 type="button"
-                className={`ide-stage-pill${isCurrent ? " is-active" : ""}${completedStep ? " is-done" : ""}`}
-                onClick={() => selectStageAndScroll(st.id)}
-                title={st.shortDesc}
+                className="clean-topbar-icon-btn"
+                onClick={() => setSidebarOpen(false)}
+                aria-label="Fechar menu"
               >
-                {completedStep ? "✓ " : ""}
-                {st.label}
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
-            );
-          })}
-        </div>
+            </div>
 
-        <div className="ide-stepper-hint">
-          <Sparkles className="w-3.5 h-3.5 ide-text-cyan" aria-hidden="true" />
-          <span>
-            {activeStageSpec
-              ? `Filtro ativo: ${activeStageSpec.label} — ${activeStageSpec.shortDesc}.`
-              : `Ato ${briefing.actNumber} de 6 (${activeActSpec.softwareProcessName}) · Role no seu ritmo ou filtre por etapa acima.`}
-          </span>
-        </div>
-      </nav>
-
-      {/* Clean 2-Zone Layout: Sidebar Track Map + Spacious Single-Focus Stage */}
-      <div
-        className={`ide-grid${sidebarOpen && !focusMode ? " has-sidebar" : " no-sidebar"}`}
-      >
-        {sidebarOpen && !focusMode && (
-          <aside className="ide-sidebar" aria-label="Mapa da Sua Trilha">
             <div className="ide-sidebar-tabs" role="tablist">
               <button
                 type="button"
@@ -423,7 +369,7 @@ export function CourseIdeShell({
                 onClick={() => setSidebarMode("curriculum")}
               >
                 <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Sua Trilha ({trackLessons.length})</span>
+                <span>Aulas ({trackLessons.length})</span>
               </button>
               <button
                 type="button"
@@ -433,7 +379,7 @@ export function CourseIdeShell({
                 onClick={() => setSidebarMode("repo")}
               >
                 <FolderTree className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Arquivos</span>
+                <span>Código Real</span>
               </button>
               <button
                 type="button"
@@ -451,17 +397,17 @@ export function CourseIdeShell({
                 <div className="ide-module-group">
                   <div className="ide-module-heading">
                     TRILHA {levelSpec.shortTitle.toUpperCase()} ({gamification.trackCompleted}/
-                    {gamification.trackTotal} CONCLUÍDAS)
+                    {gamification.trackTotal})
                   </div>
                   <ul className="ide-lesson-list">
                     {trackLessons.map((item, idx) => {
                       const isCurrent = item.slug === lesson.slug;
                       const isDone = workspace.completedSlugs.includes(item.slug);
-                      const itemBrief = getLessonQuestBriefing(item.slug);
                       return (
                         <li key={item.slug}>
                           <Link
                             href={`/pt/cursos/${courseSlug}/${item.slug}`}
+                            onClick={() => setSidebarOpen(false)}
                             className={`ide-lesson-link${isCurrent ? " is-current" : ""}${isDone ? " is-done" : ""}`}
                           >
                             {isDone ? (
@@ -470,16 +416,10 @@ export function CourseIdeShell({
                                 aria-label="Fase concluída"
                               />
                             ) : (
-                              <Circle
-                                className="w-3.5 h-3.5 shrink-0"
-                                aria-hidden="true"
-                              />
+                              <Circle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                             )}
                             <span>
-                              <strong>
-                                Fase {idx + 1} (Ato {itemBrief.actNumber}):
-                              </strong>{" "}
-                              {item.title}
+                              <strong>Fase {idx + 1}:</strong> {item.title}
                             </span>
                           </Link>
                         </li>
@@ -491,7 +431,7 @@ export function CourseIdeShell({
                 {extraLessons.length > 0 && (
                   <details className="ide-extra-modules-details">
                     <summary className="ide-module-heading" style={{ cursor: "pointer" }}>
-                      + Outras Fases Avançadas ({extraLessons.length} aulas)
+                      + Aulas Complementares ({extraLessons.length})
                     </summary>
                     <ul className="ide-lesson-list" style={{ marginTop: 6 }}>
                       {extraLessons.map((item) => {
@@ -501,15 +441,15 @@ export function CourseIdeShell({
                           <li key={item.slug}>
                             <Link
                               href={`/pt/cursos/${courseSlug}/${item.slug}`}
+                              onClick={() => setSidebarOpen(false)}
                               className={`ide-lesson-link${isCurrent ? " is-current" : ""}${isDone ? " is-done" : ""}`}
                             >
                               {isDone ? (
                                 <CheckCircle2
                                   className="w-3.5 h-3.5 ide-text-emerald shrink-0"
-                                  aria-label="Concluída"
                                 />
                               ) : (
-                                <Circle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                                <Circle className="w-3.5 h-3.5 shrink-0" />
                               )}
                               <span>{item.title}</span>
                             </Link>
@@ -525,18 +465,20 @@ export function CourseIdeShell({
             {sidebarMode === "repo" && (
               <div className="ide-sidebar-scroll">
                 <p className="ide-sidebar-help">
-                  Arquivos reais do <strong>MySuperStore</strong> ligados a esta fase:
+                  Arquivos reais do <strong>MySuperStore</strong>:
                 </p>
                 <ul className="ide-repo-list">
                   {MYSUPERSTORE_REPO_FILES.map((file) => {
                     const isRelevant = file.lessonSlugs.includes(lesson.slug);
-                    const isSelected = selectedRepoFile?.path === file.path;
                     return (
                       <li key={file.path}>
                         <button
                           type="button"
-                          className={`ide-repo-item${isSelected ? " is-selected" : ""}${isRelevant ? " is-relevant" : ""}`}
-                          onClick={() => setSelectedRepoFile(file)}
+                          className={`ide-repo-item${isRelevant ? " is-relevant" : ""}`}
+                          onClick={() => {
+                            setSelectedRepoFile(file);
+                            setSidebarOpen(false);
+                          }}
                         >
                           <Code2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                           <span className="truncate">{file.path}</span>
@@ -556,215 +498,116 @@ export function CourseIdeShell({
                     <li key={g.term} className="ide-glossary-mini-item">
                       <strong>{g.term}</strong>
                       <p>{g.definition}</p>
-                      <small>Associação: {g.association}</small>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
           </aside>
-        )}
+        </div>
+      )}
 
-        {/* Center Main Stage (Spacious, Single-Focus, Game-Guided) */}
-        <main className="ide-center-pane" ref={centerPaneRef}>
-          {selectedRepoFile && (
-            <div className="ide-repo-modal-inline">
-              <div className="ide-repo-modal-header">
-                <div>
-                  <span className="ide-file-badge">MySuperStore Reference</span>
-                  <strong>{selectedRepoFile.path}</strong>
-                  <p className="ide-muted-xs">{selectedRepoFile.summary}</p>
-                </div>
+      {/* Main Centered Learning Stage (Max-width 860px, Clean Micro-Steps) */}
+      <main className="clean-lesson-canvas" ref={centerPaneRef}>
+        {/* Sleek Context & 4-Step Progress Card */}
+        <section className="clean-lesson-hero-card" aria-label="Etapa atual da aula">
+          <div className="clean-act-strip">
+            <span className="clean-act-pill">
+              <Compass className="w-3.5 h-3.5" aria-hidden="true" /> {briefing.phaseBadge}
+            </span>
+            <span className="clean-act-process">
+              {activeActSpec.softwareProcessName}
+            </span>
+          </div>
+
+          {/* 4-Step Interactive Chapter Selector (1 Step at a Time = Zero Cognitive Overload) */}
+          <nav className="clean-chapter-tabs" aria-label="Passos desta aula">
+            {STAGE_SEQUENCE.map((st) => {
+              const isCurrent = activeStage === st.id;
+              const isDone =
+                (st.id === "predict" && mastery.completed) ||
+                (st.id === "concept" && mastery.completed) ||
+                (st.id === "practice" && mastery.labPassed) ||
+                (st.id === "quiz" && mastery.quizPassed);
+
+              return (
                 <button
+                  key={st.id}
                   type="button"
-                  className="ide-btn ide-btn-xs ide-btn-ghost"
-                  onClick={() => setSelectedRepoFile(null)}
+                  onClick={() => selectStageAndScroll(st.id)}
+                  className={`clean-chapter-tab${isCurrent ? " is-active" : ""}${isDone ? " is-done" : ""}`}
                 >
-                  Fechar arquivo
+                  <span className="clean-chapter-num">
+                    {isDone ? "✓" : st.stepNum}
+                  </span>
+                  <div className="clean-chapter-meta">
+                    <strong>{st.label.split(". ")[1]}</strong>
+                    <span>{st.shortDesc}</span>
+                  </div>
                 </button>
-              </div>
-              <IdeCodeEditor
-                value={selectedRepoFile.content}
-                readOnly
-                language={selectedRepoFile.language}
-                minHeight={220}
-              />
+              );
+            })}
+          </nav>
+
+          {/* Compact 2-Line Context Summary Only on Step 1 */}
+          {activeStage === "predict" && (
+            <div className="clean-briefing-callout">
+              <p>
+                <strong>Por que esta etapa vem agora:</strong> {briefing.whyBeforeCode}
+              </p>
+              <p style={{ marginTop: 4 }}>
+                <strong>Entrega prática desta aula:</strong> {briefing.whatYouWillBuild}
+              </p>
             </div>
           )}
+        </section>
 
-          {/* Top Software Engineering Process Pipeline & Phase Briefing Card */}
-          <section
-            className="ide-arena-portal-box"
-            style={{ marginBottom: 24 }}
-            aria-label="Posição na Engenharia de Software e Missão da Fase"
-          >
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 10,
-                marginBottom: 14,
-              }}
-            >
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-                <span className="ide-file-badge">
-                  <Compass className="w-3.5 h-3.5" aria-hidden="true" /> {briefing.phaseBadge}
-                </span>
-                <span className="curso-pill" style={{ fontSize: "0.75rem" }}>
-                  🏠 {briefing.houseRoomLabel}
-                </span>
-              </div>
-              <span className="ide-muted-xs">
-                Processo de Engenharia: <strong>{activeActSpec.softwareProcessName}</strong>
-              </span>
-            </div>
-
-            {/* 6-Act Visual Pipeline */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(135px, 1fr))",
-                gap: 8,
-                marginBottom: 16,
-              }}
-              role="list"
-              aria-label="Os 6 Atos da Engenharia de Software"
-            >
-              {ENGINEERING_ACTS.map((act) => {
-                const isCurrentAct = act.actNumber === briefing.actNumber;
-                const isPastAct = act.actNumber < briefing.actNumber;
-                return (
-                  <div
-                    key={act.id}
-                    role="listitem"
-                    style={{
-                      padding: "8px 10px",
-                      borderRadius: 10,
-                      border: isCurrentAct
-                        ? "1px solid rgba(56, 189, 248, 0.75)"
-                        : isPastAct
-                          ? "1px solid rgba(52, 211, 153, 0.38)"
-                          : "1px solid rgba(148, 163, 184, 0.16)",
-                      background: isCurrentAct
-                        ? "rgba(56, 189, 248, 0.14)"
-                        : isPastAct
-                          ? "rgba(16, 185, 129, 0.08)"
-                          : "rgba(15, 23, 42, 0.45)",
-                      fontSize: "0.76rem",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: 700,
-                        color: isCurrentAct
-                          ? "#38bdf8"
-                          : isPastAct
-                            ? "#34d399"
-                            : "#94a3b8",
-                      }}
-                    >
-                      {isPastAct ? "✓ " : isCurrentAct ? "▶ " : ""}
-                      {act.shortTitle}
-                    </div>
-                    <div
-                      style={{
-                        color: "#cbd5e1",
-                        fontSize: "0.7rem",
-                        marginTop: 2,
-                        lineHeight: 1.35,
-                      }}
-                    >
-                      {act.houseAnalogy}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Why Before Code + What You Will Build */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-                gap: 12,
-                padding: 14,
-                borderRadius: 12,
-                background: "rgba(2, 6, 23, 0.65)",
-                border: "1px solid rgba(148, 163, 184, 0.16)",
-              }}
-            >
+        {selectedRepoFile && (
+          <div className="ide-repo-modal-inline" style={{ marginBottom: 20 }}>
+            <div className="ide-repo-modal-header">
               <div>
-                <strong
-                  style={{
-                    display: "block",
-                    fontSize: "0.78rem",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    color: "#38bdf8",
-                    marginBottom: 4,
-                  }}
-                >
-                  1. Por que fazemos isso nesta etapa da obra?
-                </strong>
-                <p style={{ fontSize: "0.88rem", color: "#e2e8f0", margin: 0, lineHeight: 1.55 }}>
-                  {briefing.whyBeforeCode}
-                </p>
+                <span className="ide-file-badge">MySuperStore Reference</span>
+                <strong>{selectedRepoFile.path}</strong>
+                <p className="ide-muted-xs">{selectedRepoFile.summary}</p>
               </div>
-              <div>
-                <strong
-                  style={{
-                    display: "block",
-                    fontSize: "0.78rem",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    color: "#34d399",
-                    marginBottom: 4,
-                  }}
-                >
-                  2. Feature e Entrega Prática desta Fase
-                </strong>
-                <p style={{ fontSize: "0.88rem", color: "#e2e8f0", margin: 0, lineHeight: 1.55 }}>
-                  {briefing.whatYouWillBuild}
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {children}
-
-          {/* Focused Practice Mission of THIS Phase (Never dumping all tools unguided) */}
-          {(activeStage === "practice" || activeStage === "all") && (
-            <section
-              className="ide-arena-portal-box"
-              aria-label="Missão Prática Oficial desta Fase"
-            >
-              <div className="ide-arena-portal-head">
-                <div>
-                  <span className="ide-file-badge">
-                    <Sparkles className="w-3.5 h-3.5" aria-hidden="true" /> Missão Hands-On Oficial ·{" "}
-                    {briefing.phaseBadge}
-                  </span>
-                  <h3 style={{ marginTop: 6 }}>{briefing.primaryStationTitle}</h3>
-                  <p className="curso-muted" style={{ marginTop: 6 }}>
-                    {briefing.primaryStationWhy}
-                  </p>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  gap: 12,
-                  marginTop: 14,
-                }}
+              <button
+                type="button"
+                className="ide-btn ide-btn-xs ide-btn-ghost"
+                onClick={() => setSelectedRepoFile(null)}
               >
+                Fechar arquivo
+              </button>
+            </div>
+            <IdeCodeEditor
+              value={selectedRepoFile.content}
+              readOnly
+              language={selectedRepoFile.language}
+              minHeight={220}
+            />
+          </div>
+        )}
+
+        {/* Active Step Content */}
+        <div className="clean-stage-content">{children}</div>
+
+        {/* Focused Arena Mission Card (Only shown on Step 3 "practice") */}
+        {activeStage === "practice" && (
+          <section
+            className="clean-arena-mission-card"
+            aria-label="Missão Prática em Tela Cheia"
+          >
+            <div className="clean-arena-mission-body">
+              <span className="clean-act-pill">
+                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" /> Arena Interativa
+                Dedicada
+              </span>
+              <h3>{briefing.primaryStationTitle}</h3>
+              <p>{briefing.primaryStationWhy}</p>
+
+              <div className="clean-arena-actions">
                 <Link
                   href={buildStationHref(briefing.primaryStation)}
-                  className="ide-btn ide-btn-primary"
+                  className="clean-btn-primary"
                 >
                   <Wrench className="w-4 h-4" aria-hidden="true" />
                   <span>{briefing.primaryStationCta}</span>
@@ -773,7 +616,7 @@ export function CourseIdeShell({
                 {briefing.secondaryStation && (
                   <Link
                     href={buildStationHref(briefing.secondaryStation.station)}
-                    className="ide-btn ide-btn-secondary"
+                    className="clean-btn-secondary"
                   >
                     <span>{briefing.secondaryStation.label}</span>
                     <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -781,255 +624,119 @@ export function CourseIdeShell({
                 )}
               </div>
 
-              {/* Step-by-Step Explained Starter Kit Unlock (Only in F02 after Terminal intro!) */}
               {briefing.unlocksDownloadKit && (
-                <div
-                  style={{
-                    marginTop: 18,
-                    padding: 16,
-                    borderRadius: 12,
-                    border: "1px solid rgba(52, 211, 153, 0.45)",
-                    background: "rgba(16, 185, 129, 0.08)",
-                  }}
-                >
-                  <span className="ide-file-badge">
-                    🏠 {briefing.unlocksDownloadKit.title}
-                  </span>
-                  <p style={{ marginTop: 8, fontSize: "0.9rem", color: "#e2e8f0" }}>
-                    {briefing.unlocksDownloadKit.whatIsIt}
-                  </p>
-                  <ol
-                    style={{
-                      marginTop: 10,
-                      marginBottom: 14,
-                      paddingLeft: 20,
-                      color: "#cbd5e1",
-                      fontSize: "0.86rem",
-                      lineHeight: 1.65,
-                    }}
-                  >
-                    {briefing.unlocksDownloadKit.howToUseSteps.map((stepText) => (
-                      <li key={stepText}>{stepText}</li>
+                <div className="clean-starter-kit-box">
+                  <strong>🏠 {briefing.unlocksDownloadKit.title}</strong>
+                  <p>{briefing.unlocksDownloadKit.whatIsIt}</p>
+                  <ol>
+                    {briefing.unlocksDownloadKit.howToUseSteps.map((s) => (
+                      <li key={s}>{s}</li>
                     ))}
                   </ol>
                   <Link
                     href={briefing.unlocksDownloadKit.href}
-                    className="ide-btn ide-btn-primary"
+                    className="clean-btn-primary"
                   >
                     <Home className="w-4 h-4" aria-hidden="true" />
                     <span>{briefing.unlocksDownloadKit.buttonLabel}</span>
                   </Link>
                 </div>
               )}
+            </div>
+          </section>
+        )}
 
-              {/* Optional Collapsible Drawer for All 7 Stations (Does not clutter the primary path) */}
-              <details style={{ marginTop: 18 }}>
-                <summary
-                  style={{
-                    cursor: "pointer",
-                    fontSize: "0.82rem",
-                    color: "#94a3b8",
-                    fontWeight: 600,
-                  }}
-                >
-                  Explorar outras Estações do Laboratório (Acesso Livre sob Demanda)
-                </summary>
-                <div className="ide-arena-portal-grid" style={{ marginTop: 12 }}>
-                  <Link
-                    href={`/pt/cursos/${courseSlug}/pratica?estacao=bancada&aula=${lesson.slug}`}
-                    className="ide-arena-portal-item"
-                  >
-                    <Home className="w-5 h-5 ide-text-cyan shrink-0" aria-hidden="true" />
-                    <div>
-                      <strong>0. Casa Pré-Moldada (.zip) &amp; VS Code</strong>
-                      <p>Guia passo a passo de instalação e esqueleto em 4 cômodos.</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  </Link>
-
-                  <Link
-                    href={`/pt/cursos/${courseSlug}/pratica?estacao=terminal&aula=${lesson.slug}&missao=${recommendedMission}`}
-                    className="ide-arena-portal-item"
-                  >
-                    <TerminalSquare className="w-5 h-5 ide-text-emerald shrink-0" aria-hidden="true" />
-                    <div>
-                      <strong>1. Tela Preta (Terminal desta Fase)</strong>
-                      <p>Rode os comandos no simulador seguro (+25 XP por comando).</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  </Link>
-
-                  <Link
-                    href={`/pt/cursos/${courseSlug}/pratica?estacao=sandbox&aula=${lesson.slug}`}
-                    className="ide-arena-portal-item"
-                  >
-                    <Code2 className="w-5 h-5 ide-text-amber shrink-0" aria-hidden="true" />
-                    <div>
-                      <strong>2. Oficina Python/SQL ({labForLesson.shortCode})</strong>
-                      <p>{labForLesson.title} (+50 XP ao passar nos testes).</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  </Link>
-
-                  <Link
-                    href={`/pt/cursos/${courseSlug}/pratica?estacao=http&aula=${lesson.slug}`}
-                    className="ide-arena-portal-item"
-                  >
-                    <Globe className="w-5 h-5 ide-text-cyan shrink-0" aria-hidden="true" />
-                    <div>
-                      <strong>3. Simulador de API, Estoque &amp; Webhook</strong>
-                      <p>Dispare GET/POST e teste concorrência e assinatura PIX.</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  </Link>
-
-                  <Link
-                    href={`/pt/cursos/${courseSlug}/pratica?estacao=loja&aula=${lesson.slug}`}
-                    className="ide-arena-portal-item"
-                  >
-                    <ShoppingBag className="w-5 h-5 ide-text-emerald shrink-0" aria-hidden="true" />
-                    <div>
-                      <strong>4. Móveis da Minha Loja (Vitrine)</strong>
-                      <p>Personalize nome, cores, produtos e WhatsApp e baixe o HTML.</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  </Link>
-
-                  <Link
-                    href={`/pt/cursos/${courseSlug}/pratica?estacao=deploy&aula=${lesson.slug}`}
-                    className="ide-arena-portal-item"
-                  >
-                    <Rocket className="w-5 h-5 ide-text-amber shrink-0" aria-hidden="true" />
-                    <div>
-                      <strong>5. Publicar R$ 0 (GitHub / Neon / Render / Vercel)</strong>
-                      <p>Siga um provedor por vez com fotos reais de onde clicar.</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  </Link>
-
-                  <Link
-                    href={`/pt/cursos/${courseSlug}/pratica?estacao=cards&aula=${lesson.slug}`}
-                    className="ide-arena-portal-item"
-                  >
-                    <FlipHorizontal2 className="w-5 h-5 ide-text-cyan shrink-0" aria-hidden="true" />
-                    <div>
-                      <strong>6. Baralho 3D Flip Cards</strong>
-                      <p>Vire os cartões interativos do nível {levelSpec.shortTitle}.</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  </Link>
-                </div>
-              </details>
-            </section>
+        {/* Clean Step-by-Step Bottom Navigation Bar */}
+        <footer className="clean-step-footer" aria-label="Navegação entre etapas">
+          {activeStage === "predict" && (
+            <div className="clean-step-footer-row">
+              <span className="clean-step-footer-hint">
+                Passo 1 de 4 · Contexto &amp; Multimídia
+              </span>
+              <button
+                type="button"
+                className="clean-btn-primary"
+                onClick={() => selectStageAndScroll("concept")}
+              >
+                <span>Continuar para o Passo 2: Arquitetura &amp; Código</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </div>
           )}
 
-          {/* Gamified Step-by-Step Progression Footer */}
-          <footer className="ide-stage-progression-bar" aria-label="Avanço de fase na trilha">
-            {activeStage === "predict" && (
-              <div className="ide-stage-next-row">
-                <div>
-                  <span className="ide-file-badge">Etapa 1 de 4 Concluída?</span>
-                  <p className="ide-muted-xs" style={{ marginTop: 4 }}>
-                    Agora que você formulou sua hipótese, veja o estúdio multimídia, a ilustração e o código na Etapa 2.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  className="ide-btn ide-btn-primary"
-                  onClick={() => selectStageAndScroll("concept")}
+          {activeStage === "concept" && (
+            <div className="clean-step-footer-row">
+              <button
+                type="button"
+                className="clean-btn-ghost"
+                onClick={() => selectStageAndScroll("predict")}
+              >
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                <span>Voltar ao Passo 1</span>
+              </button>
+              <button
+                type="button"
+                className="clean-btn-primary"
+                onClick={() => selectStageAndScroll("practice")}
+              >
+                <span>Continuar para o Passo 3: Prática &amp; Arena</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </div>
+          )}
+
+          {activeStage === "practice" && (
+            <div className="clean-step-footer-row">
+              <button
+                type="button"
+                className="clean-btn-ghost"
+                onClick={() => selectStageAndScroll("concept")}
+              >
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                <span>Voltar ao Passo 2</span>
+              </button>
+              <button
+                type="button"
+                className="clean-btn-primary"
+                onClick={() => selectStageAndScroll("quiz")}
+              >
+                <span>Continuar para o Passo 4: Desafio Final (+100 XP)</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </div>
+          )}
+
+          {(activeStage === "quiz" || activeStage === "all") && (
+            <div className="clean-step-footer-row">
+              <button
+                type="button"
+                className="clean-btn-ghost"
+                onClick={() => selectStageAndScroll("practice")}
+              >
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                <span>Voltar ao Passo 3 (Prática)</span>
+              </button>
+              {nextTrackLesson ? (
+                <Link
+                  href={`/pt/cursos/${courseSlug}/${nextTrackLesson.slug}`}
+                  className="clean-btn-primary"
                 >
-                  <span>Avançar para Etapa 2: Conceito, Vídeo &amp; Planta</span>
+                  <span>Próxima Aula: {nextTrackLesson.title}</span>
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </button>
-              </div>
-            )}
-
-            {activeStage === "concept" && (
-              <div className="ide-stage-next-row">
-                <button
-                  type="button"
-                  className="ide-btn ide-btn-ghost"
-                  onClick={() => selectStageAndScroll("predict")}
+                </Link>
+              ) : (
+                <Link
+                  href={`/pt/cursos/${courseSlug}/certificado`}
+                  className="clean-btn-primary"
                 >
-                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-                  <span>Voltar para Etapa 1</span>
-                </button>
-                <button
-                  type="button"
-                  className="ide-btn ide-btn-primary"
-                  onClick={() => selectStageAndScroll("practice")}
-                >
-                  <span>Avançar para Etapa 3: Lab &amp; Arena Prática</span>
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </button>
-              </div>
-            )}
-
-            {activeStage === "practice" && (
-              <div className="ide-stage-next-row">
-                <button
-                  type="button"
-                  className="ide-btn ide-btn-ghost"
-                  onClick={() => selectStageAndScroll("concept")}
-                >
-                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-                  <span>Voltar para Etapa 2</span>
-                </button>
-                <button
-                  type="button"
-                  className="ide-btn ide-btn-primary"
-                  onClick={() => selectStageAndScroll("quiz")}
-                >
-                  <span>Avançar para Etapa 4: Boss Quiz &amp; Conclusão (+100 XP)</span>
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </button>
-              </div>
-            )}
-
-            {(activeStage === "quiz" || activeStage === "all") && (
-              <div className="ide-stage-next-row">
-                {prevTrackLesson ? (
-                  <Link
-                    href={`/pt/cursos/${courseSlug}/${prevTrackLesson.slug}`}
-                    className="ide-btn ide-btn-ghost"
-                  >
-                    <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-                    <span>Fase Anterior: {prevTrackLesson.title}</span>
-                  </Link>
-                ) : (
-                  <Link
-                    href={`/pt/cursos/${courseSlug}`}
-                    className="ide-btn ide-btn-ghost"
-                  >
-                    <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-                    <span>Voltar ao Mapa do Curso</span>
-                  </Link>
-                )}
-
-                {nextTrackLesson ? (
-                  <Link
-                    href={`/pt/cursos/${courseSlug}/${nextTrackLesson.slug}`}
-                    className="ide-btn ide-btn-primary"
-                  >
-                    <span>
-                      Próxima Fase da Trilha ({levelSpec.shortTitle}): {nextTrackLesson.title}
-                    </span>
-                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                  </Link>
-                ) : (
-                  <Link
-                    href={`/pt/cursos/${courseSlug}/certificado`}
-                    className="ide-btn ide-btn-primary"
-                  >
-                    <Award className="w-4 h-4" aria-hidden="true" />
-                    <span>Trilha Concluída · Ir para Exame Final &amp; Certificado</span>
-                  </Link>
-                )}
-              </div>
-            )}
-          </footer>
-        </main>
-      </div>
+                  <Award className="w-4 h-4" aria-hidden="true" />
+                  <span>Ir para Exame Final &amp; Certificado</span>
+                </Link>
+              )}
+            </div>
+          )}
+        </footer>
+      </main>
 
       {/* Command Palette Modal (Ctrl+K) */}
       {paletteOpen && (
@@ -1048,7 +755,7 @@ export function CourseIdeShell({
                 autoFocus
                 value={paletteQuery}
                 onChange={(e) => setPaletteQuery(e.target.value)}
-                placeholder="Buscar fase, comando ou conceito..."
+                placeholder="Buscar aula, comando ou conceito..."
                 className="ide-palette-input"
               />
               <button
@@ -1061,7 +768,7 @@ export function CourseIdeShell({
             </div>
 
             <div className="ide-palette-results">
-              <div className="ide-palette-group-title">Lições</div>
+              <div className="ide-palette-group-title">Aulas</div>
               {paletteResults.lessonsMatched.map((l) => (
                 <Link
                   key={l.slug}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Download,
   ExternalLink,
@@ -44,11 +45,25 @@ export type NotebookLMMediaConfig = {
   }[];
 };
 
+type MediaTab = "video" | "audio" | "deck" | "mindmap" | "links";
+
 export default function NotebookLMMediaBlock({
   media,
 }: {
   media?: NotebookLMMediaConfig;
 }) {
+  const defaultTab: MediaTab = media?.video
+    ? "video"
+    : media?.audio
+      ? "audio"
+      : media?.deck
+        ? "deck"
+        : media?.mindMap
+          ? "mindmap"
+          : "links";
+
+  const [activeTab, setActiveTab] = useState<MediaTab>(defaultTab);
+
   if (!media) return null;
 
   const hasAny =
@@ -62,29 +77,92 @@ export default function NotebookLMMediaBlock({
 
   return (
     <section
-      className="curso-sim-card curso-media-section"
+      className="clean-media-studio"
       aria-labelledby="notebooklm-media-title"
     >
-      <div className="curso-sim-head">
+      <div className="clean-media-studio-head">
         <div>
-          <span className="curso-badge">
-            {media.sectionLabel ?? "Estúdio da aula · Vídeo, áudio e apoio visual"}
+          <span className="clean-act-pill">
+            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />{" "}
+            {media.sectionLabel ?? "Estúdio Multimídia da Aula"}
           </span>
-          <h2 id="notebooklm-media-title">
-            <Sparkles size={20} aria-hidden="true" /> Material multimídia da lição
+          <h2 id="notebooklm-media-title" className="clean-media-heading">
+            Assista, Ouça ou Inspecione os Slides antes da Prática
           </h2>
+        </div>
+
+        {/* Clean Tab Selector: Only 1 Media Item Open at a Time */}
+        <div className="clean-media-tabs" role="tablist">
+          {media.video && (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "video"}
+              onClick={() => setActiveTab("video")}
+              className={`clean-media-tab${activeTab === "video" ? " is-active" : ""}`}
+            >
+              <PlayCircle className="w-4 h-4" aria-hidden="true" />
+              <span>Vídeo</span>
+            </button>
+          )}
+          {media.audio && (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "audio"}
+              onClick={() => setActiveTab("audio")}
+              className={`clean-media-tab${activeTab === "audio" ? " is-active" : ""}`}
+            >
+              <Headphones className="w-4 h-4" aria-hidden="true" />
+              <span>Podcast</span>
+            </button>
+          )}
+          {media.deck && (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "deck"}
+              onClick={() => setActiveTab("deck")}
+              className={`clean-media-tab${activeTab === "deck" ? " is-active" : ""}`}
+            >
+              <FileText className="w-4 h-4" aria-hidden="true" />
+              <span>Slides PDF</span>
+            </button>
+          )}
+          {media.mindMap && (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "mindmap"}
+              onClick={() => setActiveTab("mindmap")}
+              className={`clean-media-tab${activeTab === "mindmap" ? " is-active" : ""}`}
+            >
+              <ImageIcon className="w-4 h-4" aria-hidden="true" />
+              <span>Mapa Mental</span>
+            </button>
+          )}
+          {media.publicLinks && media.publicLinks.length > 0 && (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "links"}
+              onClick={() => setActiveTab("links")}
+              className={`clean-media-tab${activeTab === "links" ? " is-active" : ""}`}
+            >
+              <ExternalLink className="w-4 h-4" aria-hidden="true" />
+              <span>NotebookLM ({media.publicLinks.length})</span>
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="curso-media-stack">
-        {media.video && (
-          <div className="curso-media-card">
-            <div className="curso-media-card-head">
+      <div className="clean-media-stage">
+        {activeTab === "video" && media.video && (
+          <div className="clean-media-pane">
+            <div className="clean-media-pane-meta">
               <div>
-                <h3 className="curso-media-title">
-                  <PlayCircle size={18} aria-hidden="true" /> {media.video.title}
-                </h3>
-                <p className="curso-muted">{media.video.summary}</p>
+                <h3>{media.video.title}</h3>
+                <p>{media.video.summary}</p>
               </div>
               {media.video.durationLabel && (
                 <span className="curso-pill">{media.video.durationLabel}</span>
@@ -97,127 +175,85 @@ export default function NotebookLMMediaBlock({
               className="curso-media-video"
             >
               <source src={media.video.src} type="video/mp4" />
-              Seu navegador não suporta vídeo HTML5.{" "}
-              <a href={media.video.src} download>
-                Baixar vídeo (.mp4)
-              </a>
             </video>
           </div>
         )}
 
-        {media.audio && (
-          <div className="curso-media-card">
-            <div className="curso-media-card-head">
+        {activeTab === "audio" && media.audio && (
+          <div className="clean-media-pane">
+            <div className="clean-media-pane-meta">
               <div>
-                <h3 className="curso-media-title">
-                  <Headphones size={18} aria-hidden="true" /> {media.audio.title}
-                </h3>
-                <p className="curso-muted">{media.audio.summary}</p>
+                <h3>{media.audio.title}</h3>
+                <p>{media.audio.summary}</p>
               </div>
               {media.audio.durationLabel && (
                 <span className="curso-pill">{media.audio.durationLabel}</span>
               )}
             </div>
-            <audio
-              controls
-              preload="metadata"
-              className="curso-media-audio"
-            >
+            <audio controls preload="metadata" className="curso-media-audio">
               <source src={media.audio.src} type="audio/mp4" />
-              Seu navegador não suporta áudio HTML5.{" "}
-              <a href={media.audio.src} download>
-                Baixar áudio (.m4a)
-              </a>
             </audio>
           </div>
         )}
 
-        {media.deck && (
-          <div className="curso-media-card curso-media-deck">
-            <div className="curso-media-card-head">
+        {activeTab === "deck" && media.deck && (
+          <div className="clean-media-pane">
+            <div className="clean-media-pane-meta">
               <div>
-                <h3 className="curso-media-title">
-                  <FileText size={18} aria-hidden="true" /> {media.deck.title}
-                </h3>
-                <p className="curso-muted">{media.deck.summary}</p>
-                <p className="curso-fine" style={{ marginTop: 6 }}>
-                  Slides visuais gerados para fixação. O texto pesquisável e os
-                  comandos completos permanecem logo abaixo na lição.
-                </p>
+                <h3>{media.deck.title}</h3>
+                <p>{media.deck.summary}</p>
               </div>
               {media.deck.pagesLabel && (
                 <span className="curso-pill">{media.deck.pagesLabel}</span>
               )}
             </div>
-            <div className="curso-media-actions">
+            <div className="curso-media-actions" style={{ marginTop: 12 }}>
               <a
                 href={media.deck.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-primary curso-btn-sm"
+                className="clean-btn-primary"
               >
-                <ExternalLink size={15} aria-hidden="true" />
-                Abrir slides (PDF)
+                <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                <span>Abrir Apresentação em PDF</span>
               </a>
-              <a
-                href={media.deck.href}
-                download
-                className="btn btn-ghost curso-btn-sm"
-              >
-                <Download size={15} aria-hidden="true" />
-                Baixar PDF
+              <a href={media.deck.href} download className="clean-btn-ghost">
+                <Download className="w-4 h-4" aria-hidden="true" />
+                <span>Baixar PDF</span>
               </a>
             </div>
           </div>
         )}
 
-        {media.mindMap && (
-          <figure className="curso-media-card curso-media-figure">
-            <div className="curso-media-card-head">
-              <h3 className="curso-media-title">
-                <ImageIcon size={18} aria-hidden="true" /> {media.mindMap.title}
-              </h3>
+        {activeTab === "mindmap" && media.mindMap && (
+          <div className="clean-media-pane">
+            <div className="clean-media-pane-meta">
+              <h3>{media.mindMap.title}</h3>
               <a
                 href={media.mindMap.src}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-ghost curso-btn-sm"
+                className="clean-btn-ghost"
               >
-                <ExternalLink size={14} aria-hidden="true" />
-                Abrir em tela cheia
+                <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Ampliar Imagem</span>
               </a>
             </div>
-            <a
-              href={media.mindMap.src}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="curso-media-img-link"
-            >
-              <img
-                src={media.mindMap.src}
-                alt={media.mindMap.alt}
-                loading="lazy"
-                className="curso-media-img"
-              />
-            </a>
-            <figcaption className="curso-fine">{media.mindMap.caption}</figcaption>
-          </figure>
+            <img
+              src={media.mindMap.src}
+              alt={media.mindMap.alt}
+              loading="lazy"
+              className="curso-media-img"
+              style={{ marginTop: 10 }}
+            />
+            <p className="curso-fine" style={{ marginTop: 8 }}>
+              {media.mindMap.caption}
+            </p>
+          </div>
         )}
 
-        {media.publicLinks && media.publicLinks.length > 0 && (
-          <div className="curso-media-card">
-            <div className="curso-media-card-head">
-              <div>
-                <h3 className="curso-media-title">
-                  <ExternalLink size={18} aria-hidden="true" /> Prática extra no
-                  NotebookLM (aberta sem login)
-                </h3>
-                <p className="curso-muted">
-                  Links públicos com testes, flashcards, mapa mental e relatórios
-                  para revisar fora da aula.
-                </p>
-              </div>
-            </div>
+        {activeTab === "links" && media.publicLinks && (
+          <div className="clean-media-pane">
             <div className="curso-media-links-grid">
               {media.publicLinks.map((item) => (
                 <a
@@ -242,4 +278,3 @@ export default function NotebookLMMediaBlock({
     </section>
   );
 }
-

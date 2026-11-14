@@ -30,6 +30,14 @@ export function useCourseWorkspace(courseSlug: string) {
   const [hydrated, setHydrated] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("loading");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmissionActivated, setIsAdmissionActivated] = useState(false);
+  const [admissionLoading, setAdmissionLoading] = useState(true);
+  const [studentProfile, setStudentProfile] = useState<{
+    id: string;
+    email: string;
+    nome: string;
+    recommendedLevel?: string;
+  } | null>(null);
   const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestWorkspaceRef = useRef<WorkspaceState>(workspace);
 
@@ -109,19 +117,38 @@ export function useCourseWorkspace(courseSlug: string) {
     let cancelled = false;
     (async () => {
       try {
-        const [wsRes, trilhaRes] = await Promise.all([
+        const [wsRes, trilhaRes, admRes] = await Promise.all([
           fetch("/api/aluno/workspace", { cache: "no-store" }),
           fetch("/api/aluno/trilha", { cache: "no-store" }),
+          fetch("/api/aluno/admissao", { cache: "no-store" }),
         ]);
         if (cancelled) return;
 
-        if (wsRes.status === 401 && trilhaRes.status === 401) {
+        let admAuthed = false;
+        if (admRes.ok) {
+          const admData = (await admRes.json()) as {
+            authenticated?: boolean;
+            activated?: boolean;
+            student?: {
+              id: string;
+              email: string;
+              nome: string;
+              recommendedLevel?: string;
+            } | null;
+          };
+          admAuthed = Boolean(admData.authenticated);
+          setIsAdmissionActivated(Boolean(admData.activated));
+          setStudentProfile(admData.student ?? null);
+        }
+        setAdmissionLoading(false);
+
+        if (wsRes.status === 401 && trilhaRes.status === 401 && !admAuthed) {
           setIsAuthenticated(false);
           setSyncStatus("guest");
           return;
         }
 
-        const authed = wsRes.ok || trilhaRes.ok;
+        const authed = wsRes.ok || trilhaRes.ok || admAuthed;
         setIsAuthenticated(authed);
 
         let remoteWs: WorkspaceState | null = null;
@@ -174,6 +201,7 @@ export function useCourseWorkspace(courseSlug: string) {
         setSyncStatus(localOnly ? "local-fallback" : "cloud");
       } catch {
         if (!cancelled) {
+          setAdmissionLoading(false);
           setSyncStatus("guest");
         }
       }
@@ -380,6 +408,9 @@ export function useCourseWorkspace(courseSlug: string) {
     hydrated,
     syncStatus,
     isAuthenticated,
+    isAdmissionActivated,
+    admissionLoading,
+    studentProfile,
     setCodeDraft,
     recordLabResult,
     recordQuizScore,

@@ -38,6 +38,10 @@ import {
 } from "recharts";
 import { COURSES } from "@/app/lib/courses";
 import {
+  computeEthnographicDashboardStats,
+  type AdmissionRecord,
+} from "@/app/lib/course-admission";
+import {
   calcularTelemetriaAlunos,
   ESTAGIO_META,
   REGRAS_TELEMETRIA_PADRAO,
@@ -132,6 +136,7 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
   const [avaliandoId, setAvaliandoId] = useState<string | null>(null);
   const [copiadoCod, setCopiadoCod] = useState<string | null>(null);
   const [mostrarGraficos, setMostrarGraficos] = useState(true);
+  const [mostrarCenso, setMostrarCenso] = useState(true);
 
   useEffect(() => {
     try {
@@ -203,6 +208,24 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
     }
     return telemetriaServer;
   }, [dadosBrutos, telemetriaServer, regras]);
+
+  const ethnoStats = useMemo(() => {
+    const records =
+      dadosBrutos?.alunos
+        .map((a) => a.admissao)
+        .filter((x): x is AdmissionRecord => Boolean(x)) ?? [];
+    return computeEthnographicDashboardStats(records);
+  }, [dadosBrutos]);
+
+  const admissaoPorAlunoId = useMemo(() => {
+    const map = new Map<string, AdmissionRecord>();
+    for (const a of dadosBrutos?.alunos ?? []) {
+      if (a.admissao) {
+        map.set(a.id, a.admissao);
+      }
+    }
+    return map;
+  }, [dadosBrutos]);
 
   const filtrados = useMemo(() => {
     const lista = telemetria?.alunos ?? [];
@@ -483,6 +506,13 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
           <button
             type="button"
             className="plink"
+            onClick={() => setMostrarCenso((v) => !v)}
+          >
+            <Users size={14} /> {mostrarCenso ? "Ocultar Censo Etnográfico" : "Ver Censo Etnográfico"} ({ethnoStats.totalRespondents})
+          </button>
+          <button
+            type="button"
+            className="plink"
             onClick={() => setMostrarGraficos((v) => !v)}
           >
             {mostrarGraficos ? "Ocultar gráficos" : "Mostrar gráficos"}
@@ -673,6 +703,121 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
               </ResponsiveContainer>
             </div>
           </div>
+        </section>
+      )}
+
+      {/* Painel Etnográfico-Regional-Cultural-Estatístico & Nivelamento de Entrada */}
+      {mostrarCenso && (
+        <section
+          className="admin-panel-card"
+          aria-label="Censo Etnográfico, Regional, Cultural e Estatístico"
+          style={{ display: "grid", gap: 18 }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+            <div>
+              <h3 style={{ fontSize: 16.5, margin: 0 }}>
+                Dashboard Etnográfico, Regional, Cultural &amp; Nivelamento de Informática
+              </h3>
+              <p className="field-hint" style={{ margin: "3px 0 0" }}>
+                Análise demográfica, territorial, socioeconômica, repertório técnico e desempenho no teste obrigatório de entrada.
+              </p>
+            </div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", fontSize: 12.5 }}>
+              <span className="admin-stage-badge is-blue">
+                Respondentes: {ethnoStats.totalRespondents}
+              </span>
+              <span className="admin-stage-badge is-green">
+                Ativados por E-mail: {ethnoStats.activatedCount}
+              </span>
+              <span className="admin-stage-badge is-amber">
+                Média Teste TI: {ethnoStats.averageItScore}%
+              </span>
+              {ethnoStats.averageAge > 0 && (
+                <span className="admin-stage-badge is-blue">
+                  Idade Média: {ethnoStats.averageAge} anos
+                </span>
+              )}
+            </div>
+          </div>
+
+          {ethnoStats.totalRespondents === 0 ? (
+            <div
+              style={{
+                padding: "20px 18px",
+                borderRadius: 12,
+                border: "1px dashed var(--line-strong)",
+                background: "var(--surface)",
+                fontSize: 13.5,
+                color: "var(--fg-muted)",
+              }}
+            >
+              Os dados do Censo Etnográfico-Regional-Cultural aparecerão aqui automaticamente conforme os alunos preencherem o Portão de Admissão e ativarem o link enviado por e-mail.
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 14,
+              }}
+            >
+              {[
+                { titulo: "1. Macro-Região (IBGE)", itens: ethnoStats.byRegion },
+                { titulo: "2. Estados (UF)", itens: ethnoStats.byStateUf },
+                { titulo: "3. Zona Territorial", itens: ethnoStats.byUrbanZone },
+                { titulo: "4. Autodeclaração Étnico-Racial", itens: ethnoStats.byEthnicity },
+                { titulo: "5. Identidade de Gênero", itens: ethnoStats.byGender },
+                { titulo: "6. Escolaridade", itens: ethnoStats.byEducation },
+                { titulo: "7. Faixa Etária", itens: ethnoStats.byAgeBracket },
+                { titulo: "8. Situação Ocupacional", itens: ethnoStats.byEmployment },
+                { titulo: "9. Faixa de Renda Familiar", itens: ethnoStats.byIncome },
+                { titulo: "10. Equipamento de Estudo", itens: ethnoStats.byDevice },
+                { titulo: "11. Como Encontrou o Site", itens: ethnoStats.byHowFound },
+                { titulo: "12. Experiência em Programação", itens: ethnoStats.byProgrammingExperience },
+                { titulo: "13. Linguagens Conhecidas", itens: ethnoStats.byLanguageKnown },
+                { titulo: "14. Motivação Principal", itens: ethnoStats.byMotivation },
+                { titulo: "15. Estilo de Aprendizagem", itens: ethnoStats.byLearningStyle },
+              ].map((bloco) => (
+                <div
+                  key={bloco.titulo}
+                  style={{
+                    padding: 14,
+                    borderRadius: 12,
+                    border: "1px solid var(--line)",
+                    background: "var(--surface)",
+                    display: "grid",
+                    gap: 8,
+                    alignContent: "start",
+                  }}
+                >
+                  <strong style={{ fontSize: 13, color: "var(--fg)" }}>{bloco.titulo}</strong>
+                  <div style={{ display: "grid", gap: 6 }}>
+                    {bloco.itens.slice(0, 6).map((item) => (
+                      <div key={item.name} style={{ display: "grid", gap: 3, fontSize: 12 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                          <span style={{ color: "var(--fg-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {item.name}
+                          </span>
+                          <strong style={{ fontVariantNumeric: "tabular-nums" }}>
+                            {item.count} ({item.pct}%)
+                          </strong>
+                        </div>
+                        <div style={{ height: 5, borderRadius: 999, background: "var(--surface-2)", overflow: "hidden" }}>
+                          <div
+                            style={{
+                              width: `${Math.max(4, item.pct)}%`,
+                              height: "100%",
+                              background: "linear-gradient(90deg, #22B5F2, #38BDF8)",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       )}
 
@@ -1008,6 +1153,62 @@ export default function AlunosPanel({ aoExpirar }: { aoExpirar: () => void }) {
                     {selecionado.bio && (
                       <p style={{ margin: 0, fontSize: 13, color: "var(--fg-muted)" }}>{selecionado.bio}</p>
                     )}
+
+                    {/* Ficha Etnográfica, Regional, Cultural & Teste de Informática do Aluno */}
+                    {(() => {
+                      const adm = admissaoPorAlunoId.get(selecionado.id);
+                      if (!adm) return null;
+                      return (
+                        <div
+                          style={{
+                            padding: 14,
+                            borderRadius: 12,
+                            border: "1px solid var(--line-strong)",
+                            background: "var(--surface)",
+                            display: "grid",
+                            gap: 10,
+                          }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+                            <strong style={{ fontSize: 13.5, color: "var(--accent)" }}>
+                              Ficha do Censo Etnográfico-Regional &amp; Nivelamento de Entrada
+                            </strong>
+                            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                              <span className={`admin-stage-badge ${adm.emailActivated ? "is-green" : "is-amber"}`}>
+                                {adm.emailActivated ? "E-mail Ativado" : "Aguardando clique no e-mail"}
+                              </span>
+                              <span className="admin-stage-badge is-blue">
+                                Teste Informática: {adm.itTestScore}% ({adm.itTestPassed ? "Aprovado" : "Revisão"})
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              display: "grid",
+                              gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+                              gap: 8,
+                              fontSize: 12.5,
+                              color: "var(--fg-muted)",
+                            }}
+                          >
+                            <div><strong>Nascimento / Faixa:</strong> {adm.questionnaire.birthDate} ({adm.ageBracket})</div>
+                            <div><strong>Localidade:</strong> {adm.questionnaire.city} - {adm.questionnaire.stateUf} ({adm.macroRegion})</div>
+                            <div><strong>Zona Territorial:</strong> {adm.questionnaire.urbanZone}</div>
+                            <div><strong>Escolaridade:</strong> {adm.questionnaire.educationLevel}</div>
+                            <div><strong>Autodeclaração (IBGE):</strong> {adm.questionnaire.ethnicityIbge}</div>
+                            <div><strong>Gênero:</strong> {adm.questionnaire.gender}</div>
+                            <div><strong>Ocupação:</strong> {adm.questionnaire.employmentStatus}</div>
+                            <div><strong>Renda Familiar:</strong> {adm.questionnaire.incomeBracket}</div>
+                            <div><strong>Equipamento:</strong> {adm.questionnaire.deviceAccess}</div>
+                            <div><strong>Como encontrou:</strong> {adm.questionnaire.howFoundSite}</div>
+                            <div><strong>Linguagens:</strong> {adm.questionnaire.programmingLanguages.join(", ")}</div>
+                            <div><strong>Motivação:</strong> {adm.questionnaire.motivation}</div>
+                            <div><strong>Estilo Aprendizado:</strong> {adm.questionnaire.learningStyle}</div>
+                            <div><strong>Inglês / IA:</strong> {adm.questionnaire.englishLevel} · {adm.questionnaire.aiUsage}</div>
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     {/* Avaliação do Projeto Final + Envio por E-mail */}
                     {selecionado.avaliacao && (

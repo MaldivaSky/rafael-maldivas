@@ -186,3 +186,109 @@ export function getGoogleRedirectUri(req: Request): string {
   return `${base}/api/auth/google/callback`;
 }
 
+/* ------------------------------------------------------------------ */
+/*  Portão de Admissão & Link de Ativação por E-mail (HMAC-SHA256)    */
+/* ------------------------------------------------------------------ */
+
+export const ADMISSION_COOKIE_NAME =
+  process.env.NODE_ENV === "production" ? "__Host-mt_admissao" : "mt_admissao";
+export const EMAIL_ACTIVATION_TTL_S = 48 * 60 * 60; // 48 horas
+export const ADMISSION_COOKIE_TTL_S = 365 * 24 * 60 * 60; // 1 ano
+
+export type EmailActivationPayload = {
+  sub: string;
+  email: string;
+  nome: string;
+  recommendedLevel: "facil" | "mediano" | "dificil";
+  next: string;
+  exp: number;
+};
+
+export type StudentAdmissionPayload = {
+  sub: string;
+  email: string;
+  nome: string;
+  recommendedLevel: "facil" | "mediano" | "dificil";
+  activated: true;
+  exp: number;
+};
+
+export function getAdmissionSigningSecret(): string {
+  const s =
+    process.env.AUTH_SESSION_SECRET ||
+    process.env.ORACLE_LEADS_JWT_SECRET ||
+    "maldivas-course-admission-hmac-secret-2026";
+  return s;
+}
+
+export function issueEmailActivationToken(
+  input: Omit<EmailActivationPayload, "exp">,
+  secret = getAdmissionSigningSecret(),
+  nowMs = Date.now(),
+): string {
+  const exp = Math.floor(nowMs / 1000) + EMAIL_ACTIVATION_TTL_S;
+  return createSignedToken<EmailActivationPayload>({ ...input, exp }, secret);
+}
+
+export function verifyEmailActivationToken(
+  token: string | null | undefined,
+  secret = getAdmissionSigningSecret(),
+  nowMs = Date.now(),
+): EmailActivationPayload | null {
+  const payload = verifySignedToken<EmailActivationPayload>(token, secret, nowMs);
+  if (!payload || typeof payload.sub !== "string" || typeof payload.email !== "string") {
+    return null;
+  }
+  return payload;
+}
+
+export function issueAdmissionCompletedToken(
+  input: Omit<StudentAdmissionPayload, "exp" | "activated">,
+  secret = getAdmissionSigningSecret(),
+  nowMs = Date.now(),
+): string {
+  const exp = Math.floor(nowMs / 1000) + ADMISSION_COOKIE_TTL_S;
+  return createSignedToken<StudentAdmissionPayload>(
+    { ...input, activated: true, exp },
+    secret,
+  );
+}
+
+export function verifyAdmissionCompletedToken(
+  token: string | null | undefined,
+  secret = getAdmissionSigningSecret(),
+  nowMs = Date.now(),
+): StudentAdmissionPayload | null {
+  const payload = verifySignedToken<StudentAdmissionPayload>(token, secret, nowMs);
+  if (
+    !payload ||
+    typeof payload.sub !== "string" ||
+    typeof payload.email !== "string" ||
+    payload.activated !== true
+  ) {
+    return null;
+  }
+  return payload;
+}
+
+export function buildAdmissionCookieHeader(
+  token: string,
+  maxAge = ADMISSION_COOKIE_TTL_S,
+  isProd = process.env.NODE_ENV === "production",
+): string {
+  const name = isProd ? "__Host-mt_admissao" : "mt_admissao";
+  const secure = isProd ? "; Secure" : "";
+  return `${name}=${encodeURIComponent(token)}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Lax${secure}`;
+}
+
+export function getStudentAdmissionFromRequest(
+  req: Request,
+): StudentAdmissionPayload | null {
+  const header = req.headers.get("cookie");
+  const token =
+    readCookieFromHeader(header, "__Host-mt_admissao") ??
+    readCookieFromHeader(header, "mt_admissao");
+  return verifyAdmissionCompletedToken(token);
+}
+
+

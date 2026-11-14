@@ -299,8 +299,12 @@ CREATE TABLE IF NOT EXISTS site.alunos (
   objetivo         text NOT NULL DEFAULT '' CHECK (char_length(objetivo) <= 160),
   criado_em        timestamptz NOT NULL DEFAULT now(),
   atualizado_em    timestamptz NOT NULL DEFAULT now(),
-  ultimo_acesso_em timestamptz NOT NULL DEFAULT now()
+  ultimo_acesso_em timestamptz NOT NULL DEFAULT now(),
+  admissao         jsonb NOT NULL DEFAULT '{}'::jsonb
 );
+
+ALTER TABLE site.alunos
+  ADD COLUMN IF NOT EXISTS admissao jsonb NOT NULL DEFAULT '{}'::jsonb;
 
 CREATE TABLE IF NOT EXISTS site.matriculas (
   id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -501,13 +505,15 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = site, pg_temp AS $$
             'canal', lm.lead_canal,
             'campanha', lm.lead_campanha,
             'criado_em', lm.lead_criado_em
-          ) ELSE NULL END
+          ) ELSE NULL END,
+          'admissao', coalesce(nullif(a.admissao, '{}'::jsonb), aw.dados->'admissionRecord')
         )
         ORDER BY a.ultimo_acesso_em DESC
       )
       FROM site.alunos a
       LEFT JOIN resumo_prog rp ON rp.aluno_id = a.id
       LEFT JOIN lead_match lm ON lm.aluno_id = a.id
+      LEFT JOIN site.aluno_workspace aw ON aw.aluno_id = a.id
     ), '[]'::jsonb)
   );
 $$;
