@@ -18,6 +18,8 @@ export const OAUTH_TX_TTL_S = 5 * 60; // 5 minutos
 export type StudentSessionPayload = {
   sub: string; // UUID do aluno em site.alunos
   email: string;
+  nome?: string;
+  avatarUrl?: string;
   exp: number; // Unix timestamp em segundos
 };
 
@@ -91,9 +93,19 @@ export function issueStudentSession(
   email: string,
   secret = getSessionSecret(),
   nowMs = Date.now(),
+  extra?: { nome?: string; avatarUrl?: string },
 ): string {
   const exp = Math.floor(nowMs / 1000) + STUDENT_SESSION_TTL_S;
-  return createSignedToken<StudentSessionPayload>({ sub: alunoId, email, exp }, secret);
+  return createSignedToken<StudentSessionPayload>(
+    {
+      sub: alunoId,
+      email,
+      ...(extra?.nome ? { nome: extra.nome } : {}),
+      ...(extra?.avatarUrl ? { avatarUrl: extra.avatarUrl } : {}),
+      exp,
+    },
+    secret,
+  );
 }
 
 export function verifyStudentSession(

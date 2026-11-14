@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getStudentSessionFromRequest, sameOriginRequest } from "@/app/lib/student-auth";
 import {
   calcularCompletudePerfil,
+  getAlunoByEmail,
   getAlunoById,
   oracleConfigurado,
   touchAlunoAcesso,
@@ -13,24 +14,68 @@ export const runtime = "nodejs";
 export async function GET(req: Request) {
   const session = getStudentSessionFromRequest(req);
   if (!session) {
-    return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { ok: false, autenticado: false, reason: "unauthorized" },
+      { status: 401 },
+    );
   }
   if (!oracleConfigurado()) {
-    return NextResponse.json({ ok: false, reason: "not_configured" }, { status: 503 });
+    const fallbackAluno = {
+      id: session.sub,
+      google_sub: session.sub,
+      email: session.email,
+      nome: session.nome || session.email.split("@")[0] || "Aluno",
+      nome_certificado: session.nome || "",
+      avatar_url: session.avatarUrl || "",
+      headline: "",
+      bio: "",
+      github_url: "",
+      linkedin_url: "",
+      objetivo: "",
+      criado_em: new Date().toISOString(),
+      atualizado_em: new Date().toISOString(),
+      ultimo_acesso_em: new Date().toISOString(),
+    };
+    return NextResponse.json(
+      { ok: true, autenticado: true, aluno: fallbackAluno, completude: 40 },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   }
   try {
-    const aluno = await getAlunoById(session.sub);
+    let aluno = await getAlunoById(session.sub);
+    if (!aluno && session.email) {
+      aluno = await getAlunoByEmail(session.email);
+    }
     if (!aluno) {
-      return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
+      const fallbackAluno = {
+        id: session.sub,
+        google_sub: session.sub,
+        email: session.email,
+        nome: session.nome || session.email.split("@")[0] || "Aluno",
+        nome_certificado: session.nome || "",
+        avatar_url: session.avatarUrl || "",
+        headline: "",
+        bio: "",
+        github_url: "",
+        linkedin_url: "",
+        objetivo: "",
+        criado_em: new Date().toISOString(),
+        atualizado_em: new Date().toISOString(),
+        ultimo_acesso_em: new Date().toISOString(),
+      };
+      return NextResponse.json(
+        { ok: true, autenticado: true, aluno: fallbackAluno, completude: 40 },
+        { headers: { "Cache-Control": "no-store" } },
+      );
     }
     void touchAlunoAcesso(aluno);
     return NextResponse.json(
-      { ok: true, aluno, completude: calcularCompletudePerfil(aluno) },
+      { ok: true, autenticado: true, aluno, completude: calcularCompletudePerfil(aluno) },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (err) {
     console.error("[aluno/me GET]", String(err).slice(0, 300));
-    return NextResponse.json({ ok: false, reason: "storage" }, { status: 502 });
+    return NextResponse.json({ ok: false, autenticado: false, reason: "storage" }, { status: 502 });
   }
 }
 

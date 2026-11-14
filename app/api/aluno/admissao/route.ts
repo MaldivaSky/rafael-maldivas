@@ -10,6 +10,7 @@ import {
   type AdmissionRecord,
 } from "@/app/lib/course-admission";
 import {
+  getAlunoByEmail,
   getAlunoById,
   getWorkspaceAluno,
   oracleConfigurado,
@@ -60,18 +61,36 @@ export async function GET(req: Request) {
 
   if (session && oracleConfigurado()) {
     try {
-      const [aluno, ws] = await Promise.all([
+      let [aluno, ws] = await Promise.all([
         getAlunoById(session.sub),
         getWorkspaceAluno(session.sub),
       ]);
-      const admRecord = (ws?.dados?.admissionRecord as AdmissionRecord | undefined) ?? null;
+      if (!aluno && session.email) {
+        aluno = await getAlunoByEmail(session.email);
+        if (aluno && !ws) {
+          ws = await getWorkspaceAluno(aluno.id);
+        }
+      }
+      const admRecord =
+        (ws?.dados?.admissionRecord as AdmissionRecord | undefined) ??
+        (aluno?.admissao && typeof aluno.admissao === "object" && "questionnaire" in aluno.admissao
+          ? aluno.admissao
+          : null);
+      const resolvedNome =
+        aluno?.nome_certificado ||
+        aluno?.nome ||
+        session.nome ||
+        admRecord?.questionnaire?.fullName ||
+        "";
+      const resolvedAvatar = aluno?.avatar_url || session.avatarUrl || "";
+
       if (admRecord && admRecord.emailActivated) {
         const secret = getAdmissionSigningSecret();
         const admToken = issueAdmissionCompletedToken(
           {
             sub: session.sub,
             email: session.email,
-            nome: aluno?.nome || admRecord.questionnaire.fullName || "Aluno",
+            nome: resolvedNome || "Aluno",
             recommendedLevel: admRecord.recommendedLevel || "facil",
           },
           secret,
@@ -83,7 +102,8 @@ export async function GET(req: Request) {
           student: {
             id: session.sub,
             email: session.email,
-            nome: aluno?.nome || admRecord.questionnaire.fullName || "Aluno",
+            nome: resolvedNome || "Aluno",
+            avatarUrl: resolvedAvatar,
             recommendedLevel: admRecord.recommendedLevel || "facil",
           },
         });
@@ -97,8 +117,12 @@ export async function GET(req: Request) {
         activated: false,
         student: {
           id: session.sub,
-          email: session.email,
-          nome: aluno?.nome || "",
+          email: aluno?.email || session.email,
+          nome: resolvedNome,
+          avatarUrl: resolvedAvatar,
+          objetivo: aluno?.objetivo || "",
+          headline: aluno?.headline || "",
+          existingQuestionnaire: admRecord?.questionnaire ?? null,
         },
       });
     } catch {
@@ -114,7 +138,8 @@ export async function GET(req: Request) {
       student: {
         id: session.sub,
         email: session.email,
-        nome: "",
+        nome: session.nome || "",
+        avatarUrl: session.avatarUrl || "",
       },
     });
   }

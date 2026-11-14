@@ -51,7 +51,7 @@ function redirectError(req: Request, nextPath: string, reason: string) {
 }
 
 export async function GET(req: Request) {
-  if (!authSessionConfigured() || !oracleConfigurado()) {
+  if (!authSessionConfigured()) {
     return redirectError(req, "/pt/trilha", "not_configured");
   }
 
@@ -108,16 +108,40 @@ export async function GET(req: Request) {
       return redirectError(req, nextPath, "invalid_claims");
     }
 
-    const aluno = await upsertAlunoGoogle({
-      googleSub: claims.sub,
-      email: claims.email,
-      nome: claims.name ?? claims.email.split("@")[0] ?? "Aluno",
-      avatarUrl: claims.picture ?? "",
-    });
+    const fallbackNome = claims.name ?? claims.email.split("@")[0] ?? "Aluno";
+    const fallbackAvatar = claims.picture ?? "";
+    let alunoId = `google:${claims.sub}`;
+    let alunoEmail = claims.email;
+    let alunoNome = fallbackNome;
+    let alunoAvatar = fallbackAvatar;
 
-    const sessionToken = issueStudentSession(aluno.id, aluno.email);
+    if (oracleConfigurado()) {
+      try {
+        const aluno = await upsertAlunoGoogle({
+          googleSub: claims.sub,
+          email: claims.email,
+          nome: fallbackNome,
+          avatarUrl: fallbackAvatar,
+        });
+        alunoId = aluno.id;
+        alunoEmail = aluno.email;
+        alunoNome = aluno.nome_certificado || aluno.nome || fallbackNome;
+        alunoAvatar = aluno.avatar_url || fallbackAvatar;
+      } catch (dbErr) {
+        console.error("[oauth callback oracle fallback]:", String(dbErr).slice(0, 250));
+      }
+    }
+
+    const sessionToken = issueStudentSession(
+      alunoId,
+      alunoEmail,
+      undefined,
+      Date.now(),
+      { nome: alunoNome, avatarUrl: alunoAvatar },
+    );
     const base = new URL(req.url);
     const dest = new URL(nextPath, `${base.protocol}//${base.host}`);
+    dest.searchParams.set("google_linked", "1");
 
     const res = NextResponse.redirect(dest.toString(), 302);
     res.headers.append("Set-Cookie", buildOAuthTxCookieHeader("", 0));

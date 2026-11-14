@@ -52,8 +52,10 @@ import {
 import {
   issueAdmissionCompletedToken,
   issueEmailActivationToken,
+  issueStudentSession,
   verifyAdmissionCompletedToken,
   verifyEmailActivationToken,
+  verifyStudentSession,
 } from "../app/lib/student-auth.ts";
 
 describe("Course IDE Labs, SRS & Workspace State", () => {
@@ -548,5 +550,32 @@ describe("Course Admission Gate, Ethnographic Census & Email Activation", () => 
     assert.ok(verifiedAdm);
     assert.equal(verifiedAdm.email, "aluno@maldivastech.dev");
     assert.equal(verifiedAdm.activated, true);
+
+    // Sessao Google OAuth preserva nome e avatarUrl e o botao aponta para /api/auth/google/login
+    const sessionToken = issueStudentSession(
+      "uuid-123",
+      "rafael@maldivastech.dev",
+      secret,
+      Date.now(),
+      { nome: "Rafael Maldivas", avatarUrl: "https://lh3.googleusercontent.com/a/avatar" },
+    );
+    const verifiedSession = verifyStudentSession(sessionToken, secret);
+    assert.ok(verifiedSession);
+    assert.equal(verifiedSession.email, "rafael@maldivastech.dev");
+    assert.equal(verifiedSession.nome, "Rafael Maldivas");
+    assert.equal(verifiedSession.avatarUrl, "https://lh3.googleusercontent.com/a/avatar");
+
+    const gateSource = fs.readFileSync(
+      path.join(process.cwd(), "app/components/curso/CourseAdmissionGate.tsx"),
+      "utf8",
+    );
+    assert.ok(
+      gateSource.includes("/api/auth/google/login?next=${encodeURIComponent(targetPath)}"),
+      "CourseAdmissionGate deve apontar o botao Google para /api/auth/google/login?next=...",
+    );
+    assert.ok(
+      !gateSource.includes("href={targetPath}"),
+      "CourseAdmissionGate NUNCA deve passar href={targetPath} direto para GoogleSignInButton",
+    );
   });
 });

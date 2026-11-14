@@ -21,6 +21,7 @@ export type Aluno = {
   criado_em: string;
   atualizado_em: string;
   ultimo_acesso_em: string;
+  admissao?: AdmissionRecord | null;
 };
 
 export type Matricula = {
@@ -281,6 +282,17 @@ export async function getAlunoById(alunoId: string): Promise<Aluno | null> {
   const r = await callOracle(
     "site_student_api",
     `/alunos?id=eq.${alunoId}&select=*&limit=1`,
+  );
+  const rows = (await r.json()) as Aluno[];
+  return rows[0] ?? null;
+}
+
+export async function getAlunoByEmail(email: string): Promise<Aluno | null> {
+  const clean = (email ?? "").trim().toLowerCase();
+  if (!clean || !clean.includes("@")) return null;
+  const r = await callOracle(
+    "site_student_api",
+    `/alunos?email=eq.${encodeURIComponent(clean)}&select=*&limit=1`,
   );
   const rows = (await r.json()) as Aluno[];
   return rows[0] ?? null;

@@ -41,9 +41,13 @@ interface CourseAdmissionGateProps {
     id: string;
     email: string;
     nome: string;
+    avatarUrl?: string;
+    existingQuestionnaire?: Partial<AdmissionQuestionnaire> | null;
   } | null;
   onActivated?: () => void;
 }
+
+const DRAFT_STORAGE_KEY = "maldivas_admission_draft_v1";
 
 export function CourseAdmissionGate({
   targetPath,
@@ -52,6 +56,21 @@ export function CourseAdmissionGate({
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [googleLinked, setGoogleLinked] = useState<{
+    nome: string;
+    email: string;
+    avatarUrl?: string;
+  } | null>(
+    initialStudent?.email
+      ? {
+          nome: initialStudent.nome || "",
+          email: initialStudent.email,
+          avatarUrl: initialStudent.avatarUrl,
+        }
+      : null,
+  );
+
+  const googleLoginHref = `/api/auth/google/login?next=${encodeURIComponent(targetPath)}`;
 
   const [form, setForm] = useState<AdmissionQuestionnaire>({
     fullName: initialStudent?.nome ?? "",
@@ -88,16 +107,126 @@ export function CourseAdmissionGate({
     scorePct: number;
   } | null>(null);
 
+  // 1. Restore draft from sessionStorage if returning from Google OAuth
   useEffect(() => {
-    if (initialStudent?.email && !form.email) {
+    try {
+      const savedDraft = window.sessionStorage.getItem(DRAFT_STORAGE_KEY);
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft) as Partial<AdmissionQuestionnaire>;
+        setForm((prev) => ({
+          ...prev,
+          ...parsed,
+          fullName: prev.fullName || parsed.fullName || "",
+          email: prev.email || parsed.email || "",
+        }));
+      }
+      const params = new URLSearchParams(window.location.search);
+      const authErr = params.get("auth_error");
+      if (authErr === "cancelled") {
+        setErrorMsg("Login com Google cancelado. Você pode clicar novamente em 'Autenticar com Google' ou preencher manualmente.");
+      } else if (authErr) {
+        setErrorMsg("Não foi possível concluir a autenticação automática com o Google. Tente novamente ou preencha abaixo.");
+      }
+    } catch {
+      /* ignore storage errors */
+    }
+  }, []);
+
+  // 2. Sync whenever initialStudent prop arrives or updates
+  useEffect(() => {
+    if (initialStudent?.email) {
+      setGoogleLinked({
+        nome: initialStudent.nome || "",
+        email: initialStudent.email,
+        avatarUrl: initialStudent.avatarUrl,
+      });
       setForm((prev) => ({
         ...prev,
+        ...(initialStudent.existingQuestionnaire ?? {}),
         fullName: initialStudent.nome || prev.fullName,
         email: initialStudent.email || prev.email,
         authMethod: "google",
       }));
     }
-  }, [form.email, initialStudent]);
+  }, [initialStudent]);
+
+  // 3. Also query /api/aluno/me and /api/aluno/admissao directly on mount to guarantee pre-fill
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const [meRes, admRes] = await Promise.all([
+          fetch("/api/aluno/me", { cache: "no-store" }).catch(() => null),
+          fetch("/api/aluno/admissao", { cache: "no-store" }).catch(() => null),
+        ]);
+        if (!active) return;
+
+        let detectedName = "";
+        let detectedEmail = "";
+        let detectedAvatar = "";
+        let detectedObjective = "";
+        let existingQ: Partial<AdmissionQuestionnaire> | null = null;
+
+        if (meRes && meRes.ok) {
+          const meData = (await meRes.json()) as {
+            aluno?: {
+              nome?: string;
+              nome_certificado?: string;
+              email?: string;
+              avatar_url?: string;
+              objetivo?: string;
+            };
+          };
+          if (meData.aluno) {
+            detectedName = meData.aluno.nome_certificado || meData.aluno.nome || "";
+            detectedEmail = meData.aluno.email || "";
+            detectedAvatar = meData.aluno.avatar_url || "";
+            detectedObjective = meData.aluno.objetivo || "";
+          }
+        }
+
+        if (admRes && admRes.ok) {
+          const admData = (await admRes.json()) as {
+            student?: {
+              nome?: string;
+              email?: string;
+              avatarUrl?: string;
+              objetivo?: string;
+              existingQuestionnaire?: Partial<AdmissionQuestionnaire> | null;
+            } | null;
+          };
+          if (admData.student) {
+            detectedName = detectedName || admData.student.nome || "";
+            detectedEmail = detectedEmail || admData.student.email || "";
+            detectedAvatar = detectedAvatar || admData.student.avatarUrl || "";
+            detectedObjective = detectedObjective || admData.student.objetivo || "";
+            existingQ = admData.student.existingQuestionnaire ?? null;
+          }
+        }
+
+        if (detectedEmail || detectedName) {
+          setGoogleLinked({
+            nome: detectedName,
+            email: detectedEmail,
+            avatarUrl: detectedAvatar,
+          });
+          setForm((prev) => ({
+            ...prev,
+            ...(existingQ ?? {}),
+            fullName: detectedName || prev.fullName,
+            email: detectedEmail || prev.email,
+            motivationGoalText: prev.motivationGoalText || detectedObjective || "",
+            authMethod: "google",
+          }));
+        }
+      } catch {
+        /* ignore network errors */
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function toggleLanguage(langOption: string) {
     setForm((prev) => {
@@ -199,6 +328,11 @@ export function CourseAdmissionGate({
         setErrorMsg(data.message || "Não foi possível registrar sua admissão agora.");
         return;
       }
+      try {
+        window.sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {
+        /* ignore */
+      }
       setActivationResult({
         emailSent: Boolean(data.emailSent),
         recipientEmail: data.recipientEmail,
@@ -286,15 +420,62 @@ export function CourseAdmissionGate({
         {/* STEP 1: IDENTIFICAÇÃO (GOOGLE OAUTH OU E-MAIL DIRETO) */}
         {step === 1 && (
           <div className="admission-step-body">
-            {!initialStudent?.email && (
-              <div className="admission-oauth-box">
+            {googleLinked?.email ? (
+              <div
+                className="admission-oauth-box"
+                style={{
+                  borderColor: "rgba(34, 197, 94, 0.45)",
+                  background: "rgba(34, 197, 94, 0.08)",
+                }}
+              >
+                <div className="admission-oauth-info">
+                  {googleLinked.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={googleLinked.avatarUrl}
+                      alt=""
+                      width={38}
+                      height={38}
+                      style={{ borderRadius: "999px", flexShrink: 0 }}
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" aria-hidden="true" />
+                  )}
+                  <div>
+                    <strong style={{ color: "#4ade80" }}>
+                      Conta Google Conectada ({googleLinked.email})
+                    </strong>
+                    <p>
+                      Nome e e-mail preenchidos automaticamente com os dados da sua conta.
+                    </p>
+                  </div>
+                </div>
+                <GoogleSignInButton
+                  href={googleLoginHref}
+                  label="Trocar conta Google"
+                  compact
+                />
+              </div>
+            ) : (
+              <div
+                className="admission-oauth-box"
+                onClickCapture={() => {
+                  try {
+                    window.sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(form));
+                  } catch {
+                    /* ignore */
+                  }
+                }}
+              >
                 <div className="admission-oauth-info">
                   <strong>Opção Rápida: Vincular com sua conta Google</strong>
                   <p>Preenche seu nome e e-mail automaticamente com 1 clique.</p>
                 </div>
                 <GoogleSignInButton
-                  href={targetPath}
+                  href={googleLoginHref}
                   label="Autenticar com Google"
+                  loadingLabel="Redirecionando ao Google..."
                 />
               </div>
             )}
