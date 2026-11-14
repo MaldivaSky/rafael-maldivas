@@ -126,7 +126,7 @@ export default async function CourseLessonPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="wrap curso-page-main">
+      <main className="wrap curso-page-main curso-ide-page-main">
         <nav className="curso-breadcrumb" aria-label="Navegação do curso">
           <Link href={localePath(`/cursos/${course.slug}`, lang)}>
             <ArrowLeft size={15} aria-hidden="true" />

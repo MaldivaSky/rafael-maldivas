@@ -370,6 +370,12 @@ CREATE INDEX IF NOT EXISTS aluno_eventos_aluno_criado_idx
 CREATE INDEX IF NOT EXISTS aluno_eventos_tipo_criado_idx
   ON site.aluno_eventos (tipo, criado_em DESC);
 
+CREATE TABLE IF NOT EXISTS site.aluno_workspace (
+  aluno_id      uuid PRIMARY KEY REFERENCES site.alunos(id) ON DELETE CASCADE,
+  dados         jsonb NOT NULL DEFAULT '{}'::jsonb,
+  atualizado_em timestamptz NOT NULL DEFAULT now()
+);
+
 -- RPC para validação pública de certificado (não expõe e-mail nem dados pessoais sensíveis)
 CREATE OR REPLACE FUNCTION site.validar_certificado(p_codigo text) RETURNS jsonb
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = site, pg_temp AS $$
@@ -506,9 +512,9 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = site, pg_temp AS $$
   );
 $$;
 
-GRANT SELECT, INSERT, UPDATE ON site.alunos, site.matriculas, site.progresso_aulas, site.certificados, site.avaliacoes_projeto TO site_student_api;
+GRANT SELECT, INSERT, UPDATE ON site.alunos, site.matriculas, site.progresso_aulas, site.certificados, site.avaliacoes_projeto, site.aluno_workspace TO site_student_api;
 GRANT SELECT, INSERT ON site.aluno_eventos TO site_student_api;
-GRANT SELECT ON site.alunos, site.matriculas, site.progresso_aulas, site.certificados, site.avaliacoes_projeto, site.aluno_eventos TO site_admin;
+GRANT SELECT ON site.alunos, site.matriculas, site.progresso_aulas, site.certificados, site.avaliacoes_projeto, site.aluno_eventos, site.aluno_workspace TO site_admin;
 GRANT UPDATE (status, parecer_avaliador, avaliado_em, atualizado_em) ON site.avaliacoes_projeto TO site_admin;
 GRANT INSERT, UPDATE ON site.certificados TO site_admin;
 GRANT UPDATE (status, concluido_em) ON site.matriculas TO site_admin;

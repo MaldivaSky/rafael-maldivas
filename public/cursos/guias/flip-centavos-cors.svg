@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" fill="none">
+  <rect width="800" height="480" rx="20" fill="#0B1220"/>
+  <!-- Left Card: Money Math -->
+  <rect x="34" y="36" width="352" height="408" rx="16" fill="#0F172A" stroke="#22C55E" stroke-width="1.8"/>
+  <text x="58" y="76" fill="#22B5F2" font-family="system-ui, sans-serif" font-size="13" font-weight="700">REGRA 1 · DINHEIRO NO CODIGO</text>
+  <text x="58" y="110" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="21" font-weight="700">Float erra, Centavos acertam</text>
+  <rect x="58" y="140" width="304" height="106" rx="12" fill="#4C0519" stroke="#F43F5E"/>
+  <text x="76" y="170" fill="#FDA4AF" font-family="system-ui, sans-serif" font-size="13" font-weight="700">ERRADO: Usar float / decimal solto</text>
+  <text x="76" y="204" fill="#F8FAFC" font-family="monospace" font-size="16">0.1 + 0.2</text>
+  <text x="76" y="230" fill="#F43F5E" font-family="monospace" font-size="14">= 0.30000000000000004</text>
+  <rect x="58" y="268" width="304" height="142" rx="12" fill="#052E16" stroke="#22C55E"/>
+  <text x="76" y="298" fill="#86EFAC" font-family="system-ui, sans-serif" font-size="13" font-weight="700">CORRETO: Inteiros em centavos</text>
+  <text x="76" y="332" fill="#F8FAFC" font-family="monospace" font-size="16">7990 + 14990 = 22980</text>
+  <text x="76" y="362" fill="#22C55E" font-family="system-ui, sans-serif" font-size="14" font-weight="700">Na tela: R$ 229,80 exato!</text>
+  <text x="76" y="390" fill="#BBF7D0" font-family="system-ui, sans-serif" font-size="12">Soma de inteiros nunca perde centavo.</text>
+  <!-- Right Card: CORS -->
+  <rect x="414" y="36" width="352" height="408" rx="16" fill="#0F172A" stroke="#22B5F2" stroke-width="1.8"/>
+  <text x="438" y="76" fill="#22B5F2" font-family="system-ui, sans-serif" font-size="13" font-weight="700">REGRA 2 · VERCEL CONVERSA COM RENDER</text>
+  <text x="438" y="110" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="21" font-weight="700">Liberando CORS sem susto</text>
+  <rect x="438" y="140" width="304" height="72" rx="10" fill="#1E293B" stroke="#334155"/>
+  <text x="456" y="170" fill="#7DD3FC" font-family="system-ui, sans-serif" font-size="12" font-weight="700">SITE (FRONT NA VERCEL)</text>
+  <text x="456" y="194" fill="#F8FAFC" font-family="monospace" font-size="13">https://minha-loja.vercel.app</text>
+  <path d="M590 218V252" stroke="#22C55E" stroke-width="3" stroke-linecap="round"/>
+  <path d="M582 244L590 254L598 244" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="438" y="262" width="304" height="148" rx="10" fill="#082F49" stroke="#22B5F2"/>
+  <text x="456" y="292" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="12" font-weight="700">API NO RENDER ACEITA SE TIVER:</text>
+  <text x="456" y="324" fill="#F8FAFC" font-family="monospace" font-size="12">CORS_ALLOWED_ORIGINS=</text>
+  <text x="456" y="346" fill="#22C55E" font-family="monospace" font-size="12">https://minha-loja.vercel.app</text>
+  <text x="456" y="384" fill="#FDE68A" font-family="system-ui, sans-serif" font-size="12">Atenção: SEM barra '/' no final!</text>
+</svg>

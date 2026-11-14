@@ -649,6 +649,56 @@ export async function avaliarProjetoAdmin(input: {
   return { avaliacao, certificado: certificado ?? null };
 }
 
+export async function getWorkspaceAluno(
+  alunoId: string,
+): Promise<{ dados: Record<string, unknown>; atualizado_em: string } | null> {
+  if (!UUID_RE.test(alunoId)) return null;
+  try {
+    const r = await callOracle(
+      "site_student_api",
+      `/aluno_workspace?aluno_id=eq.${alunoId}&select=dados,atualizado_em&limit=1`,
+    );
+    const rows = (await r.json()) as Array<{
+      dados: Record<string, unknown>;
+      atualizado_em: string;
+    }>;
+    return rows[0] ?? null;
+  } catch {
+    // Tabela opcional: retorna null se SQL ainda não foi aplicado no Oracle
+    return null;
+  }
+}
+
+export async function upsertWorkspaceAluno(
+  alunoId: string,
+  dados: Record<string, unknown>,
+): Promise<boolean> {
+  if (!UUID_RE.test(alunoId)) return false;
+  const serialized = JSON.stringify(dados);
+  if (serialized.length > 250_000) {
+    throw new Error("workspace payload too large");
+  }
+  try {
+    await callOracle(
+      "site_student_api",
+      "/aluno_workspace?on_conflict=aluno_id",
+      {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+        body: JSON.stringify({
+          aluno_id: alunoId,
+          dados,
+          atualizado_em: new Date().toISOString(),
+        }),
+      },
+    );
+    return true;
+  } catch {
+    // Tabela opcional: mantém funcionamento local sem erro 502
+    return false;
+  }
+}
+
 export async function listarPainelAlunosAdmin(): Promise<PainelAlunosAdmin> {
   const [r, evRes] = await Promise.all([
     callOracle("site_admin", "/rpc/painel_alunos", {

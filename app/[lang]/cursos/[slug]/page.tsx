@@ -25,6 +25,8 @@ import {
 import { COMPANY, SITE } from "@/app/lib/site";
 import { ORACLE_CERT } from "@/app/lib/credentials";
 import CourseWaitlistForm from "@/app/components/curso/CourseWaitlistForm";
+import CourseLevelSelector from "@/app/components/curso/CourseLevelSelector";
+import CourseFreeDeployShowcase from "@/app/components/curso/CourseFreeDeployShowcase";
 
 export function generateStaticParams(): { lang: Lang; slug: CourseSlug }[] {
   const params: { lang: Lang; slug: CourseSlug }[] = [];
@@ -342,6 +344,16 @@ export default async function CourseSalesPage({
           </div>
         </div>
       </header>
+
+      {/* Seletor visual dos 3 níveis (Fácil Vitrine · Mediano Banco · Difícil Completo) */}
+      <section className="curso-section">
+        <div className="wrap">
+          <CourseLevelSelector courseSlug={course.slug} lang={lang} />
+        </div>
+      </section>
+
+      {/* Guia visual R$ 0,00 (GitHub + Neon Postgres + Render + Vercel) + Prévia Vitrine */}
+      <CourseFreeDeployShowcase courseSlug={course.slug} />
 
       {/* Para quem é & pré-requisitos */}
       <section className="curso-section">

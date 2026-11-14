@@ -31,11 +31,11 @@ const nextConfig = {
      */
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://esm.sh https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://esm.sh https://cdn.jsdelivr.net https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: blob: https: https://cdn.simpleicons.org",
-      "connect-src 'self' https://esm.sh https://cdn.simpleicons.org https://www.google-analytics.com https://region1.google-analytics.com https://viacep.com.br https://brasilapi.com.br https://api.bcb.gov.br",
+      "connect-src 'self' https://esm.sh https://cdn.jsdelivr.net https://cdn.simpleicons.org https://www.google-analytics.com https://region1.google-analytics.com https://viacep.com.br https://brasilapi.com.br https://api.bcb.gov.br",
       "media-src 'self' blob:",
       "worker-src 'self' blob:",
       "frame-ancestors 'none'",

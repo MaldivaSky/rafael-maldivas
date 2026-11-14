@@ -18,6 +18,15 @@ import {
   UserCheck,
 } from "lucide-react";
 import { COURSES, formatDuration } from "@/app/lib/courses";
+import {
+  countDueSrsCards,
+  createEmptyWorkspaceState,
+  extractLegacyCompletedSlugsFromStorage,
+  mergeWorkspaceStates,
+  migrateLegacyLocalProgress,
+  sanitizeWorkspaceState,
+  type WorkspaceState,
+} from "@/app/lib/course-workspace";
 import { localePath, type Lang } from "@/app/lib/seo";
 import StudentLoginCard from "@/app/components/auth/StudentLoginCard";
 
@@ -60,26 +69,10 @@ type TrilhaData = {
   certificados: CertItem[];
 };
 
-const M0_KEY = "maldivas-curso-m0-done-v1";
-const M1_KEY = "maldivas-curso-m1-done-v1";
-
 function collectLocalProgressSlugs(): string[] {
-  const out: string[] = [];
-  for (const key of [M0_KEY, M1_KEY]) {
-    try {
-      const raw = window.localStorage.getItem(key);
-      if (!raw) continue;
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        for (const item of parsed) {
-          if (typeof item === "string" && item.trim()) out.push(item.trim());
-        }
-      }
-    } catch {
-      /* ignore */
-    }
-  }
-  return Array.from(new Set(out));
+  const fromLegacy = extractLegacyCompletedSlugsFromStorage(window.localStorage);
+  const ws = migrateLegacyLocalProgress(window.localStorage);
+  return Array.from(new Set([...fromLegacy, ...ws.completedSlugs]));
 }
 
 export default function TrilhaClient({
@@ -91,6 +84,9 @@ export default function TrilhaClient({
 }) {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<TrilhaData | null>(null);
+  const [workspaceState, setWorkspaceState] = useState<WorkspaceState>(() =>
+    createEmptyWorkspaceState(),
+  );
   const [unauth, setUnauth] = useState(false);
 
   const course = COURSES["construa-seu-marketplace"];
@@ -123,9 +119,27 @@ export default function TrilhaClient({
 
   useEffect(() => {
     let active = true;
+    const localWs = migrateLegacyLocalProgress(window.localStorage);
+    setWorkspaceState(localWs);
+
     (async () => {
-      const r = await fetch("/api/aluno/trilha", { cache: "no-store" });
+      const [r, wsRes] = await Promise.all([
+        fetch("/api/aluno/trilha", { cache: "no-store" }),
+        fetch("/api/aluno/workspace", { cache: "no-store" }).catch(() => null),
+      ]);
       if (!active) return;
+
+      if (wsRes && wsRes.ok) {
+        try {
+          const wsJson = (await wsRes.json()) as { workspace?: unknown };
+          if (wsJson.workspace) {
+            setWorkspaceState(mergeWorkspaceStates(localWs, sanitizeWorkspaceState(wsJson.workspace)));
+          }
+        } catch {
+          // ignore
+        }
+      }
+
       if (r.status === 401) {
         setUnauth(true);
         setLoading(false);
@@ -368,6 +382,26 @@ export default function TrilhaClient({
           </div>
           <span className="curso-muted" style={{ fontSize: "0.82rem" }}>
             {certificados.length > 0 ? "Certificado emitido" : "Exame final a partir de 80%"}
+          </span>
+        </div>
+
+        <div className="curso-catalog-card">
+          <span className="curso-muted" style={{ fontSize: "0.85rem" }}>Labs Python / SQL na IDE</span>
+          <div style={{ fontSize: "1.8rem", fontWeight: 700, marginTop: "0.25rem" }}>
+            {Object.values(workspaceState.labsPassed).filter((l) => l.passed).length} / {allLessons.length}
+          </div>
+          <span className="curso-muted" style={{ fontSize: "0.82rem" }}>
+            {Object.values(workspaceState.notes).filter((n) => n.trim().length > 0).length} cadernos com notas
+          </span>
+        </div>
+
+        <div className="curso-catalog-card">
+          <span className="curso-muted" style={{ fontSize: "0.85rem" }}>Revisão espaçada (SRS)</span>
+          <div style={{ fontSize: "1.8rem", fontWeight: 700, marginTop: "0.25rem" }}>
+            {countDueSrsCards(workspaceState).dueNow}
+          </div>
+          <span className="curso-muted" style={{ fontSize: "0.82rem" }}>
+            pendentes hoje · {countDueSrsCards(workspaceState).mastered} dominados
           </span>
         </div>
       </section>

@@ -9,6 +9,7 @@ import {
   totalCourseMinutes,
 } from "@/app/lib/courses";
 import { SITE } from "@/app/lib/site";
+import CourseLevelSelector from "@/app/components/curso/CourseLevelSelector";
 
 export function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
@@ -193,6 +194,10 @@ export default async function CoursesIndexPage({
             );
           })}
         </section>
+
+        <div style={{ marginTop: 40 }}>
+          <CourseLevelSelector courseSlug="construa-seu-marketplace" lang={lang} />
+        </div>
       </main>
     </>
   );

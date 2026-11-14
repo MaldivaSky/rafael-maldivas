@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" fill="none">
+  <rect width="800" height="480" rx="20" fill="#0B1220"/>
+  <text x="46" y="54" fill="#22B5F2" font-family="system-ui, sans-serif" font-size="14" font-weight="700">RENDER FREE TIER (R$ 0,00 / MES)</text>
+  <text x="46" y="88" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="24" font-weight="700">Por que o servidor "dorme" e acorda sozinho?</text>
+  <!-- Stage 1 -->
+  <rect x="46" y="130" width="210" height="270" rx="16" fill="#0F172A" stroke="#22C55E" stroke-width="2"/>
+  <circle cx="151" cy="190" r="34" fill="#052E16" stroke="#22C55E" stroke-width="2"/>
+  <text x="131" y="196" fill="#22C55E" font-family="system-ui, sans-serif" font-size="16" font-weight="700">ATIVO</text>
+  <text x="72" y="260" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="17" font-weight="700">1. Loja em uso</text>
+  <text x="72" y="290" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="13">Sua API Django</text>
+  <text x="72" y="310" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="13">responde pedidos</text>
+  <text x="72" y="330" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="13">em menos de 100ms.</text>
+  <rect x="72" y="352" width="156" height="28" rx="8" fill="#14532D"/>
+  <text x="88" y="370" fill="#BBF7D0" font-family="system-ui, sans-serif" font-size="12" font-weight="700">Custo: R$ 0,00</text>
+  <!-- Arrow 1 -->
+  <path d="M266 265H290" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+  <path d="M284 257L294 265L284 273" stroke="#F59E0B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Stage 2 -->
+  <rect x="300" y="130" width="210" height="270" rx="16" fill="#0F172A" stroke="#F59E0B" stroke-width="2"/>
+  <circle cx="405" cy="190" r="34" fill="#451A03" stroke="#F59E0B" stroke-width="2"/>
+  <text x="383" y="196" fill="#F59E0B" font-family="system-ui, sans-serif" font-size="16" font-weight="700">15 MIN</text>
+  <text x="324" y="260" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="17" font-weight="700">2. Modo soneca</text>
+  <text x="324" y="290" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="13">Sem visitantes por</text>
+  <text x="324" y="310" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="13">15 minutos, o Render</text>
+  <text x="324" y="330" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="13">pausa para ser gratis.</text>
+  <rect x="324" y="352" width="162" height="28" rx="8" fill="#451A03"/>
+  <text x="336" y="370" fill="#FDE68A" font-family="system-ui, sans-serif" font-size="12" font-weight="700">Dados ficam no Neon!</text>
+  <!-- Arrow 2 -->
+  <path d="M520 265H544" stroke="#22B5F2" stroke-width="3" stroke-linecap="round"/>
+  <path d="M538 257L548 265L538 273" stroke="#22B5F2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Stage 3 -->
+  <rect x="554" y="130" width="200" height="270" rx="16" fill="#0F172A" stroke="#22B5F2" stroke-width="2"/>
+  <circle cx="654" cy="190" r="34" fill="#082F49" stroke="#22B5F2" stroke-width="2"/>
+  <text x="630" y="196" fill="#22B5F2" font-family="system-ui, sans-serif" font-size="15" font-weight="700">~40 SEG</text>
+  <text x="576" y="260" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="17" font-weight="700">3. Acorda na hora</text>
+  <text x="576" y="290" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="13">No primeiro clique,</text>
+  <text x="576" y="310" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="13">liga sozinho em ~40s.</text>
+  <text x="576" y="330" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="13">Não quebrou nada!</text>
+  <rect x="576" y="352" width="156" height="28" rx="8" fill="#082F49"/>
+  <text x="594" y="370" fill="#7DD3FC" font-family="system-ui, sans-serif" font-size="12" font-weight="700">Depois voa rapido!</text>
+</svg>

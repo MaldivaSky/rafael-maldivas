@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" fill="none">
+  <rect width="800" height="480" rx="20" fill="#0B1220"/>
+  <text x="44" y="54" fill="#22B5F2" font-family="system-ui, sans-serif" font-size="14" font-weight="700">NIVEL 3 · ARQUITETURA DE PRODUCAO</text>
+  <text x="44" y="88" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="24" font-weight="700">Pix, Lock Atomico, Webhook HMAC e Split em Centavos</text>
+  <!-- Box 1 -->
+  <rect x="44" y="128" width="336" height="142" rx="14" fill="#0F172A" stroke="#22B5F2" stroke-width="1.8"/>
+  <text x="64" y="160" fill="#22B5F2" font-family="system-ui, sans-serif" font-size="13" font-weight="700">1. SERVER CALCULA EM CENTAVOS</text>
+  <text x="64" y="190" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="16" font-weight="700">Nunca confie no preco vindo do browser</text>
+  <text x="64" y="218" fill="#94A3B8" font-family="monospace" font-size="13">preco_centavos = 7990  # R$ 79,90</text>
+  <text x="64" y="242" fill="#22C55E" font-family="monospace" font-size="13">total = sum(item.qty * db_preco)</text>
+  <!-- Box 2 -->
+  <rect x="420" y="128" width="336" height="142" rx="14" fill="#0F172A" stroke="#F59E0B" stroke-width="1.8"/>
+  <text x="440" y="160" fill="#F59E0B" font-family="system-ui, sans-serif" font-size="13" font-weight="700">2. LOCK ATOMICO DE ESTOQUE</text>
+  <text x="440" y="190" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="16" font-weight="700">Impede 2 compras na ultima unidade</text>
+  <text x="440" y="218" fill="#94A3B8" font-family="monospace" font-size="12.5">UPDATE produto SET estoque = estoque - 1</text>
+  <text x="440" y="242" fill="#FDE68A" font-family="monospace" font-size="12.5">WHERE id = :id AND estoque &gt;= 1;</text>
+  <!-- Box 3 -->
+  <rect x="44" y="298" width="336" height="142" rx="14" fill="#0F172A" stroke="#F43F5E" stroke-width="1.8"/>
+  <text x="64" y="330" fill="#F43F5E" font-family="system-ui, sans-serif" font-size="13" font-weight="700">3. WEBHOOK HMAC FAIL-CLOSED</text>
+  <text x="64" y="360" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="16" font-weight="700">Só gateway assina com a chave secreta</text>
+  <text x="64" y="388" fill="#94A3B8" font-family="monospace" font-size="12.5">hmac.compare_digest(header, esperado)</text>
+  <text x="64" y="412" fill="#FDA4AF" font-family="monospace" font-size="12.5">Se falhar -&gt; 401 + event_id idempotente</text>
+  <!-- Box 4 -->
+  <rect x="420" y="298" width="336" height="142" rx="14" fill="#0F172A" stroke="#22C55E" stroke-width="1.8"/>
+  <text x="440" y="330" fill="#22C55E" font-family="system-ui, sans-serif" font-size="13" font-weight="700">4. SPLIT &amp; LEDGER IMUTAVEL</text>
+  <text x="440" y="360" fill="#F8FAFC" font-family="system-ui, sans-serif" font-size="16" font-weight="700">Divisao exata entre loja e plataforma</text>
+  <text x="440" y="388" fill="#94A3B8" font-family="monospace" font-size="13">taxa_marketplace = 10%  # 799 cts</text>
+  <text x="440" y="412" fill="#22C55E" font-family="monospace" font-size="13">repasse_lojista = total - taxa  # 7191</text>
+</svg>
