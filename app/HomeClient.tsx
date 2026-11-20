@@ -5,21 +5,24 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowDown,
-  ArrowRight,
   ArrowUpRight,
   BadgeCheck,
+  BarChart3,
   Bot,
-  Check,
   CheckCircle2,
   Code2,
   Cpu,
+  Database,
+  ExternalLink,
   Film,
   Layers,
   MonitorSmartphone,
   Receipt,
   Server,
   ShieldCheck,
+  ShoppingBag,
   Sparkles,
+  Store,
 } from "lucide-react";
 import { useLang, localePath } from "./lib/i18n";
 import { WHATSAPP } from "./lib/site";
@@ -49,16 +52,16 @@ export default function HomeClient() {
         },
         {
           code: "02 · SAAS & HARDWARE",
-          title: "MiseOn, Totens Bravus & SelectSys",
-          desc: "Plataformas multi-tenant prontas em produção para food service, varejo e RH.",
+          title: "MiseOn, MercadinhoSys (.com.br) & SelectSys",
+          desc: "Plataformas multi-tenant reais operando com clientes no varejo, food service e RH.",
           href: "#produtos",
           icon: Cpu,
         },
         {
-          code: "03 · ACADEMY & FERRAMENTAS",
-          title: "Curso gratuito & Arena Prática",
-          desc: "18 aulas reais com terminal, Python/SQL, webhook PIX e Tutor IA.",
-          href: "#academy",
+          code: "03 · WHITE-LABEL & ACADEMY",
+          title: "MySuperStore (Eli Macramê) & Arena",
+          desc: "Personalize a sua loja com esse marketplace ou aprenda a arquitetura real em 18 aulas.",
+          href: "#mysuperstore-showcase",
           icon: Layers,
         },
       ]
@@ -72,113 +75,17 @@ export default function HomeClient() {
         },
         {
           code: "02 · SAAS & HARDWARE",
-          title: "MiseOn, Bravus Kiosks & SelectSys",
-          desc: "Production multi-tenant SaaS for food service, retail POS, and recruiting.",
+          title: "MiseOn, MercadinhoSys (.com.br) & SelectSys",
+          desc: "Production multi-tenant SaaS serving real retail, food service, and recruiting clients.",
           href: "#produtos",
           icon: Cpu,
         },
         {
-          code: "03 · ACADEMY & TOOLS",
-          title: "Free engineering course & Practice Arena",
-          desc: "18 real lessons featuring terminal, Python/SQL, PIX webhooks, and AI Tutor.",
-          href: "#academy",
+          code: "03 · WHITE-LABEL & ACADEMY",
+          title: "MySuperStore (Eli Macramê) & Arena",
+          desc: "Launch your custom marketplace storefront or inspect every line in the 18-lesson Academy.",
+          href: "#mysuperstore-showcase",
           icon: Layers,
-        },
-      ];
-
-  const flagshipSecondary = pt
-    ? [
-        {
-          id: "selectsys",
-          code: "02 / ATS BILÍNGUE BRASIL → JAPÃO",
-          pill: "Case Fujiarte Co., Ltd. · Em implantação",
-          title: "SelectSys Jobs — triagem internacional sem planilhas paralelas",
-          businessSummary:
-            "Substituiu o vai-e-vem de e-mails e formulários manuais por cadastro bilíngue, leitura automática de documentos e redução de 60% no tempo de triagem.",
-          archSummary:
-            "React 19 + PostgreSQL Row Level Security (LGPD) + OCR via Tesseract.js/PDF.js + exportação fiel para modelos Excel (ExcelJS/Python) + Edge Functions.",
-          tags: ["React 19", "PostgreSQL RLS", "Tesseract OCR", "ExcelJS", "LGPD"],
-          href: "/portfolio/fujiarte",
-          cta: "Ver Case Fujiarte",
-          conciergePrompt:
-            "Como foi construído o SelectSys Jobs da Fujiarte e qual o impacto na triagem?",
-        },
-        {
-          id: "mercadinhosys",
-          code: "03 / ERP MULTI-TENANT & PDV FISCAL",
-          pill: "Varejo & Supermercados · Em operação",
-          title: "mercadinhosys — estoque transacional, NFC-e e BI comercial",
-          businessSummary:
-            "Unifica vendas no PDV fiscal, entrada por XML de fornecedor e painéis de Curva ABC, RFM e DRE para eliminar ruptura e furo de caixa.",
-          archSummary:
-            "TenantQuery fail-closed no ORM + savepoints aninhados no fechamento de venda + motor NFC-e/SEFAZ + pipeline analítico Python (Pandas, Statsmodels, Plotly) + Sentry.",
-          tags: ["Python / Flask", "PostgreSQL", "NFC-e SEFAZ", "Pandas + Plotly", "Redis"],
-          href: "/portfolio",
-          cta: "Explorar no Portfólio",
-          conciergePrompt:
-            "Qual a arquitetura multi-tenant e fiscal do mercadinhosys?",
-        },
-        {
-          id: "mysuperstore",
-          code: "04 / MARKETPLACE HEADLESS & SPLIT PIX",
-          pill: "E-commerce Multi-Vendedor · Estudo de Caso do Curso",
-          title: "MySuperStore — split automático de receita sem travar o checkout",
-          businessSummary:
-            "Plataforma multi-lojista com pagamento via PIX/cartão, divisão automática de comissão na liquidação e cotação de frete em tempo real.",
-          archSummary:
-            "Django REST + Next.js 15 + PostgreSQL (dinheiro em centavos inteiros + UPDATE condicional de estoque) + webhook Efí idempotente + workers Celery/Redis.",
-          tags: ["Django REST", "Next.js 15", "PostgreSQL", "Celery + Redis", "Efí PIX"],
-          href: "/cursos/construa-seu-marketplace",
-          cta: "Ver Arquitetura na Academy",
-          conciergePrompt:
-            "Como funciona o split de pagamento e idempotência no MySuperStore?",
-        },
-      ]
-    : [
-        {
-          id: "selectsys",
-          code: "02 / BILINGUAL ATS BRAZIL → JAPAN",
-          pill: "Fujiarte Co., Ltd. · Rolling out",
-          title: "SelectSys Jobs — international recruiting without parallel spreadsheets",
-          businessSummary:
-            "Replaced manual email back-and-forth with structured bilingual candidate intake, automated document reading, and 60% faster manual screening.",
-          archSummary:
-            "React 19 + PostgreSQL Row Level Security (LGPD) + Tesseract.js/PDF.js OCR + faithful Excel template export (ExcelJS/Python) + Edge Functions.",
-          tags: ["React 19", "PostgreSQL RLS", "Tesseract OCR", "ExcelJS", "LGPD"],
-          href: "/portfolio/fujiarte",
-          cta: "Read Fujiarte Case",
-          conciergePrompt:
-            "How was SelectSys Jobs architected for Fujiarte?",
-        },
-        {
-          id: "mercadinhosys",
-          code: "03 / MULTI-TENANT ERP & FISCAL POS",
-          pill: "Retail & Supermarkets · Live",
-          title: "mercadinhosys — transactional inventory, fiscal POS & commercial BI",
-          businessSummary:
-            "Unifies POS sales, supplier XML ingestion, and ABC Curve, RFM, and P&L dashboards to stop stockouts and cash discrepancies.",
-          archSummary:
-            "Fail-closed ORM TenantQuery + nested transaction savepoints + NFC-e fiscal engine + Python analytics (Pandas, Statsmodels, Plotly) + Sentry.",
-          tags: ["Python / Flask", "PostgreSQL", "Fiscal NFC-e", "Pandas + Plotly", "Redis"],
-          href: "/portfolio",
-          cta: "Explore Portfolio",
-          conciergePrompt:
-            "What is mercadinhosys's multi-tenant and BI architecture?",
-        },
-        {
-          id: "mysuperstore",
-          code: "04 / HEADLESS MARKETPLACE & PIX SPLIT",
-          pill: "Multi-Vendor Commerce · Course Case Study",
-          title: "MySuperStore — automated revenue split without blocking checkout",
-          businessSummary:
-            "Multi-seller marketplace featuring PIX/card payments, automated settlement split across stores, and real-time shipping quotes.",
-          archSummary:
-            "Django REST + Next.js 15 + PostgreSQL (integer-cent ledger & conditional stock locks) + idempotent Efí webhooks + Celery/Redis workers.",
-          tags: ["Django REST", "Next.js 15", "PostgreSQL", "Celery + Redis", "PIX Split"],
-          href: "/cursos/construa-seu-marketplace",
-          cta: "Explore in Academy",
-          conciergePrompt:
-            "How does payment splitting and idempotency work in MySuperStore?",
         },
       ];
 
@@ -207,8 +114,8 @@ export default function HomeClient() {
               </h1>
               <p>
                 {pt
-                  ? "Sou Rafael Maldivas. Construo plataformas SaaS, ERPs e automações com IA — da conversa com quem opera ao sistema rodando em produção."
-                  : "I'm Rafael Maldivas. I architect production SaaS platforms, custom ERPs, and applied AI workflows — from discovery to live deployment."}
+                  ? "Sou Rafael Maldivas. Construo plataformas SaaS com domínio próprio e clientes reais em operação — MiseOn, MercadinhoSys (.com.br), SelectSys e MySuperStore."
+                  : "I'm Rafael Maldivas. I architect live SaaS platforms running on custom domains with real production clients — MiseOn, MercadinhoSys (.com.br), SelectSys, and MySuperStore."}
               </p>
 
               <div className="hero-credentials-strip">
@@ -308,18 +215,14 @@ export default function HomeClient() {
                 </span>
                 <div>
                   {pt ? "Da arquitetura ao deploy" : "From schema to production"}
-                  <small>
-                    {pt
-                      ? "Next.js · Python · PostgreSQL · Three.js"
-                      : "Next.js · Python · PostgreSQL · Three.js"}
-                  </small>
+                  <small>Next.js · Python · PostgreSQL · Three.js</small>
                 </div>
                 <ArrowUpRight size={18} />
               </div>
             </div>
           </div>
 
-          {/* Barra de Auto-Segmentação (Funil B2B / SaaS / Academy) */}
+          {/* Barra de Auto-Segmentação (Funil B2B / SaaS / White-Label & Academy) */}
           <nav
             className="hero-intent-router"
             aria-label={pt ? "Caminhos por objetivo" : "Paths by objective"}
@@ -342,14 +245,17 @@ export default function HomeClient() {
       </header>
 
       {/* ============================================================ */}
-      {/* MOMENTO 2: VITRINE FLAGSHIP + TOGGLE NEGÓCIO vs ARQUITETURA  */}
+      {/* MOMENTO 2: VITRINES FLAGSHIP COM CLIENTES REAIS + TOGGLE     */}
       {/* ============================================================ */}
       <section id="produtos" className="studio-selected">
         <div className="wrap">
           <div className="studio-section-heading">
             <div>
               <div className="studio-kicker">
-                01 / {pt ? "SISTEMAS EM PRODUÇÃO & PARCERIA HARDWARE" : "PRODUCTION SYSTEMS & HARDWARE"}
+                01 /{" "}
+                {pt
+                  ? "SISTEMAS EM PRODUÇÃO · DOMÍNIOS PRÓPRIOS & CLIENTES REAIS"
+                  : "PRODUCTION SYSTEMS · LIVE DOMAINS & REAL CLIENTS"}
               </div>
               <h2>
                 {pt ? "Software que fecha a conta" : "Software that closes the loop"}
@@ -386,23 +292,21 @@ export default function HomeClient() {
 
               <Link
                 className="studio-text-link"
-                href={localePath("/portfolio", lang)}
-                data-analytics="portfolio_click"
+                href={localePath("/produtos", lang)}
+                data-analytics="product_click"
               >
-                {pt ? "Explorar portfólio" : "Explore portfolio"}
+                {pt ? "Ver catálogo SaaS" : "View SaaS catalog"}
                 <ArrowUpRight size={18} />
               </Link>
             </div>
           </div>
 
-          {/* Card Principal Integrado: MiseOn + Hardware Bravus Core / Gertec */}
+          {/* Flagship 01: MiseOn + Hardware Bravus Core / Gertec */}
           <div className="flagship-hero-card">
             <div className="flagship-hero-copy">
               <div className="flagship-meta-row">
                 <span className="studio-pill">
-                  {pt
-                    ? "01 / FOOD SERVICE · SOFTWARE + HARDWARE"
-                    : "01 / FOOD SERVICE · SOFTWARE + HARDWARE"}
+                  01 / FOOD SERVICE · miseon.app.br
                 </span>
                 <span className="flagship-status-pill">
                   {pt ? "Em operação · Meta & iFood" : "Live · Meta & iFood"}
@@ -444,32 +348,36 @@ export default function HomeClient() {
               <div className="flagship-feature-strip">
                 <div>
                   <MonitorSmartphone size={18} aria-hidden="true" />
-                  <span>
-                    {pt ? "Autoatendimento & KDS" : "Self-Service Kiosk & KDS"}
-                  </span>
+                  <span>{pt ? "Autoatendimento & KDS" : "Self-Service Kiosk & KDS"}</span>
                 </div>
                 <div>
                   <Receipt size={18} aria-hidden="true" />
-                  <span>
-                    {pt ? "Smart POS + NFC-e" : "Smart POS + Fiscal Receipt"}
-                  </span>
+                  <span>{pt ? "Smart POS + NFC-e" : "Smart POS + Fiscal Receipt"}</span>
                 </div>
                 <div>
                   <Server size={18} aria-hidden="true" />
-                  <span>
-                    {pt ? "PEPS + iFood + WhatsApp" : "FIFO Stock + iFood + WhatsApp"}
-                  </span>
+                  <span>{pt ? "PEPS + iFood + WhatsApp" : "FIFO Stock + iFood + WhatsApp"}</span>
                 </div>
               </div>
 
               <div className="flagship-actions">
+                <a
+                  href="https://miseon.app.br"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary"
+                  data-analytics="product_demo"
+                >
+                  <ExternalLink size={16} />
+                  <span>{pt ? "Acessar miseon.app.br" : "Open miseon.app.br"}</span>
+                </a>
                 <Link
                   href={localePath("/produtos/miseon", lang)}
-                  className="btn btn-primary"
-                  data-analytics="portfolio_click"
+                  className="btn btn-ghost"
+                  data-analytics="product_click"
                 >
-                  <span>{pt ? "Conhecer MiseOn" : "Explore MiseOn"}</span>
-                  <ArrowUpRight size={17} />
+                  <span>{pt ? "Detalhes & Planos" : "Specs & Pricing"}</span>
+                  <ArrowUpRight size={16} />
                 </Link>
                 <button
                   type="button"
@@ -477,13 +385,13 @@ export default function HomeClient() {
                   onClick={() =>
                     openPortfolioConcierge(
                       pt
-                        ? "Como funciona a parceria MiseOn + Totens Bravus Core e quanto custa?"
+                        ? "Como funciona a parceria MiseOn + Totens Bravus Core?"
                         : "How does MiseOn + Bravus Core kiosk integration work?",
                     )
                   }
                 >
                   <Bot size={16} aria-hidden="true" />
-                  <span>{pt ? "Perguntar à IA" : "Ask AI Agent"}</span>
+                  <span>{pt ? "Perguntar à IA" : "Ask AI"}</span>
                 </button>
               </div>
             </div>
@@ -519,41 +427,289 @@ export default function HomeClient() {
             </div>
           </div>
 
-          {/* 3 Plataformas Complementares (SelectSys, MercadinhoSys, MySuperStore) */}
-          <div className="flagship-secondary-grid">
-            {flagshipSecondary.map((item) => (
-              <article key={item.id} className="flagship-secondary-card">
-                <div className="flagship-secondary-top">
-                  <span className="flagship-code">{item.code}</span>
-                  <span className="studio-pill">{item.pill}</span>
+          {/* Flagship 02: MercadinhoSys — Domínio próprio mercadinhosys.com.br + Cliente Real */}
+          <div className="flagship-hero-card flagship-mercadinhosys">
+            <div className="flagship-hero-copy">
+              <div className="flagship-meta-row">
+                <span className="studio-pill">
+                  02 / VAREJO &amp; ERP · mercadinhosys.com.br
+                </span>
+                <span className="flagship-status-pill is-gold">
+                  {pt ? "Domínio Próprio · Cliente Real em Operação" : "Custom Domain · Real Client Live"}
+                </span>
+              </div>
+
+              <div className="flagship-brand-lockup">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/logo-mercadinhosys.png"
+                  alt=""
+                  width={48}
+                  height={48}
+                  className="prod-brand-icon"
+                />
+                <div className="flagship-logo-plate">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/logo-horiz-mercadinhosys.png"
+                    alt="MercadinhoSys"
+                  />
                 </div>
-                <h3>{item.title}</h3>
-                <p>
-                  {showcaseMode === "business" ? item.businessSummary : item.archSummary}
-                </p>
-                <div className="tags">
-                  {item.tags.map((tg) => (
-                    <span className="tag" key={tg}>
-                      {tg}
-                    </span>
-                  ))}
+              </div>
+
+              <h3>
+                {pt
+                  ? "ERP multi-tenant com PDV fiscal NFC-e, entrada por XML e BI comercial em produção real."
+                  : "Live retail ERP featuring fiscal NFC-e POS, XML intake, and commercial BI."}
+              </h3>
+
+              <p className="flagship-summary">
+                {showcaseMode === "business"
+                  ? pt
+                    ? "Rodando em domínio próprio (mercadinhosys.com.br) com cliente real de varejo operando no dia a dia: unifica caixa PDV, importação automática de XML do fornecedor e painéis de Curva ABC, matriz RFM e DRE para travar rupturas."
+                    : "Operating on its dedicated domain (mercadinhosys.com.br) with an active retail client: unifies POS checkout, automated supplier XML ingestion, ABC Curve, RFM segmentation, and P&L dashboards."
+                  : pt
+                    ? "TenantQuery fail-closed no SQLAlchemy/PostgreSQL + savepoints aninhados no fechamento de venda + motor NFC-e SEFAZ + pipeline Python (Pandas, Statsmodels, Plotly) + cache Redis + observabilidade Sentry."
+                    : "Fail-closed ORM TenantQuery in PostgreSQL + nested savepoints at POS checkout + SEFAZ NFC-e fiscal engine + Python analytics (Pandas, Statsmodels, Plotly) + Redis + Sentry."}
+              </p>
+
+              <div className="flagship-feature-strip">
+                <div>
+                  <Receipt size={18} aria-hidden="true" />
+                  <span>{pt ? "PDV Fiscal NFC-e + XML" : "Fiscal POS + XML Intake"}</span>
                 </div>
-                <div className="flagship-secondary-foot">
-                  <Link href={localePath(item.href, lang)} className="plink solid">
-                    <span>{item.cta}</span>
-                    <ArrowUpRight size={15} />
-                  </Link>
-                  <button
-                    type="button"
-                    className="plink"
-                    onClick={() => openPortfolioConcierge(item.conciergePrompt)}
-                  >
-                    <Bot size={15} aria-hidden="true" />
-                    <span>{pt ? "Raio-X IA" : "AI Q&A"}</span>
-                  </button>
+                <div>
+                  <BarChart3 size={18} aria-hidden="true" />
+                  <span>{pt ? "Curva ABC + RFM + DRE" : "ABC Curve + RFM + P&L"}</span>
                 </div>
-              </article>
-            ))}
+                <div>
+                  <Database size={18} aria-hidden="true" />
+                  <span>{pt ? "Estoque Transacional PostgreSQL" : "PostgreSQL Stock Ledger"}</span>
+                </div>
+              </div>
+
+              <div className="flagship-actions">
+                <a
+                  href="https://mercadinhosys.com.br"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary"
+                  data-analytics="product_demo"
+                >
+                  <ExternalLink size={16} />
+                  <span>{pt ? "Acessar mercadinhosys.com.br" : "Open mercadinhosys.com.br"}</span>
+                </a>
+                <Link
+                  href={localePath("/produtos/mercadinhosys", lang)}
+                  className="btn btn-ghost"
+                  data-analytics="product_click"
+                >
+                  <span>{pt ? "Conhecer MercadinhoSys" : "Product Details"}</span>
+                  <ArrowUpRight size={16} />
+                </Link>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() =>
+                    openPortfolioConcierge(
+                      pt
+                        ? "Qual a arquitetura multi-tenant, NFC-e e BI do MercadinhoSys em mercadinhosys.com.br?"
+                        : "What is MercadinhoSys's multi-tenant and BI architecture?",
+                    )
+                  }
+                >
+                  <Bot size={16} aria-hidden="true" />
+                  <span>{pt ? "Raio-X IA" : "AI Q&A"}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="flagship-visual-showcase">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/media/mercadinhosys-flagship.jpg"
+                alt={
+                  pt
+                    ? "Dashboard executivo do MercadinhoSys exibindo PDV fiscal NFC-e, Curva ABC/RFM e PostgreSQL"
+                    : "MercadinhoSys executive showcase displaying NFC-e POS, ABC/RFM analytics and PostgreSQL"
+                }
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          {/* 2 Plataformas Complementares em Grid 2 Colunas Equilibrado (SelectSys & MySuperStore White-Label) */}
+          <div className="flagship-secondary-grid" id="mysuperstore-showcase">
+            {/* 03: SelectSys Jobs */}
+            <article className="flagship-secondary-card">
+              <div className="flagship-card-visual">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/media/selectsys-flagship.jpg"
+                  alt={
+                    pt
+                      ? "SelectSys Jobs ATS bilíngue Brasil Japão com scanner OCR e proteção LGPD"
+                      : "SelectSys Jobs bilingual ATS dashboard with passport OCR and LGPD compliance"
+                  }
+                  loading="lazy"
+                />
+              </div>
+
+              <div className="flagship-secondary-top">
+                <span className="flagship-code">03 / ATS BILÍNGUE BRASIL → JAPÃO</span>
+                <span className="studio-pill">
+                  {pt ? "Cliente Real · Fujiarte Co., Ltd." : "Real Client · Fujiarte Co., Ltd."}
+                </span>
+              </div>
+
+              <div className="flagship-mini-brand">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo-selectsys.png" alt="" width={36} height={36} className="prod-brand-icon" />
+                <div className="prod-logo-plate is-mini">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo-horiz-selectsys.png" alt="SelectSys Jobs" />
+                </div>
+              </div>
+
+              <h3>
+                {pt
+                  ? "SelectSys Jobs — triagem internacional sem planilhas paralelas"
+                  : "SelectSys Jobs — cross-border recruiting without manual spreadsheets"}
+              </h3>
+              <p>
+                {showcaseMode === "business"
+                  ? pt
+                    ? "Substituiu e-mails e formulários soltos na agência Fujiarte (60+ anos conectando Brasil e Japão), cortando em 60% o tempo de triagem documental manual com conformidade LGPD."
+                    : "Replaced scattered spreadsheets at Fujiarte (60+ years connecting Brazil and Japan), cutting manual screening time by 60% with strict LGPD isolation."
+                  : pt
+                    ? "React 19 + PostgreSQL Row Level Security (LGPD) + OCR automático com Tesseract.js/PDF.js + exportação fiel para planilhas ExcelJS/Python + Edge Functions."
+                    : "React 19 + PostgreSQL Row Level Security (LGPD) + Tesseract.js/PDF.js OCR + faithful ExcelJS exports + Edge Functions."}
+              </p>
+
+              <div className="tags">
+                {["React 19", "PostgreSQL RLS", "Tesseract OCR", "ExcelJS", "LGPD"].map((tg) => (
+                  <span className="tag" key={tg}>
+                    {tg}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flagship-secondary-foot">
+                <Link href={localePath("/produtos/selectsys-jobs", lang)} className="plink solid">
+                  <span>{pt ? "Conhecer SelectSys Jobs" : "Explore SelectSys"}</span>
+                  <ArrowUpRight size={15} />
+                </Link>
+                <Link href={localePath("/portfolio/fujiarte", lang)} className="plink">
+                  <span>{pt ? "Ver Case Fujiarte" : "Fujiarte Case"}</span>
+                </Link>
+                <button
+                  type="button"
+                  className="plink"
+                  onClick={() =>
+                    openPortfolioConcierge(
+                      pt
+                        ? "Como o SelectSys Jobs ajudou a agência Fujiarte?"
+                        : "How was SelectSys Jobs architected for Fujiarte?",
+                    )
+                  }
+                >
+                  <Bot size={15} aria-hidden="true" />
+                  <span>{pt ? "Raio-X IA" : "AI Q&A"}</span>
+                </button>
+              </div>
+            </article>
+
+            {/* 04: MySuperStore — Personalize a sua loja com esse marketplace (Cliente Real: Loja de Macramê da Eli) */}
+            <article className="flagship-secondary-card is-highlighted">
+              <div className="flagship-card-visual">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/media/mysuperstore-architecture.jpg"
+                  alt={
+                    pt
+                      ? "Arquitetura do MySuperStore com gateway PIX Split 88% lojista 12% plataforma, HMAC Gate e Celery Redis"
+                      : "MySuperStore distributed architecture showing PIX Split, HMAC gate and Celery/Redis workers"
+                  }
+                  loading="lazy"
+                />
+              </div>
+
+              <div className="flagship-secondary-top">
+                <span className="flagship-code">
+                  04 / MARKETPLACE WHITE-LABEL · PERSONALIZE A SUA LOJA
+                </span>
+                <span className="flagship-status-pill is-gold">
+                  {pt
+                    ? "Cliente Real em Operação: Loja de Macramê da Eli"
+                    : "Real Store Live: Eli's Macramê Shop"}
+                </span>
+              </div>
+
+              <div className="flagship-mini-brand">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo-mysuperstore.png" alt="" width={36} height={36} className="prod-brand-icon" />
+                <div className="prod-logo-dark is-mini">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo-horiz-mysuperstore.png" alt="MySuperStore" />
+                </div>
+              </div>
+
+              <h3>
+                {pt
+                  ? "MySuperStore — personalize a sua loja com este marketplace multi-vendedor"
+                  : "MySuperStore — launch your own custom storefront inside our marketplace"}
+              </h3>
+              <p>
+                {showcaseMode === "business"
+                  ? pt
+                    ? "Plataforma pronta para empreendedores e marcas personalizarem sua própria loja em dias — já validada em produção por clientes reais como a Loja de Macramê da Eli — com checkout PIX/cartão, split automático na liquidação e frete calculado na hora."
+                    : "Turnkey multi-vendor marketplace ready for real merchants — proven in production by Eli's Macramê Store — featuring branded storefronts, instant shipping quotes, and automated PIX split payouts."
+                  : pt
+                    ? "Django REST + Next.js 15 + PostgreSQL (ledger em centavos inteiros + lock condicional UPDATE de estoque) + webhook Efí Bank com assinatura HMAC e chave idempotente + fila Celery/Redis."
+                    : "Django REST + Next.js 15 + PostgreSQL (integer-cent ledger & conditional stock locks) + idempotent Efí Bank HMAC webhooks + Celery/Redis workers."}
+              </p>
+
+              <div className="tags">
+                {["Django REST", "Next.js 15", "Loja de Macramê da Eli", "Efí PIX Split", "Celery + Redis"].map((tg) => (
+                  <span className="tag" key={tg}>
+                    {tg}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flagship-secondary-foot">
+                <Link
+                  href={`${localePath("/cursos/construa-seu-marketplace/pratica", lang)}?estacao=loja`}
+                  className="plink solid"
+                >
+                  <Store size={15} aria-hidden="true" />
+                  <span>{pt ? "Personalizar Minha Loja" : "Customize Storefront"}</span>
+                </Link>
+                <a
+                  href="https://mysuperstore-lime.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="plink"
+                >
+                  <ShoppingBag size={15} aria-hidden="true" />
+                  <span>{pt ? "Abrir Marketplace" : "Live Marketplace"}</span>
+                </a>
+                <button
+                  type="button"
+                  className="plink"
+                  onClick={() =>
+                    openPortfolioConcierge(
+                      pt
+                        ? "Como personalizar uma loja no MySuperStore (como a Loja de Macramê da Eli) e como funciona o split PIX?"
+                        : "How do merchants like Eli Macramê launch customizable storefronts on MySuperStore?",
+                    )
+                  }
+                >
+                  <Bot size={15} aria-hidden="true" />
+                  <span>{pt ? "Raio-X IA" : "AI Q&A"}</span>
+                </button>
+              </div>
+            </article>
           </div>
         </div>
       </section>

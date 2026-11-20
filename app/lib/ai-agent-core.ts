@@ -373,27 +373,27 @@ function buildFallbackConcierge(
     };
   }
 
-  if (/mercadinho|erp|pdv|fiscal|nfc|varejo|curva abc|rfm|mysuperstore|marketplace/.test(q)) {
+  if (/mercadinho|erp|pdv|fiscal|nfc|varejo|curva abc|rfm|mysuperstore|marketplace|macrame|macramê|eli/.test(q)) {
     return {
       answer: pt
-        ? "Na linha de varejo e comércio, a Maldivas Tech opera o mercadinhosys (ERP multi-tenant fail-closed com PDV fiscal NFC-e/NF-e via SEFAZ e BI com Curva ABC, RFM e DRE em Python/Pandas/Plotly) e o MySuperStore (marketplace multi-vendedor headless em Django REST + Next.js 15 + Celery/Redis com split automático Efí Bank)."
-        : "For retail and commerce, Maldivas Tech builds mercadinhosys (fail-closed multi-tenant ERP with fiscal NFC-e POS and Pandas/Plotly BI: ABC curve, RFM, P&L) and MySuperStore (headless multi-vendor marketplace with Django REST, Next.js 15, Celery/Redis, and Efí Bank automated split).",
+        ? "Na linha de varejo e comércio, a Maldivas Tech opera o MercadinhoSys em domínio próprio (mercadinhosys.com.br) atendendo cliente real com PDV fiscal NFC-e/SEFAZ e BI em Python/Pandas/Plotly (Curva ABC, RFM e DRE), além do MySuperStore — marketplace personalizável onde clientes reais como a Loja de Macramê da Eli operam sua vitrine com split automático de PIX via Efí Bank."
+        : "For retail and commerce, Maldivas Tech operates MercadinhoSys on its custom domain (mercadinhosys.com.br) serving a real retail client with fiscal NFC-e POS and Pandas/Plotly BI (ABC Curve, RFM, P&L), alongside MySuperStore — a customizable marketplace powering real merchant storefronts such as Eli Macramê with automated Efí Bank PIX revenue split.",
       highlights: pt
         ? [
-            "Isolamento multi-tenant fail-closed e emissão fiscal NFC-e com contingência",
-            "BI operacional: Curva ABC, análise RFM, previsão de ruptura e DRE",
-            "Split automático de pagamentos PIX/cartão e processamento assíncrono Celery + Redis",
+            "MercadinhoSys (mercadinhosys.com.br): domínio próprio e cliente real no varejo",
+            "MySuperStore (personalize sua loja): caso real da Loja de Macramê da Eli em operação",
+            "Split automático de pagamentos PIX/cartão + Celery & Redis em produção",
           ]
         : [
-            "Fail-closed multi-tenant isolation & fiscal NFC-e engine",
-            "Actionable BI: ABC Curve, RFM segmentation, stockout forecasting",
-            "Automated PIX/card split settlement and Celery + Redis background workers",
+            "MercadinhoSys (mercadinhosys.com.br): custom production domain & real retail client",
+            "MySuperStore (customizable storefront): real production store Eli Macramê",
+            "Automated PIX/card split settlement + Celery & Redis background workers",
           ],
-      recommendedRoute: `/${input.lang}/portfolio`,
-      recommendedRouteLabel: pt ? "Ver Portfólio Completo" : "View Full Portfolio",
+      recommendedRoute: `/${input.lang}/produtos/mercadinhosys`,
+      recommendedRouteLabel: pt ? "Conhecer MercadinhoSys (.com.br)" : "Explore MercadinhoSys (.com.br)",
       whatsappPrefill: pt
-        ? "Olá Rafael! Quero entender como a arquitetura de ERP/Marketplace da Maldivas Tech se aplica à minha empresa."
-        : "Hi Rafael! I'd like to discuss how Maldivas Tech's ERP/Marketplace architecture fits my business.",
+        ? "Olá Rafael! Quero entender como o MercadinhoSys (mercadinhosys.com.br) ou o MySuperStore se aplicam à minha loja."
+        : "Hi Rafael! I'd like to discuss how MercadinhoSys or MySuperStore fits my store.",
       source: "fallback",
     };
   }

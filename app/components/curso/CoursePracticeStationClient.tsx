@@ -217,6 +217,8 @@ export default function CoursePracticeStationClient({
 
   const currentStationSpec =
     STATION_SPECS.find((s) => s.id === activeStation) ?? STATION_SPECS[1];
+  const nextStationSpec =
+    STATION_SPECS.find((s) => s.order === currentStationSpec.order + 1) ?? null;
 
   const [vscodeChecks, setVscodeChecks] = useState<Record<string, boolean>>({
     zip: false,
@@ -225,7 +227,7 @@ export default function CoursePracticeStationClient({
     terminal: false,
   });
 
-  const [tutorOpen, setTutorOpen] = useState(false);
+  const [tutorOpen, setTutorOpen] = useState(true);
   const [tutorQuery, setTutorQuery] = useState("");
   const [tutorLoading, setTutorLoading] = useState(false);
   const [tutorError, setTutorError] = useState("");
@@ -461,7 +463,7 @@ export default function CoursePracticeStationClient({
           )}
         </section>
 
-        {/* Socratic AI Tutor Panel (Gemini Agent Front 3) */}
+        {/* Socratic AI Tutor Panel (Gemini Agent Front 3) + 4-Stage Pipeline Blueprint */}
         <section className="tutor-arena-shell" aria-label="Engenheiro Tutor IA">
           <div className="tutor-arena-bar">
             <div className="tutor-arena-head">
@@ -473,13 +475,29 @@ export default function CoursePracticeStationClient({
             </div>
             <button
               type="button"
-              className="ide-btn ide-btn-ghost"
+              className="ide-btn ide-btn-primary"
               aria-expanded={tutorOpen}
               onClick={() => setTutorOpen((v) => !v)}
             >
               <Sparkles size={15} aria-hidden="true" />
               <span>{tutorOpen ? "Recolher Tutor IA" : "Pedir Dica ao Tutor IA"}</span>
             </button>
+          </div>
+
+          <div className="tutor-blueprint-strip">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/media/course-arena-blueprint.jpg"
+              alt="Ciclo de vida da requisição no laboratório: Node HTTP, Porteiro HMAC, Lock SQL e Ledger em centavos"
+              loading="lazy"
+            />
+            <div className="tutor-blueprint-copy">
+              <strong>Mapa Mental da Requisição em Produção (4 Degraus):</strong>
+              <p>
+                <span>01 Node HTTP</span> → <span>02 Porteiro HMAC &amp; Idempotência</span> →{" "}
+                <span>03 Lock SQL Transacional</span> → <span>04 Ledger em Centavos</span>
+              </p>
+            </div>
           </div>
 
           {tutorOpen && (
@@ -1008,29 +1026,42 @@ export default function CoursePracticeStationClient({
 
         {/* Bottom Return & Next Station Footer */}
         <footer className="ide-station-footer">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            {originLesson ? (
-              <Link
-                href={localePath(
-                  `/cursos/${courseSlug}/${originLesson.slug}`,
-                  lang,
-                )}
-                className="ide-btn ide-btn-primary"
-              >
-                <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
-                <span>Concluir Prática e Voltar para a Aula ({originLesson.title})</span>
-              </Link>
-            ) : (
-              <Link
-                href={localePath(`/cursos/${courseSlug}`, lang)}
-                className="ide-btn ide-btn-primary"
-              >
-                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-                <span>Voltar para a Trilha do Curso</span>
-              </Link>
-            )}
+          <div className="ide-station-footer-inner">
+            <div className="ide-station-footer-actions">
+              {originLesson ? (
+                <Link
+                  href={localePath(
+                    `/cursos/${courseSlug}/${originLesson.slug}`,
+                    lang,
+                  )}
+                  className="ide-btn ide-btn-primary"
+                >
+                  <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
+                  <span>Concluir Prática e Voltar para a Aula ({originLesson.title})</span>
+                </Link>
+              ) : (
+                <Link
+                  href={localePath(`/cursos/${courseSlug}`, lang)}
+                  className="ide-btn ide-btn-primary"
+                >
+                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                  <span>Voltar para a Trilha do Curso</span>
+                </Link>
+              )}
 
-            <div className="flex flex-wrap gap-2">
+              {nextStationSpec && (
+                <button
+                  type="button"
+                  className="ide-btn ide-btn-secondary"
+                  onClick={() => navigateToStation(nextStationSpec.id)}
+                >
+                  <span>Avançar: {nextStationSpec.shortLabel}</span>
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+
+            <div className="ide-station-footer-actions">
               {activeStation !== "deploy" && (
                 <button
                   type="button"

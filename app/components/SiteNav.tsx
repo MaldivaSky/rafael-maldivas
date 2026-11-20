@@ -76,8 +76,9 @@ const toolsGroups: SubGroup[] = [
 
 const produtosSub: SubItem[] = [
   { href: "/produtos/miseon", pt: "MiseOn — gestão para restaurantes", en: "MiseOn — restaurant SaaS" },
+  { href: "/produtos/mercadinhosys", pt: "MercadinhoSys — ERP e PDV para varejo", en: "MercadinhoSys — Retail ERP & Fiscal POS" },
   { href: "/produtos/selectsys-jobs", pt: "SelectSys Jobs — ATS para agências", en: "SelectSys Jobs — ATS for agencies" },
-  { href: "/#bravus-partnership", pt: "Parceria de Hardware (Bravus Core)", en: "Hardware Partnership (Bravus Core)" },
+  { href: "/#produtos", pt: "Parceria de Hardware (Bravus Core)", en: "Hardware Partnership (Bravus Core)" },
 ];
 
 const cursosSub: SubItem[] = [

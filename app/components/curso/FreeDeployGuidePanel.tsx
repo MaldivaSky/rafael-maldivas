@@ -48,9 +48,44 @@ interface StoreBuilderProduct extends CustomStoreProduct {
 
 const THEME_SWATCHES = [
   { label: "Azul Ciano", hex: "#22B5F2" },
+  { label: "Ouro Artesanal", hex: "#F5B544" },
   { label: "Esmeralda", hex: "#22C55E" },
-  { label: "Âmbar", hex: "#F59E0B" },
   { label: "Coral", hex: "#F43F5E" },
+];
+
+const ELI_MACRAME_STOREFRONT: StoreBuilderProduct[] = [
+  {
+    id: "eli-bolsa-boho",
+    name: "Bolsa Macramê Boho Artesanal",
+    priceCents: 14990,
+    sizes: ["P", "M", "G"],
+    colorHex: "#F5B544",
+    badge: "Cliente Real · Eli Macramê",
+  },
+  {
+    id: "eli-painel-trama",
+    name: "Painel de Parede Macramê Trama Real",
+    priceCents: 21990,
+    sizes: ["70x90cm", "100x120cm"],
+    colorHex: "#D97706",
+    badge: "Destaque Ateliê",
+  },
+  {
+    id: "eli-suporte-vaso",
+    name: "Suporte Suspenso para Vaso Macramê",
+    priceCents: 8990,
+    sizes: ["65cm", "90cm"],
+    colorHex: "#0EA5E9",
+    badge: "Envio Rápido",
+  },
+  {
+    id: "eli-luminaria-algodao",
+    name: "Luminária Pendente Fio Algodão Cru",
+    priceCents: 17990,
+    sizes: ["Bivolt"],
+    colorHex: "#22C55E",
+    badge: "Sob Encomenda",
+  },
 ];
 
 function formatBrl(cents: number): string {
@@ -88,21 +123,37 @@ export function FreeDeployGuidePanel({
     return idx >= 0 ? idx : 0;
   });
 
-  // Custom Storefront Builder state
-  const [storeName, setStoreName] = useState("Vitrine Jovem Store");
+  // Custom Storefront Builder state (Defaults to real MySuperStore white-label model inspired by Loja de Macramê da Eli)
+  const [storePreset, setStorePreset] = useState<"eli" | "streetwear">("eli");
+  const [storeName, setStoreName] = useState("Ateliê Eli Macramê · MySuperStore");
   const [whatsappDigits, setWhatsappDigits] = useState("5511999999999");
-  const [accentHex, setAccentHex] = useState("#22B5F2");
-  const [products, setProducts] = useState<StoreBuilderProduct[]>(() =>
-    DEFAULT_CLOTHING_STOREFRONT.map((p) => ({
-      id: p.id,
-      name: p.name,
-      priceCents: p.priceCents,
-      sizes: p.sizes,
-      colorHex: p.colorHex,
-      badge: p.badge,
-      imagePath: p.imagePath,
-    })),
-  );
+  const [accentHex, setAccentHex] = useState("#F5B544");
+  const [products, setProducts] = useState<StoreBuilderProduct[]>(() => ELI_MACRAME_STOREFRONT);
+
+  function applyStorePreset(preset: "eli" | "streetwear") {
+    setStorePreset(preset);
+    setCart([]);
+    setWhatsappPreview(null);
+    if (preset === "eli") {
+      setStoreName("Ateliê Eli Macramê · MySuperStore");
+      setAccentHex("#F5B544");
+      setProducts(ELI_MACRAME_STOREFRONT);
+    } else {
+      setStoreName("Vitrine Jovem Store");
+      setAccentHex("#22B5F2");
+      setProducts(
+        DEFAULT_CLOTHING_STOREFRONT.map((p) => ({
+          id: p.id,
+          name: p.name,
+          priceCents: p.priceCents,
+          sizes: p.sizes,
+          colorHex: p.colorHex,
+          badge: p.badge,
+          imagePath: p.imagePath,
+        })),
+      );
+    }
+  }
   const [newProdName, setNewProdName] = useState("");
   const [newProdPriceReais, setNewProdPriceReais] = useState("89.90");
 
@@ -234,10 +285,36 @@ export function FreeDeployGuidePanel({
       {/* Interactive Custom Storefront Builder + Live Preview + Export */}
       {showBuilder && (
       <section className="ide-vitrine-box" aria-label="Construtor Ao Vivo da Sua Loja">
+        <div className="ide-vitrine-spotlight">
+          <div>
+            <span className="ide-file-badge">Case Real MySuperStore · Personalize a Sua Loja</span>
+            <strong>Loja de Macramê da Eli operando com este mesmo marketplace</strong>
+            <p className="ide-muted-xs">
+              Alterne entre o modelo artesanal em produção (<strong>Ateliê Eli Macramê</strong>) e a vitrine Streetwear para testar cores, catálogo e geração automática do arquivo <code>index.html</code>.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              className={`ide-preset-chip${storePreset === "eli" ? " is-selected-chip" : ""}`}
+              onClick={() => applyStorePreset("eli")}
+            >
+              Case Real: Loja de Macramê da Eli
+            </button>
+            <button
+              type="button"
+              className={`ide-preset-chip${storePreset === "streetwear" ? " is-selected-chip" : ""}`}
+              onClick={() => applyStorePreset("streetwear")}
+            >
+              Modelo Streetwear &amp; Roupas
+            </button>
+          </div>
+        </div>
+
         <div className="ide-vitrine-head">
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-4 h-4 ide-text-cyan" aria-hidden="true" />
-            <strong>Fábrica da Sua Loja: Edite, Teste Ao Vivo e Baixe Pronto para Subir!</strong>
+            <strong>Fábrica da Sua Loja MySuperStore: Edite, Teste Ao Vivo e Baixe Pronto para Subir!</strong>
           </div>
           <div className="flex flex-wrap gap-2">
             <button

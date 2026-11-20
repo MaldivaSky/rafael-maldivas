@@ -108,6 +108,7 @@ export function IdeWorkbench({
   const [httpBodyText, setHttpBodyText] = useState(defaultScenario.bodyText);
   const [httpResponse, setHttpResponse] = useState<HttpLabResponse | null>(null);
   const [httpHeaderParseError, setHttpHeaderParseError] = useState("");
+  const [completedHttpMissions, setCompletedHttpMissions] = useState<Record<string, boolean>>({});
 
   // SRS state
   const [revealedCardId, setRevealedCardId] = useState<string | null>(null);
@@ -169,6 +170,25 @@ export function IdeWorkbench({
     }
   }
 
+  function recordMissionTelemetry(res: HttpLabResponse, methodUsed: "GET" | "POST", pathUsed: string) {
+    setCompletedHttpMissions((prev) => {
+      const next = { ...prev };
+      if (methodUsed === "POST" && pathUsed === "/api/v1/orders" && res.status === 201) {
+        next["m1-order"] = true;
+      }
+      if (methodUsed === "POST" && pathUsed === "/api/v1/orders" && res.status === 409) {
+        next["m2-race"] = true;
+      }
+      if (methodUsed === "POST" && pathUsed === "/api/v1/webhooks/efi" && res.status === 401) {
+        next["m3-hmac"] = true;
+      }
+      if (methodUsed === "POST" && pathUsed === "/api/v1/webhooks/efi" && res.status === 200) {
+        next["m4-idempotency"] = true;
+      }
+      return next;
+    });
+  }
+
   function handleSendHttp(repeatTimes = 1) {
     const headers = parseHeaders();
     if (!headers) return;
@@ -182,9 +202,126 @@ export function IdeWorkbench({
         bodyText: httpBodyText,
       });
       workingState = lastRes.nextState;
+      recordMissionTelemetry(lastRes, httpMethod, httpPath);
     }
     setHttpState(workingState);
     if (lastRes) setHttpResponse(lastRes);
+  }
+
+  function runGuidedHttpMission(missionKey: "m1-order" | "m2-race" | "m3-hmac" | "m4-idempotency") {
+    let workingState = httpState;
+    let lastRes: HttpLabResponse | null = null;
+
+    if (missionKey === "m1-order") {
+      if (workingState.orders["ord-1001"]) {
+        workingState = createInitialHttpSandboxState();
+      }
+      const hdrs = { Authorization: "Bearer aluno-token" };
+      const body = JSON.stringify(
+        { orderId: "ord-1001", items: [{ productId: "cafeteira-pro", qty: 1 }], couponCode: "BEMVINDO10" },
+        null,
+        2,
+      );
+      setHttpMethod("POST");
+      setHttpPath("/api/v1/orders");
+      setHttpHeadersText(JSON.stringify(hdrs, null, 2));
+      setHttpBodyText(body);
+      setHttpHeaderParseError("");
+      lastRes = executeHttpLabRequest(workingState, { method: "POST", path: "/api/v1/orders", headers: hdrs, bodyText: body });
+      workingState = lastRes.nextState;
+      recordMissionTelemetry(lastRes, "POST", "/api/v1/orders");
+    } else if (missionKey === "m2-race") {
+      const hdrs = { Authorization: "Bearer aluno-token" };
+      const body = JSON.stringify(
+        { orderId: "ord-race-2", items: [{ productId: "cafeteira-pro", qty: 2 }] },
+        null,
+        2,
+      );
+      setHttpMethod("POST");
+      setHttpPath("/api/v1/orders");
+      setHttpHeadersText(JSON.stringify(hdrs, null, 2));
+      setHttpBodyText(body);
+      setHttpHeaderParseError("");
+      for (let i = 0; i < 2; i++) {
+        lastRes = executeHttpLabRequest(workingState, { method: "POST", path: "/api/v1/orders", headers: hdrs, bodyText: body });
+        workingState = lastRes.nextState;
+        recordMissionTelemetry(lastRes, "POST", "/api/v1/orders");
+        if (lastRes.status === 409) break;
+      }
+    } else if (missionKey === "m3-hmac") {
+      const hdrs = { "X-Webhook-Signature": "assinatura-forjada", "Idempotency-Key": "evt-pix-forged" };
+      const body = JSON.stringify({ orderId: "ord-1001", status: "CONCLUIDA" }, null, 2);
+      setHttpMethod("POST");
+      setHttpPath("/api/v1/webhooks/efi");
+      setHttpHeadersText(JSON.stringify(hdrs, null, 2));
+      setHttpBodyText(body);
+      setHttpHeaderParseError("");
+      lastRes = executeHttpLabRequest(workingState, { method: "POST", path: "/api/v1/webhooks/efi", headers: hdrs, bodyText: body });
+      workingState = lastRes.nextState;
+      recordMissionTelemetry(lastRes, "POST", "/api/v1/webhooks/efi");
+    } else {
+      if (!workingState.orders["ord-1001"]) {
+        const seedRes = executeHttpLabRequest(workingState, {
+          method: "POST",
+          path: "/api/v1/orders",
+          headers: { Authorization: "Bearer aluno-token" },
+          bodyText: JSON.stringify({ orderId: "ord-1001", items: [{ productId: "cafeteira-pro", qty: 1 }] }),
+        });
+        workingState = seedRes.nextState;
+      }
+      const hdrs = { "X-Webhook-Signature": "secret-ok", "Idempotency-Key": "evt-pix-1001" };
+      const body = JSON.stringify({ orderId: "ord-1001", status: "CONCLUIDA" }, null, 2);
+      setHttpMethod("POST");
+      setHttpPath("/api/v1/webhooks/efi");
+      setHttpHeadersText(JSON.stringify(hdrs, null, 2));
+      setHttpBodyText(body);
+      setHttpHeaderParseError("");
+      for (let i = 0; i < 2; i++) {
+        lastRes = executeHttpLabRequest(workingState, { method: "POST", path: "/api/v1/webhooks/efi", headers: hdrs, bodyText: body });
+        workingState = lastRes.nextState;
+        recordMissionTelemetry(lastRes, "POST", "/api/v1/webhooks/efi");
+      }
+    }
+
+    setHttpState(workingState);
+    if (lastRes) setHttpResponse(lastRes);
+  }
+
+  function getEngineeringInsight(res: HttpLabResponse): { title: string; detail: string } {
+    if (res.status === 201) {
+      return {
+        title: "Invariante #1 Validada: Zero Confiança no Front-end",
+        detail: "O servidor recalculou preços unitários e desconto em centavos inteiros dentro de uma transação atômica antes de baixar o estoque.",
+      };
+    }
+    if (res.status === 409) {
+      return {
+        title: "Invariante #2 Validada: Bloqueio Anti-Overselling (Concorrência)",
+        detail: "Um segundo comprador tentando levar a última unidade recebe HTTP 409 Conflict antes que o saldo de estoque fique negativo.",
+      };
+    }
+    if (res.status === 401) {
+      return {
+        title: "Invariante #3 Validada: Defesa Fail-Closed por Assinatura HMAC",
+        detail: "Sem assinatura criptográfica válida no header X-Webhook-Signature, a requisição morre na borda (HTTP 401) sem tocar no banco.",
+      };
+    }
+    if (res.status === 200 && Boolean((res.body as { deduplicated?: boolean })?.deduplicated)) {
+      return {
+        title: "Invariante #4 Validada: Idempotência em Retentativas PIX",
+        detail: "O banco notificou o mesmo Idempotency-Key duas vezes; o servidor deduplicou o evento e manteve o ledger exato sem duplicar saldo.",
+      };
+    }
+    if (res.status === 200 && Boolean((res.body as { split?: unknown })?.split)) {
+      return {
+        title: "Invariante #4 Validada: Split Exato em Centavos",
+        detail: "Liquidação confirmada dividindo receita líquida do lojista e comissão da plataforma em inteiros, preservando auditoria contábil.",
+      };
+    }
+    return {
+      title: "Contrato REST Observável",
+      detail: "Todo status HTTP comunica exatamente o estado da transição de negócio no banco — nunca disfarce erros com HTTP 200.",
+    };
   }
 
   const labPassed = Boolean(workspace.labsPassed[lessonSlug]?.passed);
@@ -421,6 +558,62 @@ export function IdeWorkbench({
 
       {activeTab === "http" && (
         <div className="ide-workbench-panel">
+          <div className="ide-didactic-missions-grid" aria-label="Roteiro Guiado de Engenharia">
+            {(
+              [
+                {
+                  key: "m1-order",
+                  step: "Missão 1 · Reserva",
+                  title: "Pedido Válido (201)",
+                  desc: "Cria ord-1001 no servidor em centavos com reserva de estoque.",
+                },
+                {
+                  key: "m2-race",
+                  step: "Missão 2 · Trava SQL",
+                  title: "Concorrência (409)",
+                  desc: "Dispara compra acima do estoque para provar anti-overselling.",
+                },
+                {
+                  key: "m3-hmac",
+                  step: "Missão 3 · Porteiro",
+                  title: "Assinatura Falsa (401)",
+                  desc: "Simula ataque webhook bloqueado antes de alterar saldo.",
+                },
+                {
+                  key: "m4-idempotency",
+                  step: "Missão 4 · Idempotência",
+                  title: "Replay PIX 2x (200)",
+                  desc: "Envia o mesmo evento Efí 2x garantindo split único no ledger.",
+                },
+              ] as const
+            ).map((m) => {
+              const done = Boolean(completedHttpMissions[m.key]);
+              return (
+                <article
+                  key={m.key}
+                  className={`ide-didactic-mission-card${done ? " is-done" : ""}`}
+                >
+                  <div className="ide-didactic-mission-head">
+                    <span className="ide-file-badge">{m.step}</span>
+                    {done && (
+                      <span className="ide-status-chip is-ok">Concluída ✓</span>
+                    )}
+                  </div>
+                  <strong>{m.title}</strong>
+                  <p>{m.desc}</p>
+                  <button
+                    type="button"
+                    className={`ide-btn ${done ? "ide-btn-ghost" : "ide-btn-primary"} ide-btn-xs`}
+                    onClick={() => runGuidedHttpMission(m.key)}
+                  >
+                    <Play className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>{done ? "Reexecutar" : "Executar Missão"}</span>
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+
           <div className="ide-http-presets">
             {HTTP_LAB_SCENARIOS.map((sc) => (
               <button
@@ -525,6 +718,10 @@ export function IdeWorkbench({
                   </strong>
                 </span>
                 <span className="ide-console-timing">{httpResponse.diagnostic}</span>
+              </div>
+              <div className="ide-engineer-insight">
+                <strong>{getEngineeringInsight(httpResponse).title}</strong>
+                <p>{getEngineeringInsight(httpResponse).detail}</p>
               </div>
               <pre className="ide-console-stream">
                 {JSON.stringify(httpResponse.body, null, 2)}

@@ -210,13 +210,13 @@ export const products: Product[] = [
   {
     icon: "/logo-mercadinhosys.png",
     logoHorizontal: "/logo-horiz-mercadinhosys.png",
-    name: "mercadinhosys",
+    name: "MercadinhoSys",
     status: "live",
     role: { pt: "ERP multi-tenant · Varejo e PDV fiscal", en: "Multi-tenant ERP · Retail & fiscal POS" },
     statusLabel: { pt: "Em operação", en: "Live" },
     desc: {
-      pt: "ERP para varejo com vendas, estoque e análise de dados. Uso Python e Flask no backend e bibliotecas de análise para organizar indicadores da operação.",
-      en: "Retail ERP for sales, stock and data analysis. I use Python and Flask on the backend and analysis libraries to organise business indicators.",
+      pt: "ERP para varejo e mercadinhos em mercadinhosys.com.br com PDV fiscal NFC-e, estoque transacional, entrada por XML e inteligência comercial.",
+      en: "Retail ERP at mercadinhosys.com.br for sales, fiscal POS, transactional stock and commercial intelligence.",
     },
     problem: {
       pt: "Conferir vendas, estoque e compras em lugares separados dificulta entender o que está acontecendo na loja.",
@@ -235,7 +235,7 @@ export const products: Product[] = [
       { l: "Advanced UX" },
     ],
     repo: `${GITHUB_ORG}/mercadinhosys`,
-    demo: "https://mercadinhosys.vercel.app",
+    demo: "https://mercadinhosys.com.br",
     signup: "https://wa.me/5511919889233?text=Ola%20Rafael!%20Quero%20contratar%20o%20mercadinhosys%20para%20a%20minha%20loja.",
     deepTech: {
       pt: [
@@ -297,11 +297,14 @@ export const products: Product[] = [
     logoHorizontal: "/logo-horiz-mysuperstore.png",
     name: "MySuperStore",
     status: "live",
-    role: { pt: "Marketplace multi-vendedor headless", en: "Headless multi-vendor marketplace" },
-    statusLabel: { pt: "Em operação", en: "Live" },
+    role: {
+      pt: "Marketplace white-label · Cliente real: Loja de Macramê da Eli",
+      en: "White-label marketplace · Real storefront: Eli Macramê",
+    },
+    statusLabel: { pt: "Em operação · Cliente real", en: "Live · Real Client" },
     desc: {
-      pt: "Marketplace com múltiplos lojistas, pagamento Pix e cartão com split automático de receita, cotação de frete em tempo real e processamento assíncrono.",
-      en: "Multi-seller marketplace with Pix and card payments, automatic revenue split, real-time shipping quotes and asynchronous processing.",
+      pt: "Marketplace multi-lojista onde marcas personalizam a própria loja (caso real em operação: Loja de Macramê da Eli), com Pix e cartão, split automático de receita, frete em tempo real e processamento assíncrono.",
+      en: "Multi-seller marketplace where merchants launch their own custom storefront (real store in production: Eli Macramê), with Pix/card checkout, automated revenue split, shipping quotes and async queues.",
     },
     problem: {
       pt: "Uma loja com vários vendedores precisa organizar o catálogo, calcular frete e acompanhar a divisão dos pagamentos.",

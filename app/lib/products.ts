@@ -4,7 +4,7 @@
 
 import type { Lang } from "./seo";
 
-export type ProductSlug = "miseon" | "selectsys-jobs";
+export type ProductSlug = "miseon" | "mercadinhosys" | "selectsys-jobs";
 
 export type ProductCopy = {
   /** use no <title> — frase de busca real do mercado daquele idioma */
@@ -23,8 +23,12 @@ export type Product = {
   slug: ProductSlug;
   /** nome comercial, igual em todo idioma */
   name: string;
+  /** logo quadrada do app */
+  icon?: string;
   /** logo horizontal do produto (path público) */
   logoHorizontal?: string;
+  /** imagem showcase / arquitetura */
+  showcaseImage?: string;
   /** domain do app em produção (mesmo host externo, se houver) */
   appUrl?: string;
   /** categoria Schema.org (applicationCategory) */
@@ -52,6 +56,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
   miseon: {
     slug: "miseon",
     name: "MiseOn",
+    icon: "/logo-miseon.png",
     logoHorizontal: "/logo-horiz-miseon.png",
     appUrl: "https://miseon.app.br",
     applicationCategory: "BusinessApplication",
@@ -60,7 +65,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     priceCurrency: "BRL",
     hasFreeTrial: true,
     trialDays: 30,
-    stack: ["Next.js", "PostgreSQL", "Row Level Security", "NFC-e", "iFood API"],
+    stack: ["Next.js", "PostgreSQL", "Row Level Security", "NFC-e", "iFood API", "Bravus Core POS"],
     copy: {
       pt: {
         metaTitle: "Sistema de Gestão para Restaurantes e Cozinhas Profissionais",
@@ -68,7 +73,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
           "MiseOn é o sistema de gestão para restaurantes: ficha técnica, precificação, controle de estoque e integração com iFood. Emita NFC-e no PDV e elimine a planilha paralela.",
         h1: "O sistema de gestão que a sua cozinha usa todo dia",
         tagline:
-          "Gestão multi-tenant para restaurantes: ficha técnica, precificação, estoque e NFC-e em um só lugar.",
+          "Gestão multi-tenant para restaurantes em produção (miseon.app.br): ficha técnica, precificação, estoque e NFC-e em um só lugar.",
         keywords: [
           "sistema para restaurantes",
           "software de gestão de restaurante",
@@ -84,7 +89,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
           "MiseOn is a multi-tenant restaurant SaaS: recipe costing, menu pricing, inventory control and iFood integration. Run fiscal receipts at the POS and drop the side spreadsheet.",
         h1: "The multi-tenant restaurant SaaS your kitchen runs on",
         tagline:
-          "Multi-tenant restaurant SaaS for recipe costing, menu pricing, inventory and fiscal POS — in one place.",
+          "Multi-tenant restaurant SaaS in production (miseon.app.br): recipe costing, menu pricing, inventory and fiscal POS — in one place.",
         keywords: [
           "multi-tenant restaurant SaaS",
           "restaurant management software",
@@ -97,18 +102,77 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     },
   },
 
+  mercadinhosys: {
+    slug: "mercadinhosys",
+    name: "MercadinhoSys",
+    icon: "/logo-mercadinhosys.png",
+    logoHorizontal: "/logo-horiz-mercadinhosys.png",
+    showcaseImage: "/media/mercadinhosys-flagship.jpg",
+    appUrl: "https://mercadinhosys.com.br",
+    applicationCategory: "BusinessApplication",
+    applicationSubCategory: "RetailERPAndPOS",
+    priceBRL: "199.90",
+    priceCurrency: "BRL",
+    hasFreeTrial: true,
+    trialDays: 14,
+    stack: [
+      "Python / Flask",
+      "PostgreSQL",
+      "NFC-e SEFAZ",
+      "Pandas & Statsmodels",
+      "Plotly BI",
+      "Redis",
+      "Sentry",
+    ],
+    copy: {
+      pt: {
+        metaTitle: "MercadinhoSys — ERP Multi-Tenant e PDV Fiscal em mercadinhosys.com.br",
+        metaDescription:
+          "MercadinhoSys (mercadinhosys.com.br) opera com cliente real no varejo: ERP com PDV fiscal NFC-e, entrada automática de XML, estoque transacional e BI Curva ABC, RFM e DRE.",
+        h1: "O ERP e PDV fiscal em operação real que elimina furo de caixa e ruptura",
+        tagline:
+          "Domínio próprio (mercadinhosys.com.br) e cliente real no varejo: PDV NFC-e, importação XML, estoque transacional e BI (Curva ABC, RFM e DRE).",
+        keywords: [
+          "sistema ERP para mercadinho e varejo",
+          "PDV fiscal NFC-e online",
+          "controle de estoque curva ABC",
+          "entrada de nota fiscal XML estoque",
+          "mercadinhosys.com.br",
+          "software de gestão para supermercados",
+        ],
+      },
+      en: {
+        metaTitle: "MercadinhoSys — Multi-Tenant Retail ERP & Fiscal POS (mercadinhosys.com.br)",
+        metaDescription:
+          "MercadinhoSys (mercadinhosys.com.br) runs in production with a real retail client: fiscal NFC-e POS, automated invoice XML ingestion, transactional inventory and ABC/RFM BI.",
+        h1: "Live retail ERP & fiscal POS built to stop stockouts and margin leaks",
+        tagline:
+          "Custom domain (mercadinhosys.com.br) serving a real retail operation: fiscal POS, XML intake, transactional inventory and commercial BI.",
+        keywords: [
+          "retail ERP software",
+          "multi-tenant POS system",
+          "ABC curve inventory analytics",
+          "RFM retail analytics",
+          "mercadinhosys.com.br",
+        ],
+      },
+    },
+  },
+
   "selectsys-jobs": {
     slug: "selectsys-jobs",
     name: "SelectSys Jobs",
+    icon: "/logo-selectsys.png",
     logoHorizontal: "/logo-horiz-selectsys.png",
-    appUrl: undefined,
+    showcaseImage: "/media/selectsys-flagship.jpg",
+    appUrl: "https://selectsys-jobs.vercel.app",
     applicationCategory: "BusinessApplication",
     applicationSubCategory: "ApplicantTrackingSystem",
     priceBRL: "399.00",
     priceCurrency: "BRL",
     hasFreeTrial: true,
     trialDays: 7,
-    stack: ["Next.js", "PostgreSQL", "Postgres Full-Text Search", "LGPD"],
+    stack: ["React 19", "PostgreSQL", "Row Level Security", "Tesseract OCR", "ExcelJS", "LGPD"],
     copy: {
       pt: {
         metaTitle: "ATS para Agências de Recrutamento e Seleção",
