@@ -47,7 +47,7 @@ export default function EmpresasInvite() {
               </Spotlight>
 
               <Spotlight style={{ padding: "32px", borderRadius: "24px", background: "var(--bg)", border: "1px solid var(--line)", display: "flex", gap: "24px", alignItems: "center" }}>
-                <div style={{ background: "rgba(168, 85, 247, 0.1)", color: "#a855f7", padding: "16px", borderRadius: "16px" }}>
+                <div style={{ background: "rgba(245, 181, 68, 0.12)", color: "#F5B544", padding: "16px", borderRadius: "16px" }}>
                   <BarChart3 size={32} />
                 </div>
                 <div>

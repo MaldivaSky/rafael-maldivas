@@ -55,9 +55,9 @@ export default async function CertificadoPublicoPage({
             <ShieldAlert size={22} aria-hidden="true" />
             Certificado não encontrado
           </div>
-          <h1 style={{ marginTop: "0.9rem", fontSize: "1.5rem" }}>
+          <h2 style={{ marginTop: "0.9rem", fontSize: "1.5rem" }}>
             Código inválido ou inexistente
-          </h1>
+          </h2>
           <p className="curso-muted" style={{ marginTop: "0.5rem" }}>
             Não localizamos nenhum certificado com o código <code>{codigo}</code>.
             Confira se não há espaços ou caracteres trocados.

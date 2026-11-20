@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useLang, localePath } from "../lib/i18n";
+import PortfolioConcierge from "./PortfolioConcierge";
 import {
   COMPANY,
   EMAIL,
@@ -52,10 +54,15 @@ const t = {
 
 export default function SiteFooter() {
   const { lang } = useLang();
+  const pathname = usePathname() || "/";
   const c = t[lang];
+  const hideConcierge =
+    pathname.startsWith("/admin") || /\/cursos\/[^/]+\/pratica/.test(pathname);
 
   return (
-    <footer>
+    <>
+      {!hideConcierge && <PortfolioConcierge />}
+      <footer>
       <div className="wrap foot-grid">
         <div className="foot-brand">
           <Image src="/brand/logo-full.png" alt="Maldivas Tech" width={210} height={70} />
@@ -109,5 +116,6 @@ export default function SiteFooter() {
         <span>{c.marks}</span>
       </div>
     </footer>
+    </>
   );
 }

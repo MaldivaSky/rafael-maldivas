@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { isLang, type Lang } from "@/app/lib/seo";
-import { buildMetadata } from "@/app/lib/metadata";
-import SobreClient from "@/app/sobre/SobreClient";
+import { isLang, type Lang } from "../../lib/seo";
+import { buildMetadata } from "../../lib/metadata";
+import SobreClient from "../../sobre/SobreClient";
 
 /**
  * /[lang]/about — página de autoridade (GEO) para pt e en.

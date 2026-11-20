@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Award,
+  Bot,
   CheckCircle2,
   Code2,
   Download,
@@ -17,11 +18,13 @@ import {
   Layers,
   Loader2,
   Rocket,
+  Send,
   ShoppingBag,
   Sparkles,
   TerminalSquare,
   Wrench,
 } from "lucide-react";
+import type { TutorAgentResult } from "@/app/lib/ai-agent-core";
 import {
   allCourseLessons,
   courseBySlug,
@@ -222,6 +225,84 @@ export default function CoursePracticeStationClient({
     terminal: false,
   });
 
+  const [tutorOpen, setTutorOpen] = useState(false);
+  const [tutorQuery, setTutorQuery] = useState("");
+  const [tutorLoading, setTutorLoading] = useState(false);
+  const [tutorError, setTutorError] = useState("");
+  const [tutorResult, setTutorResult] = useState<TutorAgentResult | null>(null);
+
+  const stationTutorChips = useMemo(() => {
+    const map: Record<StationId, string[]> = {
+      bancada: [
+        "Como organizar os 4 Cômodos da Casa Pré-Moldada?",
+        "Erro de Python no PATH do Windows — como validar?",
+        "Por que separar ambiente virtual (.venv)?",
+      ],
+      terminal: [
+        "Por que o git add bloqueia quando falta .gitignore?",
+        "Qual a diferença entre pwd, mkdir e cd?",
+        "Como checar configurações antes do deploy?",
+      ],
+      sandbox: [
+        "Por que salvar preços em centavos inteiros (int)?",
+        "Como evitar condição de corrida no estoque?",
+        "Como interpretar o __TEST_RESULT__?",
+      ],
+      http: [
+        "Como validar assinatura HMAC e idempotência no Webhook PIX?",
+        "Por que o servidor retorna HTTP 409 Conflict?",
+        "Como testar estorno parcial sem ultrapassar o limite?",
+      ],
+      loja: [
+        "Por que a vitrine nunca calcula o preço final confiável?",
+        "Como formatar centavos para Reais na vitrine HTML?",
+      ],
+      deploy: [
+        "Qual a ordem segura entre Neon PostgreSQL, Render e Vercel?",
+        "O que nunca pode subir para o GitHub?",
+      ],
+      cards: [
+        "Como funciona a revisão espaçada SM-2 nestes cards?",
+        "Qual o conceito mais crítico de pagamento para memorizar?",
+      ],
+    };
+    return map[activeStation] ?? map.terminal;
+  }, [activeStation]);
+
+  async function askTutor(queryText: string) {
+    const clean = queryText.trim();
+    if (clean.length < 2) return;
+    setTutorLoading(true);
+    setTutorError("");
+    try {
+      const codeDraft = workspace.codeDrafts?.[effectiveLessonSlug] ?? "";
+      const res = await fetch("/api/agent/tutor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          stationId: activeStation,
+          lessonSlug: effectiveLessonSlug,
+          studentQuery: clean,
+          codeOrPayload: codeDraft ? codeDraft.slice(0, 900) : undefined,
+          lang,
+        }),
+      });
+      const json = (await res.json()) as {
+        ok?: boolean;
+        data?: TutorAgentResult;
+      };
+      if (!res.ok || !json.ok || !json.data) {
+        setTutorError("Não consegui consultar o Tutor IA agora. Tente em instantes.");
+        return;
+      }
+      setTutorResult(json.data);
+    } catch {
+      setTutorError("Erro de conexão ao consultar o Tutor IA.");
+    } finally {
+      setTutorLoading(false);
+    }
+  }
+
   function navigateToStation(
     nextStation: StationId,
     opts?: { aula?: string; missao?: TerminalMissionId; provedor?: string },
@@ -376,6 +457,112 @@ export default function CoursePracticeStationClient({
                   </option>
                 ))}
               </select>
+            </div>
+          )}
+        </section>
+
+        {/* Socratic AI Tutor Panel (Gemini Agent Front 3) */}
+        <section className="tutor-arena-shell" aria-label="Engenheiro Tutor IA">
+          <div className="tutor-arena-bar">
+            <div className="tutor-arena-head">
+              <span className="tutor-arena-badge">
+                <Bot size={15} aria-hidden="true" />
+                <span>Engenheiro Tutor IA · Dica Socrática</span>
+              </span>
+              <h2>Apoio contextual para a estação {currentStationSpec.order}</h2>
+            </div>
+            <button
+              type="button"
+              className="ide-btn ide-btn-ghost"
+              aria-expanded={tutorOpen}
+              onClick={() => setTutorOpen((v) => !v)}
+            >
+              <Sparkles size={15} aria-hidden="true" />
+              <span>{tutorOpen ? "Recolher Tutor IA" : "Pedir Dica ao Tutor IA"}</span>
+            </button>
+          </div>
+
+          {tutorOpen && (
+            <div className="tutor-arena-panel">
+              <div className="tutor-arena-chips">
+                {stationTutorChips.map((chip) => (
+                  <button
+                    key={chip}
+                    type="button"
+                    className="tutor-arena-chip"
+                    onClick={() => {
+                      setTutorQuery(chip);
+                      void askTutor(chip);
+                    }}
+                  >
+                    {chip}
+                  </button>
+                ))}
+              </div>
+
+              <form
+                className="tutor-arena-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void askTutor(tutorQuery);
+                }}
+              >
+                <label htmlFor="arena-tutor-input" className="sr-only">
+                  Pergunte ao Tutor IA sobre a missão atual
+                </label>
+                <input
+                  id="arena-tutor-input"
+                  type="text"
+                  value={tutorQuery}
+                  onChange={(e) => setTutorQuery(e.target.value)}
+                  placeholder="Descreva onde travou (ex.: por que meu webhook deu 401 ou como travar estoque)..."
+                  maxLength={450}
+                />
+                <button
+                  type="submit"
+                  className="ide-btn ide-btn-primary"
+                  disabled={tutorLoading || tutorQuery.trim().length < 2}
+                >
+                  {tutorLoading ? (
+                    <Loader2 size={15} className="spin" />
+                  ) : (
+                    <Send size={15} />
+                  )}
+                  <span>{tutorLoading ? "Pensando..." : "Orientar sem spoiler"}</span>
+                </button>
+              </form>
+
+              {tutorError && (
+                <p className="admission-alert-error" role="alert">
+                  {tutorError}
+                </p>
+              )}
+
+              {tutorResult && (
+                <div className="tutor-arena-result" aria-live="polite">
+                  <div className="tutor-arena-meta">
+                    <strong>{tutorResult.roomAnalogy}</strong>
+                    <span>
+                      {tutorResult.source === "gemini"
+                        ? `Gemini (${tutorResult.model ?? "Flash"})`
+                        : "Guia Socrático Local"}
+                    </span>
+                  </div>
+                  <p className="tutor-arena-hint">{tutorResult.socraticHint}</p>
+                  <ul className="tutor-arena-checklist">
+                    {tutorResult.nextChecklist.map((chk) => (
+                      <li key={chk}>
+                        <CheckCircle2 size={14} aria-hidden="true" />
+                        <span>{chk}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="tutor-arena-checkpoint">
+                    <strong>Pergunta-chave para você validar:</strong>{" "}
+                    <span>{tutorResult.checkpointQuestion}</span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </section>
@@ -721,6 +908,7 @@ export default function CoursePracticeStationClient({
         {/* ================================================================ */}
         {activeStation === "terminal" && (
           <section className="ide-station-stage" aria-label="Estação Terminal Preto">
+            <h2 className="sr-only">Simulador Interativo de Terminal e Git</h2>
             <InteractiveTerminalLab
               completedStepIds={workspace.terminalSteps}
               completedMissions={workspace.terminalMissions}
@@ -737,6 +925,7 @@ export default function CoursePracticeStationClient({
         {/* ================================================================ */}
         {activeStation === "sandbox" && (
           <section className="ide-station-stage" aria-label="Estação Sandbox de Código">
+            <h2 className="sr-only">Oficina Python 3.12 e SQLite</h2>
             <IdeWorkbench
               lessonSlug={effectiveLessonSlug}
               workspace={workspace}
@@ -759,6 +948,7 @@ export default function CoursePracticeStationClient({
         {/* ================================================================ */}
         {activeStation === "http" && (
           <section className="ide-station-stage" aria-label="Estação HTTP e Webhook">
+            <h2 className="sr-only">Simulador de Requisições HTTP e Webhook PIX</h2>
             <IdeWorkbench
               lessonSlug={effectiveLessonSlug}
               workspace={workspace}

@@ -33,7 +33,7 @@ export const ESTAGIO_META: Record<
   EstagioAluno,
   {
     label: string;
-    tone: "green" | "blue" | "amber" | "red" | "purple" | "muted";
+    tone: "green" | "blue" | "amber" | "red" | "cyan" | "muted";
     descricaoRegra: string;
   }
 > = {
@@ -69,7 +69,7 @@ export const ESTAGIO_META: Record<
   },
   em_avaliacao: {
     label: "Em avaliação / Revisão",
-    tone: "purple",
+    tone: "cyan",
     descricaoRegra: "Enviou o Projeto Final para correção ou aguarda revisão.",
   },
   concluido: {

@@ -21,8 +21,8 @@
 .growth-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .growth-card{--tool-color:var(--accent);position:relative;display:flex;flex-direction:column;padding:28px;border:1px solid var(--line-strong);border-radius:20px;background:var(--bg-soft);color:var(--fg);text-decoration:none;overflow:hidden;transition:transform .2s,border-color .2s}
 .growth-card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--tool-color)}
-.growth-color-0{--tool-color:#147c58}.growth-color-1{--tool-color:#7651cd}.growth-color-2{--tool-color:#b65f17}
-.dark .growth-color-0{--tool-color:#67deb0}.dark .growth-color-1{--tool-color:#b5a0ff}.dark .growth-color-2{--tool-color:#ffc575}
+.growth-color-0{--tool-color:#147c58}.growth-color-1{--tool-color:#0166BB}.growth-color-2{--tool-color:#b65f17}
+.dark .growth-color-0{--tool-color:#67deb0}.dark .growth-color-1{--tool-color:#22B5F2}.dark .growth-color-2{--tool-color:#ffc575}
 .growth-card:hover{transform:translateY(-4px);border-color:var(--tool-color)}
 .growth-card-top{display:flex;justify-content:space-between;align-items:center;color:var(--tool-color);margin-bottom:26px}
 .growth-card h3{font-size:23px;line-height:1.25;letter-spacing:-.025em;margin:0 0 12px}

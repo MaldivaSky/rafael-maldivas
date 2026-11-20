@@ -455,10 +455,20 @@ export default function FerramentasClient() {
 
       <section style={{ paddingTop: 0 }}>
         <div className="wrap">
+          <h2 className="sr-only">
+            {lang === "pt"
+              ? "Ferramentas interativas de crescimento e diagnóstico"
+              : "Interactive growth and diagnostic tools"}
+          </h2>
           <GrowthToolsInvite />
           <StudioInvite />
           <ToolIndex lang={lang} title={c.indexTitle} />
 
+          <h2 className="sr-only">
+            {lang === "pt"
+              ? "Calculadoras fiscais, de margem e consultas técnicas"
+              : "Tax, margin calculators and technical lookups"}
+          </h2>
           <div className="tools-grid">
             <div id="nfe">
               <NfeTool />

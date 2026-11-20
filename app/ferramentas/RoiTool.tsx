@@ -111,7 +111,7 @@ function BarChart({
   const totalH = (barH + gap) * 2 + 24;
 
   const bars = [
-    { label: labelCurrent, value: current, color: "#6d28d9", opacity: 0.5 },
+    { label: labelCurrent, value: current, color: "#0166BB", opacity: 0.72 },
     { label: labelAfter, value: after, color: "#10b981", opacity: 1 },
   ];
 
@@ -133,7 +133,7 @@ function BarChart({
                 x={0}
                 y={y + barH / 2 + 5}
                 fontSize={12}
-                fontFamily="Outfit, sans-serif"
+                fontFamily="var(--font-mono), monospace"
                 fontWeight={600}
                 fill="currentColor"
                 opacity={0.6}
@@ -169,7 +169,7 @@ function BarChart({
                   x={labelW + barWidth - 10}
                   y={y + barH / 2 + 5}
                   fontSize={12}
-                  fontFamily="Outfit, sans-serif"
+                  fontFamily="var(--font-mono), monospace"
                   fontWeight={700}
                   fill="#fff"
                   textAnchor="end"
@@ -182,7 +182,7 @@ function BarChart({
                   x={labelW + barWidth + 8}
                   y={y + barH / 2 + 5}
                   fontSize={12}
-                  fontFamily="Outfit, sans-serif"
+                  fontFamily="var(--font-mono), monospace"
                   fontWeight={700}
                   fill="currentColor"
                   opacity={0.7}

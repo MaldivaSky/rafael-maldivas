@@ -7,13 +7,16 @@
 /* ------------------------------------------------------------------ */
 
 import {
+  COMPANY,
   EMAIL,
   GITHUB_USER,
   GITHUB_ORG,
   LINKEDIN,
+  SERVICE_AREAS,
   SITE,
   YOUTUBE,
 } from "./site";
+import { ORACLE_CERT } from "./credentials";
 
 const ORG_ID = `${SITE}/#organization`;
 const WEBSITE_ID = `${SITE}/#website`;
@@ -29,19 +32,34 @@ export const maldivasTechKnowledgeGraph = {
     {
       "@type": ["Organization", "ProfessionalService"],
       "@id": ORG_ID,
-      name: "Maldivas Tech",
+      name: COMPANY.tradeName,
+      legalName: COMPANY.legalName,
       alternateName: "Maldivas Tech Solutions",
+      taxID: COMPANY.cnpj,
+      foundingDate: COMPANY.since,
       url: SITE,
       logo: `${SITE}/logo-bimi.svg`,
       description:
         "Sistemas de gestão SaaS, arquitetura de software, presença digital e automação — do modelo de dados ao sistema em produção.",
-      email: "suporte@maldivastech.dev",
+      email: EMAIL,
       address: {
         "@type": "PostalAddress",
-        addressLocality: "Guarulhos",
-        addressRegion: "SP",
-        addressCountry: "BR",
+        streetAddress: COMPANY.street,
+        addressLocality: COMPANY.city,
+        addressRegion: COMPANY.region,
+        postalCode: COMPANY.postalCode,
+        addressCountry: COMPANY.country,
       },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: COMPANY.lat,
+        longitude: COMPANY.lng,
+      },
+      areaServed: [
+        ...SERVICE_AREAS.map((city) => ({ "@type": "City", name: city })),
+        { "@type": "Country", name: "Brazil" },
+        "Remote / Worldwide",
+      ],
       founder: {
         "@type": "Person",
         "@id": FOUNDER_ID,
@@ -49,6 +67,16 @@ export const maldivasTechKnowledgeGraph = {
         alternateName: "Rafael Maldivas",
         jobTitle: "Founder, Product Owner & Systems Analyst",
         url: LINKEDIN,
+        hasCredential: {
+          "@type": "EducationalOccupationalCredential",
+          name: `${ORACLE_CERT.issuer} — ${ORACLE_CERT.name}`,
+          credentialCategory: "certification",
+          recognizedBy: {
+            "@type": "Organization",
+            name: ORACLE_CERT.issuer,
+          },
+          url: ORACLE_CERT.verifyUrl,
+        },
         sameAs: [
           GITHUB_USER,
           LINKEDIN,
@@ -67,7 +95,7 @@ export const maldivasTechKnowledgeGraph = {
       "@type": "WebSite",
       "@id": WEBSITE_ID,
       url: SITE,
-      name: "Maldivas Tech",
+      name: COMPANY.tradeName,
       publisher: { "@id": ORG_ID },
       inLanguage: ["pt-BR", "en"],
     },
@@ -107,7 +135,7 @@ export const maldivasTechKnowledgeGraph = {
       "@id": `${SITE}/#product-selectsys-jobs`,
       name: "SelectSys Jobs",
       description: "Plataforma ATS Trilíngue de Recrutamento e Seleção",
-      url: "https://selectsys-job.vercel.app",
+      url: "https://selectsys-jobs.vercel.app",
       applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
       author: {
@@ -129,7 +157,7 @@ export function websiteSchema() {
 }
 
 export function founderSchema() {
-  return (maldivasTechKnowledgeGraph["@graph"][0] as any).founder;
+  return (maldivasTechKnowledgeGraph["@graph"][0] as { founder: unknown }).founder;
 }
 
 /** Grafo completo para injetar no layout. */

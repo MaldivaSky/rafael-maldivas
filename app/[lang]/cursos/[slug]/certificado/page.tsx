@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { LOCALES, isLang, localePath, type Lang } from "@/app/lib/seo";
 import { buildMetadata } from "@/app/lib/metadata";
 import { courseBySlug, courseList, type CourseSlug } from "@/app/lib/courses";
-import FinalExamCertificate from "@/app/components/curso/FinalExamCertificate";
+import FinalExamCertificate from "../../../../components/curso/FinalExamCertificate";
 
 export function generateStaticParams(): { lang: Lang; slug: CourseSlug }[] {
   const params: { lang: Lang; slug: CourseSlug }[] = [];

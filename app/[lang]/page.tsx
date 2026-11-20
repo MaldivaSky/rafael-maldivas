@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { LOCALES, isLang, type Lang } from "@/app/lib/seo";
-import { buildMetadata } from "@/app/lib/metadata";
-import HomeClient from "@/app/HomeClient";
+import { LOCALES, isLang, type Lang } from "../lib/seo";
+import { buildMetadata } from "../lib/metadata";
+import HomeClient from "../HomeClient";
 
 export function generateStaticParams() {
   return LOCALES.map((lang: Lang) => ({ lang }));

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { isLang, type Lang } from "@/app/lib/seo";
-import { buildMetadata } from "@/app/lib/metadata";
-import FerramentasClient from "@/app/ferramentas/FerramentasClient";
+import { isLang, type Lang } from "../../lib/seo";
+import { buildMetadata } from "../../lib/metadata";
+import FerramentasClient from "../../ferramentas/FerramentasClient";
 
 export function generateStaticParams() {
   return [{ lang: "pt" }, { lang: "en" }];

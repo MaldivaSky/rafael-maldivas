@@ -3,7 +3,7 @@
 .personal-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(30px,6vw,88px);align-items:center;padding-top:50px;padding-bottom:64px}
 .personal-eyebrow{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:28px}
 .personal-eyebrow>span{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent-glow)}
-.personal-copy h1{font-size:clamp(42px,5.4vw,76px);letter-spacing:-.055em;line-height:1.06;margin-bottom:28px;text-wrap:balance}
+.personal-copy h1{font-family:var(--font-display);font-size:clamp(42px,5vw,70px);font-weight:700;letter-spacing:-0.025em;line-height:1.1;max-width:none;margin-bottom:28px;text-wrap:balance}
 .personal-lead{font-size:clamp(18px,1.6vw,22px);line-height:1.65;color:var(--fg);max-width:560px}
 .personal-note{font-size:16px;line-height:1.75;color:var(--fg-muted);margin-top:20px;max-width:490px}
 .personal-actions{display:flex;align-items:center;flex-wrap:wrap;gap:24px;margin-top:30px}

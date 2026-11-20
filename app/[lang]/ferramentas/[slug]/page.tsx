@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { isLang, type Lang } from "@/app/lib/seo";
-import { buildMetadata } from "@/app/lib/metadata";
-import { tools, toolBySlug } from "@/app/lib/tools";
-import { SITE } from "@/app/lib/site";
-import ToolRenderer from "@/app/ferramentas/ToolRenderer";
+import { isLang, type Lang } from "../../../lib/seo";
+import { buildMetadata } from "../../../lib/metadata";
+import { tools, toolBySlug } from "../../../lib/tools";
+import { SITE } from "../../../lib/site";
+import ToolRenderer from "../../../ferramentas/ToolRenderer";
 
 type Params = { lang: string; slug: string };
 

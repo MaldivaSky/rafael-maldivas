@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { isLang, type Lang } from "@/app/lib/seo";
-import { buildMetadata } from "@/app/lib/metadata";
-import ImageStudio from "@/app/ferramentas/estudio-de-imagem/ImageStudio";
+import { isLang, type Lang } from "../../../lib/seo";
+import { buildMetadata } from "../../../lib/metadata";
+import ImageStudio from "../../../ferramentas/estudio-de-imagem/ImageStudio";
 
 export function generateStaticParams() {
   return [{ lang: "pt" }, { lang: "en" }];

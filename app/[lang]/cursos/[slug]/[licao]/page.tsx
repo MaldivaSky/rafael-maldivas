@@ -12,9 +12,9 @@ import {
   lessonBySlug,
 } from "@/app/lib/courses";
 import { SITE } from "@/app/lib/site";
-import ModuleOneLessonClient from "@/app/components/curso/ModuleOneLessonClient";
-import ModuleZeroLessonClient from "@/app/components/curso/ModuleZeroLessonClient";
-import MarketplaceLessonClient from "@/app/components/curso/MarketplaceLessonClient";
+import ModuleOneLessonClient from "../../../../components/curso/ModuleOneLessonClient";
+import ModuleZeroLessonClient from "../../../../components/curso/ModuleZeroLessonClient";
+import MarketplaceLessonClient from "../../../../components/curso/MarketplaceLessonClient";
 import { MODULE_ZERO_LESSONS } from "@/app/lib/module-zero-content";
 import { MARKETPLACE_LESSONS } from "@/app/lib/marketplace-lessons-content";
 

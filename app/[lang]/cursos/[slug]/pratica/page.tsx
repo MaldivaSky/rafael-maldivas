@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { LOCALES, isLang, type Lang } from "@/app/lib/seo";
-import { buildMetadata } from "@/app/lib/metadata";
-import { courseBySlug, courseList, type CourseSlug } from "@/app/lib/courses";
-import CoursePracticeStationClient from "@/app/components/curso/CoursePracticeStationClient";
+import { LOCALES, isLang, type Lang } from "../../../../lib/seo";
+import { buildMetadata } from "../../../../lib/metadata";
+import { courseBySlug, courseList, type CourseSlug } from "../../../../lib/courses";
+import CoursePracticeStationClient from "../../../../components/curso/CoursePracticeStationClient";
 
 export function generateStaticParams(): { lang: Lang; slug: CourseSlug }[] {
   const params: { lang: Lang; slug: CourseSlug }[] = [];

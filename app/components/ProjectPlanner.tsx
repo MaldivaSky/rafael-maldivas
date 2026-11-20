@@ -1,15 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, Compass, Download, FileText } from "lucide-react";
+import {
+  ArrowUpRight,
+  Bot,
+  CheckCircle2,
+  Compass,
+  FileText,
+  Loader2,
+  Sparkles,
+} from "lucide-react";
 import { useLang } from "../lib/i18n";
 import { WHATSAPP } from "../lib/site";
+import type { DiagnosticAgentResult } from "../lib/ai-agent-core";
 
 const plans = {
   pt: [
     {
       title: "Atrair mais contatos",
-      icon: "📣",
       priority: "Alta",
       timeframe: "2–4 semanas",
       steps: [
@@ -17,16 +25,19 @@ const plans = {
         "Prepare uma página com exemplos reais e um contato visível.",
         "Crie um link UTM para cada canal de divulgação e acompanhe as visitas.",
       ],
-      // Usado apenas no PDF — não aparece na página
       _pdf: {
-        icon: "📣", priority: "Alta", timeframe: "2–4 semanas",
-        metrics: ["Aumento de visitas ao site", "Taxa de cliques no WhatsApp", "Origem das visitas por canal"],
+        priority: "Alta",
+        timeframe: "2–4 semanas",
+        metrics: [
+          "Aumento de visitas ao site",
+          "Taxa de cliques no WhatsApp",
+          "Origem das visitas por canal",
+        ],
         nextStep: "Criar ou revisar a página de apresentação do serviço escolhido.",
       },
     },
     {
       title: "Organizar minha operação",
-      icon: "⚙️",
       priority: "Média",
       timeframe: "4–8 semanas",
       steps: [
@@ -35,14 +46,18 @@ const plans = {
         "Defina os dados e as permissões necessários antes de escolher um sistema.",
       ],
       _pdf: {
-        icon: "⚙️", priority: "Média", timeframe: "4–8 semanas",
-        metrics: ["Tempo médio de atendimento", "Taxa de erros por processo", "Horas semanais em retrabalho"],
+        priority: "Média",
+        timeframe: "4–8 semanas",
+        metrics: [
+          "Tempo médio de atendimento",
+          "Taxa de erros por processo",
+          "Horas semanais em retrabalho",
+        ],
         nextStep: "Mapear o processo com maior custo de retrabalho e quantificar o impacto.",
       },
     },
     {
       title: "Automatizar tarefas repetitivas",
-      icon: "🤖",
       priority: "Alta",
       timeframe: "3–6 semanas",
       steps: [
@@ -51,14 +66,18 @@ const plans = {
         "Teste a automação em uma pequena amostra e compare tempo e qualidade.",
       ],
       _pdf: {
-        icon: "🤖", priority: "Alta", timeframe: "3–6 semanas",
-        metrics: ["Horas liberadas por mês", "Taxa de erro antes vs. depois", "Custo por execução"],
+        priority: "Alta",
+        timeframe: "3–6 semanas",
+        metrics: [
+          "Horas liberadas por mês",
+          "Taxa de erro antes vs. depois",
+          "Custo por execução",
+        ],
         nextStep: "Simular o tempo economizado na ferramenta de automação e conversar com Rafael.",
       },
     },
     {
       title: "Melhorar minha imagem",
-      icon: "✨",
       priority: "Média",
       timeframe: "2–3 semanas",
       steps: [
@@ -67,8 +86,13 @@ const plans = {
         "Prepare um conjunto consistente de imagens para site, catálogo e redes.",
       ],
       _pdf: {
-        icon: "✨", priority: "Média", timeframe: "2–3 semanas",
-        metrics: ["Consistência visual nas redes", "Engajamento por post", "Reconhecimento da marca"],
+        priority: "Média",
+        timeframe: "2–3 semanas",
+        metrics: [
+          "Consistência visual nas redes",
+          "Engajamento por post",
+          "Reconhecimento da marca",
+        ],
         nextStep: "Definir uma paleta de cores e tipografia para usar em todos os materiais.",
       },
     },
@@ -76,7 +100,6 @@ const plans = {
   en: [
     {
       title: "Attract more contacts",
-      icon: "📣",
       priority: "High",
       timeframe: "2–4 weeks",
       steps: [
@@ -85,14 +108,18 @@ const plans = {
         "Create a UTM link for each channel and review visits.",
       ],
       _pdf: {
-        icon: "📣", priority: "High", timeframe: "2–4 weeks",
-        metrics: ["Website visit growth", "WhatsApp click-through rate", "Visit origin by channel"],
+        priority: "High",
+        timeframe: "2–4 weeks",
+        metrics: [
+          "Website visit growth",
+          "WhatsApp click-through rate",
+          "Visit origin by channel",
+        ],
         nextStep: "Create or revise the presentation page for your chosen service.",
       },
     },
     {
       title: "Organise my operations",
-      icon: "⚙️",
       priority: "Medium",
       timeframe: "4–8 weeks",
       steps: [
@@ -101,14 +128,18 @@ const plans = {
         "Define data and permissions before choosing a system.",
       ],
       _pdf: {
-        icon: "⚙️", priority: "Medium", timeframe: "4–8 weeks",
-        metrics: ["Average service time", "Error rate per process", "Weekly hours on rework"],
+        priority: "Medium",
+        timeframe: "4–8 weeks",
+        metrics: [
+          "Average service time",
+          "Error rate per process",
+          "Weekly hours on rework",
+        ],
         nextStep: "Map the process with the highest rework cost and quantify the impact.",
       },
     },
     {
       title: "Automate repetitive tasks",
-      icon: "🤖",
       priority: "High",
       timeframe: "3–6 weeks",
       steps: [
@@ -117,14 +148,18 @@ const plans = {
         "Test automation on a small sample and compare time and quality.",
       ],
       _pdf: {
-        icon: "🤖", priority: "High", timeframe: "3–6 weeks",
-        metrics: ["Hours freed per month", "Error rate before vs. after", "Cost per execution"],
+        priority: "High",
+        timeframe: "3–6 weeks",
+        metrics: [
+          "Hours freed per month",
+          "Error rate before vs. after",
+          "Cost per execution",
+        ],
         nextStep: "Simulate time savings in the automation tool and talk to Rafael.",
       },
     },
     {
       title: "Improve my brand image",
-      icon: "✨",
       priority: "Medium",
       timeframe: "2–3 weeks",
       steps: [
@@ -133,59 +168,79 @@ const plans = {
         "Prepare consistent images for your site, catalogue and social channels.",
       ],
       _pdf: {
-        icon: "✨", priority: "Medium", timeframe: "2–3 weeks",
-        metrics: ["Visual consistency across channels", "Engagement per post", "Brand recognition"],
+        priority: "Medium",
+        timeframe: "2–3 weeks",
+        metrics: [
+          "Visual consistency across channels",
+          "Engagement per post",
+          "Brand recognition",
+        ],
         nextStep: "Define a colour palette and typeface to use across all materials.",
       },
     },
   ],
 };
 
+function escapeHtml(raw: string): string {
+  return raw
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
 /** Opens a styled print window — user saves as PDF via browser dialog */
 function printPlan(
   plan: (typeof plans.pt)[0],
   lang: string,
-  disclaimer: string
+  disclaimer: string,
+  aiDiagnostic: DiagnosticAgentResult | null,
 ) {
   const today = new Date().toLocaleDateString(
     lang === "pt" ? "pt-BR" : "en-US",
-    { day: "2-digit", month: "long", year: "numeric" }
+    { day: "2-digit", month: "long", year: "numeric" },
   );
   const p = plan._pdf;
   const priorityColor =
-    p.priority === "Alta" || p.priority === "High" ? "#10b981" : "#f59e0b";
+    p.priority === "Alta" || p.priority === "High" ? "#0E9384" : "#B45309";
+
+  const activeTitle = aiDiagnostic ? aiDiagnostic.recommendedSolution : plan.title;
+  const activeSteps = aiDiagnostic ? aiDiagnostic.firstSprintSteps : plan.steps;
+  const activeMetrics = aiDiagnostic ? aiDiagnostic.metricsToTrack : p.metrics;
+  const activeTimeline = aiDiagnostic ? aiDiagnostic.estimatedTimeline : p.timeframe;
+  const activeNext = aiDiagnostic ? aiDiagnostic.summary : p.nextStep;
 
   const html = `<!DOCTYPE html>
 <html lang="${lang === "pt" ? "pt-BR" : "en"}">
 <head>
 <meta charset="UTF-8">
-<title>${plan.title} — Maldivas Tech</title>
+<title>${escapeHtml(activeTitle)} — Maldivas Tech</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Outfit',sans-serif;background:#fff;color:#0f172a;padding:48px;max-width:760px;margin:0 auto}
-  .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;padding-bottom:24px;border-bottom:2px solid #f1f5f9}
-  .brand{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6d28d9}
-  .brand-sub{font-size:11px;color:#94a3b8;font-weight:400;margin-top:3px}
-  .date{font-size:12px;color:#94a3b8;text-align:right}
-  .plan-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6d28d9;margin-bottom:12px}
-  .plan-title{font-size:36px;font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-bottom:20px}
-  .badges{display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap}
+  body{font-family:'Inter',sans-serif;background:#fff;color:#0f172a;padding:48px;max-width:760px;margin:0 auto}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:36px;padding-bottom:20px;border-bottom:2px solid #e2e8f0}
+  .brand{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#0166BB}
+  .brand-sub{font-size:11.5px;color:#64748b;font-weight:500;margin-top:3px}
+  .date{font-size:12px;color:#64748b;text-align:right}
+  .plan-tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0166BB;margin-bottom:10px}
+  .plan-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:18px}
+  .badges{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap}
   .badge{font-size:12px;font-weight:600;padding:6px 14px;border-radius:999px}
   .badge-p{background:${priorityColor}18;color:${priorityColor};border:1px solid ${priorityColor}40}
-  .badge-t{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
-  .sec-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94a3b8;margin-bottom:14px}
-  .steps{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
-  .step{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0}
-  .num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:#6d28d9;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
-  .step-text{font-size:15px;line-height:1.6;color:#334155;padding-top:2px}
-  .metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:32px}
-  .metric{padding:12px 14px;background:#f8fafc;border-radius:9px;border:1px solid #e2e8f0;font-size:13px;color:#475569}
-  .next{padding:18px 22px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);border-radius:14px;border:1px solid #c4b5fd;margin-bottom:40px}
-  .next p{font-size:15px;color:#4c1d95;font-weight:500;line-height:1.6}
-  .footer{padding-top:20px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center}
-  .fn{font-size:11px;color:#94a3b8;line-height:1.6}
-  .fu{font-size:11px;color:#6d28d9;font-weight:600}
+  .badge-t{background:#f1f5f9;color:#334155;border:1px solid #cbd5e1}
+  .sec-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:12px}
+  .steps{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+  .step{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0}
+  .num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:#0166BB;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .step-text{font-size:14.5px;line-height:1.6;color:#1e293b;padding-top:2px}
+  .metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:28px}
+  .metric{padding:12px 14px;background:#f8fafc;border-radius:9px;border:1px solid #e2e8f0;font-size:13px;color:#334155}
+  .next{padding:18px 22px;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-radius:14px;border:1px solid #7dd3fc;margin-bottom:36px}
+  .next p{font-size:14.5px;color:#0c4a6e;font-weight:500;line-height:1.6}
+  .footer{padding-top:18px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center}
+  .fn{font-size:11px;color:#64748b;line-height:1.6}
+  .fu{font-size:11px;color:#0166BB;font-weight:700}
   @media print{body{padding:32px}@page{margin:0;size:A4}}
 </style>
 </head>
@@ -193,29 +248,29 @@ function printPlan(
   <div class="header">
     <div>
       <div class="brand">Maldivas Tech</div>
-      <div class="brand-sub">Rafael Maldivas · Software &amp; Presença Digital</div>
+      <div class="brand-sub">Rafael Maldivas · Sistemas de Gestão, SaaS &amp; Presença Digital</div>
     </div>
-    <div class="date">${today}</div>
+    <div class="date">${escapeHtml(today)}</div>
   </div>
-  <div class="plan-tag">${lang === "pt" ? "Planejador Digital" : "Digital Planner"}</div>
-  <h1 class="plan-title">${p.icon} ${plan.title}</h1>
+  <div class="plan-tag">${aiDiagnostic ? (lang === "pt" ? "Diagnóstico Arquitetural IA" : "AI Architectural Diagnostic") : (lang === "pt" ? "Planejador Digital" : "Digital Planner")}</div>
+  <h1 class="plan-title">${escapeHtml(activeTitle)}</h1>
   <div class="badges">
-    <span class="badge badge-p">● ${p.priority}</span>
-    <span class="badge badge-t">🗓 ${p.timeframe}</span>
+    <span class="badge badge-p">Prioridade: ${escapeHtml(p.priority)}</span>
+    <span class="badge badge-t">Prazo estimado: ${escapeHtml(activeTimeline)}</span>
   </div>
-  <div class="sec-label">${lang === "pt" ? "3 ações para começar" : "3 actions to start"}</div>
+  <div class="sec-label">${lang === "pt" ? "3 ações da primeira sprint" : "3 Sprint-1 actions"}</div>
   <ol class="steps">
-    ${plan.steps.map((s, i) => `<li class="step"><span class="num">${i + 1}</span><span class="step-text">${s}</span></li>`).join("")}
+    ${activeSteps.map((s, i) => `<li class="step"><span class="num">${i + 1}</span><span class="step-text">${escapeHtml(s)}</span></li>`).join("")}
   </ol>
-  <div class="sec-label">${lang === "pt" ? "O que acompanhar" : "What to track"}</div>
+  <div class="sec-label">${lang === "pt" ? "Indicadores para acompanhar" : "KPIs to track"}</div>
   <div class="metrics">
-    ${p.metrics.map((m) => `<div class="metric">📊 ${m}</div>`).join("")}
+    ${activeMetrics.map((m) => `<div class="metric">${escapeHtml(m)}</div>`).join("")}
   </div>
-  <div class="sec-label">${lang === "pt" ? "Próximo passo imediato" : "Immediate next step"}</div>
-  <div class="next"><p>→ ${p.nextStep}</p></div>
+  <div class="sec-label">${lang === "pt" ? "Síntese técnica e próximo passo" : "Technical summary & next step"}</div>
+  <div class="next"><p>${escapeHtml(activeNext)}</p></div>
   <div class="footer">
-    <div class="fn">${disclaimer}<br/>Maldivas Tech · rafael-maldivas.vercel.app</div>
-    <div class="fu">rafael-maldivas.vercel.app</div>
+    <div class="fn">${escapeHtml(disclaimer)}<br/>Maldivas Tech · CNPJ 68.923.239/0001-77</div>
+    <div class="fu">www.maldivastech.dev</div>
   </div>
 </body>
 </html>`;
@@ -224,71 +279,276 @@ function printPlan(
   if (!win) return;
   win.document.write(html);
   win.document.close();
-  win.onload = () => { win.focus(); win.print(); };
+  win.onload = () => {
+    win.focus();
+    win.print();
+  };
 }
 
-export default function ProjectPlanner() {
+export default function ProjectPlanner({ embedded = false }: { embedded?: boolean }) {
   const { lang } = useLang();
   const pt = lang === "pt";
   const [selected, setSelected] = useState(0);
+  const [business, setBusiness] = useState("");
+  const [pain, setPain] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");
+  const [aiResult, setAiResult] = useState<DiagnosticAgentResult | null>(null);
+
   const plan = plans[lang][selected];
 
   const disclaimer = pt
-    ? "Ponto de partida para discussão; não substitui uma avaliação do negócio."
-    : "A starting point for discussion, not a business assessment.";
+    ? "Ponto de partida arquitetural para discussão; não substitui levantamento presencial."
+    : "Architectural starting point for discussion, not a substitute for full discovery.";
 
-  const whatsappText = pt
-    ? `Olá, Rafael! Escolhi a prioridade "${plan.title}" no planejador digital. Gostaria de conversar sobre os próximos passos.`
-    : `Hi Rafael! I chose the priority "${plan.title}" in the digital planner. I'd love to talk about next steps.`;
+  const whatsappText = aiResult
+    ? pt
+      ? `Olá, Rafael! Gerei o diagnóstico IA para "${business || plan.title}": recomendação "${aiResult.recommendedSolution}". Quero avançar na Sprint 1.`
+      : `Hi Rafael! I generated the AI diagnostic for "${business || plan.title}" (${aiResult.recommendedSolution}) and want to discuss Sprint 1.`
+    : pt
+      ? `Olá, Rafael! Escolhi a prioridade "${plan.title}" no planejador digital. Gostaria de conversar sobre os próximos passos.`
+      : `Hi Rafael! I chose the priority "${plan.title}" in the digital planner. I'd love to talk about next steps.`;
 
-  // Texto simples mantido como fallback visível na página (igual ao original)
-  const text = `${pt ? "Meu plano digital" : "My digital plan"} — Maldivas Tech\n\n${plan.title}\n\n${plan.steps.map((step, i) => `${i + 1}. ${step}`).join("\n")}\n\n${disclaimer}`;
+  async function handleGenerateAiPlan(e: React.FormEvent) {
+    e.preventDefault();
+    if (business.trim().length < 2 && pain.trim().length < 3) {
+      setAiError(
+        pt
+          ? "Conte rapidamente qual é o negócio ou o que está travando hoje."
+          : "Briefly describe your business or main bottleneck.",
+      );
+      return;
+    }
+    setAiLoading(true);
+    setAiError("");
+    try {
+      const res = await fetch("/api/agent/diagnostico", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          business,
+          pain,
+          priority: plan.title,
+          lang,
+        }),
+      });
+      const json = (await res.json()) as {
+        ok?: boolean;
+        data?: DiagnosticAgentResult;
+      };
+      if (!res.ok || !json.ok || !json.data) {
+        setAiError(
+          pt
+            ? "Não foi possível gerar o diagnóstico agora. Tente novamente."
+            : "Could not generate diagnostic right now. Please try again.",
+        );
+        return;
+      }
+      setAiResult(json.data);
+    } catch {
+      setAiError(
+        pt
+          ? "Falha de rede ao consultar o Arquiteto IA."
+          : "Network error while contacting AI Architect.",
+      );
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  const content = (
+    <div className="growth-tool">
+      <div className="growth-tool-icon">
+        <Compass size={27} />
+      </div>
+      <div className="sec-tag">
+        {pt ? "Arquiteto IA & Planejador Digital · Gratuito" : "AI Architect & Digital Planner · Free"}
+      </div>
+      <h2>
+        {pt
+          ? "Vamos desenhar o próximo passo da sua operação."
+          : "Let's design the next step for your operation."}
+      </h2>
+      <p>
+        {pt
+          ? "Escolha um roteiro rápido abaixo ou descreva seu gargalo para o Agente Arquiteto IA da Maldivas Tech montar a arquitetura inicial."
+          : "Pick a quick track below or describe your bottleneck so our Solutions Architect AI outlines your initial roadmap."}
+      </p>
+
+      <div
+        className="growth-presets"
+        role="group"
+        aria-label={pt ? "Sua prioridade" : "Your priority"}
+      >
+        {plans[lang].map((item, i) => (
+          <button
+            key={item.title}
+            type="button"
+            aria-pressed={selected === i}
+            onClick={() => setSelected(i)}
+          >
+            {item.title}
+          </button>
+        ))}
+      </div>
+
+      <div className="growth-plan" aria-live="polite">
+        <h3>{plan.title}</h3>
+        <ol>
+          {plan.steps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+      </div>
+
+      <form className="planner-ai-box" onSubmit={handleGenerateAiPlan}>
+        <div className="planner-ai-head">
+          <Bot size={18} aria-hidden="true" />
+          <strong>
+            {pt
+              ? "Diagnóstico Arquitetural Personalizado (Agente Gemini)"
+              : "Custom Architectural Diagnostic (Gemini Agent)"}
+          </strong>
+        </div>
+        <div className="field-row">
+          <div className="field">
+            <label htmlFor="planner-biz">
+              {pt ? "Qual é o seu negócio?" : "What is your business?"}
+            </label>
+            <input
+              id="planner-biz"
+              type="text"
+              value={business}
+              onChange={(e) => setBusiness(e.target.value)}
+              placeholder={
+                pt
+                  ? "Ex.: Restaurante com delivery, mercado, agência B2B..."
+                  : "e.g. Restaurant with delivery, retail store, B2B agency..."
+              }
+              maxLength={180}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="planner-pain">
+              {pt ? "Qual gargalo quer resolver?" : "What bottleneck do you want to solve?"}
+            </label>
+            <input
+              id="planner-pain"
+              type="text"
+              value={pain}
+              onChange={(e) => setPain(e.target.value)}
+              placeholder={
+                pt
+                  ? "Ex.: Estoque não bate, redigitação de pedidos, falta de leads..."
+                  : "e.g. Inventory mismatch, manual order re-entry, low leads..."
+              }
+              maxLength={320}
+            />
+          </div>
+        </div>
+        {aiError && (
+          <p className="field-hint result-warn" role="alert">
+            {aiError}
+          </p>
+        )}
+        <div className="planner-ai-actions">
+          <button type="submit" className="btn btn-primary" disabled={aiLoading}>
+            {aiLoading ? (
+              <Loader2 size={17} className="spin" />
+            ) : (
+              <Sparkles size={17} />
+            )}
+            <span>
+              {aiLoading
+                ? pt
+                  ? "Analisando arquitetura..."
+                  : "Analyzing architecture..."
+                : pt
+                  ? "Gerar Diagnóstico com IA"
+                  : "Generate AI Diagnostic"}
+            </span>
+          </button>
+        </div>
+      </form>
+
+      {aiResult && (
+        <div className="planner-ai-result" aria-live="polite">
+          <div className="planner-badges">
+            <span className="planner-badge badge-high">
+              {aiResult.source === "gemini"
+                ? `Gemini (${aiResult.model ?? "Flash"})`
+                : pt
+                  ? "Arquitetura Maldivas Tech"
+                  : "Maldivas Architecture"}
+            </span>
+            <span className="planner-badge badge-time">
+              {aiResult.estimatedTimeline}
+            </span>
+          </div>
+          <h3>{aiResult.recommendedSolution}</h3>
+          <p className="planner-ai-summary">{aiResult.summary}</p>
+          {aiResult.architecturePillars.length > 0 && (
+            <>
+              <div className="planner-section-label">
+                {pt ? "Pilares de Engenharia" : "Engineering Pillars"}
+              </div>
+              <ul className="planner-ai-list">
+                {aiResult.architecturePillars.map((pillar) => (
+                  <li key={pillar}>
+                    <CheckCircle2 size={15} aria-hidden="true" />
+                    <span>{pillar}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          <div className="planner-section-label">
+            {pt ? "Primeira Sprint (Execução)" : "Sprint 1 Actions"}
+          </div>
+          <ol className="planner-ai-ol">
+            {aiResult.firstSprintSteps.map((st) => (
+              <li key={st}>{st}</li>
+            ))}
+          </ol>
+          {aiResult.metricsToTrack.length > 0 && (
+            <div className="planner-metrics">
+              {aiResult.metricsToTrack.map((m) => (
+                <span key={m} className="planner-metric">
+                  {m}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="personal-actions">
+        <button
+          className="btn btn-ghost"
+          type="button"
+          onClick={() => printPlan(plan, lang, disclaimer, aiResult)}
+        >
+          <FileText size={17} /> {pt ? "Baixar plano em PDF" : "Download PDF roadmap"}
+        </button>
+        <a
+          className="personal-link"
+          href={`${WHATSAPP}?text=${encodeURIComponent(whatsappText)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-analytics="contact_click"
+        >
+          {pt ? "Validar com Rafael no WhatsApp" : "Review with Rafael on WhatsApp"}{" "}
+          <ArrowUpRight size={17} />
+        </a>
+      </div>
+    </div>
+  );
+
+  if (embedded) return content;
 
   return (
     <section id="diagnostico">
-      <div className="wrap">
-        <div className="growth-tool">
-          <div className="growth-tool-icon"><Compass size={27} /></div>
-          <div className="sec-tag">{pt ? "Planejador digital · gratuito" : "Digital planner · free"}</div>
-          <h2>{pt ? "Vamos encontrar seu próximo passo." : "Let's find your next step."}</h2>
-          <p>{pt ? "Escolha sua prioridade e leve um roteiro inicial de três ações." : "Choose your priority and take away three initial action steps."}</p>
-
-          <div className="growth-presets" role="group" aria-label={pt ? "Sua prioridade" : "Your priority"}>
-            {plans[lang].map((item, i) => (
-              <button key={i} type="button" aria-pressed={selected === i} onClick={() => setSelected(i)}>
-                {item.title}
-              </button>
-            ))}
-          </div>
-
-          {/* Card do plano — igual ao original, sem prazos nem badges */}
-          <div className="growth-plan" aria-live="polite">
-            <h3>{plan.title}</h3>
-            <ol>
-              {plan.steps.map((step) => <li key={step}>{step}</li>)}
-            </ol>
-          </div>
-
-          <div className="personal-actions">
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={() => printPlan(plan, lang, disclaimer)}
-            >
-              <FileText size={17} /> {pt ? "Baixar meu plano (PDF)" : "Download my plan (PDF)"}
-            </button>
-            <a
-              className="personal-link"
-              href={`${WHATSAPP}?text=${encodeURIComponent(whatsappText)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-analytics="contact_click"
-            >
-              {pt ? "Conversar com Rafael" : "Talk to Rafael"} <ArrowUpRight size={17} />
-            </a>
-          </div>
-        </div>
-      </div>
+      <div className="wrap">{content}</div>
     </section>
   );
 }

@@ -1,69 +1,690 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpRight, BadgeCheck, Check, Code2, Film, Layers, Sparkles } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUpRight,
+  BadgeCheck,
+  Bot,
+  Check,
+  CheckCircle2,
+  Code2,
+  Cpu,
+  Film,
+  Layers,
+  MonitorSmartphone,
+  Receipt,
+  Server,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { useLang, localePath } from "./lib/i18n";
 import { WHATSAPP } from "./lib/site";
 import { ORACLE_CERT } from "./lib/credentials";
 import CaseHighlights from "./components/CaseHighlights";
 import BriefingForm from "./components/BriefingForm";
-import ProjectPlanner from "./components/ProjectPlanner";
-import EmpresasInvite from "./components/EmpresasInvite";
+import WorkbenchHub from "./components/WorkbenchHub";
 import ExitToast from "./components/ExitToast";
-import GrowthToolsInvite from "./components/GrowthToolsInvite";
-import BravusPartnership from "./components/BravusPartnership";
 import CourseInvite from "./components/curso/CourseInvite";
+import { openPortfolioConcierge } from "./components/PortfolioConcierge";
+
+type ShowcaseMode = "business" | "architecture";
 
 export default function HomeClient() {
   const { lang } = useLang();
   const pt = lang === "pt";
-  const services = pt ? [
-    ["software", "Organizar para crescer.", "Sistemas e automações que tiram o retrabalho da rotina."],
-    ["marketing", "Aparecer do jeito certo.", "Sites e presença digital com identidade e um caminho claro até você."],
-    ["audiovisual", "Mostrar outro ponto de vista.", "Drone, vídeo e conteúdo para dar vida à sua marca."],
-  ] : [
-    ["software", "Make room to grow.", "Systems and automation that take repetitive work off your plate."],
-    ["marketing", "Show up with purpose.", "Websites and a digital presence with personality and a clear way to reach you."],
-    ["audiovisual", "Offer a fresh perspective.", "Drone footage, video and content that bring your brand to life."],
-  ];
-  const icons = [Code2, Layers, Film];
+  const [showcaseMode, setShowcaseMode] = useState<ShowcaseMode>("business");
+
+  const intentRoutes = pt
+    ? [
+        {
+          code: "01 · B2B SOB MEDIDA",
+          title: "Sistemas internos, ERPs & automação",
+          desc: "Para empresas que querem eliminar planilhas paralelas e integrar operação.",
+          href: "#diagnostico",
+          icon: Code2,
+        },
+        {
+          code: "02 · SAAS & HARDWARE",
+          title: "MiseOn, Totens Bravus & SelectSys",
+          desc: "Plataformas multi-tenant prontas em produção para food service, varejo e RH.",
+          href: "#produtos",
+          icon: Cpu,
+        },
+        {
+          code: "03 · ACADEMY & FERRAMENTAS",
+          title: "Curso gratuito & Arena Prática",
+          desc: "18 aulas reais com terminal, Python/SQL, webhook PIX e Tutor IA.",
+          href: "#academy",
+          icon: Layers,
+        },
+      ]
+    : [
+        {
+          code: "01 · CUSTOM B2B",
+          title: "Internal systems, ERPs & automation",
+          desc: "For companies replacing scattered spreadsheets with unified, auditable software.",
+          href: "#diagnostico",
+          icon: Code2,
+        },
+        {
+          code: "02 · SAAS & HARDWARE",
+          title: "MiseOn, Bravus Kiosks & SelectSys",
+          desc: "Production multi-tenant SaaS for food service, retail POS, and recruiting.",
+          href: "#produtos",
+          icon: Cpu,
+        },
+        {
+          code: "03 · ACADEMY & TOOLS",
+          title: "Free engineering course & Practice Arena",
+          desc: "18 real lessons featuring terminal, Python/SQL, PIX webhooks, and AI Tutor.",
+          href: "#academy",
+          icon: Layers,
+        },
+      ];
+
+  const flagshipSecondary = pt
+    ? [
+        {
+          id: "selectsys",
+          code: "02 / ATS BILÍNGUE BRASIL → JAPÃO",
+          pill: "Case Fujiarte Co., Ltd. · Em implantação",
+          title: "SelectSys Jobs — triagem internacional sem planilhas paralelas",
+          businessSummary:
+            "Substituiu o vai-e-vem de e-mails e formulários manuais por cadastro bilíngue, leitura automática de documentos e redução de 60% no tempo de triagem.",
+          archSummary:
+            "React 19 + PostgreSQL Row Level Security (LGPD) + OCR via Tesseract.js/PDF.js + exportação fiel para modelos Excel (ExcelJS/Python) + Edge Functions.",
+          tags: ["React 19", "PostgreSQL RLS", "Tesseract OCR", "ExcelJS", "LGPD"],
+          href: "/portfolio/fujiarte",
+          cta: "Ver Case Fujiarte",
+          conciergePrompt:
+            "Como foi construído o SelectSys Jobs da Fujiarte e qual o impacto na triagem?",
+        },
+        {
+          id: "mercadinhosys",
+          code: "03 / ERP MULTI-TENANT & PDV FISCAL",
+          pill: "Varejo & Supermercados · Em operação",
+          title: "mercadinhosys — estoque transacional, NFC-e e BI comercial",
+          businessSummary:
+            "Unifica vendas no PDV fiscal, entrada por XML de fornecedor e painéis de Curva ABC, RFM e DRE para eliminar ruptura e furo de caixa.",
+          archSummary:
+            "TenantQuery fail-closed no ORM + savepoints aninhados no fechamento de venda + motor NFC-e/SEFAZ + pipeline analítico Python (Pandas, Statsmodels, Plotly) + Sentry.",
+          tags: ["Python / Flask", "PostgreSQL", "NFC-e SEFAZ", "Pandas + Plotly", "Redis"],
+          href: "/portfolio",
+          cta: "Explorar no Portfólio",
+          conciergePrompt:
+            "Qual a arquitetura multi-tenant e fiscal do mercadinhosys?",
+        },
+        {
+          id: "mysuperstore",
+          code: "04 / MARKETPLACE HEADLESS & SPLIT PIX",
+          pill: "E-commerce Multi-Vendedor · Estudo de Caso do Curso",
+          title: "MySuperStore — split automático de receita sem travar o checkout",
+          businessSummary:
+            "Plataforma multi-lojista com pagamento via PIX/cartão, divisão automática de comissão na liquidação e cotação de frete em tempo real.",
+          archSummary:
+            "Django REST + Next.js 15 + PostgreSQL (dinheiro em centavos inteiros + UPDATE condicional de estoque) + webhook Efí idempotente + workers Celery/Redis.",
+          tags: ["Django REST", "Next.js 15", "PostgreSQL", "Celery + Redis", "Efí PIX"],
+          href: "/cursos/construa-seu-marketplace",
+          cta: "Ver Arquitetura na Academy",
+          conciergePrompt:
+            "Como funciona o split de pagamento e idempotência no MySuperStore?",
+        },
+      ]
+    : [
+        {
+          id: "selectsys",
+          code: "02 / BILINGUAL ATS BRAZIL → JAPAN",
+          pill: "Fujiarte Co., Ltd. · Rolling out",
+          title: "SelectSys Jobs — international recruiting without parallel spreadsheets",
+          businessSummary:
+            "Replaced manual email back-and-forth with structured bilingual candidate intake, automated document reading, and 60% faster manual screening.",
+          archSummary:
+            "React 19 + PostgreSQL Row Level Security (LGPD) + Tesseract.js/PDF.js OCR + faithful Excel template export (ExcelJS/Python) + Edge Functions.",
+          tags: ["React 19", "PostgreSQL RLS", "Tesseract OCR", "ExcelJS", "LGPD"],
+          href: "/portfolio/fujiarte",
+          cta: "Read Fujiarte Case",
+          conciergePrompt:
+            "How was SelectSys Jobs architected for Fujiarte?",
+        },
+        {
+          id: "mercadinhosys",
+          code: "03 / MULTI-TENANT ERP & FISCAL POS",
+          pill: "Retail & Supermarkets · Live",
+          title: "mercadinhosys — transactional inventory, fiscal POS & commercial BI",
+          businessSummary:
+            "Unifies POS sales, supplier XML ingestion, and ABC Curve, RFM, and P&L dashboards to stop stockouts and cash discrepancies.",
+          archSummary:
+            "Fail-closed ORM TenantQuery + nested transaction savepoints + NFC-e fiscal engine + Python analytics (Pandas, Statsmodels, Plotly) + Sentry.",
+          tags: ["Python / Flask", "PostgreSQL", "Fiscal NFC-e", "Pandas + Plotly", "Redis"],
+          href: "/portfolio",
+          cta: "Explore Portfolio",
+          conciergePrompt:
+            "What is mercadinhosys's multi-tenant and BI architecture?",
+        },
+        {
+          id: "mysuperstore",
+          code: "04 / HEADLESS MARKETPLACE & PIX SPLIT",
+          pill: "Multi-Vendor Commerce · Course Case Study",
+          title: "MySuperStore — automated revenue split without blocking checkout",
+          businessSummary:
+            "Multi-seller marketplace featuring PIX/card payments, automated settlement split across stores, and real-time shipping quotes.",
+          archSummary:
+            "Django REST + Next.js 15 + PostgreSQL (integer-cent ledger & conditional stock locks) + idempotent Efí webhooks + Celery/Redis workers.",
+          tags: ["Django REST", "Next.js 15", "PostgreSQL", "Celery + Redis", "PIX Split"],
+          href: "/cursos/construa-seu-marketplace",
+          cta: "Explore in Academy",
+          conciergePrompt:
+            "How does payment splitting and idempotency work in MySuperStore?",
+        },
+      ];
+
   return (
     <div className="studio-home">
-      <header className="studio-hero" id="top"><div className="wrap">
-        <div className="studio-hero-grid">
-          <div className="studio-hero-copy">
-            <div className="studio-kicker"><span />{pt ? "TECNOLOGIA COM CABEÇA. CRIAÇÃO COM ALMA." : "THOUGHTFUL TECHNOLOGY. SOULFUL CREATION."}</div>
-            <h1>{pt ? "Boas ideias" : "Good ideas"}<br />{pt ? "merecem" : "deserve"}<br /><em>{pt ? "ganhar vida." : "to come alive."}</em><Sparkles aria-hidden="true" /></h1>
-            <p>{pt ? "Sou Rafael. Conecto tecnologia, negócio e criatividade para transformar o que você imagina em algo que funciona de verdade." : "I’m Rafael. I connect technology, business and creativity to turn what you imagine into something that really works."}</p>
-            <a className="cert-chip" href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click"><BadgeCheck size={17} /><span><strong>Oracle Certified</strong> · {ORACLE_CERT.name}</span><small>{pt ? "verificar" : "verify"} <ArrowUpRight size={13} /></small></a>
-            <div className="studio-actions"><a href="#diagnostico" className="btn studio-primary">{pt ? "Descobrir meu próximo passo" : "Find my next step"}<ArrowUpRight size={18} /></a><a href="#produtos" className="studio-text-link">{pt ? "Conheça meu trabalho" : "Explore my work"}<ArrowDown size={16} /></a></div>
-            <div className="studio-hero-note"><span className="studio-avatars">RM</span><span>{pt ? "Da primeira conversa à entrega." : "From the first conversation to delivery."}<strong>{pt ? "Você fala com quem faz." : "You talk to the person who builds it."}</strong></span></div>
+      {/* ============================================================ */}
+      {/* MOMENTO 1: HERO EXECUTIVO + CREDENCIAIS + ROTEADOR DE INTENÇÃO */}
+      {/* ============================================================ */}
+      <header className="studio-hero" id="top">
+        <div className="wrap">
+          <div className="studio-hero-grid">
+            <div className="studio-hero-copy">
+              <div className="studio-kicker">
+                <span />
+                {pt
+                  ? "ENGENHARIA DE SOFTWARE · SAAS MULTI-TENANT · SÃO PAULO"
+                  : "SOFTWARE ENGINEERING · MULTI-TENANT SAAS · SÃO PAULO"}
+              </div>
+              <h1>
+                {pt ? "Sistemas sob medida" : "Production systems"}
+                <br />
+                {pt ? "para operações que" : "built for teams that"}
+                <br />
+                <em>{pt ? "não podem parar." : "cannot stall."}</em>
+                <Sparkles aria-hidden="true" />
+              </h1>
+              <p>
+                {pt
+                  ? "Sou Rafael Maldivas. Construo plataformas SaaS, ERPs e automações com IA — da conversa com quem opera ao sistema rodando em produção."
+                  : "I'm Rafael Maldivas. I architect production SaaS platforms, custom ERPs, and applied AI workflows — from discovery to live deployment."}
+              </p>
+
+              <div className="hero-credentials-strip">
+                <a
+                  className="cert-chip"
+                  href={ORACLE_CERT.verifyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-analytics="cert_click"
+                >
+                  <BadgeCheck size={17} />
+                  <span>
+                    <strong>Oracle Certified</strong> · {ORACLE_CERT.name}
+                  </span>
+                  <small>
+                    {pt ? "verificar" : "verify"} <ArrowUpRight size={13} />
+                  </small>
+                </a>
+                <div className="trust-micro-pills">
+                  <span>
+                    <ShieldCheck size={14} aria-hidden="true" /> Meta Tech Provider
+                  </span>
+                  <span>
+                    <CheckCircle2 size={14} aria-hidden="true" /> iFood Homologado
+                  </span>
+                  <span>CNPJ 68.923.239/0001-77</span>
+                </div>
+              </div>
+
+              <div className="studio-actions">
+                <a href="#diagnostico" className="btn studio-primary">
+                  {pt ? "Gerar Diagnóstico IA Gratuito" : "Free AI Architecture Plan"}
+                  <ArrowUpRight size={18} />
+                </a>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => openPortfolioConcierge()}
+                >
+                  <Bot size={17} aria-hidden="true" />
+                  <span>{pt ? "Perguntar ao Agente IA" : "Ask AI Concierge"}</span>
+                </button>
+                <a href="#produtos" className="studio-text-link">
+                  {pt ? "Ver sistemas em produção" : "Explore live systems"}
+                  <ArrowDown size={16} />
+                </a>
+              </div>
+
+              <div className="studio-hero-note">
+                <span className="studio-avatars">RM</span>
+                <span>
+                  {pt
+                    ? "Contrato, nota fiscal e contato direto."
+                    : "Formal contracts, invoicing & senior ownership."}
+                  <strong>
+                    {pt
+                      ? "Você fala com quem desenha e entrega."
+                      : "You talk directly to the builder."}
+                  </strong>
+                </span>
+              </div>
+            </div>
+
+            <div className="studio-portrait-composition">
+              <div className="studio-orbit" aria-hidden="true" />
+              <figure className="studio-portrait">
+                <Image
+                  src="/media/rafael-drone.jpg"
+                  alt={
+                    pt
+                      ? "Rafael Maldivas pilotando drone em operação audiovisual e de engenharia"
+                      : "Rafael Maldivas operating a drone in the field"
+                  }
+                  fill
+                  priority
+                  sizes="(max-width: 800px) 90vw, 45vw"
+                  quality={85}
+                />
+                <span className="studio-photo-label">
+                  PINHEIROS, SP · {pt ? "ATUAÇÃO GLOBAL" : "GLOBAL DELIVERY"}
+                </span>
+                <figcaption>
+                  <span>{pt ? "Fundador & Product Owner" : "Founder & Product Owner"}</span>
+                  <strong>
+                    Rafael Maldivas<span>.</span>
+                  </strong>
+                  <small>
+                    {pt
+                      ? "Software · Dados & BI · IA Agêntica · Audiovisual"
+                      : "Software · Data & BI · Agentic AI · Audiovisual"}
+                  </small>
+                </figcaption>
+              </figure>
+              <div className="studio-float">
+                <span>
+                  <Film size={20} aria-hidden="true" />
+                </span>
+                <div>
+                  {pt ? "Da arquitetura ao deploy" : "From schema to production"}
+                  <small>
+                    {pt
+                      ? "Next.js · Python · PostgreSQL · Three.js"
+                      : "Next.js · Python · PostgreSQL · Three.js"}
+                  </small>
+                </div>
+                <ArrowUpRight size={18} />
+              </div>
+            </div>
           </div>
-          <div className="studio-portrait-composition"><div className="studio-orbit" aria-hidden="true" /><figure className="studio-portrait"><Image src="/media/rafael-drone.jpg" alt={pt ? "Rafael Maldivas pilotando um drone em campo" : "Rafael Maldivas flying a drone in the field"} fill priority sizes="(max-width: 800px) 90vw, 45vw" quality={85} /><span className="studio-photo-label">SÃO PAULO · {pt ? "PARA O MUNDO" : "TO THE WORLD"}</span><figcaption><span>{pt ? "Prazer, eu sou o" : "Hi, I’m"}</span><strong>Rafael Maldivas<span>.</span></strong><small>{pt ? "Engenharia, criatividade e pé no chão." : "Engineering, creativity and a grounded approach."}</small></figcaption></figure><div className="studio-float"><span><Code2 size={22} /></span><div>{pt ? "Da ideia à operação" : "From idea to operation"}<small>{pt ? "Software · Estratégia · Audiovisual" : "Software · Strategy · Video"}</small></div><ArrowUpRight size={18} /></div><span className="studio-handnote" aria-hidden="true">{pt ? "Vamos fazer acontecer ↗" : "Let’s make it happen ↗"}</span></div>
+
+          {/* Barra de Auto-Segmentação (Funil B2B / SaaS / Academy) */}
+          <nav
+            className="hero-intent-router"
+            aria-label={pt ? "Caminhos por objetivo" : "Paths by objective"}
+          >
+            {intentRoutes.map((route) => {
+              const Icon = route.icon;
+              return (
+                <a key={route.code} href={route.href} className="intent-route-card">
+                  <div className="intent-route-top">
+                    <span className="intent-route-code">{route.code}</span>
+                    <Icon size={18} aria-hidden="true" />
+                  </div>
+                  <strong>{route.title}</strong>
+                  <p>{route.desc}</p>
+                </a>
+              );
+            })}
+          </nav>
         </div>
-        <div className="studio-service-row">{services.map(([id,title,desc],i) => { const Icon = icons[i]; return <Link href={localePath(`/servicos#${id}`,lang)} key={id} data-analytics="service_click"><span className={`studio-service-icon tone-${i}`}><Icon size={23} /></span><div><h2>{title}</h2><p>{desc}</p></div><ArrowUpRight size={19} /></Link>; })}</div>
-      </div></header>
-      <section id="produtos" className="studio-selected"><div className="wrap"><div className="studio-section-heading"><div><div className="studio-kicker">01 / {pt ? "IDEIAS EM MOVIMENTO" : "IDEAS IN MOTION"}</div><h2>{pt ? "É na prática que" : "The work"}<br /><span>{pt ? "a ideia se prova." : "speaks for itself."}</span></h2></div><Link className="studio-text-link" href={localePath("/portfolio",lang)} data-analytics="portfolio_click">{pt ? "Explorar portfólio" : "Explore portfolio"}<ArrowUpRight size={18} /></Link></div>
-        <div className="studio-projects"><Link href={localePath("/produtos/miseon",lang)} className="studio-project project-miseon" data-analytics="portfolio_click"><div className="studio-project-top"><span>01 / FOOD SERVICE</span><ArrowUpRight /></div><div className="studio-product-visual"><Image src="/logo-horiz-miseon.png" alt="MiseOn" width={310} height={120} style={{objectFit:"contain"}} /><div className="studio-operation"><span><Check size={14} />{pt ? "Pedidos" : "Orders"}</span><span><Check size={14} />{pt ? "Estoque" : "Inventory"}</span><span><Check size={14} />{pt ? "Gestão" : "Management"}</span></div></div><div className="studio-project-bottom"><span className="studio-pill">{pt ? "Produto próprio · Em operação" : "Own product · Live"}</span><h3>{pt ? "Mais controle na cozinha." : "More control in the kitchen."}</h3><p>{pt ? "Pedidos, estoque e delivery conectados em um sistema feito para restaurantes." : "Orders, inventory and delivery connected in a system built for restaurants."}</p></div></Link>
-        <Link href={localePath("/portfolio#audiovisual",lang)} className="studio-project project-video" data-analytics="portfolio_click"><Image src="/media/cidade-anoitecer.jpg" alt={pt ? "Vista aérea da cidade ao anoitecer, por Rafael Maldivas" : "Aerial city view at dusk by Rafael Maldivas"} fill sizes="(max-width: 800px) 95vw, 48vw" /><div className="studio-project-top"><span>02 / {pt ? "UM NOVO OLHAR" : "A FRESH PERSPECTIVE"}</span><ArrowUpRight /></div><div className="studio-project-bottom"><span className="studio-pill">{pt ? "Drone · Vídeo · Conteúdo" : "Drone · Video · Content"}</span><h3>{pt ? "Sua marca vista de outro jeito." : "See your brand in a new light."}</h3><p>{pt ? "Da captação aérea à edição. Imagens que apresentam lugares, histórias e negócios." : "From aerial capture to editing. Images that introduce places, stories and businesses."}</p></div></Link></div>
-      </div></section>
-      <ProjectPlanner />
-      <BravusPartnership />
-      <CourseInvite />
-      <EmpresasInvite />
-      <section className="growth-home"><div className="wrap"><GrowthToolsInvite /></div></section>
+      </header>
+
+      {/* ============================================================ */}
+      {/* MOMENTO 2: VITRINE FLAGSHIP + TOGGLE NEGÓCIO vs ARQUITETURA  */}
+      {/* ============================================================ */}
+      <section id="produtos" className="studio-selected">
+        <div className="wrap">
+          <div className="studio-section-heading">
+            <div>
+              <div className="studio-kicker">
+                01 / {pt ? "SISTEMAS EM PRODUÇÃO & PARCERIA HARDWARE" : "PRODUCTION SYSTEMS & HARDWARE"}
+              </div>
+              <h2>
+                {pt ? "Software que fecha a conta" : "Software that closes the loop"}
+                <br />
+                <span>
+                  {pt ? "na operação de verdade." : "in real daily operations."}
+                </span>
+              </h2>
+            </div>
+
+            <div className="showcase-controls">
+              <div
+                className="showcase-mode-toggle"
+                role="group"
+                aria-label={pt ? "Nível de leitura técnica" : "Technical detail toggle"}
+              >
+                <button
+                  type="button"
+                  aria-pressed={showcaseMode === "business"}
+                  className={showcaseMode === "business" ? "is-active" : ""}
+                  onClick={() => setShowcaseMode("business")}
+                >
+                  {pt ? "Visão de Negócio" : "Business Impact"}
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={showcaseMode === "architecture"}
+                  className={showcaseMode === "architecture" ? "is-active" : ""}
+                  onClick={() => setShowcaseMode("architecture")}
+                >
+                  {pt ? "Raio-X Arquitetura" : "Architecture X-Ray"}
+                </button>
+              </div>
+
+              <Link
+                className="studio-text-link"
+                href={localePath("/portfolio", lang)}
+                data-analytics="portfolio_click"
+              >
+                {pt ? "Explorar portfólio" : "Explore portfolio"}
+                <ArrowUpRight size={18} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card Principal Integrado: MiseOn + Hardware Bravus Core / Gertec */}
+          <div className="flagship-hero-card">
+            <div className="flagship-hero-copy">
+              <div className="flagship-meta-row">
+                <span className="studio-pill">
+                  {pt
+                    ? "01 / FOOD SERVICE · SOFTWARE + HARDWARE"
+                    : "01 / FOOD SERVICE · SOFTWARE + HARDWARE"}
+                </span>
+                <span className="flagship-status-pill">
+                  {pt ? "Em operação · Meta & iFood" : "Live · Meta & iFood"}
+                </span>
+              </div>
+
+              <div className="flagship-brand-lockup">
+                <Image
+                  src="/logo-horiz-miseon.png"
+                  alt="MiseOn"
+                  width={170}
+                  height={48}
+                  style={{ objectFit: "contain" }}
+                />
+                <span className="flagship-divider" aria-hidden="true">
+                  ×
+                </span>
+                <span className="bravus-wordmark">
+                  BRAVUS <strong>CORE</strong> · GERTEC
+                </span>
+              </div>
+
+              <h3>
+                {pt
+                  ? "Da cozinha ao totem de autoatendimento: pedidos, estoque PEPS e NFC-e sem redigitação."
+                  : "From kitchen display to self-service kiosk: orders, FIFO stock, and fiscal POS unified."}
+              </h3>
+
+              <p className="flagship-summary">
+                {showcaseMode === "business"
+                  ? pt
+                    ? "Conectamos a inteligência do SaaS MiseOn aos terminais comerciais Bravus Core e Gertec. O cliente pede e paga no totem ou Smart POS, o estoque baixa por ficha técnica e a cozinha recebe no KDS em tempo real."
+                    : "MiseOn's multi-tenant software paired with commercial Bravus Core & Gertec terminals. Guests order and pay directly on kiosks, recipe-costed stock updates automatically, and the kitchen tracks prep on KDS."
+                  : pt
+                    ? "Arquitetura multi-tenant em React 19 + Supabase PostgreSQL (RLS), persistência offline-first (IndexedDB + Service Workers), salão espacial com Three.js/Konva, testes de carga k6, webhooks iFood/WhatsApp e PDV NFC-e."
+                    : "Multi-tenant React 19 + Supabase PostgreSQL (RLS), offline-first IndexedDB + Service Workers, Three.js/Konva floor layout, k6 load-tested checkout, iFood/WhatsApp APIs, and fiscal POS."}
+              </p>
+
+              <div className="flagship-feature-strip">
+                <div>
+                  <MonitorSmartphone size={18} aria-hidden="true" />
+                  <span>
+                    {pt ? "Autoatendimento & KDS" : "Self-Service Kiosk & KDS"}
+                  </span>
+                </div>
+                <div>
+                  <Receipt size={18} aria-hidden="true" />
+                  <span>
+                    {pt ? "Smart POS + NFC-e" : "Smart POS + Fiscal Receipt"}
+                  </span>
+                </div>
+                <div>
+                  <Server size={18} aria-hidden="true" />
+                  <span>
+                    {pt ? "PEPS + iFood + WhatsApp" : "FIFO Stock + iFood + WhatsApp"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flagship-actions">
+                <Link
+                  href={localePath("/produtos/miseon", lang)}
+                  className="btn btn-primary"
+                  data-analytics="portfolio_click"
+                >
+                  <span>{pt ? "Conhecer MiseOn" : "Explore MiseOn"}</span>
+                  <ArrowUpRight size={17} />
+                </Link>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() =>
+                    openPortfolioConcierge(
+                      pt
+                        ? "Como funciona a parceria MiseOn + Totens Bravus Core e quanto custa?"
+                        : "How does MiseOn + Bravus Core kiosk integration work?",
+                    )
+                  }
+                >
+                  <Bot size={16} aria-hidden="true" />
+                  <span>{pt ? "Perguntar à IA" : "Ask AI Agent"}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="flagship-hardware-gallery">
+              <div className="flagship-hw-tile">
+                <Image
+                  src="/partners/bravus-1.jpg"
+                  alt={pt ? "Terminal comercial Gertec integrado" : "Integrated Gertec terminal"}
+                  fill
+                  sizes="(max-width: 900px) 45vw, 240px"
+                  style={{ objectFit: "contain", padding: "10px" }}
+                />
+              </div>
+              <div className="flagship-hw-tile">
+                <Image
+                  src="/partners/bravus-2.jpg"
+                  alt={pt ? "Totem de autoatendimento MiseOn Bravus Core" : "MiseOn Bravus Core kiosk"}
+                  fill
+                  sizes="(max-width: 900px) 45vw, 240px"
+                  style={{ objectFit: "contain", padding: "10px" }}
+                />
+              </div>
+              <div className="flagship-hw-tile is-wide">
+                <Image
+                  src="/partners/bravus-3.jpg"
+                  alt={pt ? "Terminal MiseOn operando em ambiente comercial" : "MiseOn terminal in commercial environment"}
+                  fill
+                  sizes="(max-width: 900px) 90vw, 480px"
+                  style={{ objectFit: "contain", padding: "12px" }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 3 Plataformas Complementares (SelectSys, MercadinhoSys, MySuperStore) */}
+          <div className="flagship-secondary-grid">
+            {flagshipSecondary.map((item) => (
+              <article key={item.id} className="flagship-secondary-card">
+                <div className="flagship-secondary-top">
+                  <span className="flagship-code">{item.code}</span>
+                  <span className="studio-pill">{item.pill}</span>
+                </div>
+                <h3>{item.title}</h3>
+                <p>
+                  {showcaseMode === "business" ? item.businessSummary : item.archSummary}
+                </p>
+                <div className="tags">
+                  {item.tags.map((tg) => (
+                    <span className="tag" key={tg}>
+                      {tg}
+                    </span>
+                  ))}
+                </div>
+                <div className="flagship-secondary-foot">
+                  <Link href={localePath(item.href, lang)} className="plink solid">
+                    <span>{item.cta}</span>
+                    <ArrowUpRight size={15} />
+                  </Link>
+                  <button
+                    type="button"
+                    className="plink"
+                    onClick={() => openPortfolioConcierge(item.conciergePrompt)}
+                  >
+                    <Bot size={15} aria-hidden="true" />
+                    <span>{pt ? "Raio-X IA" : "AI Q&A"}</span>
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* MOMENTO 3: WORKBENCH INTERATIVO UNIFICADO (IA + ROI + TOOLS) */}
+      {/* ============================================================ */}
+      <WorkbenchHub />
+
+      {/* ============================================================ */}
+      {/* MOMENTO 4: CASOS DOCUMENTADOS & MÉTODO DE ENGENHARIA         */}
+      {/* ============================================================ */}
       <CaseHighlights />
-      <ExitToast />
-      <section className="studio-tools" id="ferramentas"><div className="wrap"><div className="studio-section-heading"><div><div className="studio-kicker">{pt ? "EXPERIMENTE. É POR MINHA CONTA." : "TRY IT. IT’S ON ME."}</div><h2>{pt ? "Uma mão na roda." : "A little helping hand."}</h2><p>{pt ? "Ferramentas úteis, sem cadastro. Um pouco do meu trabalho, já ajudando no seu." : "Useful tools, no signup. A little of my work, already helping yours."}</p></div><Link className="studio-text-link" href={localePath("/ferramentas",lang)}>{pt ? "Ver todas" : "See all"}<ArrowUpRight size={18} /></Link></div><div className="studio-tool-grid">{[
-        ["roi-presenca-digital", "01", pt ? "ROI de presença digital" : "Digital presence ROI", pt ? "Descubra quanto sua empresa deixa na mesa sem presença digital." : "Find out how much your business is missing without a digital presence."],
-        ["plano-digital", "02", pt ? "Planejador digital" : "Digital planner", pt ? "Encontre uma prioridade e saia com um plano de ação." : "Find a priority and leave with an action plan."],
-        ["plano-digital#simulador", "03", pt ? "Simulador de tempo" : "Time simulator", pt ? "Descubra quanto da rotina poderia ser automatizado." : "Explore how much of your routine could be automated."],
-        ["estudio-de-imagem", "04", pt ? "Estúdio de imagem" : "Image studio", pt ? "Remova fundos e prepare fotos para a sua vitrine." : "Remove backgrounds and prepare photos for your storefront."],
-      ].map(([slug,n,title,desc])=><Link key={slug} href={localePath(`/ferramentas/${slug}`,lang)} data-analytics="tool_click"><span>{n}<ArrowUpRight size={20} /></span><h3>{title}</h3><p>{desc}</p><small>{pt ? "Abrir ferramenta" : "Open tool"}<ArrowRight size={15} /></small></Link>)}</div></div></section>
-      <section className="studio-method" id="metodo"><div className="wrap"><div className="studio-section-heading"><div><div className="studio-kicker">{pt ? "CRIATIVIDADE NO COMEÇO. CUIDADO ATÉ O FIM." : "CREATIVE FROM THE START. CAREFUL TO THE FINISH."}</div><h2>{pt ? "Trabalho bom tem conversa." : "Good work starts with a conversation."}</h2></div></div><div className="studio-method-grid">{(pt ? [["Escutar de verdade", "Entendo sua rotina, o problema e o que precisa mudar."],["Combinar o caminho", "Escopo, prioridades e etapas claros antes de começar."],["Construir junto", "Você acompanha, experimenta e participa dos ajustes."],["Entregar com cuidado", "Validação, orientação de uso e próximos passos combinados."]] : [["Really listen", "I learn about your routine, the problem and what needs to change."],["Agree on the path", "Clear scope, priorities and milestones before we start."],["Build together", "You follow along, try things and help shape the adjustments."],["Deliver with care", "Validation, guidance and agreed next steps."]]).map(([title,desc],i)=><div key={title}><span>0{i+1}</span><h3>{title}</h3><p>{desc}</p></div>)}</div></div></section>
+
+      <section className="studio-method" id="metodo">
+        <div className="wrap">
+          <div className="studio-section-heading">
+            <div>
+              <div className="studio-kicker">
+                04 / {pt ? "PROCESSO TRANSPARENTE" : "TRANSPARENT DELIVERY"}
+              </div>
+              <h2>
+                {pt
+                  ? "Trabalho sério começa entendendo o negócio."
+                  : "Solid software starts by understanding the business."}
+              </h2>
+            </div>
+          </div>
+          <div className="studio-method-grid">
+            {(pt
+              ? [
+                  [
+                    "Escutar de verdade",
+                    "Mapeio sua rotina, onde o dinheiro vaza e onde a equipe redigita dados antes de abrir o editor de código.",
+                  ],
+                  [
+                    "Combinar o caminho",
+                    "Escopo, prazo, modelo de dados e critérios de aceite documentados em contrato antes de começar.",
+                  ],
+                  [
+                    "Construir com validação",
+                    "Entregas semanais em ambiente de homologação para quem opera testar junto e ajustar rápido.",
+                  ],
+                  [
+                    "Entregar com garantia",
+                    "Deploy seguro, treinamento da equipe, nota fiscal e 90 dias de garantia técnica sobre o escopo.",
+                  ],
+                ]
+              : [
+                  [
+                    "Listen to operations",
+                    "I map your workflow, revenue leaks, and manual bottlenecks before writing a single line of code.",
+                  ],
+                  [
+                    "Lock clear scope",
+                    "Architecture, timeline, data boundaries, and deliverables agreed transparently upfront.",
+                  ],
+                  [
+                    "Build in weekly slices",
+                    "Weekly staging releases so real operators test screens early and shape final polish.",
+                  ],
+                  [
+                    "Ship with warranty",
+                    "Production deploy, team onboarding, formal invoicing, and 90-day scope warranty.",
+                  ],
+                ]
+            ).map(([title, desc], i) => (
+              <div key={title}>
+                <span>0{i + 1}</span>
+                <h3>{title}</h3>
+                <p>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* MOMENTO 5: MALDIVAS TECH ACADEMY & ARENA PRÁTICA             */}
+      {/* ============================================================ */}
+      <div id="academy">
+        <CourseInvite />
+      </div>
+
+      {/* ============================================================ */}
+      {/* MOMENTO 6: BRIEFING TÉCNICO & CONTATO DIRETO                 */}
+      {/* ============================================================ */}
       <BriefingForm />
-      <section id="contato" className="studio-contact"><div className="wrap"><div className="studio-kicker">{pt ? "O PRÓXIMO PROJETO PODE SER O SEU." : "THE NEXT PROJECT COULD BE YOURS."}</div><h2>{pt ? "Vamos fazer" : "Let’s make"}<br /><em>{pt ? "acontecer?" : "it happen."}</em></h2><p>{pt ? "Me conte a ideia. A gente encontra o caminho." : "Tell me your idea. We’ll find the way forward."}</p><a className="btn studio-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">{pt ? "Conversar com o Rafael" : "Talk to Rafael"}<ArrowUpRight size={20} /></a><span className="studio-contact-sign">Rafael Maldivas / Maldivas Tech</span></div></section>
+
+      <section id="contato" className="studio-contact">
+        <div className="wrap">
+          <div className="studio-kicker">
+            {pt ? "O PRÓXIMO PROJETO PODE SER O SEU." : "THE NEXT PROJECT COULD BE YOURS."}
+          </div>
+          <h2>
+            {pt ? "Vamos tirar" : "Ready to ship"}
+            <br />
+            <em>{pt ? "do papel?" : "something real?"}</em>
+          </h2>
+          <p>
+            {pt
+              ? "Conte sua necessidade ou tire dúvidas agora mesmo pelo WhatsApp ou com o Agente IA."
+              : "Share your challenge on WhatsApp or ask our AI Concierge to explore architecture options."}
+          </p>
+          <div className="studio-contact-actions">
+            <a
+              className="btn studio-primary"
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-analytics="contact_click"
+            >
+              {pt ? "Conversar com o Rafael" : "Talk to Rafael"}
+              <ArrowUpRight size={20} />
+            </a>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => openPortfolioConcierge()}
+            >
+              <Bot size={18} aria-hidden="true" />
+              <span>{pt ? "Abrir Concierge IA" : "Open AI Concierge"}</span>
+            </button>
+          </div>
+          <span className="studio-contact-sign">
+            Rafael Maldivas · Maldivas Tech · CNPJ 68.923.239/0001-77
+          </span>
+        </div>
+      </section>
+
+      <ExitToast />
     </div>
   );
 }

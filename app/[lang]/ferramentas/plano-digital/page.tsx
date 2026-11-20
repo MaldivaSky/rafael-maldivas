@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import ProjectPlanner from "@/app/components/ProjectPlanner";
-import { AutomationTool } from "@/app/ferramentas/GrowthTools";
-import { buildMetadata } from "@/app/lib/metadata";
-import { isLang } from "@/app/lib/seo";
+import ProjectPlanner from "../../../components/ProjectPlanner";
+import { AutomationTool } from "../../../ferramentas/GrowthTools";
+import { buildMetadata } from "../../../lib/metadata";
+import { isLang } from "../../../lib/seo";
 
 export function generateStaticParams() { return [{ lang: "pt" }, { lang: "en" }]; }
 export async function generateMetadata({ params: paramsP }: { params: Promise<{ lang: string }> }) {
