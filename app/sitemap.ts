@@ -32,6 +32,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "ferramentas", priority: 0.8, changeFrequency: "monthly" },
     { path: "ferramentas/plano-digital", priority: 0.7, changeFrequency: "monthly" },
     { path: "about", priority: 0.7, changeFrequency: "yearly" },
+    { path: "privacidade", priority: 0.3, changeFrequency: "yearly" },
+    { path: "termos", priority: 0.3, changeFrequency: "yearly" },
+    { path: "exclusao-de-dados", priority: 0.3, changeFrequency: "yearly" },
     { path: "cursos", priority: 0.9, changeFrequency: "weekly" },
     ...courseList.map(
       (c): Route => ({

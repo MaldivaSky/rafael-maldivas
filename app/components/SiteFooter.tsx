@@ -30,6 +30,9 @@ const t = {
       ["/#contato", "Contato"],
     ],
     rights: "Todos os direitos reservados.",
+    privacy: "Política de Privacidade",
+    terms: "Termos de Uso",
+    deletion: "Exclusão de Dados",
     marks:
       "Meta, iFood, 99Food, Google e demais marcas citadas pertencem aos seus respectivos titulares.",
   },
@@ -47,6 +50,9 @@ const t = {
       ["/#contato", "Contact"],
     ],
     rights: "All rights reserved.",
+    privacy: "Privacy Policy",
+    terms: "Terms of Service",
+    deletion: "Data Deletion",
     marks:
       "Meta, iFood, 99Food, Google and other marks cited belong to their respective owners.",
   },
@@ -101,6 +107,7 @@ export default function SiteFooter() {
         <div>
           <h4>{c.company}</h4>
           <span>{COMPANY.tradeName}</span>
+          <span>{COMPANY.legalName}</span>
           <span>CNPJ {COMPANY.cnpj}</span>
           <span>
             {COMPANY.city}/{COMPANY.region}
@@ -114,6 +121,13 @@ export default function SiteFooter() {
           © {new Date().getFullYear()} {COMPANY.tradeName}. {c.rights}
         </span>
         <span>{c.marks}</span>
+        <span className="foot-legal-links">
+          <Link href={localePath("/privacidade", lang)}>{c.privacy}</Link>
+          {" · "}
+          <Link href={localePath("/termos", lang)}>{c.terms}</Link>
+          {" · "}
+          <Link href={localePath("/exclusao-de-dados", lang)}>{c.deletion}</Link>
+        </span>
       </div>
     </footer>
     </>
