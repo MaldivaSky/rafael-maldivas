@@ -11,6 +11,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import PainelBI from "./PainelBI";
+import AtolPanel from "./AtolPanel";
 import AlunosPanel from "./AlunosPanel";
 
 /**
@@ -91,7 +92,7 @@ export default function AdminClient() {
   const [filtroCanal, setFiltroCanal] = useState("Todos");
   const [busca, setBusca] = useState("");
   const [salvandoId, setSalvandoId] = useState<string | null>(null);
-  const [aba, setAba] = useState<"leads" | "painel" | "alunos">("leads");
+  const [aba, setAba] = useState<"leads" | "painel" | "alunos" | "atol">("leads");
 
   // a sessão acabou (cookie vencido ou senha trocada): volta ao login; identidade estável
   const sessaoExpirou = useCallback(() => {
@@ -288,7 +289,9 @@ export default function AdminClient() {
                 ? "Funil de Leads"
                 : aba === "painel"
                   ? "Painel BI · Tráfego"
-                  : "Telemetria LMS & Alunos"}
+                  : aba === "atol"
+                    ? "Atol Connect · WhatsApp"
+                    : "Telemetria LMS & Alunos"}
             </h2>
           </div>
           <div className="briefing-chips" style={{ margin: 0 }} role="tablist" aria-label="Seção do painel">
@@ -297,6 +300,7 @@ export default function AdminClient() {
                 ["leads", "Leads"],
                 ["painel", "Painel BI"],
                 ["alunos", "Telemetria LMS & Alunos"],
+                ["atol", "Atol Connect"],
               ] as const
             ).map(([id, nome]) => (
               <button
@@ -326,6 +330,8 @@ export default function AdminClient() {
           <PainelBI aoExpirar={sessaoExpirou} />
         ) : aba === "alunos" ? (
           <AlunosPanel aoExpirar={sessaoExpirou} />
+        ) : aba === "atol" ? (
+          <AtolPanel aoExpirar={sessaoExpirou} />
         ) : (
         <>
         {/* filtros */}
