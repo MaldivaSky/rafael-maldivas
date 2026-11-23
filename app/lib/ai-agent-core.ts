@@ -326,7 +326,7 @@ function buildFallbackConcierge(
   if (/miseon|restaurante|cozinha|bravus|totem|gertec|ifood|food/.test(q)) {
     return {
       answer: pt
-        ? "O MiseOn é o SaaS multi-tenant da Maldivas Tech para food service e cozinhas profissionais. Ele une pedidos, baixa de estoque por ficha técnica (PEPS), emissão de NFC-e, integração homologada com iFood e WhatsApp Business API (Meta Tech Provider), e opera integrado aos totens e terminais Smart POS da parceria Bravus Core / Gertec."
+        ? "O MiseOn é o SaaS multi-tenant da Maldivas Tech para food service e cozinhas profissionais. Ele une pedidos, baixa de estoque por ficha técnica (PEPS), emissão de NFC-e, integração homologada com iFood e com a API oficial do WhatsApp Business (Meta), e opera integrado aos totens e terminais Smart POS da parceria Bravus Core / Gertec."
         : "MiseOn is Maldivas Tech's multi-tenant SaaS for food service and professional kitchens. It connects orders, recipe-costed FIFO inventory, fiscal POS (NFC-e), approved iFood & Meta WhatsApp Business API integrations, and Bravus Core / Gertec self-service kiosks.",
       highlights: pt
         ? [
@@ -430,12 +430,12 @@ function buildFallbackConcierge(
     highlights: pt
       ? [
           "4 plataformas SaaS reais em produção + atendimento corporativo B2B",
-          "Credenciais verificáveis: Oracle Agentic AI, Meta Tech Provider e iFood",
+          "Credenciais verificáveis: Oracle Agentic AI e iFood; credenciamento Meta Tech Provider em andamento",
           "Contratação flexível: projeto fechado, contrato mensal ou alocação sênior",
         ]
       : [
           "4 production SaaS platforms + B2B custom software delivery",
-          "Verifiable credentials: Oracle Agentic AI, Meta Tech Provider & iFood",
+          "Verifiable credentials: Oracle Agentic AI & iFood; Meta Tech Provider accreditation in progress",
           "Flexible engagement: fixed scope, monthly retainer, or senior allocation",
         ],
     recommendedRoute: `/${input.lang}/servicos`,

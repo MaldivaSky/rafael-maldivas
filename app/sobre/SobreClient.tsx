@@ -42,7 +42,7 @@ const copy = {
       ],
       [
         "Homologações e operação",
-        "MiseOn verificado pela Meta como Provedora de Tecnologia (WhatsApp Business API) e homologado no iFood. Produtos multi-tenant com acesso por linha e trilha de auditoria."
+        "MiseOn integrado à API oficial do WhatsApp (Meta) e homologado no iFood; credenciamento da Maldivas Tech como Tech Provider da Meta em andamento. Produtos multi-tenant com acesso por linha e trilha de auditoria."
       ]
     ],
     "pmProducts": "Produtos que eu construo e opero",
@@ -78,7 +78,7 @@ const copy = {
       [
         "2026 — hoje",
         "Product Owner e fundador — Maldivas Tech",
-        "Concebo e construo sozinho, com agentes de IA, meus próprios produtos (MiseOn e SelectSys Jobs). CNPJ próprio, contrato com agência de recrutamento Brasil–Japão, Meta Tech Provider, homologação no iFood e certificação Oracle em IA agêntica."
+        "Concebo e construo sozinho, com agentes de IA, meus próprios produtos (MiseOn e SelectSys Jobs). CNPJ próprio, contrato com agência de recrutamento Brasil–Japão, integração com a API oficial do WhatsApp, homologação no iFood e certificação Oracle em IA agêntica."
       ]
     ],
     "stackTag": "Formação",
@@ -148,7 +148,7 @@ const copy = {
       ],
       [
         "Approvals and operations",
-        "MiseOn verified by Meta as a Technology Provider (WhatsApp Business API) and approved on iFood. Multi-tenant products with row-level access and audit trails."
+        "MiseOn runs on the official WhatsApp API (Meta) and is approved on iFood; Maldivas Tech's Meta Tech Provider accreditation is in progress. Multi-tenant products with row-level access and audit trails."
       ]
     ],
     "pmProducts": "Products I build and operate",
@@ -184,7 +184,7 @@ const copy = {
       [
         "2026 — today",
         "Product Owner and founder — Maldivas Tech",
-        "I design and build my own products (MiseOn and SelectSys Jobs) solo, with AI agents. Registered company, a signed contract with a Brazil–Japan recruitment agency, Meta Tech Provider, iFood approval and an Oracle certification in agentic AI."
+        "I design and build my own products (MiseOn and SelectSys Jobs) solo, with AI agents. Registered company, a signed contract with a Brazil–Japan recruitment agency, official WhatsApp API integration, iFood approval and an Oracle certification in agentic AI."
       ]
     ],
     "stackTag": "Education",

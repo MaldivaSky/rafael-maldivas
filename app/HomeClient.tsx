@@ -136,7 +136,7 @@ export default function HomeClient() {
                 </a>
                 <div className="trust-micro-pills">
                   <span>
-                    <ShieldCheck size={14} aria-hidden="true" /> Meta Tech Provider
+                    <ShieldCheck size={14} aria-hidden="true" /> WhatsApp API oficial (Meta)
                   </span>
                   <span>
                     <CheckCircle2 size={14} aria-hidden="true" /> iFood Homologado

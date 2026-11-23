@@ -23,13 +23,13 @@ export const badges: Badge[] = [
     id: "meta",
     icon: "/icons/meta.svg",
     platform: "Meta",
-    title: { pt: "Provedora de Tecnologia verificada", en: "Verified Tech Provider" },
+    title: { pt: "Provedora de Tecnologia (Tech Provider)", en: "Tech Provider" },
     detail: {
-      pt: "Empresa verificada por Meta como Provedora de Tecnologia, com aplicativo aprovado para WhatsApp Business API.",
-      en: "Company verified by Meta as a Technology Provider, with an approved WhatsApp Business API app.",
+      pt: "Credenciamento da Maldivas Tech como Provedora de Tecnologia da WhatsApp Business Platform em andamento, com o aplicativo Atol Connect. Os produtos já operam sobre a API oficial do WhatsApp.",
+      en: "Maldivas Tech's accreditation as a WhatsApp Business Platform Tech Provider is in progress, with the Atol Connect app. Our products already run on the official WhatsApp API.",
     },
-    status: "approved",
-    statusLabel: { pt: "Verificado", en: "Verified" },
+    status: "pending",
+    statusLabel: { pt: "Em credenciamento", en: "In progress" },
   },
   {
     id: "ifood",

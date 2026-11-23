@@ -84,7 +84,7 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
         { icon: Layers, title: "Multi-tenant", desc: "Gerencie mais de uma unidade com o mesmo login. Visão unificada ou por filial, você decide." },
       ],
       stats: [
-        { n: "Meta", label: "Tech Provider verificado" },
+        { n: "WhatsApp", label: "API oficial da Meta" },
         { n: "iFood", label: "integração homologada" },
         { n: "R$149,90", label: "por mês, por unidade" },
         { n: "30 dias", label: "teste grátis" },
@@ -108,7 +108,7 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
         { icon: Layers, title: "Multi-tenant", desc: "Manage more than one location with the same login. Unified view or by branch — your call." },
       ],
       stats: [
-        { n: "Meta", label: "verified Tech Provider" },
+        { n: "WhatsApp", label: "official Meta API" },
         { n: "iFood", label: "approved integration" },
         { n: "R$149.90", label: "per month, per location" },
         { n: "30 days", label: "free trial" },

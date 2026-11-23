@@ -131,7 +131,7 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
           h: "1. O serviço",
           p: [
             "A Atol Connect é uma plataforma de software que permite a empresas conectar seus números à WhatsApp Business Platform (Cloud API) da Meta para enviar e receber mensagens, gerenciar modelos, atender clientes e integrar sistemas por API e webhooks.",
-            "A Maldivas Tech atua como provedora de tecnologia (Tech Provider) da Meta. A Meta e o WhatsApp não são parte destes termos e não patrocinam nem endossam a Atol Connect.",
+            "A Atol Connect funciona sobre a API oficial da Meta; o credenciamento da Maldivas Tech como provedora de tecnologia (Tech Provider) da Meta está em andamento. A Meta e o WhatsApp não são parte destes termos e não patrocinam nem endossam a Atol Connect.",
           ],
         },
         {
@@ -334,7 +334,7 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
           h: "1. The service",
           p: [
             "Atol Connect is a software platform that lets businesses connect their numbers to Meta's WhatsApp Business Platform (Cloud API) to send and receive messages, manage templates, serve customers and integrate systems via API and webhooks.",
-            "Maldivas Tech acts as a Meta Tech Provider. Meta and WhatsApp are not parties to these terms and do not sponsor or endorse Atol Connect.",
+            "Atol Connect runs on Meta's official API; Maldivas Tech's accreditation as a Meta Tech Provider is in progress. Meta and WhatsApp are not parties to these terms and do not sponsor or endorse Atol Connect.",
           ],
         },
         {
