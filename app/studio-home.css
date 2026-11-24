@@ -33,7 +33,7 @@
 .studio-float>span{color:var(--studio-warm)}.studio-float small{display:block;font-size:11px;color:var(--fg-muted);font-family:var(--mono)}.studio-float>svg{margin-left:auto;color:var(--studio-warm)}
 
 /* Intent Router */
-.hero-intent-router{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line-strong);border-radius:18px;background:var(--bg-soft);overflow:hidden}
+.hero-intent-router{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line-strong);border-radius:18px;background:var(--bg-soft);overflow:hidden}
 .intent-route-card{display:flex;flex-direction:column;gap:8px;padding:24px;text-decoration:none;color:var(--fg);transition:background .2s ease}
 .intent-route-card+.intent-route-card{border-left:1px solid var(--line)}
 .intent-route-card:hover{background:var(--accent-glow)}

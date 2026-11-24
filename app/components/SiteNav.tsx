@@ -81,6 +81,14 @@ const produtosSub: SubItem[] = [
   { href: "/#produtos", pt: "Parceria de Hardware (Bravus Core)", en: "Hardware Partnership (Bravus Core)" },
 ];
 
+const whatsappSub: SubItem[] = [
+  { href: "/whatsapp-api", pt: "Atol Connect — API oficial do WhatsApp", en: "Atol Connect — official WhatsApp API" },
+  { href: "/whatsapp-api#nichos", pt: "Ideias por nicho e regras de negócio", en: "Niche ideas & business rules" },
+  { href: "/desenvolvedores", pt: "Desenvolvedores: REST, SDK e webhooks", en: "Developers: REST, SDK & webhooks" },
+  { href: "/whatsapp-api/restaurantes-delivery", pt: "Restaurantes e delivery", en: "Restaurants & delivery" },
+  { href: "/whatsapp-api/clinicas-consultorios", pt: "Clínicas e consultórios", en: "Clinics & practices" },
+];
+
 const cursosSub: SubItem[] = [
   { href: "/cursos", pt: "Catálogo de cursos", en: "Course catalog" },
   { href: "/trilha", pt: "Minha trilha & progresso", en: "My track & progress" },
@@ -91,6 +99,7 @@ const menu: MenuItem[] = [
   { href: "/servicos", pt: "Serviços", en: "Services", sub: servicesSub },
   { href: "/portfolio", pt: "Portfólio", en: "Portfolio", sub: portfolioSub },
   { href: "/produtos", pt: "Produtos", en: "Products", sub: produtosSub },
+  { href: "/whatsapp-api", pt: "WhatsApp API", en: "WhatsApp API", sub: whatsappSub },
   { href: "/cursos", pt: "Cursos", en: "Courses", sub: cursosSub },
   { href: "/ferramentas", pt: "Ferramentas", en: "Tools", groups: toolsGroups },
   { href: "/about", pt: "Sobre", en: "About" },

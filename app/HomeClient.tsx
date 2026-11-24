@@ -45,6 +45,13 @@ export default function HomeClient() {
   const intentRoutes = pt
     ? [
         {
+          code: "00 · WHATSAPP API OFICIAL",
+          title: "Atol Connect: entre com Google e teste 14 dias",
+          desc: "API oficial da Meta a partir de R$ 79, sem markup. Para empresas e software houses.",
+          href: localePath("/whatsapp-api", lang),
+          icon: MessageCircle,
+        },
+        {
           code: "01 · B2B SOB MEDIDA",
           title: "Sistemas internos, ERPs & automação",
           desc: "Para empresas que querem eliminar planilhas paralelas e integrar operação.",
@@ -67,6 +74,13 @@ export default function HomeClient() {
         },
       ]
     : [
+        {
+          code: "00 · OFFICIAL WHATSAPP API",
+          title: "Atol Connect: sign in with Google, 14-day trial",
+          desc: "Meta's official API from BRL 79, no markup. For businesses and software houses.",
+          href: localePath("/whatsapp-api", lang),
+          icon: MessageCircle,
+        },
         {
           code: "01 · CUSTOM B2B",
           title: "Internal systems, ERPs & automation",

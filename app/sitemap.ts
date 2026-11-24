@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { tools } from "./lib/tools";
 import { LOCALES, HTML_LANG, localeUrl } from "./lib/seo";
+import { NICHES } from "./lib/whatsapp-niches";
 import { productList } from "./lib/products";
 import { allCourseLessons, courseList } from "./lib/courses";
 
@@ -31,6 +32,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "portfolio", priority: 0.9, changeFrequency: "monthly" },
     { path: "ferramentas", priority: 0.8, changeFrequency: "monthly" },
     { path: "ferramentas/plano-digital", priority: 0.7, changeFrequency: "monthly" },
+    { path: "whatsapp-api", priority: 0.95, changeFrequency: "weekly" },
+    { path: "desenvolvedores", priority: 0.85, changeFrequency: "monthly" },
+    ...NICHES.map((n): Route => ({ path: `whatsapp-api/${n.slug}`, priority: 0.8, changeFrequency: "monthly" })),
     { path: "about", priority: 0.7, changeFrequency: "yearly" },
     { path: "privacidade", priority: 0.3, changeFrequency: "yearly" },
     { path: "termos", priority: 0.3, changeFrequency: "yearly" },

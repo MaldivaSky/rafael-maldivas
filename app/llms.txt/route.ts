@@ -97,6 +97,8 @@ export function GET() {
     "- Segurança: Row Level Security por organização, tokens da Meta cifrados (AES-256-GCM), webhooks assinados (HMAC), LGPD.",
     "- Status Meta: a Maldivas Tech está em processo de credenciamento como Tech Provider da Meta (ainda não concluído); a plataforma usa a API oficial da Meta.",
     `- Página do produto: ${SITE}/pt/produtos/atol-connect · ${SITE}/en/produtos/atol-connect`,
+    `- Hub, nichos e regras de negócio: ${SITE}/pt/whatsapp-api (restaurantes, varejo, clínicas, e-commerce, imobiliárias, educação, oficinas, contabilidade) · Desenvolvedores (cURL, Node, Python, PHP, C#): ${SITE}/pt/desenvolvedores`,
+    "- Cadastro: Entrar com Google ou e-mail em https://connect.maldivastech.dev/login?mode=signup",
     `- Calculadora gratuita de custo total: ${SITE}/pt/ferramentas/calculadora-custo-whatsapp-api`,
     `- Política de Privacidade: ${SITE}/pt/privacidade · Exclusão de dados: ${SITE}/pt/exclusao-de-dados`,
     "",
