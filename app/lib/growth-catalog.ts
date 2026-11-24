@@ -2,6 +2,40 @@ import type { Tool } from "./tools";
 
 export const growthTools: Tool[] = [
   {
+    slug: "calculadora-custo-whatsapp-api",
+    key: "whatsappcost",
+    group: "operacao",
+    category: "BusinessApplication",
+    copy: {
+      pt: {
+        title: "Calculadora de custo da API oficial do WhatsApp",
+        seoTitle: "Quanto custa a API oficial do WhatsApp? Calculadora | grátis",
+        h1: "Quanto custa a API oficial do WhatsApp Business em reais?",
+        description:
+          "Calcule o custo mensal total da WhatsApp Cloud API no Brasil: tarifas da Meta por mensagem (marketing, utilidade, autenticação, serviço) mais o plano da plataforma. Grátis.",
+        keywords: ["quanto custa API oficial do WhatsApp", "preço WhatsApp Business API", "tarifa Meta WhatsApp Brasil", "custo WhatsApp Cloud API", "calculadora WhatsApp API"],
+        faq: [
+          ["Quanto a Meta cobra por mensagem no Brasil?", "Na referência de novembro de 2026: marketing R$ 0,3217, utilidade e autenticação R$ 0,035 por mensagem entregue. Respostas de atendimento dentro da janela de 24h têm 1.000 grátis por número por mês, e o excedente segue a tarifa de utilidade. Confira sempre a tabela vigente da Meta."],
+          ["A plataforma cobra markup sobre as mensagens?", "Na Atol Connect, não: a tarifa da Meta é paga pelo cliente direto à Meta, pelo método de pagamento da própria conta do WhatsApp Business. A plataforma cobra apenas o plano mensal."],
+          ["Esta calculadora inclui impostos?", "Não. É uma estimativa antes de impostos, com base nas quantidades informadas. O valor real depende do volume entregue e da tabela da Meta no mês."],
+        ],
+      },
+      en: {
+        title: "Official WhatsApp API cost calculator",
+        seoTitle: "How much does the official WhatsApp API cost? Calculator | free",
+        h1: "How much does the official WhatsApp Business API cost in reais?",
+        description:
+          "Estimate the total monthly cost of the WhatsApp Cloud API in Brazil: Meta per-message fees (marketing, utility, authentication, service) plus the platform plan. Free.",
+        keywords: ["WhatsApp Business API cost Brazil", "WhatsApp Cloud API pricing", "Meta WhatsApp per-message fees Brazil", "WhatsApp API cost calculator"],
+        faq: [
+          ["How much does Meta charge per message in Brazil?", "Per the November 2026 reference: marketing BRL 0.3217, utility and authentication BRL 0.035 per delivered message. Service replies inside the 24-hour window include 1,000 free per number per month, with overage at the utility rate. Always check Meta's current rate card."],
+          ["Does the platform mark up messages?", "Not at Atol Connect: Meta's fee is paid by the customer directly to Meta, through the payment method on the customer's own WhatsApp Business Account. The platform only charges its monthly plan."],
+          ["Does this calculator include taxes?", "No. It is a pre-tax estimate based on the volumes you enter. Real cost depends on delivered volume and Meta's rate card for the month."],
+        ],
+      },
+    },
+  },
+  {
     slug: "gerador-link-whatsapp", key: "whatsapp", group: "site", category: "BusinessApplication",
     copy: {
       pt: { title: "Gerador de link do WhatsApp", seoTitle: "Gerador de link do WhatsApp com mensagem | grátis", h1: "Seu próximo cliente, a um clique.", description: "Crie um link do WhatsApp com mensagem personalizada para sua bio, site ou campanha. Copie e compartilhe. Grátis, sem cadastro.", keywords: ["gerador link whatsapp", "link whatsapp mensagem", "link para bio"], faq: [["A ferramenta envia mensagens?", "Não. Ela cria um link com uma mensagem pronta. A pessoa abre o WhatsApp e confirma o envio."], ["Preciso incluir o código do país?", "Sim. Informe o número completo com código do país e DDD. Para o Brasil, comece com 55. A ferramenta verifica o formato, mas não se o número possui WhatsApp."]] },

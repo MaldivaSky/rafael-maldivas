@@ -1,9 +1,10 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Check, Copy, MessageCircle, Link2, Timer, ArrowUpRight } from "lucide-react";
+import { Check, Copy, MessageCircle, Link2, Timer, ArrowUpRight, Calculator } from "lucide-react";
 import { useLang } from "../lib/i18n";
 import { campaignLink, savedTime, whatsappLink } from "../lib/growth-tools";
+import { META_RATES_BRL, monthlyCost } from "../lib/whatsapp-cost";
 import { WHATSAPP } from "../lib/site";
 
 function CopyResult({ value }: { value: string }) {
@@ -86,5 +87,36 @@ export function AutomationTool() {
     <div aria-live="polite" aria-atomic="true">{result ? <div className="growth-metrics"><div><span>{pt ? "Tempo liberado / mês" : "Time freed / month"}</span><strong>{format(result.saved)} <small>h</small></strong></div><div><span>{pt ? "Hoje / mês" : "Today / month"}</span><b>{format(result.monthly)} h</b></div><div><span>{pt ? "Após automação / mês" : "After automation / month"}</span><b>{format(result.remaining)} h</b></div><div><span>{pt ? "Em 12 meses" : "Over 12 months"}</span><b>{format(result.yearly)} h</b></div></div> : <p>{pt ? "Use valores positivos e de 1 a 31 dias por mês." : "Use positive values and 1 to 31 days per month."}</p>}</div>
     <p className="field-hint">{pt ? "Estimativa, não promessa de resultado. Cálculo: minutos × execuções × dias ÷ 60 × redução. Não inclui implantação, manutenção ou revisão humana." : "An estimate, not a guaranteed outcome. Formula: minutes × tasks × days ÷ 60 × reduction. Excludes implementation, maintenance and human review."}</p>
     {result && <a className="btn btn-primary" href={`${WHATSAPP}?text=${encodeURIComponent(summary)}`} target="_blank" rel="noopener noreferrer" data-analytics="contact_click"><Check size={17}/>{pt ? "Conversar sobre esta automação" : "Discuss this automation"}</a>}
+  </div>;
+}
+
+export function WhatsAppCostTool() {
+  const { lang } = useLang(); const pt = lang === "pt"; const id = useId();
+  const [v, setV] = useState({ utility: "2000", authentication: "0", marketing: "300", service: "800", numbers: "1", users: "3" });
+  const set = (k: keyof typeof v) => (e: { target: { value: string } }) => setV((s) => ({ ...s, [k]: e.target.value }));
+  const r = monthlyCost({ utility: Number(v.utility), authentication: Number(v.authentication), marketing: Number(v.marketing), service: Number(v.service), numbers: Number(v.numbers), users: Number(v.users) });
+  const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const fields: [keyof typeof v, string, string][] = [
+    ["utility", pt ? "Mensagens de utilidade / mês (pedido, cobrança, aviso)" : "Utility messages / month (orders, billing, alerts)", "utility"],
+    ["marketing", pt ? "Mensagens de marketing / mês" : "Marketing messages / month", "marketing"],
+    ["authentication", pt ? "Mensagens de autenticação / mês (códigos)" : "Authentication messages / month (codes)", "authentication"],
+    ["service", pt ? "Respostas de atendimento / mês (janela de 24h)" : "Service replies / month (24h window)", "service"],
+    ["numbers", pt ? "Números de WhatsApp" : "WhatsApp numbers", "numbers"],
+    ["users", pt ? "Atendentes (usuários)" : "Agents (users)", "users"],
+  ];
+  return <div className="growth-tool">
+    <div className="growth-tool-icon"><Calculator size={27} /></div>
+    <h2>{pt ? "Quanto custa, de verdade, o WhatsApp oficial?" : "What does official WhatsApp really cost?"}</h2>
+    <p>{pt ? "Some a tarifa da Meta (paga direto à Meta) ao plano da plataforma e veja o custo mensal total em reais." : "Add Meta's per-message fees (paid directly to Meta) to the platform plan and see the total monthly cost in reais."}</p>
+    <div className="field-row">{fields.map(([k, label]) => <div className="field" key={k}><label htmlFor={`${id}-${k}`}>{label}</label><input id={`${id}-${k}`} type="number" min="0" step="1" inputMode="numeric" value={v[k]} onChange={set(k)} /></div>)}</div>
+    <div aria-live="polite" aria-atomic="true">
+      <div className="growth-metrics">
+        <div><span>{pt ? "Tarifas da Meta / mês" : "Meta fees / month"}</span><strong>{brl(r.metaTotal)}</strong></div>
+        <div><span>{pt ? "Plataforma Atol Connect / mês" : "Atol Connect platform / month"}</span><b>{r.plan ? `${r.plan.name} · ${brl(r.plan.priceBRL)}` : (pt ? "Sob consulta (acima de 5 números ou 25 usuários)" : "Custom quote (above 5 numbers or 25 users)")}</b></div>
+        <div><span>{pt ? "Total estimado / mês" : "Estimated total / month"}</span><b>{r.total === null ? (pt ? "Sob consulta" : "Custom quote") : brl(r.total)}</b></div>
+      </div>
+    </div>
+    <p className="field-hint">{pt ? `Tarifas Meta Brasil (referência ${META_RATES_BRL.updated}): marketing R$ 0,3217, utilidade e autenticação R$ 0,035 por mensagem entregue; 1.000 respostas de serviço grátis por número, excedente na tarifa de utilidade. Estimativa sem impostos; confirme os valores vigentes na Meta antes de contratar.` : `Meta Brazil rates (reference ${META_RATES_BRL.updated}): marketing BRL 0.3217, utility and authentication BRL 0.035 per delivered message; 1,000 free service replies per number, overage at the utility rate. Estimate excludes taxes; confirm current rates with Meta before buying.`}</p>
+    <a className="btn btn-primary" href="https://connect.maldivastech.dev/login?mode=signup" target="_blank" rel="noopener noreferrer" data-analytics="contact_click"><Check size={17} />{pt ? "Testar a Atol Connect por 14 dias" : "Try Atol Connect free for 14 days"}</a>
   </div>;
 }

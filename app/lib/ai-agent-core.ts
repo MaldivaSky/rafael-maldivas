@@ -323,6 +323,31 @@ function buildFallbackConcierge(
   const q = input.question.toLowerCase();
   const pt = input.lang === "pt";
 
+  if (/atol|api (oficial )?(do )?whatsapp|whatsapp (business )?(api|cloud)|cloud api|embedded signup|tech provider/.test(q)) {
+    return {
+      answer: pt
+        ? "O Atol Connect é a plataforma multi-tenant da Maldivas Tech sobre a API oficial do WhatsApp Business (Cloud API da Meta). A empresa conecta o próprio número pelo Embedded Signup, atende em equipe numa caixa de entrada em tempo real, gerencia modelos e integra ERP, PDV ou loja virtual por REST API e webhooks assinados. A Maldivas Tech está em processo de credenciamento como Tech Provider da Meta."
+        : "Atol Connect is Maldivas Tech's multi-tenant platform on the official WhatsApp Business API (Meta's Cloud API). Businesses connect their own number through Embedded Signup, serve customers from a real-time team inbox, manage templates and integrate ERP, POS or storefronts through a REST API and signed webhooks. Maldivas Tech's Meta Tech Provider accreditation is in progress.",
+      highlights: pt
+        ? [
+            "Planos a partir de R$ 79/mês com 14 dias de teste grátis; tarifas de mensagem pagas direto à Meta",
+            "Plano Parceiro para software houses: R$ 59 por número (mínimo 5), com API OpenAPI 3.1",
+            "Isolamento por organização (RLS), tokens cifrados e webhooks assinados",
+          ]
+        : [
+            "Plans from BRL 79/month with a 14-day free trial; message fees are paid directly to Meta",
+            "Partner plan for software houses: BRL 59 per number (minimum 5), with an OpenAPI 3.1 spec",
+            "Per-organization isolation (RLS), encrypted tokens and signed webhooks",
+          ],
+      recommendedRoute: `/${input.lang}/produtos/atol-connect`,
+      recommendedRouteLabel: pt ? "Conhecer o Atol Connect" : "Explore Atol Connect",
+      whatsappPrefill: pt
+        ? "Olá Rafael! Vi o Atol Connect no site e quero integrar a API oficial do WhatsApp no meu sistema."
+        : "Hi Rafael! I saw Atol Connect on your site and want to add the official WhatsApp API to my system.",
+      source: "fallback",
+    };
+  }
+
   if (/miseon|restaurante|cozinha|bravus|totem|gertec|ifood|food/.test(q)) {
     return {
       answer: pt
@@ -627,7 +652,7 @@ export async function executePortfolioConcierge(
     "Answer ONLY using verified facts from the provided Maldivas Tech Knowledge JSON. Never invent prices, clients, certifications, or metrics.",
     `Respond in ${lang === "pt" ? "Brazilian Portuguese (pt-BR)" : "English"}. Keep it sharp, executive, and helpful for B2B buyers, CTOs, or students.`,
     "Return valid JSON strictly matching schema:",
-    '{"answer":"2-4 concise sentences","highlights":["3 short verifiable bullet facts"],"recommendedRoute":"/pt/produtos/miseon or /pt/portfolio or /pt/servicos or /pt/cursos/construa-seu-marketplace","recommendedRouteLabel":"short button label","whatsappPrefill":"short ready-to-send WhatsApp message"}',
+    '{"answer":"2-4 concise sentences","highlights":["3 short verifiable bullet facts"],"recommendedRoute":"/pt/produtos/miseon or /pt/produtos/atol-connect or /pt/portfolio or /pt/servicos or /pt/cursos/construa-seu-marketplace","recommendedRouteLabel":"short button label","whatsappPrefill":"short ready-to-send WhatsApp message"}',
   ].join("\n");
 
   const userPrompt = JSON.stringify({

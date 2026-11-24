@@ -95,6 +95,15 @@ describe("AI Agent Engine Core (3 Fronts + Security)", () => {
     assert.ok(concierge.recommendedRoute.includes("miseon"));
     assert.equal(concierge.highlights.length, 3);
 
+    const atol = await executePortfolioConcierge(
+      { question: "Vocês têm API oficial do WhatsApp para integrar no meu ERP?", lang: "pt" },
+      MOCK_CTX,
+      nullCaller,
+    );
+    assert.equal(atol.source, "fallback");
+    assert.ok(atol.recommendedRoute.includes("atol-connect"));
+    assert.ok(atol.answer.includes("em processo de credenciamento"));
+
     const diagnostic = await executeDiagnosticArchitect(
       {
         business: "Rede de hamburguerias",

@@ -155,7 +155,12 @@ const nextConfig = {
         destination: "/pt/produtos/selectsys-jobs",
         permanent: true,
       },
+      { source: "/atol-connect", destination: "/pt/produtos/atol-connect", permanent: true },
       { source: "/produtos", destination: "/pt/produtos", permanent: true },
+      // documentos legais sem prefixo de idioma → canônico /pt/*
+      { source: "/privacidade", destination: "/pt/privacidade", permanent: true },
+      { source: "/termos", destination: "/pt/termos", permanent: true },
+      { source: "/exclusao-de-dados", destination: "/pt/exclusao-de-dados", permanent: true },
     ];
   },
 };

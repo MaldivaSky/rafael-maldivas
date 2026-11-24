@@ -89,6 +89,7 @@ export const maldivasTechKnowledgeGraph = {
         "https://www.instagram.com/miseon_system_food_service/",
         "https://miseon.app.br",
         "https://mercadinhosys.com.br",
+        "https://connect.maldivastech.dev",
       ],
     },
     {
@@ -138,6 +139,30 @@ export const maldivasTechKnowledgeGraph = {
       url: "https://selectsys-jobs.vercel.app",
       applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
+      author: {
+        "@id": ORG_ID,
+      },
+      provider: {
+        "@id": ORG_ID,
+      },
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${SITE}/#product-atol-connect`,
+      name: "Atol Connect",
+      description:
+        "Plataforma multi-tenant sobre a WhatsApp Business Platform (Cloud API da Meta): Embedded Signup, caixa de entrada em equipe, modelos, REST API e webhooks assinados.",
+      url: "https://connect.maldivastech.dev",
+      applicationCategory: "BusinessApplication",
+      applicationSubCategory: "WhatsAppBusinessPlatformCloudAPI",
+      operatingSystem: "Web",
+      offers: {
+        "@type": "AggregateOffer",
+        priceCurrency: "BRL",
+        lowPrice: "79.00",
+        highPrice: "499.00",
+        offerCount: 3,
+      },
       author: {
         "@id": ORG_ID,
       },

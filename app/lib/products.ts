@@ -4,7 +4,7 @@
 
 import type { Lang } from "./seo";
 
-export type ProductSlug = "miseon" | "mercadinhosys" | "selectsys-jobs";
+export type ProductSlug = "miseon" | "mercadinhosys" | "selectsys-jobs" | "atol-connect";
 
 export type ProductCopy = {
   /** use no <title> — frase de busca real do mercado daquele idioma */
@@ -204,6 +204,54 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
           "recruitment software",
           "candidate screening software",
           "cross-border hiring software",
+        ],
+      },
+    },
+  },
+
+  "atol-connect": {
+    slug: "atol-connect",
+    name: "Atol Connect",
+    icon: "/logo-atol-connect.png",
+    appUrl: "https://connect.maldivastech.dev",
+    applicationCategory: "BusinessApplication",
+    applicationSubCategory: "WhatsAppBusinessPlatformCloudAPI",
+    priceBRL: "79.00",
+    priceCurrency: "BRL",
+    hasFreeTrial: true,
+    trialDays: 14,
+    stack: ["Next.js", "Supabase PostgreSQL", "Row Level Security", "WhatsApp Cloud API", "Embedded Signup", "OpenAPI 3.1", "Webhooks HMAC"],
+    copy: {
+      pt: {
+        metaTitle: "API Oficial do WhatsApp Business: Atol Connect (Cloud API)",
+        metaDescription:
+          "Atol Connect: plataforma multi-tenant sobre a API oficial do WhatsApp (Cloud API da Meta). Conecte seu número em minutos, atenda em equipe e integre ERP ou PDV por REST e webhooks.",
+        h1: "API oficial do WhatsApp Business, sem taxa extra por mensagem",
+        tagline:
+          "Plataforma multi-tenant sobre a WhatsApp Cloud API da Meta: Embedded Signup, caixa de entrada em equipe, modelos, REST API e webhooks assinados. Planos a partir de R$ 79/mês.",
+        keywords: [
+          "API oficial do WhatsApp",
+          "WhatsApp Business API Brasil",
+          "WhatsApp Cloud API",
+          "integrar WhatsApp com ERP",
+          "API WhatsApp para software house",
+          "caixa de entrada WhatsApp em equipe",
+        ],
+      },
+      en: {
+        metaTitle: "Official WhatsApp Business API Platform: Atol Connect (Cloud API)",
+        metaDescription:
+          "Atol Connect is a multi-tenant platform on Meta's official WhatsApp Cloud API: Embedded Signup onboarding, team inbox, templates, REST API and signed webhooks for Brazilian businesses.",
+        h1: "The official WhatsApp Business API with no per-message markup",
+        tagline:
+          "Multi-tenant platform on Meta's WhatsApp Cloud API: Embedded Signup, shared team inbox, templates, REST API and signed webhooks. Plans from BRL 79/month.",
+        keywords: [
+          "official WhatsApp Business API",
+          "WhatsApp Cloud API platform",
+          "WhatsApp Embedded Signup",
+          "WhatsApp API for ERP integration",
+          "multi-tenant WhatsApp API",
+          "WhatsApp API Brazil",
         ],
       },
     },

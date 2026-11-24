@@ -26,9 +26,13 @@ const LEGACY_PATHS = [
   "/sobre",
   "/miseon",
   "/selectsys-jobs",
+  "/atol-connect",
   "/produtos",
   "/about",
   "/painel",
+  "/privacidade",
+  "/termos",
+  "/exclusao-de-dados",
 ];
 
 export function middleware(req: NextRequest) {

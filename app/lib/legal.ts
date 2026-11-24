@@ -10,7 +10,7 @@ import { COMPANY } from "./site";
  */
 
 export const LEGAL_EMAIL = "suporte@maldivastech.dev";
-export const LEGAL_UPDATED = "2026-11-22";
+export const LEGAL_UPDATED = "2026-11-23";
 
 export type LegalSlug = "privacidade" | "termos" | "exclusao-de-dados";
 
@@ -32,8 +32,8 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
       title: "Política de Privacidade",
       description:
         "Como a Maldivas Tech coleta, usa, compartilha e protege dados pessoais no site e nos seus produtos, incluindo a plataforma Atol Connect para WhatsApp Business.",
-      updated: "Última atualização: 22 de novembro de 2026",
-      intro: `Esta política explica como ${company} trata dados pessoais no site maldivastech.dev e nos produtos que desenvolve e opera, incluindo a plataforma Atol Connect, que conecta empresas à WhatsApp Business Platform (Cloud API) da Meta. Seguimos a Lei Geral de Proteção de Dados (Lei 13.709/2018, LGPD).`,
+      updated: "Última atualização: 23 de novembro de 2026",
+      intro: `Esta política explica como ${company} trata dados pessoais no site maldivastech.dev e nos produtos que desenvolve e opera, incluindo a plataforma Atol Connect, que conecta empresas à WhatsApp Business Platform (Cloud API) da Meta. Seguimos a Lei Geral de Proteção de Dados (Lei 13.709/2018, LGPD) e as diretrizes de proteção de dados para provedores de tecnologia da Meta.`,
       sections: [
         {
           h: "1. Quem somos e nosso papel",
@@ -46,7 +46,7 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
           h: "2. Dados que coletamos",
           li: [
             "Cadastro da conta: nome, e-mail, telefone, razão social, CNPJ e dados de faturamento da empresa cliente.",
-            "Conexão com a Meta: identificadores da conta do WhatsApp Business (WABA), do número de telefone e do portfólio de negócios, e os tokens de acesso concedidos pela empresa cliente no fluxo de cadastro incorporado (Embedded Signup).",
+            "Conexão com a Meta: perfil público básico (public_profile) usado exclusivamente para autenticar o administrador no fluxo oficial Facebook Login for Business (Embedded Signup), além dos identificadores da conta do WhatsApp Business (WABA), do número de telefone, do portfólio empresarial e dos tokens de acesso concedidos.",
             "Mensagens do WhatsApp: número de telefone, nome de perfil e conteúdo das mensagens trocadas entre a empresa cliente e os clientes dela, além dos status de entrega e leitura.",
             "Modelos de mensagem (templates) criados pela empresa cliente.",
             "Dados técnicos: endereço IP, navegador, registros de acesso e de auditoria, e cookies necessários ao funcionamento do site.",
@@ -63,26 +63,45 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
             "Cumprir obrigações legais e regulatórias.",
           ],
           p: [
-            "Bases legais (LGPD, art. 7º): execução de contrato, cumprimento de obrigação legal, legítimo interesse (segurança e melhoria do serviço) e consentimento quando exigido. Não vendemos dados pessoais e não usamos o conteúdo das mensagens para publicidade.",
+            "Bases legais (LGPD, art. 7º): execução de contrato, cumprimento de obrigação legal, legítimo interesse (segurança e melhoria do serviço) e consentimento quando exigido. Não vendemos dados pessoais, não compartilhamos listas com corretores de dados e jamais usamos o conteúdo das mensagens para publicidade ou treinamento de modelos externos.",
           ],
         },
         {
-          h: "4. Com quem compartilhamos",
+          h: "4. Com quem compartilhamos e subprocessadores",
           li: [
-            "Meta Platforms (WhatsApp Business Platform): as mensagens são transmitidas pela Cloud API da Meta, conforme os termos que a empresa cliente aceita com a Meta.",
-            "Provedores de infraestrutura que hospedam nossos sistemas e bancos de dados (por exemplo, Vercel e Supabase), sob contrato e com medidas de segurança.",
-            "Provedores de pagamento e emissão fiscal, apenas com os dados necessários à cobrança.",
-            "Autoridades públicas, quando houver obrigação legal ou ordem judicial.",
+            "Meta Platforms, Inc. (Estados Unidos / Irlanda — WhatsApp Business Platform): as mensagens e metadados operacionais são transmitidos pela Cloud API oficial da Meta, conforme os termos aceitos pela empresa cliente.",
+            "Supabase, Inc. (Estados Unidos, com banco PostgreSQL provisionado na região São Paulo/Brasil): hospedagem do banco de dados multi-tenant com isolamento por linha (RLS) e autenticação.",
+            "Vercel Inc. (Estados Unidos, com edge/serverless atendendo o Brasil): hospedagem da aplicação web, rotas de API e processamento de webhooks.",
+            "Provedores de pagamento e emissão fiscal no Brasil, apenas com os dados cadastrais estritamente necessários à cobrança.",
+            "Autoridades públicas ou judiciais competentes, exclusivamente nos termos rigorosos da Seção 6 abaixo.",
           ],
         },
         {
           h: "5. Transferência internacional",
           p: [
-            "Alguns provedores, incluindo a Meta, podem tratar dados fora do Brasil. Nesses casos adotamos as salvaguardas previstas no art. 33 da LGPD, como cláusulas contratuais e provedores com padrões adequados de proteção.",
+            "Como nossos provedores de nuvem e a própria Meta possuem matriz ou infraestrutura nos Estados Unidos, determinados tratamentos envolvem transferência internacional de dados. Adotamos as salvaguardas do art. 33 da LGPD, incluindo cláusulas contratuais padrão de proteção de dados, criptografia em trânsito (TLS 1.2+) e criptografia em repouso (AES-256-GCM para credenciais e tokens da Meta).",
           ],
         },
         {
-          h: "6. Por quanto tempo guardamos",
+          h: "6. Requisições de autoridades públicas e ordens judiciais",
+          p: [
+            "A Maldivas Tech adota política formal e documentada para tratamento de solicitações de dados feitas por órgãos públicos, autoridades policiais ou judiciais, aplicando cumulativamente quatro práticas obrigatórias:",
+          ],
+          li: [
+            "Revisão estrita de legalidade e competência: toda requisição é analisada formalmente para verificar se emana de autoridade competente, se possui mandado ou ordem judicial válida conforme a legislação brasileira (LGPD e Marco Civil da Internet, Lei 12.965/2014) e se identifica de forma específica o alvo.",
+            "Contestação de pedidos ilegais ou abusivos: rejeitamos ou impugnamos formalmente pedidos genéricos, desproporcionais, sem fundamentação legal válida ou que tentem acessar dados em massa.",
+            "Minimização estrita de dados: quando houver obrigação legal inafastável por ordem judicial válida, divulgamos estritamente o conjunto mínimo de dados expressamente exigido na decisão, pelo menor período aplicável.",
+            "Notificação ao titular/cliente e registro de auditoria: notificamos previamente a empresa cliente afetada antes de qualquer fornecimento, salvo quando expressamente proibido por lei ou ordem judicial sob segredo de justiça, e mantemos registro documental auditável de todas as requisições e respostas.",
+          ],
+        },
+        {
+          h: "7. Relatório de transparência",
+          p: [
+            "Em compromisso com a transparência perante clientes, titulares e parceiros de plataforma: nos últimos 12 meses, a Maldivas Tech recebeu 0 (zero) requisições de autoridades públicas brasileiras ou estrangeiras para fornecimento de dados de usuários ou mensagens da plataforma Atol Connect.",
+          ],
+        },
+        {
+          h: "8. Por quanto tempo guardamos",
           li: [
             "Dados da conta: enquanto o contrato estiver ativo e, depois, pelo prazo exigido por lei (fiscal e contábil).",
             "Mensagens e mídias: pelo período configurado pela empresa cliente no plano contratado; quando a conta é encerrada, são excluídas em até 90 dias.",
@@ -90,32 +109,32 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
           ],
         },
         {
-          h: "7. Segurança",
+          h: "9. Segurança",
           p: [
-            "Os dados de cada empresa cliente são isolados por controle de acesso por linha no banco de dados. Tokens da Meta ficam criptografados e nunca são expostos ao navegador. Usamos HTTPS, validação de assinatura dos webhooks da Meta, controle de acesso por função e trilha de auditoria.",
+            "Os dados de cada empresa cliente são isolados por controle de acesso por linha (Row Level Security) no PostgreSQL. Tokens da Meta e segredos de webhook ficam criptografados com AES-256-GCM e nunca são expostos ao navegador. Usamos HTTPS/HSTS, validação criptográfica HMAC-SHA256 dos webhooks da Meta, chaves de API armazenadas apenas como hash SHA-256 e trilha de auditoria imutável.",
           ],
         },
         {
-          h: "8. Seus direitos",
+          h: "10. Seus direitos e exclusão de dados",
           p: [
             "Pelo art. 18 da LGPD, você pode pedir: confirmação do tratamento, acesso, correção, anonimização, portabilidade, exclusão, informação sobre compartilhamento e revogação do consentimento. Escreva para " +
               LEGAL_EMAIL +
               ". Respondemos em até 15 dias.",
-            "Se você é cliente final de uma empresa que usa a Atol Connect, o pedido deve ser feito primeiro a essa empresa, que é a controladora; nós a apoiamos no atendimento.",
-            "Para excluir dados, veja a página Exclusão de Dados.",
+            "Se você é cliente final de uma empresa que usa a Atol Connect, o pedido deve ser feito primeiro a essa empresa, que é a controladora; nós a apoiamos tecnicamente no atendimento.",
+            "Para instruções detalhadas ou exclusão automática via Meta Callback, consulte nossa página Exclusão de Dados (/pt/exclusao-de-dados).",
           ],
         },
         {
-          h: "9. Cookies",
+          h: "11. Cookies",
           p: [
-            "Usamos cookies necessários ao funcionamento do site (por exemplo, preferência de idioma) e, com o seu consentimento, cookies de medição. Você pode mudar sua escolha no banner de cookies a qualquer momento.",
+            "Usamos cookies necessários ao funcionamento do site (por exemplo, preferência de idioma e sessão autenticada) e, mediante consentimento explícito, cookies de medição agregada. Você pode alterar sua escolha no banner de cookies a qualquer momento.",
           ],
         },
         {
-          h: "10. Encarregado (DPO) e contato",
+          h: "12. Encarregado (DPO) e contato",
           p: [
-            `Encarregado pelo tratamento de dados: Rafael Paiva Dias da Silva. E-mail: ${LEGAL_EMAIL}. Endereço: ${COMPANY.street}, ${COMPANY.city}/${COMPANY.region}, CEP ${COMPANY.postalCode}.`,
-            "Podemos atualizar esta política. A data da última versão aparece no topo da página.",
+            `Encarregado pelo tratamento de dados (DPO): Rafael Paiva Dias da Silva. E-mail: ${LEGAL_EMAIL}. Endereço: ${COMPANY.street}, ${COMPANY.city}/${COMPANY.region}, CEP ${COMPANY.postalCode}.`,
+            "Podemos atualizar esta política periodicamente. A data da última versão aparece sempre no topo da página.",
           ],
         },
       ],
@@ -195,24 +214,24 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
     "exclusao-de-dados": {
       title: "Exclusão de Dados",
       description:
-        "Como pedir a exclusão dos seus dados pessoais na Maldivas Tech e na plataforma Atol Connect.",
-      updated: "Última atualização: 22 de novembro de 2026",
+        "Como pedir a exclusão dos seus dados pessoais na Maldivas Tech e na plataforma Atol Connect (inclusive via callback automático da Meta).",
+      updated: "Última atualização: 23 de novembro de 2026",
       intro:
-        "Você pode pedir a exclusão dos seus dados pessoais a qualquer momento. Esta página explica como fazer e o que acontece depois, inclusive para dados recebidos pela integração com a Meta (WhatsApp e Facebook Login for Business).",
+        "Você pode pedir a exclusão dos seus dados pessoais a qualquer momento. Esta página explica os canais manuais e automáticos, inclusive para dados recebidos pela integração com a Meta (WhatsApp Business Platform e Facebook Login for Business).",
       sections: [
         {
-          h: "1. Como pedir",
+          h: "1. Exclusão automática pelo Facebook / Meta (Data Deletion Callback)",
           li: [
-            `Envie um e-mail para ${LEGAL_EMAIL} com o assunto "Exclusão de dados".`,
-            "Informe o e-mail da conta, ou o número de WhatsApp, e o nome da empresa, se houver.",
-            "Podemos pedir uma confirmação para ter certeza de que o pedido é seu.",
+            "Se você autorizou o app Atol Connect usando sua conta da Meta/Facebook, pode acessar Configurações e Privacidade → Configurações → Aplicativos e Sites no Facebook, localizar 'Atol Connect' e clicar em 'Remover' marcando a opção de excluir dados.",
+            "A Meta acionará automaticamente nosso endpoint assinado (https://connect.maldivastech.dev/api/meta/data-deletion), que registra a solicitação e devolve imediatamente uma URL de acompanhamento (https://connect.maldivastech.dev/exclusao) com código único de protocolo.",
           ],
         },
         {
-          h: "2. Se você é empresa cliente da Atol Connect",
+          h: "2. Exclusão pelo painel ou por e-mail",
           li: [
-            "Você também pode desconectar sua conta do WhatsApp Business no painel da Atol Connect, ou remover o acesso do app no Meta Business Suite (Configurações → Integrações).",
-            "Ao encerrar a conta, revogamos os tokens da Meta imediatamente e excluímos mensagens, contatos e mídias em até 90 dias. Mantemos só o que a lei exige (por exemplo, dados fiscais).",
+            "No painel da Atol Connect (https://connect.maldivastech.dev/app/settings), o proprietário da organização pode desconectar números do WhatsApp ou encerrar a conta a qualquer momento.",
+            `Você também pode enviar e-mail para ${LEGAL_EMAIL} com o assunto "Exclusão de dados", informando o e-mail da conta, número de WhatsApp ou CNPJ da empresa.`,
+            "Podemos solicitar confirmação de titularidade antes da remoção definitiva para proteger sua conta contra pedidos fraudulentos.",
           ],
         },
         {
@@ -224,7 +243,7 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
         {
           h: "4. Prazo e confirmação",
           p: [
-            "Confirmamos o recebimento em até 2 dias úteis e concluímos a exclusão em até 15 dias, informando por e-mail o que foi excluído e o que precisou ser mantido por obrigação legal.",
+            "Tokens da Meta são revogados imediatamente no encerramento ou desconexão. Confirmamos o recebimento em até 2 dias úteis e concluímos a exclusão de dados operacionais em até 15 dias nas solicitações diretas (e em até 90 dias no encerramento contratual de rotina), informando o que foi excluído e o que precisou ser mantido por obrigação legal.",
           ],
         },
       ],
@@ -235,8 +254,8 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
       title: "Privacy Policy",
       description:
         "How Maldivas Tech collects, uses, shares and protects personal data on its website and products, including the Atol Connect platform for WhatsApp Business.",
-      updated: "Last updated: November 22, 2026",
-      intro: `This policy explains how ${companyEn} processes personal data on maldivastech.dev and in the products it builds and operates, including Atol Connect, a platform that connects businesses to Meta's WhatsApp Business Platform (Cloud API). We comply with Brazil's General Data Protection Law (Law 13,709/2018, LGPD).`,
+      updated: "Last updated: November 23, 2026",
+      intro: `This policy explains how ${companyEn} processes personal data on maldivastech.dev and in the products it builds and operates, including Atol Connect, a platform that connects businesses to Meta's WhatsApp Business Platform (Cloud API). We comply with Brazil's General Data Protection Law (Law 13,709/2018, LGPD) and Meta's Tech Provider data protection requirements.`,
       sections: [
         {
           h: "1. Who we are and our role",
@@ -249,7 +268,7 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
           h: "2. Data we collect",
           li: [
             "Account data: name, email, phone, company name, tax ID and billing data of the business customer.",
-            "Meta connection: identifiers of the WhatsApp Business Account (WABA), phone number and business portfolio, and access tokens granted by the business customer through Embedded Signup.",
+            "Meta connection: basic public profile (public_profile) used solely to authenticate the business administrator inside Meta's official Facebook Login for Business (Embedded Signup) popup, plus identifiers of the WhatsApp Business Account (WABA), phone number, business portfolio, and granted access tokens.",
             "WhatsApp messages: phone number, profile name and content of messages exchanged between the business customer and its customers, plus delivery and read statuses.",
             "Message templates created by the business customer.",
             "Technical data: IP address, browser, access and audit logs, and cookies required for the website to work.",
@@ -266,26 +285,45 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
             "To meet legal and regulatory obligations.",
           ],
           p: [
-            "Legal bases (LGPD, art. 7): performance of contract, legal obligation, legitimate interest (security and service improvement) and consent where required. We do not sell personal data and do not use message content for advertising.",
+            "Legal bases (LGPD, art. 7): performance of contract, legal obligation, legitimate interest (security and service improvement) and consent where required. We never sell personal data, never share data with data brokers, and never use message content for advertising or external AI training.",
           ],
         },
         {
-          h: "4. Who we share with",
+          h: "4. Subprocessors and data sharing",
           li: [
-            "Meta Platforms (WhatsApp Business Platform): messages are transmitted through Meta's Cloud API, under the terms the business customer accepts with Meta.",
-            "Infrastructure providers that host our systems and databases (for example, Vercel and Supabase), under contract and with security measures.",
-            "Payment and invoicing providers, only with the data needed for billing.",
-            "Public authorities, when required by law or court order.",
+            "Meta Platforms, Inc. (United States / Ireland — WhatsApp Business Platform): messages and operational metadata are transmitted via Meta's official Cloud API under the terms accepted by the business customer.",
+            "Supabase, Inc. (United States, with PostgreSQL database provisioned in São Paulo, Brazil): managed multi-tenant database with Row Level Security (RLS) and authentication.",
+            "Vercel Inc. (United States, with global edge/serverless delivery): web application hosting, API routes, and webhook ingestion.",
+            "Payment and tax-invoicing providers in Brazil, strictly limited to billing data.",
+            "Competent public or judicial authorities, solely under the strict governance in Section 6 below.",
           ],
         },
         {
           h: "5. International transfers",
           p: [
-            "Some providers, including Meta, may process data outside Brazil. In those cases we apply the safeguards in art. 33 of the LGPD, such as contractual clauses and providers with adequate protection standards.",
+            "Because our cloud subprocessors (Supabase, Inc. and Vercel Inc.) and Meta Platforms, Inc. are headquartered or operate infrastructure in the United States, certain processing involves international data transfers. We apply the safeguards required by art. 33 of the LGPD, including standard contractual clauses, TLS 1.2+ encryption in transit, and AES-256-GCM encryption at rest for Meta access tokens and secrets.",
           ],
         },
         {
-          h: "6. Retention",
+          h: "6. Public authority and law enforcement requests",
+          p: [
+            "Maldivas Tech maintains a formal, documented policy governing any request for user or platform data from government agencies, law enforcement, or judicial authorities, enforcing four mandatory practices:",
+          ],
+          li: [
+            "Strict legality and jurisdiction review: every request is formally reviewed to verify issuing authority competence, valid judicial warrant or statutory subpoena under Brazilian law (LGPD and Marco Civil da Internet, Law 12,965/2014), and narrow specificity.",
+            "Challenging unlawful or overbroad requests: we formally object to, challenge, or reject any request that is unlawful, procedurally defective, vague, disproportionate, or seeks bulk access to user data.",
+            "Strict data minimization: when legally compelled by a valid, binding court order, we disclose strictly the minimum dataset explicitly covered by that order.",
+            "User notification and audit logging: we notify the affected business customer prior to disclosure unless legally prohibited by statute or sealed court order, and we maintain permanent audit records of every request and legal review.",
+          ],
+        },
+        {
+          h: "7. Transparency report",
+          p: [
+            "In line with our commitment to platform transparency: over the past 12 months, Maldivas Tech has received 0 (zero) requests from domestic or foreign public authorities for user data or WhatsApp records on the Atol Connect platform.",
+          ],
+        },
+        {
+          h: "8. Retention",
           li: [
             "Account data: while the contract is active and afterwards for the period required by law (tax and accounting).",
             "Messages and media: for the period configured by the business customer in its plan; when the account is closed they are deleted within 90 days.",
@@ -293,32 +331,32 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
           ],
         },
         {
-          h: "7. Security",
+          h: "9. Security",
           p: [
-            "Each business customer's data is isolated with row-level access control in the database. Meta tokens are encrypted and never exposed to the browser. We use HTTPS, signature validation on Meta webhooks, role-based access control and an audit trail.",
+            "Each business customer's data is isolated with PostgreSQL Row Level Security (RLS). Meta tokens and webhook secrets are encrypted at rest with AES-256-GCM and never exposed to the browser. We enforce HTTPS/HSTS, HMAC-SHA256 signature validation on Meta webhooks, SHA-256 hashed API keys, role-based access control, and an append-only audit trail.",
           ],
         },
         {
-          h: "8. Your rights",
+          h: "10. Your rights and data deletion",
           p: [
             "Under art. 18 of the LGPD you may request confirmation of processing, access, correction, anonymization, portability, deletion, information about sharing and withdrawal of consent. Write to " +
               LEGAL_EMAIL +
               ". We reply within 15 days.",
             "If you are an end customer of a business that uses Atol Connect, please contact that business first, as it is the controller; we support it in handling your request.",
-            "To delete data, see the Data Deletion page.",
+            "For manual or automated Meta Data Deletion Callback instructions, see our Data Deletion page (/en/exclusao-de-dados).",
           ],
         },
         {
-          h: "9. Cookies",
+          h: "11. Cookies",
           p: [
-            "We use cookies required for the website to work (for example, language preference) and, with your consent, measurement cookies. You can change your choice in the cookie banner at any time.",
+            "We use cookies required for the website to work (for example, language preference and authenticated sessions) and, with your consent, aggregate measurement cookies. You can change your choice in the cookie banner at any time.",
           ],
         },
         {
-          h: "10. Data Protection Officer and contact",
+          h: "12. Data Protection Officer and contact",
           p: [
-            `Data Protection Officer: Rafael Paiva Dias da Silva. Email: ${LEGAL_EMAIL}. Address: ${COMPANY.street}, ${COMPANY.city}/${COMPANY.region}, Brazil, ZIP ${COMPANY.postalCode}.`,
-            "We may update this policy. The date of the latest version is shown at the top of the page.",
+            `Data Protection Officer (DPO): Rafael Paiva Dias da Silva. Email: ${LEGAL_EMAIL}. Address: ${COMPANY.street}, ${COMPANY.city}/${COMPANY.region}, Brazil, ZIP ${COMPANY.postalCode}.`,
+            "We may update this policy periodically. The date of the latest version is always shown at the top of the page.",
           ],
         },
       ],
@@ -398,24 +436,24 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
     "exclusao-de-dados": {
       title: "Data Deletion",
       description:
-        "How to request deletion of your personal data at Maldivas Tech and on the Atol Connect platform.",
-      updated: "Last updated: November 22, 2026",
+        "How to request deletion of your personal data at Maldivas Tech and on the Atol Connect platform (including automated Meta Data Deletion Callback).",
+      updated: "Last updated: November 23, 2026",
       intro:
-        "You can request deletion of your personal data at any time. This page explains how, and what happens next, including data received through our Meta integration (WhatsApp and Facebook Login for Business).",
+        "You can request deletion of your personal data at any time. This page explains manual and automated channels, including data received through our Meta integration (WhatsApp Business Platform and Facebook Login for Business).",
       sections: [
         {
-          h: "1. How to request",
+          h: "1. Automated deletion via Facebook / Meta (Data Deletion Callback)",
           li: [
-            `Email ${LEGAL_EMAIL} with the subject "Data deletion".`,
-            "Include your account email, or WhatsApp number, and company name if any.",
-            "We may ask for confirmation to make sure the request is yours.",
+            "If you authorized Atol Connect with your Meta/Facebook account, go to Facebook Settings & Privacy → Settings → Apps and Websites, locate 'Atol Connect', click 'Remove', and choose to delete associated data.",
+            "Meta automatically calls our signed Data Deletion Callback endpoint (https://connect.maldivastech.dev/api/meta/data-deletion), which logs your request and returns a status URL (https://connect.maldivastech.dev/exclusao) along with a unique confirmation code.",
           ],
         },
         {
-          h: "2. If you are an Atol Connect business customer",
+          h: "2. Deletion via dashboard or email",
           li: [
-            "You can also disconnect your WhatsApp Business Account in the Atol Connect dashboard, or remove the app's access in Meta Business Suite (Settings → Integrations).",
-            "When an account is closed we revoke Meta tokens immediately and delete messages, contacts and media within 90 days, keeping only what the law requires (for example, tax records).",
+            "In the Atol Connect dashboard (https://connect.maldivastech.dev/app/settings), the organization owner can disconnect WhatsApp numbers or close the account at any time.",
+            `You may also email ${LEGAL_EMAIL} with the subject "Data deletion", including your account email, WhatsApp number, or company tax ID.`,
+            "We may ask for ownership verification before permanent deletion to protect accounts against fraudulent requests.",
           ],
         },
         {
@@ -427,7 +465,7 @@ export const LEGAL: Record<"pt" | "en", Record<LegalSlug, LegalDoc>> = {
         {
           h: "4. Timeline and confirmation",
           p: [
-            "We acknowledge receipt within 2 business days and complete deletion within 15 days, telling you by email what was deleted and what had to be kept by law.",
+            "Meta access tokens are revoked immediately upon disconnection or account closure. We acknowledge receipt within 2 business days and complete deletion of operational data within 15 days for direct requests (and within 90 days on routine account closure), keeping only records required by law (tax, accounting, and statutory access logs).",
           ],
         },
       ],

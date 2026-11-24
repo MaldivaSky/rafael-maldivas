@@ -16,6 +16,7 @@ import {
   ExternalLink,
   Film,
   Layers,
+  MessageCircle,
   MonitorSmartphone,
   Receipt,
   Server,
@@ -535,6 +536,83 @@ export default function HomeClient() {
                 }
                 loading="lazy"
               />
+            </div>
+          </div>
+
+          {/* Flagship 05: Atol Connect — API oficial do WhatsApp Business */}
+          <div className="flagship-hero-card flagship-atol-connect">
+            <div className="flagship-hero-copy">
+              <div className="flagship-meta-row">
+                <span className="studio-pill">05 / WHATSAPP CLOUD API · connect.maldivastech.dev</span>
+                <span className="flagship-status-pill">
+                  {pt ? "API oficial da Meta · Teste grátis 14 dias" : "Official Meta API · 14-day free trial"}
+                </span>
+              </div>
+
+              <div className="flagship-brand-lockup">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo-atol-connect.png" alt="" width={48} height={48} className="prod-brand-icon" />
+                <strong>Atol Connect</strong>
+              </div>
+
+              <h3>
+                {pt
+                  ? "API oficial do WhatsApp Business para empresas e software houses, sem markup por mensagem."
+                  : "Official WhatsApp Business API for businesses and software houses, with no per-message markup."}
+              </h3>
+
+              <p className="flagship-summary">
+                {showcaseMode === "business"
+                  ? pt
+                    ? "Conecte o número pelo fluxo oficial da Meta, atenda em equipe numa caixa de entrada em tempo real e integre ERP, PDV e loja virtual por REST API. Planos a partir de R$ 79/mês; a tarifa da Meta é paga direto à Meta."
+                    : "Connect your number through Meta's official flow, serve customers from a real-time team inbox and integrate ERP, POS and storefronts through a REST API. Plans from BRL 79/month; Meta's fees are paid directly to Meta."
+                  : pt
+                    ? "Next.js + Supabase PostgreSQL com RLS por organização, Embedded Signup, tokens cifrados (AES-256-GCM), webhooks de entrada validados por HMAC e de saída assinados com reentrega, OpenAPI 3.1."
+                    : "Next.js + Supabase PostgreSQL with per-organization RLS, Embedded Signup, AES-256-GCM encrypted tokens, HMAC-validated inbound webhooks and signed outbound webhooks with redelivery, OpenAPI 3.1."}
+              </p>
+
+              <div className="flagship-feature-strip">
+                <div>
+                  <MessageCircle size={18} aria-hidden="true" />
+                  <span>{pt ? "Inbox em equipe" : "Team inbox"}</span>
+                </div>
+                <div>
+                  <Server size={18} aria-hidden="true" />
+                  <span>{pt ? "REST API + Webhooks" : "REST API + Webhooks"}</span>
+                </div>
+                <div>
+                  <ShieldCheck size={18} aria-hidden="true" />
+                  <span>{pt ? "Multi-tenant + LGPD" : "Multi-tenant + LGPD"}</span>
+                </div>
+              </div>
+
+              <div className="flagship-actions">
+                <a
+                  href="https://connect.maldivastech.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary"
+                  data-analytics="product_demo"
+                >
+                  <ExternalLink size={16} />
+                  <span>{pt ? "Acessar connect.maldivastech.dev" : "Open connect.maldivastech.dev"}</span>
+                </a>
+                <Link
+                  href={localePath("/produtos/atol-connect", lang)}
+                  className="btn btn-ghost"
+                  data-analytics="product_click"
+                >
+                  <span>{pt ? "Detalhes & Planos" : "Specs & Pricing"}</span>
+                  <ArrowUpRight size={16} />
+                </Link>
+                <Link
+                  href={localePath("/ferramentas/calculadora-custo-whatsapp-api", lang)}
+                  className="btn btn-ghost"
+                  data-analytics="tool_click"
+                >
+                  <span>{pt ? "Calcular custo" : "Cost calculator"}</span>
+                </Link>
+              </div>
             </div>
           </div>
 

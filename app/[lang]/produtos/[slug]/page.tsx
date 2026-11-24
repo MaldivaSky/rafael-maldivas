@@ -221,6 +221,57 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
       trialNote: "Rolling out · Fujiarte Co., Ltd. (Brazil → Japan)",
     },
   },
+
+  "atol-connect": {
+    pt: {
+      heroLabel: "WhatsApp Business Platform · Cloud API oficial da Meta · Multi-tenant",
+      problem:
+        "Software houses e empresas pagam por APIs não oficiais de WhatsApp e convivem com o risco de banimento do número, ou migram para plataformas que cobram markup sobre cada mensagem e por atendente. O resultado é custo imprevisível e integração frágil com ERP, PDV e loja virtual.",
+      solutionTitle: "WhatsApp oficial, em reais, com a tarifa da Meta paga direto à Meta",
+      features: [
+        { icon: Zap, title: "Conexão em minutos (Embedded Signup)", desc: "O cliente conecta o próprio número pelo fluxo oficial da Meta, sem setup e sem intermediário. O servidor confere os escopos autorizados antes de ativar a conta." },
+        { icon: Users, title: "Caixa de entrada em equipe", desc: "Atendimento em tempo real com janela de 24h, respostas rápidas, campanhas e automações. Preço por empresa, não por atendente." },
+        { icon: FileText, title: "Modelos e envio com opt-out", desc: "Crie modelos, acompanhe a aprovação na Meta e envie mensagens com bloqueio fora da janela de 24h e respeito a opt-out." },
+        { icon: Database, title: "REST API e webhooks assinados", desc: "API pública com chaves por escopo, especificação OpenAPI 3.1 e webhooks de saída assinados, com reentrega automática. Feita para ERP, PDV e e-commerce." },
+        { icon: ShieldCheck, title: "Segurança e LGPD", desc: "Isolamento por organização com Row Level Security, tokens da Meta cifrados com AES-256-GCM, chaves de API guardadas como hash e auditoria imutável." },
+        { icon: Layers, title: "Plano Parceiro para software houses", desc: "Leve o WhatsApp oficial para dentro do seu sistema a partir de R$ 59 por número, com 100 mil requisições por número e webhooks ilimitados." },
+      ],
+      stats: [
+        { n: "R$ 79", label: "plano de entrada por mês" },
+        { n: "14 dias", label: "teste grátis, sem cartão" },
+        { n: "OpenAPI 3.1", label: "API pública documentada" },
+        { n: "Cloud API", label: "oficial da Meta" },
+      ],
+      cta: "Acessar connect.maldivastech.dev",
+      ctaDemo: "Falar sobre integração",
+      ctaAllProducts: "Ver todos os produtos",
+      trialNote: "14 dias grátis · A Maldivas Tech está em processo de credenciamento como Tech Provider da Meta · Tarifas de mensagem pagas direto à Meta",
+    },
+    en: {
+      heroLabel: "WhatsApp Business Platform · Official Meta Cloud API · Multi-tenant",
+      problem:
+        "Software houses and businesses either pay for unofficial WhatsApp APIs and live with the risk of number bans, or move to platforms that mark up every message and charge per agent. The result is unpredictable cost and fragile ERP, POS and storefront integrations.",
+      solutionTitle: "Official WhatsApp, billed in reais, with Meta's fees paid straight to Meta",
+      features: [
+        { icon: Zap, title: "Onboarding in minutes (Embedded Signup)", desc: "Customers connect their own number through Meta's official flow, with no setup fee and no middleman. The server verifies the granted scopes before activating the account." },
+        { icon: Users, title: "Shared team inbox", desc: "Real-time support with the 24-hour window, quick replies, campaigns and automations. Priced per business, not per agent." },
+        { icon: FileText, title: "Templates with opt-out handling", desc: "Create templates, track Meta approval and send messages with free-form blocking outside the 24-hour window and opt-out enforcement." },
+        { icon: Database, title: "REST API and signed webhooks", desc: "Public API with scoped keys, an OpenAPI 3.1 spec and signed outbound webhooks with automatic redelivery. Built for ERP, POS and e-commerce." },
+        { icon: ShieldCheck, title: "Security and LGPD", desc: "Per-organization Row Level Security isolation, Meta tokens encrypted with AES-256-GCM, hashed API keys and an append-only audit trail." },
+        { icon: Layers, title: "Partner plan for software houses", desc: "Bring official WhatsApp inside your own product from BRL 59 per number, with 100k requests per number and unlimited webhooks." },
+      ],
+      stats: [
+        { n: "BRL 79", label: "entry plan per month" },
+        { n: "14 days", label: "free trial, no card" },
+        { n: "OpenAPI 3.1", label: "documented public API" },
+        { n: "Cloud API", label: "official Meta" },
+      ],
+      cta: "Open connect.maldivastech.dev",
+      ctaDemo: "Talk about integration",
+      ctaAllProducts: "All products",
+      trialNote: "14 days free · Maldivas Tech's Meta Tech Provider accreditation is in progress · Message fees are paid directly to Meta",
+    },
+  },
 };
 
 /* ──────────────────────────────────────────────
