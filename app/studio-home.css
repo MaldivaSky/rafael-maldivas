@@ -223,3 +223,8 @@
 .wa-band p{margin:0;color:var(--fg-muted);line-height:1.6;max-width:62ch}
 .wa-band-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
 @media(max-width:860px){.wa-band-inner{grid-template-columns:1fr}.wa-band-actions{justify-content:flex-start}}
+
+.hero-atol-pill{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;padding:9px 16px;border:1px solid var(--accent);border-radius:999px;background:var(--accent-glow);color:var(--fg);text-decoration:none;font-size:13.5px;transition:transform .15s}
+.hero-atol-pill:hover{transform:translateY(-1px)}
+.hero-atol-pill strong{color:var(--accent);font-family:var(--mono);font-size:12px;letter-spacing:.04em}
+.hero-atol-pill span{color:var(--fg-muted)}

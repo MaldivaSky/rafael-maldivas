@@ -113,6 +113,12 @@ export default function HomeClient() {
         <div className="wrap">
           <div className="studio-hero-grid">
             <div className="studio-hero-copy">
+              <Link href={localePath("/whatsapp-api", lang)} className="hero-atol-pill" data-analytics="hero_atol">
+                <MessageCircle size={14} aria-hidden="true" />
+                <strong>{pt ? "NOVO · Atol Connect" : "NEW · Atol Connect"}</strong>
+                <span>{pt ? "API oficial do WhatsApp a partir de R$ 79/mês" : "Official WhatsApp API from BRL 79/month"}</span>
+                <ArrowUpRight size={14} aria-hidden="true" />
+              </Link>
               <div className="studio-kicker">
                 <span />
                 {pt

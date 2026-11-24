@@ -75,6 +75,7 @@ const toolsGroups: SubGroup[] = [
 ];
 
 const produtosSub: SubItem[] = [
+  { href: "/whatsapp-api", pt: "Atol Connect — API oficial do WhatsApp (novo)", en: "Atol Connect — official WhatsApp API (new)" },
   { href: "/produtos/miseon", pt: "MiseOn — gestão para restaurantes", en: "MiseOn — restaurant SaaS" },
   { href: "/produtos/mercadinhosys", pt: "MercadinhoSys — ERP e PDV para varejo", en: "MercadinhoSys — Retail ERP & Fiscal POS" },
   { href: "/produtos/selectsys-jobs", pt: "SelectSys Jobs — ATS para agências", en: "SelectSys Jobs — ATS for agencies" },
