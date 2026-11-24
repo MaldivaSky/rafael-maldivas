@@ -46,7 +46,7 @@ export default function HomeClient() {
     ? [
         {
           code: "00 · WHATSAPP API OFICIAL",
-          title: "Atol Connect: entre com Google e teste 14 dias",
+          title: "Atol Connect: teste 14 dias grátis",
           desc: "API oficial da Meta a partir de R$ 79, sem markup. Para empresas e software houses.",
           href: localePath("/whatsapp-api", lang),
           icon: MessageCircle,
@@ -76,7 +76,7 @@ export default function HomeClient() {
     : [
         {
           code: "00 · OFFICIAL WHATSAPP API",
-          title: "Atol Connect: sign in with Google, 14-day trial",
+          title: "Atol Connect: 14-day free trial",
           desc: "Meta's official API from BRL 79, no markup. For businesses and software houses.",
           href: localePath("/whatsapp-api", lang),
           icon: MessageCircle,
@@ -258,6 +258,33 @@ export default function HomeClient() {
           </nav>
         </div>
       </header>
+
+      {/* ============================================================ */}
+      {/* BANDA ATOL CONNECT: porta de entrada da API de WhatsApp       */}
+      {/* ============================================================ */}
+      <section className="wa-band" aria-label="Atol Connect">
+        <div className="wrap wa-band-inner">
+          <div>
+            <span className="wa-band-kicker">ATOL CONNECT · {pt ? "API OFICIAL DO WHATSAPP" : "OFFICIAL WHATSAPP API"}</span>
+            <h2>
+              {pt ? "WhatsApp oficial pelo preço da não oficial. " : "Official WhatsApp at the price of the unofficial one. "}
+              <em>{pt ? "R$ 79/mês, zero markup nas tarifas da Meta." : "BRL 79/month, zero markup on Meta fees."}</em>
+            </h2>
+            <p>
+              {pt
+                ? "Sem número banido por QR Code. 8 nichos com fluxos e regras de negócio prontos, API REST com SDK e exemplos em PHP, C#, Python e Node."
+                : "No QR-code bans. 8 niches with ready flows and business rules, REST API with SDK and PHP, C#, Python and Node examples."}
+            </p>
+          </div>
+          <div className="wa-band-actions">
+            <a className="btn btn-primary" href="https://connect.maldivastech.dev/login?mode=signup&utm_source=maldivastech&utm_medium=portal&utm_campaign=home-band" data-analytics="atol_signup">
+              {pt ? "Testar 14 dias grátis" : "Start 14-day free trial"}
+            </a>
+            <Link className="btn btn-ghost" href={localePath("/whatsapp-api", lang)}>{pt ? "Ver nichos e preços" : "See niches and pricing"}</Link>
+            <Link className="btn btn-ghost" href={localePath("/desenvolvedores", lang)}>{pt ? "Para desenvolvedores" : "For developers"}</Link>
+          </div>
+        </div>
+      </section>
 
       {/* ============================================================ */}
       {/* MOMENTO 2: VITRINES FLAGSHIP COM CLIENTES REAIS + TOGGLE     */}

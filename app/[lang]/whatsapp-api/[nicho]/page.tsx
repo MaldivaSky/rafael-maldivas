@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { isLang, type Lang } from "../../../lib/seo";
 import { buildMetadata } from "../../../lib/metadata";
 import { NICHES, nicheBySlug, META_RATES, brl, scenarioCost } from "../../../lib/whatsapp-niches";
+import JsonLd from "../../../components/whatsapp/JsonLd";
 import GoogleCta from "../../../components/whatsapp/GoogleCta";
 import "../../../whatsapp-api.css";
 
@@ -43,6 +44,12 @@ export default async function NichePage({ params: p }: { params: Promise<{ lang:
 
   return (
     <main>
+      <JsonLd data={[
+        { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Atol Connect", item: `https://maldivastech.dev/${lang}/whatsapp-api` },
+          { "@type": "ListItem", position: 2, name: n.name[lang], item: `https://maldivastech.dev/${lang}/whatsapp-api/${n.slug}` } ] },
+        { "@context": "https://schema.org", "@type": "Service", name: n.seoTitle[lang], description: n.pitch[lang], areaServed: "BR", provider: { "@type": "Organization", name: "Maldivas Tech Solutions", url: "https://maldivastech.dev" }, offers: { "@type": "Offer", price: "79.00", priceCurrency: "BRL" } },
+      ]} />
       <header className="wa-hero">
         <div className="wrap">
           <div className="wa-crumb">

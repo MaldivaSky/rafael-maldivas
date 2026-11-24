@@ -3,6 +3,7 @@ import Link from "next/link";
 import { isLang, type Lang } from "../../lib/seo";
 import { buildMetadata } from "../../lib/metadata";
 import { CONNECT_URL } from "../../lib/whatsapp-niches";
+import JsonLd from "../../components/whatsapp/JsonLd";
 import GoogleCta from "../../components/whatsapp/GoogleCta";
 import "../../whatsapp-api.css";
 
@@ -100,6 +101,7 @@ export default async function DevelopersPage({ params: p }: { params: Promise<{ 
 
   return (
     <main>
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "TechArticle", headline: pt ? "API do WhatsApp para desenvolvedores" : "WhatsApp API for developers", inLanguage: pt ? "pt-BR" : "en", author: { "@type": "Organization", name: "Maldivas Tech Solutions" }, about: "WhatsApp Cloud API" }} />
       <header className="wa-hero">
         <div className="wrap">
           <div className="wa-crumb"><Link href={`${base}/whatsapp-api`}>Atol Connect</Link> / {pt ? "Desenvolvedores" : "Developers"}</div>
