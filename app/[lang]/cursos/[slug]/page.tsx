@@ -23,7 +23,7 @@ import {
   type CourseSlug,
 } from "@/app/lib/courses";
 import { COMPANY, SITE } from "@/app/lib/site";
-import { ORACLE_CERT } from "@/app/lib/credentials";
+import { CX_CERT, ORACLE_CERT } from "@/app/lib/credentials";
 import CourseLevelSelector from "@/app/components/curso/CourseLevelSelector";
 import CourseFreeDeployShowcase from "@/app/components/curso/CourseFreeDeployShowcase";
 
@@ -568,7 +568,7 @@ export default async function CourseSalesPage({
             </h3>
             <p className="curso-muted">{t.instructorBio}</p>
             <p className="curso-fine" style={{ marginTop: 10 }}>
-              {COMPANY.legalName} · CNPJ {COMPANY.cnpj} · {ORACLE_CERT.name}
+              {COMPANY.legalName} · CNPJ {COMPANY.cnpj} · Oracle {CX_CERT.name} · Oracle {ORACLE_CERT.name}
             </p>
 
             <hr className="curso-divider" style={{ margin: "20px 0" }} />

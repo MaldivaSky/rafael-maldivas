@@ -22,12 +22,20 @@ const MOCK_CTX = {
     whatsapp: "https://wa.me/5511919889233",
     email: "rafaelmaldivas@gmail.com",
   },
-  founderCert: {
-    issuer: "Oracle",
-    name: "Agentic AI Certified Foundations Associate",
-    id: "332142567AAI26OFA",
-    verifyUrl: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=example",
-  },
+  founderCerts: [
+    {
+      issuer: "Oracle",
+      name: "Fusion Cloud Applications CX Process Essentials Certified - Rel 1",
+      id: "332142567OMBPCXCFA1",
+      verifyUrl: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=621A507272338129F811F46480609CBE6BE7EEE32545D4272D8A7B90BF6E0FE9",
+    },
+    {
+      issuer: "Oracle",
+      name: "Agentic AI Certified Foundations Associate",
+      id: "332142567AAI26OFA",
+      verifyUrl: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=example",
+    },
+  ],
   products: [
     {
       name: "MiseOn",

@@ -1,5 +1,5 @@
 import { COMPANY, EMAIL, SITE, WHATSAPP } from "./site";
-import { ORACLE_CERT } from "./credentials";
+import { ORACLE_CERTS } from "./credentials";
 import { productList } from "./products";
 import { works } from "./projects";
 import { packs } from "./services";
@@ -37,12 +37,12 @@ export function getMaldivasKnowledgeContext(
       whatsapp: WHATSAPP,
       email: EMAIL,
     },
-    founderCert: {
-      issuer: ORACLE_CERT.issuer,
-      name: ORACLE_CERT.name,
-      id: ORACLE_CERT.id,
-      verifyUrl: ORACLE_CERT.verifyUrl,
-    },
+    founderCerts: ORACLE_CERTS.map((cert) => ({
+      issuer: cert.issuer,
+      name: cert.name,
+      id: cert.id,
+      verifyUrl: cert.verifyUrl,
+    })),
     products: productList.map((p) => ({
       name: p.name,
       slug: p.slug,

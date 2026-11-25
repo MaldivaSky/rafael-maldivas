@@ -40,12 +40,12 @@ export type MaldivasKnowledgeContext = {
     whatsapp: string;
     email: string;
   };
-  founderCert: {
+  founderCerts: {
     issuer: string;
     name: string;
     id: string;
     verifyUrl: string;
-  };
+  }[];
   products: ConciergeProductSummary[];
   works: ConciergeWorkSummary[];
   services: ConciergeServiceSummary[];
@@ -450,17 +450,17 @@ function buildFallbackConcierge(
 
   return {
     answer: pt
-      ? `A Maldivas Tech (${ctx.company.city}/${ctx.company.region}, CNPJ ${ctx.company.cnpj}) é liderada por Rafael Maldivas (Product Owner certificado pela Oracle em IA Agêntica). Entregamos software sob medida, produtos SaaS em produção (MiseOn, SelectSys Jobs, mercadinhosys, MySuperStore), TI gerenciada, SEO/GEO e audiovisual — sempre com contrato, nota fiscal e contato direto com quem constrói.`
-      : `Maldivas Tech (${ctx.company.city}/${ctx.company.region}) is led by Rafael Maldivas (Oracle-certified Product Owner in Agentic AI). We build custom software, production SaaS products (MiseOn, SelectSys Jobs, mercadinhosys, MySuperStore), managed IT, SEO/GEO, and audiovisual work — always with formal contracts and direct senior ownership.`,
+      ? `A Maldivas Tech (${ctx.company.city}/${ctx.company.region}, CNPJ ${ctx.company.cnpj}) é liderada por Rafael Maldivas (Product Owner com duas certificações Oracle — IA agêntica e processos de CX). Entregamos software sob medida, produtos SaaS em produção (MiseOn, SelectSys Jobs, mercadinhosys, MySuperStore), TI gerenciada, SEO/GEO e audiovisual — sempre com contrato, nota fiscal e contato direto com quem constrói.`
+      : `Maldivas Tech (${ctx.company.city}/${ctx.company.region}) is led by Rafael Maldivas (Product Owner with two Oracle certifications — Agentic AI and CX processes). We build custom software, production SaaS products (MiseOn, SelectSys Jobs, mercadinhosys, MySuperStore), managed IT, SEO/GEO, and audiovisual work — always with formal contracts and direct senior ownership.`,
     highlights: pt
       ? [
           "4 plataformas SaaS reais em produção + atendimento corporativo B2B",
-          "Credenciais verificáveis: Oracle Agentic AI e iFood; credenciamento Meta Tech Provider em andamento",
+          "Credenciais verificáveis: Oracle CX + Agentic AI, e iFood; credenciamento Meta Tech Provider em andamento",
           "Contratação flexível: projeto fechado, contrato mensal ou alocação sênior",
         ]
       : [
           "4 production SaaS platforms + B2B custom software delivery",
-          "Verifiable credentials: Oracle Agentic AI & iFood; Meta Tech Provider accreditation in progress",
+          "Verifiable credentials: Oracle CX + Agentic AI, and iFood; Meta Tech Provider accreditation in progress",
           "Flexible engagement: fixed scope, monthly retainer, or senior allocation",
         ],
     recommendedRoute: `/${input.lang}/servicos`,
@@ -723,7 +723,7 @@ export async function executeDiagnosticArchitect(
   }
 
   const systemInstruction = [
-    "You are the Solutions Architect Agent of Maldivas Tech (Rafael Maldivas, Oracle Certified in Agentic AI).",
+    "You are the Solutions Architect Agent of Maldivas Tech (Rafael Maldivas, Oracle Certified in CX & Agentic AI).",
     "Analyze the visitor's business scenario and bottleneck, then prescribe a realistic architecture using Maldivas Tech capabilities (MiseOn, Bravus Core/Gertec, SelectSys Jobs, mercadinhosys, MySuperStore, or Custom Next.js/PostgreSQL/AI Automation).",
     `Respond in ${lang === "pt" ? "Brazilian Portuguese (pt-BR)" : "English"}. Never invent unrealistic ROI numbers.`,
     "Return valid JSON strictly matching schema:",

@@ -11,12 +11,13 @@ import {
   EMAIL,
   GITHUB_USER,
   GITHUB_ORG,
+  INSTAGRAM,
   LINKEDIN,
   SERVICE_AREAS,
   SITE,
   YOUTUBE,
 } from "./site";
-import { ORACLE_CERT } from "./credentials";
+import { ORACLE_CERTS } from "./credentials";
 
 const ORG_ID = `${SITE}/#organization`;
 const WEBSITE_ID = `${SITE}/#website`;
@@ -76,19 +77,21 @@ export const maldivasTechKnowledgeGraph = {
         alternateName: "Rafael Maldivas",
         jobTitle: "Founder, Product Owner & Systems Analyst",
         url: LINKEDIN,
-        hasCredential: {
+        hasCredential: ORACLE_CERTS.map((cert) => ({
           "@type": "EducationalOccupationalCredential",
-          name: `${ORACLE_CERT.issuer} — ${ORACLE_CERT.name}`,
+          name: `${cert.issuer} — ${cert.name}`,
           credentialCategory: "certification",
           recognizedBy: {
             "@type": "Organization",
-            name: ORACLE_CERT.issuer,
+            name: cert.issuer,
           },
-          url: ORACLE_CERT.verifyUrl,
-        },
+          url: cert.verifyUrl,
+        })),
         sameAs: [
           GITHUB_USER,
           LINKEDIN,
+          YOUTUBE,
+          INSTAGRAM,
         ],
       },
       sameAs: [

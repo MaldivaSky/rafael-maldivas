@@ -29,16 +29,16 @@ export async function generateMetadata({
     path: "about",
     title:
       lang === "pt"
-        ? "Rafael Maldivas — fundador da Maldivas Tech · Oracle IA"
-        : "Rafael Maldivas — Product Owner, Oracle-Certified in Agentic AI",
+        ? "Rafael Maldivas — fundador da Maldivas Tech · Oracle CX & IA agêntica"
+        : "Rafael Maldivas — Product Owner, Oracle-Certified in CX & Agentic AI",
     description:
       lang === "pt"
-        ? "Rafael Maldivas, Product Owner certificado pela Oracle em IA agêntica, fundou a Maldivas Tech em São Paulo e constrói com agentes de IA o MiseOn e o SelectSys Jobs, SaaS multi-tenant em produção. Domínio oficial: maldivastech.dev."
-        : "Rafael Maldivas, an Oracle-certified Product Owner in agentic AI, founded Maldivas Tech in São Paulo and builds MiseOn and SelectSys Jobs, multi-tenant SaaS in production, with AI agents. Official domain: maldivastech.dev.",
+        ? "Rafael Maldivas, Product Owner com certificações Oracle em IA agêntica e processos de CX (Fusion Cloud Applications CX Process Essentials), fundou a Maldivas Tech em São Paulo e constrói com agentes de IA o MiseOn e o SelectSys Jobs, SaaS multi-tenant em produção. Domínio oficial: maldivastech.dev."
+        : "Rafael Maldivas, a Product Owner with Oracle certifications in agentic AI and CX processes (Fusion Cloud Applications CX Process Essentials), founded Maldivas Tech in São Paulo and builds MiseOn and SelectSys Jobs, multi-tenant SaaS in production, with AI agents. Official domain: maldivastech.dev.",
     keywords:
       lang === "pt"
-        ? ["Maldivas Tech", "empresa de software São Paulo", "SaaS brasileiro"]
-        : ["Maldivas Tech", "software company São Paulo", "Brazilian SaaS company"],
+        ? ["Maldivas Tech", "empresa de software São Paulo", "SaaS brasileiro", "certificação Oracle CX"]
+        : ["Maldivas Tech", "software company São Paulo", "Brazilian SaaS company", "Oracle CX certification"],
   });
 }
 
