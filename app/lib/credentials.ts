@@ -111,15 +111,74 @@ export const craftStack: CraftTool[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/*  Certificação pessoal — verificável no Oracle CertView              */
+/*  Certificações pessoais — verificáveis no Oracle CertView           */
 /*  (link público de verificação lido do QR code do eCertificate)      */
 /* ------------------------------------------------------------------ */
 
-export const ORACLE_CERT = {
+export type OracleCert = {
+  /** Chave estável usada pelo código (não é o ID do Oracle CertView). */
+  key: string;
+  issuer: "Oracle";
+  /** Nome oficial da credencial, como aparece no badge. */
+  name: string;
+  /** Nome curto para selos, faixas e rodapés. */
+  short: { pt: string; en: string };
+  /** Código oficial do exame (1Z0-…) — omitido quando não documentado. */
+  examCode?: string;
+  /** Emissão: data ISO + rótulo pronto por idioma. */
+  issued: string;
+  issuedLabel: { pt: string; en: string };
+  /** Validade: omitida quando o eCertificate não documenta expiração. */
+  validUntil?: string;
+  validUntilLabel?: { pt: string; en: string };
+  /** Nota do score report — só entra o que está documentado. */
+  score?: { earned: number; passing: number; label: { pt: string; en: string } };
+  /** ID da credencial no Oracle CertView. */
+  id: string;
+  verifyUrl: string;
+  skills: { pt: string[]; en: string[] };
+};
+
+export const CX_CERT: OracleCert = {
+  key: "cx",
+  issuer: "Oracle",
+  name: "Fusion Cloud Applications CX Process Essentials Certified - Rel 1",
+  short: { pt: "Oracle CX Process Essentials", en: "Oracle CX Process Essentials" },
+  examCode: "1Z0-1161-1",
+  issued: "2026-11-24",
+  issuedLabel: { pt: "Emitido em 24/11/2026", en: "Issued 24 Nov 2026" },
+  /* O eCertificate não documenta expiração: o selo permanece verificável no CertView. */
+  score: {
+    earned: 84,
+    passing: 65,
+    label: { pt: "Aprovação 84% · mínimo 65%", en: "Scored 84% · 65% required" },
+  },
+  id: "332142567OMBPCXCFA1",
+  verifyUrl:
+    "https://catalog-education.oracle.com/ords/certview/sharebadge?id=621A507272338129F811F46480609CBE6BE7EEE32545D4272D8A7B90BF6E0FE9",
+  skills: {
+    pt: [
+      "Oracle Modern Best Practices (OMBP) aplicados a CX",
+      "Fluxos de dados e processos integrados na suíte CX — Marketing, Vendas, Sales Performance Management e Service",
+      "Oracle Cloud Success Navigator e Cloud Quality Standards",
+    ],
+    en: [
+      "Oracle Modern Best Practices (OMBP) applied to CX",
+      "Data and process flows integrated across the CX suite — Marketing, Sales, Sales Performance Management and Service",
+      "Oracle Cloud Success Navigator and Cloud Quality Standards",
+    ],
+  },
+};
+
+export const AGENTIC_AI_CERT: OracleCert = {
+  key: "agentic-ai",
   issuer: "Oracle",
   name: "Agentic AI Certified Foundations Associate",
+  short: { pt: "Oracle Agentic AI", en: "Oracle Agentic AI" },
   issued: "2026-10-03",
+  issuedLabel: { pt: "Emitido em 03/10/2026", en: "Issued 3 Oct 2026" },
   validUntil: "2028-10-03",
+  validUntilLabel: { pt: "válido até 03/10/2028", en: "valid until 3 Oct 2028" },
   id: "332142567AAI26OFA",
   verifyUrl:
     "https://catalog-education.oracle.com/ords/certview/sharebadge?id=f92f628ad09631f9c15a5396ccfbd8a01c05282d4d03f9b4f02971976b59e004",
@@ -141,4 +200,10 @@ export const ORACLE_CERT = {
       "Oracle AI Database for agentic AI",
     ],
   },
-} as const;
+};
+
+/** Nova primeiro: a CX é a credencial em destaque, ao lado da de IA agêntica. */
+export const ORACLE_CERTS: OracleCert[] = [CX_CERT, AGENTIC_AI_CERT];
+
+/** Compat: consumidores legados que citam a credencial de IA agêntica. */
+export const ORACLE_CERT = AGENTIC_AI_CERT;

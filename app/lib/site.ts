@@ -29,6 +29,7 @@ export const LINKEDIN = "https://www.linkedin.com/in/rafael-paiva-dias/";
 export const GITHUB_USER = "https://github.com/MaldivaSky";
 export const GITHUB_ORG = "https://github.com/Mald1vas-Tech-Solut1ons";
 export const YOUTUBE = "https://www.youtube.com/@MiseOnSISTEMA--CozinhasProfiss";
+export const INSTAGRAM = "https://www.instagram.com/miseon_system_food_service/";
 export const CANVA_REEL = "https://canva.link/6laeoy708m17zrt";
 
 export const COMPANY = {
