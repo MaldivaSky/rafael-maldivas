@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, BadgeCheck, CheckCircle2, ExternalLink, Pause, Play, PlayCircle, ShieldCheck, Wrench } from "lucide-react";
 import { useLang, localePath } from "./lib/i18n";
-import { ORACLE_CERT } from "./lib/credentials";
+import { CX_CERT, ORACLE_CERT } from "./lib/credentials";
 import { CANVA_REEL, COMPANY, GITHUB_ORG, LINKEDIN, YOUTUBE } from "./lib/site";
 import { works, workTags } from "./lib/projects";
 import { HOME_FAQ } from "./lib/home-content";
@@ -284,6 +284,11 @@ export default function HomeClient() {
             <li><ShieldCheck size={15} aria-hidden="true" /> {pt ? "Cloud API oficial da Meta" : "Official Meta Cloud API"}</li>
             <li><CheckCircle2 size={15} aria-hidden="true" /> {pt ? "Cliente operando entre Brasil e Japão" : "Client operating between Brazil and Japan"}</li>
             <li>
+              <a href={CX_CERT.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click">
+                <BadgeCheck size={15} aria-hidden="true" /> Oracle · CX Process Essentials
+              </a>
+            </li>
+            <li>
               <a href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click">
                 <BadgeCheck size={15} aria-hidden="true" /> Oracle · Agentic AI
               </a>
@@ -470,7 +475,12 @@ export default function HomeClient() {
               <div><dt>{pt ? "Razão social" : "Legal name"}</dt><dd>{COMPANY.legalName}</dd></div>
               <div><dt>CNPJ</dt><dd>{COMPANY.cnpj} · NFSe</dd></div>
               <div><dt>{pt ? "Endereço" : "Address"}</dt><dd>{COMPANY.street} — {COMPANY.city}/{COMPANY.region}</dd></div>
-              <div><dt>{pt ? "Certificação" : "Certification"}</dt><dd><a href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer">Oracle — {ORACLE_CERT.name}</a></dd></div>
+              <div><dt>{pt ? "Certificações" : "Certifications"}</dt>
+                <dd style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <a href={CX_CERT.verifyUrl} target="_blank" rel="noopener noreferrer">Oracle — {CX_CERT.name}</a>
+                  <a href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer">Oracle — {ORACLE_CERT.name}</a>
+                </dd>
+              </div>
             </dl>
             <Link className="h7-textlink" href={localePath("/about", lang)}>
               {pt ? "Trajetória completa" : "Full background"} <ArrowRight size={15} aria-hidden="true" />

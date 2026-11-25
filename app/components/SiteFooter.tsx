@@ -10,6 +10,7 @@ import {
   EMAIL,
   GITHUB_ORG,
   GITHUB_USER,
+  INSTAGRAM,
   LINKEDIN,
   WHATSAPP,
   YOUTUBE,
@@ -103,6 +104,9 @@ export default function SiteFooter() {
           </a>
           <a href={YOUTUBE} target="_blank" rel="noopener noreferrer">
             YouTube
+          </a>
+          <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer">
+            Instagram
           </a>
           <a href={WHATSAPP} target="_blank" rel="noopener noreferrer">
             WhatsApp
