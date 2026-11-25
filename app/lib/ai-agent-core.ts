@@ -401,16 +401,16 @@ function buildFallbackConcierge(
   if (/mercadinho|erp|pdv|fiscal|nfc|varejo|curva abc|rfm|mysuperstore|marketplace|macrame|macramê|eli/.test(q)) {
     return {
       answer: pt
-        ? "Na linha de varejo e comércio, a Maldivas Tech opera o MercadinhoSys em domínio próprio (mercadinhosys.com.br) atendendo cliente real com PDV fiscal NFC-e/SEFAZ e BI em Python/Pandas/Plotly (Curva ABC, RFM e DRE), além do MySuperStore — marketplace personalizável onde clientes reais como a Loja de Macramê da Eli operam sua vitrine com split automático de PIX via Efí Bank."
-        : "For retail and commerce, Maldivas Tech operates MercadinhoSys on its custom domain (mercadinhosys.com.br) serving a real retail client with fiscal NFC-e POS and Pandas/Plotly BI (ABC Curve, RFM, P&L), alongside MySuperStore — a customizable marketplace powering real merchant storefronts such as Eli Macramê with automated Efí Bank PIX revenue split.",
+        ? "Na linha de varejo e comércio, a Maldivas Tech opera o MercadinhoSys em domínio próprio (mercadinhosys.com.br) — plataforma validada no varejo, com novas implantações em andamento — com PDV fiscal NFC-e/SEFAZ e BI em Python/Pandas/Plotly (Curva ABC, RFM e DRE), além do MySuperStore — marketplace personalizável onde clientes reais como a Loja de Macramê da Eli operam sua vitrine com split automático de PIX via Efí Bank."
+        : "For retail and commerce, Maldivas Tech operates MercadinhoSys on its custom domain (mercadinhosys.com.br) — a retail-validated platform with new rollouts in progress — with fiscal NFC-e POS and Pandas/Plotly BI (ABC Curve, RFM, P&L), alongside MySuperStore — a customizable marketplace powering real merchant storefronts such as Eli Macramê with automated Efí Bank PIX revenue split.",
       highlights: pt
         ? [
-            "MercadinhoSys (mercadinhosys.com.br): domínio próprio e cliente real no varejo",
+            "MercadinhoSys (mercadinhosys.com.br): domínio próprio, validado no varejo, novas implantações em andamento",
             "MySuperStore (personalize sua loja): caso real da Loja de Macramê da Eli em operação",
             "Split automático de pagamentos PIX/cartão + Celery & Redis em produção",
           ]
         : [
-            "MercadinhoSys (mercadinhosys.com.br): custom production domain & real retail client",
+            "MercadinhoSys (mercadinhosys.com.br): custom domain, retail-validated, new rollouts in progress",
             "MySuperStore (customizable storefront): real production store Eli Macramê",
             "Automated PIX/card split settlement + Celery & Redis background workers",
           ],

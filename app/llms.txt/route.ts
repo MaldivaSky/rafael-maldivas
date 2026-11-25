@@ -1,4 +1,4 @@
-import { tools, GROUP_LABEL, type ToolGroup } from "../lib/tools";
+import { tools, GROUP_LABEL, TOOL_GROUP_ORDER, type ToolGroup } from "../lib/tools";
 import { SITE, COMPANY, EMAIL, LINKEDIN, WHATSAPP } from "../lib/site";
 import { productList } from "../lib/products";
 import { courseList, formatDuration, totalCourseMinutes } from "../lib/courses";
@@ -17,7 +17,7 @@ import { courseList, formatDuration, totalCourseMinutes } from "../lib/courses";
 export const dynamic = "force-static";
 
 export function GET() {
-  const groups: ToolGroup[] = ["fiscal", "margem", "site", "operacao"];
+  const groups: ToolGroup[] = TOOL_GROUP_ORDER;
 
   const linhas: string[] = [
     "# Maldivas Tech",
@@ -91,15 +91,16 @@ export function GET() {
     "- O que é: plataforma multi-tenant sobre a WhatsApp Business Platform (Cloud API oficial da Meta), operada pela Maldivas Tech em https://connect.maldivastech.dev .",
     "- Para quem: PMEs brasileiras (caixa de entrada em equipe, modelos, automações) e software houses que querem WhatsApp oficial dentro de ERP, PDV ou e-commerce via REST API e webhooks.",
     "- Onboarding: Embedded Signup da Meta; o cliente conecta o próprio número, sem taxa de setup.",
-    "- Planos (BRL/mês): Start R$ 79 (1 número, 3 usuários), Pro R$ 199 (2 números, 8 usuários), Business R$ 499 (5 números, 25 usuários), Parceiro R$ 59 por número (mínimo 5). Teste grátis de 14 dias, sem cartão.",
-    "- Tarifas da Meta (BR, por mensagem entregue, referência nov/2026): marketing R$ 0,3217; utilidade e autenticação R$ 0,035; 1.000 conversas de serviço grátis por número/mês. São pagas pelo cliente direto à Meta, sem markup da Atol Connect.",
+    "- Planos (BRL/mês): Start R$ 79 (1 número, 3 usuários), Pro R$ 149 (2 números, 8 usuários), Business R$ 499 (5 números, 25 usuários), Parceiro R$ 59 por número sem mínimo (R$ 49 por número a partir de 21 números). Teste grátis de 14 dias, sem cartão, quando o self-serve estiver liberado.",
+    "- Tarifas da Meta (BR, por mensagem entregue, regras desde 01/10/2026): marketing R$ 0,3217; utilidade e autenticação R$ 0,035 (utilidade é cobrada mesmo dentro da janela de 24h); mensagens de serviço via API: 1.000 grátis por número/mês e R$ 0,035 no excedente; respostas no app WhatsApp Business do celular (Coexistência) não são cobradas. Pagas pelo cliente direto à Meta, sem markup da Atol Connect.",
+    "- Operação oficial Meta já ativa em produção para food service via MiseOn.",
     "- API pública: OpenAPI 3.1 em https://connect.maldivastech.dev/openapi.yaml ; documentação em https://connect.maldivastech.dev/docs .",
     "- Segurança: Row Level Security por organização, tokens da Meta cifrados (AES-256-GCM), webhooks assinados (HMAC), LGPD.",
     "- Status Meta: a Maldivas Tech está em processo de credenciamento como Tech Provider da Meta (ainda não concluído); a plataforma usa a API oficial da Meta.",
     `- Página do produto: ${SITE}/pt/produtos/atol-connect · ${SITE}/en/produtos/atol-connect`,
     `- Hub, nichos e regras de negócio: ${SITE}/pt/whatsapp-api (restaurantes, varejo, clínicas, e-commerce, imobiliárias, educação, oficinas, contabilidade) · Desenvolvedores (cURL, Node, Python, PHP, C#): ${SITE}/pt/desenvolvedores`,
     "- Cadastro: Entrar com Google ou e-mail em https://connect.maldivastech.dev/login?mode=signup",
-    `- Calculadora gratuita de custo total: ${SITE}/pt/ferramentas/calculadora-custo-whatsapp-api`,
+    `- Calculadora TCO pós-outubro/2026: ${SITE}/pt/whatsapp-api/calculadora-2026 · Comparativo Z-API x oficial: ${SITE}/pt/whatsapp-api/z-api-vs-oficial`,
     `- Política de Privacidade: ${SITE}/pt/privacidade · Exclusão de dados: ${SITE}/pt/exclusao-de-dados`,
     "",
     "## Diferenciais",

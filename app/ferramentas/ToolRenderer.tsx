@@ -14,6 +14,8 @@ import { BancosTool, CpfTool, DddTool, NfeXmlTool, TaxasTool } from "./NewTools"
 import { WhatsAppTool, CampaignTool, AutomationTool, WhatsAppCostTool } from "./GrowthTools";
 import { RoiTool } from "./RoiTool";
 import DiagnosticoTool from "./DiagnosticoTool";
+import { HmacValidatorTool, MigrationChecklistTool, TemplateAnalyzerTool } from "./WhatsAppDevTools";
+import AtolCrossLink from "../components/atol/AtolCrossLink";
 
 const t = {
   pt: {
@@ -46,6 +48,9 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
 
   const render = () => {
     switch (tool.key) {
+      case "waTemplate": return <TemplateAnalyzerTool />;
+      case "waHmac": return <HmacValidatorTool />;
+      case "waChecklist": return <MigrationChecklistTool />;
       case "whatsapp": return <WhatsAppTool />;
       case "whatsappcost": return <WhatsAppCostTool />;
       case "utm": return <CampaignTool />;
@@ -123,6 +128,7 @@ export default function ToolRenderer({ tool }: { tool: Tool }) {
       <section style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="tool-solo">{render()}</div>
+          <AtolCrossLink lang={lang} />
         </div>
       </section>
 

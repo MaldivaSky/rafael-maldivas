@@ -7,10 +7,31 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { ChevronDown, GraduationCap, LogIn, LogOut, Menu, Moon, Sun, User, X } from "lucide-react";
 import { useLang, localePath } from "../lib/i18n";
-import { WHATSAPP } from "../lib/site";
-import { AREAS, servicos } from "../lib/catalog";
-import { tools, GROUP_LABEL, type ToolGroup } from "../lib/tools";
+import { tools, GROUP_LABEL, TOOL_GROUP_ORDER, type ToolGroup } from "../lib/tools";
+import { TECH_PROVIDER_APPROVED } from "../lib/flags";
 import { ScrollProgress } from "./fx";
+import PriorityAccess from "./atol/PriorityAccess";
+import { signupHref } from "./atol/AtolCta";
+
+/** CTA do topo controlado pela flag de pré-aprovação Meta. */
+function NavCta({ lang, mobile = false }: { lang: "pt" | "en"; mobile?: boolean }) {
+  const cls = mobile ? "btn btn-primary" : "nav-cta";
+  if (TECH_PROVIDER_APPROVED) {
+    return (
+      <a className={cls} href={signupHref(mobile ? "nav-mobile" : "nav")} data-analytics="atol_signup">
+        {lang === "pt" ? "Conectar meu número" : "Connect my number"}
+      </a>
+    );
+  }
+  return (
+    <PriorityAccess
+      lang={lang}
+      source={mobile ? "nav-mobile" : "nav"}
+      className={cls}
+      label={lang === "pt" ? "Acesso prioritário" : "Priority access"}
+    />
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /*  Estrutura do menu                                                  */
@@ -26,31 +47,12 @@ type SubItem = { href: string; pt: string; en: string };
 type SubGroup = { label: { pt: string; en: string }; items: SubItem[] };
 type MenuItem = { href: string; pt: string; en: string; sub?: SubItem[]; groups?: SubGroup[] };
 
-const servicesSub: SubItem[] = (
-  Object.keys(AREAS) as (keyof typeof AREAS)[]
-).map((area) => {
-  // usa o id do primeiro serviço da área como âncora estável, se existir
-  const anchor = servicos.find((s) => s.area === area)?.area ?? area;
-  return {
-    href: `/servicos#${anchor}`,
-    pt: AREAS[area].pt,
-    en: AREAS[area].en,
-  };
-});
-
-const portfolioSub: SubItem[] = [
-  { href: "/portfolio#saas", pt: "Plataformas próprias", en: "Own platforms" },
-  { href: "/portfolio#clientes", pt: "Projetos para clientes", en: "Client projects" },
-  { href: "/portfolio#audiovisual", pt: "Audiovisual", en: "Video & content" },
-  { href: "/portfolio#contato", pt: "Falar sobre um projeto", en: "Talk about a project" },
-];
-
 // Ferramentas: cada uma leva à sua própria página /ferramentas/<slug>.
 // O submenu é agrupado por tópico (igual à página /ferramentas) e os itens
 // ficam em ordem alfabética dentro de cada grupo. O Estúdio de imagem é uma
 // rota própria e por isso não vive no registro `tools` — entra à parte, em
 // destaque, no topo da lista.
-const GROUP_ORDER: ToolGroup[] = ["fiscal", "margem", "site", "operacao"];
+const GROUP_ORDER: ToolGroup[] = TOOL_GROUP_ORDER;
 
 const studioItem: SubItem = {
   href: "/ferramentas/estudio-de-imagem",
@@ -74,37 +76,33 @@ const toolsGroups: SubGroup[] = [
   })),
 ];
 
-const produtosSub: SubItem[] = [
-  { href: "/whatsapp-api", pt: "Atol Connect — API oficial do WhatsApp (novo)", en: "Atol Connect — official WhatsApp API (new)" },
-  { href: "/produtos/miseon", pt: "MiseOn — gestão para restaurantes", en: "MiseOn — restaurant SaaS" },
-  { href: "/produtos/mercadinhosys", pt: "MercadinhoSys — ERP e PDV para varejo", en: "MercadinhoSys — Retail ERP & Fiscal POS" },
-  { href: "/produtos/selectsys-jobs", pt: "SelectSys Jobs — ATS para agências", en: "SelectSys Jobs — ATS for agencies" },
-  { href: "/#produtos", pt: "Parceria de Hardware (Bravus Core)", en: "Hardware Partnership (Bravus Core)" },
+const academyGroups: SubGroup[] = [
+  {
+    label: { pt: "Academy", en: "Academy" },
+    items: [
+      { href: "/cursos", pt: "Cursos gratuitos com certificado", en: "Free courses with certificate" },
+      { href: "/trilha", pt: "Minha trilha & progresso", en: "My track & progress" },
+    ],
+  },
+  ...toolsGroups,
 ];
 
-const whatsappSub: SubItem[] = [
-  { href: "/whatsapp-api", pt: "Atol Connect — API oficial do WhatsApp", en: "Atol Connect — official WhatsApp API" },
-  { href: "/whatsapp-api#nichos", pt: "Ideias por nicho e regras de negócio", en: "Niche ideas & business rules" },
-  { href: "/desenvolvedores", pt: "Desenvolvedores: REST, SDK e webhooks", en: "Developers: REST, SDK & webhooks" },
-  { href: "/whatsapp-api/restaurantes-delivery", pt: "Restaurantes e delivery", en: "Restaurants & delivery" },
-  { href: "/whatsapp-api/clinicas-consultorios", pt: "Clínicas e consultórios", en: "Clinics & practices" },
-];
-
-const cursosSub: SubItem[] = [
-  { href: "/cursos", pt: "Catálogo de cursos", en: "Course catalog" },
-  { href: "/trilha", pt: "Minha trilha & progresso", en: "My track & progress" },
-  { href: "/perfil", pt: "Meu perfil", en: "My profile" },
-];
-
+/*
+ * Navbar comercial: Atol Connect · Calculadora 2026 · Sistemas · Cases ·
+ * Academy & Ferramentas. Serviços/Portfólio/Sobre seguem no ar (SEO) e
+ * linkados no rodapé — saíram só do topo para não diluir o funil.
+ */
 const menu: MenuItem[] = [
-  { href: "/servicos", pt: "Serviços", en: "Services", sub: servicesSub },
-  { href: "/portfolio", pt: "Portfólio", en: "Portfolio", sub: portfolioSub },
-  { href: "/produtos", pt: "Produtos", en: "Products", sub: produtosSub },
-  { href: "/whatsapp-api", pt: "WhatsApp API", en: "WhatsApp API", sub: whatsappSub },
-  { href: "/cursos", pt: "Cursos", en: "Courses", sub: cursosSub },
-  { href: "/ferramentas", pt: "Ferramentas", en: "Tools", groups: toolsGroups },
-  { href: "/about", pt: "Sobre", en: "About" },
+  { href: "/whatsapp-api", pt: "Atol Connect", en: "Atol Connect" },
+  { href: "/whatsapp-api/calculadora-2026", pt: "Calculadora 2026", en: "2026 Calculator" },
+  { href: "/#sistemas", pt: "Sistemas", en: "Systems" },
+  { href: "/#cases", pt: "Cases", en: "Cases" },
+  { href: "/ferramentas", pt: "Academy & Ferramentas", en: "Academy & Tools", groups: academyGroups },
 ];
+
+/** "/#sistemas" → "/pt#sistemas" (sem a barra que viraria redirect). */
+const navHref = (href: string, lang: "pt" | "en") =>
+  href.startsWith("/#") ? `/${lang}${href.slice(1)}` : localePath(href, lang);
 
 /* ------------------------------------------------------------------ */
 /*  Dropdown de desktop                                                */
@@ -161,7 +159,7 @@ function DesktopItem({
   // sem submenu nem grupos: link simples
   if (!item.sub && !item.groups) {
     return (
-      <Link href={localePath(item.href, lang)} className={`nav-link ${active ? "on" : ""}`}>
+      <Link href={navHref(item.href, lang)} className={`nav-link ${active ? "on" : ""}`}>
         {label}
       </Link>
     );
@@ -449,9 +447,7 @@ export default function SiteNav() {
               </div>
             )}
 
-            <a className="nav-cta" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">
-              {lang === "pt" ? "Falar comigo" : "Get in touch"}
-            </a>
+            <NavCta lang={lang} />
 
             <button
               className="nav-burger"
@@ -473,7 +469,7 @@ export default function SiteNav() {
             const label = lang === "pt" ? item.pt : item.en;
             if (!item.sub && !item.groups) {
               return (
-                <Link key={item.href} href={localePath(item.href, lang)} className="mm-link">
+                <Link key={item.href} href={navHref(item.href, lang)} className="mm-link">
                   {label}
                 </Link>
               );
@@ -543,9 +539,7 @@ export default function SiteNav() {
             )
           )}
 
-          <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">
-            {lang === "pt" ? "Falar no WhatsApp" : "Message on WhatsApp"}
-          </a>
+          <NavCta lang={lang} mobile />
         </div>
       </div>
     </>

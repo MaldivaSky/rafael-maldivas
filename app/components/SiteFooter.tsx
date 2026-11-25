@@ -18,14 +18,18 @@ import {
 const t = {
   pt: {
     tagline:
-      "Sistemas de gestão, presença digital e conteúdo — do modelo de dados ao anúncio no ar.",
-    nav: "Navegação",
-    social: "Onde me achar",
+      "Infraestrutura WhatsApp Oficial e SaaS multi-tenant em produção — do modelo de dados ao deploy.",
+    nav: "Institucional",
+    social: "Onde nos achar",
     company: "Empresa",
-        links: [
-      ["/servicos", "Serviços"],
+    links: [
+      ["/whatsapp-api", "Atol Connect"],
+      ["/whatsapp-api/calculadora-2026", "Calculadora 2026"],
+      ["/produtos", "Sistemas"],
       ["/portfolio", "Portfólio"],
-      ["/cursos", "Cursos"],
+      ["/servicos", "Software sob medida"],
+      ["/cursos", "Academy"],
+      ["/ferramentas", "Ferramentas"],
       ["/about", "Sobre"],
       ["/#contato", "Contato"],
     ],
@@ -34,18 +38,22 @@ const t = {
     terms: "Termos de Uso",
     deletion: "Exclusão de Dados",
     marks:
-      "Meta, iFood, 99Food, Google e demais marcas citadas pertencem aos seus respectivos titulares.",
+      "WhatsApp e Meta são marcas da Meta Platforms, Inc. O Atol Connect usa a WhatsApp Business Platform (Cloud API) oficial; as tarifas de mensagem são cobradas pela Meta diretamente do cliente. iFood, Google e demais marcas citadas pertencem aos seus titulares.",
   },
   en: {
     tagline:
-      "Management systems, digital presence and content — from the data model to the live ad.",
-    nav: "Navigation",
-    social: "Find me",
+      "Official WhatsApp infrastructure and multi-tenant SaaS in production — from data model to deploy.",
+    nav: "Company pages",
+    social: "Find us",
     company: "Company",
-        links: [
-      ["/servicos", "Services"],
+    links: [
+      ["/whatsapp-api", "Atol Connect"],
+      ["/whatsapp-api/calculadora-2026", "2026 Calculator"],
+      ["/produtos", "Systems"],
       ["/portfolio", "Portfolio"],
-      ["/cursos", "Courses"],
+      ["/servicos", "Custom software"],
+      ["/cursos", "Academy"],
+      ["/ferramentas", "Tools"],
       ["/about", "About"],
       ["/#contato", "Contact"],
     ],
@@ -54,7 +62,7 @@ const t = {
     terms: "Terms of Service",
     deletion: "Data Deletion",
     marks:
-      "Meta, iFood, 99Food, Google and other marks cited belong to their respective owners.",
+      "WhatsApp and Meta are trademarks of Meta Platforms, Inc. Atol Connect uses the official WhatsApp Business Platform (Cloud API); message fees are billed by Meta directly to the customer. iFood, Google and other marks cited belong to their owners.",
   },
 } as const;
 
@@ -77,8 +85,8 @@ export default function SiteFooter() {
 
         <div>
           <h4>{c.nav}</h4>
-                    {c.links.map(([href, label]) => (
-            <Link key={href} href={localePath(href, lang)}>
+          {c.links.map(([href, label]) => (
+            <Link key={href} href={href.startsWith("/#") ? `/${lang}${href.slice(1)}` : localePath(href, lang)}>
               {label}
             </Link>
           ))}
@@ -110,9 +118,9 @@ export default function SiteFooter() {
           <span>{COMPANY.legalName}</span>
           <span>CNPJ {COMPANY.cnpj}</span>
           <span>
-            {COMPANY.city}/{COMPANY.region}
+            {COMPANY.street} — {COMPANY.city}/{COMPANY.region} · CEP {COMPANY.postalCode}
           </span>
-          <span>{EMAIL}</span>
+          <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
         </div>
       </div>
 

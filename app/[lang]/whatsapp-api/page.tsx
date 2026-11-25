@@ -5,6 +5,9 @@ import { buildMetadata } from "../../lib/metadata";
 import { NICHES, META_RATES, CONNECT_URL, brl, scenarioCost } from "../../lib/whatsapp-niches";
 import JsonLd from "../../components/whatsapp/JsonLd";
 import GoogleCta from "../../components/whatsapp/GoogleCta";
+import EightNichesExplorer from "../../components/atol/EightNichesExplorer";
+import { TECH_PROVIDER_APPROVED } from "../../lib/flags";
+import { SITE } from "../../lib/site";
 import "../../whatsapp-api.css";
 
 export function generateStaticParams() {
@@ -20,10 +23,10 @@ export async function generateMetadata({ params: p }: { params: Promise<{ lang: 
     path: "whatsapp-api",
     title: pt ? "API oficial do WhatsApp Business a partir de R$ 79 · Atol Connect" : "Official WhatsApp Business API from BRL 79 · Atol Connect",
     description: pt
-      ? "API oficial do WhatsApp (Cloud API da Meta) sem risco de banimento e sem markup nas tarifas. Crie a conta, conecte seu número em 3 minutos e integre seu ERP, PDV ou loja. 14 dias grátis."
-      : "Official WhatsApp Cloud API with no ban risk and no markup on Meta fees. Create your account, connect your number in 3 minutes and plug in your ERP, POS or store. 14 days free.",
+      ? "API oficial do WhatsApp em reais (Cloud API da Meta), sem markup nas tarifas e com Coexistência: o celular continua funcionando. Inbox em equipe, templates, REST e webhooks. A partir de R$ 79/mês."
+      : "Official WhatsApp Cloud API priced in BRL, no markup on Meta fees and with Coexistence: your phone keeps working. Team inbox, templates, REST and webhooks. From BRL 79/month.",
     keywords: pt
-      ? ["API oficial WhatsApp", "alternativa Z-API", "WhatsApp API para ERP", "WhatsApp Business API preço", "WhatsApp Cloud API Brasil"]
+      ? ["api oficial whatsapp em reais", "whatsapp api sem markup", "whatsapp coexistência meta", "alternativa Z-API", "WhatsApp API para ERP", "WhatsApp Cloud API Brasil"]
       : ["official WhatsApp API", "Z-API alternative", "WhatsApp API for ERP", "WhatsApp Cloud API Brazil"],
   });
 }
@@ -49,8 +52,9 @@ export default async function WhatsappApiHub({ params: p }: { params: Promise<{ 
       ];
   const ld = [
     { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
-    { "@context": "https://schema.org", "@type": "ItemList", name: pt ? "WhatsApp API por nicho" : "WhatsApp API by niche", itemListElement: NICHES.map((n, i) => ({ "@type": "ListItem", position: i + 1, name: n.name[lang], url: `https://maldivastech.dev/${lang}/whatsapp-api/${n.slug}` })) },
-    { "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Atol Connect", applicationCategory: "BusinessApplication", operatingSystem: "Web", url: CONNECT_URL, offers: { "@type": "Offer", price: "79.00", priceCurrency: "BRL" }, provider: { "@type": "Organization", name: "Maldivas Tech Solutions", url: "https://maldivastech.dev" } },
+    { "@context": "https://schema.org", "@type": "ItemList", name: pt ? "WhatsApp API por nicho" : "WhatsApp API by niche", itemListElement: NICHES.map((n, i) => ({ "@type": "ListItem", position: i + 1, name: n.name[lang], url: `${SITE}/${lang}/whatsapp-api/${n.slug}` })) },
+    // mesma entidade do grafo global (layout) e do connect.maldivastech.dev
+    { "@context": "https://schema.org", "@type": "SoftwareApplication", "@id": `${CONNECT_URL}/#software`, name: "Atol Connect", applicationCategory: "BusinessApplication", operatingSystem: "Web", url: CONNECT_URL, offers: { "@type": "Offer", price: "79.00", priceCurrency: "BRL" }, provider: { "@id": `${SITE}/#organization` }, publisher: { "@id": `${SITE}/#organization` } },
   ];
 
   return (
@@ -73,17 +77,35 @@ export default async function WhatsappApiHub({ params: p }: { params: Promise<{ 
             <div className="wa-stat"><strong>R$ 79</strong><span>{pt ? "por número/mês (Start)" : "per number/month (Start)"}</span></div>
             <div className="wa-stat"><strong>R$ 59</strong><span>{pt ? "por número no Plano Parceiro" : "per number on the Partner plan"}</span></div>
             <div className="wa-stat"><strong>0%</strong><span>{pt ? "markup nas tarifas da Meta" : "markup on Meta fees"}</span></div>
-            <div className="wa-stat"><strong>14 {pt ? "dias" : "days"}</strong><span>{pt ? "grátis, sem cartão" : "free, no card"}</span></div>
+            <div className="wa-stat"><strong>R$ 0,00</strong><span>{pt ? "respostas no celular (Coexistência)" : "phone replies (Coexistence)"}</span></div>
           </div>
         </div>
       </header>
 
+      <section className="wa-sec" style={{ paddingTop: 8 }}>
+        <div className="wrap">
+          <h2>{pt ? "Sandbox interativa: 8 nichos, conversa e código" : "Interactive sandbox: 8 industries, chat and code"}</h2>
+          <p className="wa-sub">
+            {pt
+              ? "Escolha o nicho e veja o template cobrado pela Meta, a resposta da equipe no celular e a chamada REST com Idempotency-Key e webhook assinado."
+              : "Pick an industry and see the template Meta charges for, the team's phone reply and the REST call with Idempotency-Key and signed webhook."}
+          </p>
+          <EightNichesExplorer lang={lang} />
+        </div>
+      </section>
+
       <section className="wa-sec">
         <div className="wrap">
           <h2>{pt ? "Do cadastro ao primeiro envio em 3 passos" : "From sign-up to first send in 3 steps"}</h2>
-          <p className="wa-sub">{pt ? "Sem formulário longo e sem esperar aprovação manual nossa." : "No long forms and no waiting on us for manual approval."}</p>
+          <p className="wa-sub">
+            {TECH_PROVIDER_APPROVED
+              ? pt ? "Sem formulário longo e sem esperar aprovação manual nossa." : "No long forms and no waiting on us for manual approval."
+              : pt
+                ? "Food service já opera hoje via MiseOn. Para os demais segmentos, a liberação self-serve abre ao fim do credenciamento Tech Provider na Meta — reserve o acesso prioritário."
+                : "Food service already runs today via MiseOn. For other segments, self-serve opens when Meta's Tech Provider accreditation completes — reserve priority access."}
+          </p>
           <div className="wa-steps">
-            <div className="wa-step"><h3>{pt ? "Crie a conta" : "Create your account"}</h3><p>{pt ? "Cadastro em 1 minuto, sem cartão. A organização é criada junto, com 14 dias de teste." : "1-minute sign-up, no card. Your organization is created with a 14-day trial."}</p></div>
+            <div className="wa-step"><h3>{pt ? "Crie a conta" : "Create your account"}</h3><p>{pt ? "Cadastro em 1 minuto, sem cartão. A organização é criada junto, com 14 dias de teste a partir da liberação." : "1-minute sign-up, no card. Your organization is created with a 14-day trial from release."}</p></div>
             <div className="wa-step"><h3>{pt ? "Conecte o número" : "Connect your number"}</h3><p>{pt ? "Embedded Signup da Meta, incluindo o modo Coexistência para manter o app WhatsApp Business no celular." : "Meta Embedded Signup, including Coexistence to keep the WhatsApp Business app on your phone."}</p></div>
             <div className="wa-step"><h3>{pt ? "Atenda e integre" : "Serve and integrate"}</h3><p>{pt ? "Caixa de entrada em equipe, modelos aprovados, chave de API e webhooks assinados com HMAC." : "Team inbox, approved templates, API key and HMAC-signed webhooks."}</p></div>
           </div>
@@ -153,7 +175,9 @@ export default async function WhatsappApiHub({ params: p }: { params: Promise<{ 
             </table>
           </div>
           <p className="wa-micro" style={{ marginTop: 12 }}>
-            <Link href={`${base}/desenvolvedores#migracao`}>{pt ? "Guia de migração da Z-API em 15 minutos →" : "Z-API migration guide in 15 minutes →"}</Link>
+            <Link href={`${base}/whatsapp-api/z-api-vs-oficial`}>{pt ? "Comparativo completo Z-API x oficial e migração em 5 passos →" : "Full Z-API vs official comparison and 5-step migration →"}</Link>
+            {"  ·  "}
+            <Link href={`${base}/whatsapp-api/calculadora-2026`}>{pt ? "Calculadora 2026 →" : "2026 calculator →"}</Link>
           </p>
         </div>
       </section>

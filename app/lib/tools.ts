@@ -10,8 +10,12 @@
 
 import type { Lang } from "./seo";
 import { growthTools } from "./growth-catalog";
+import { whatsappDevTools } from "./whatsapp-dev-tools";
 
-export type ToolGroup = "fiscal" | "margem" | "site" | "operacao";
+export type ToolGroup = "whatsapp" | "fiscal" | "margem" | "site" | "operacao";
+
+/** Ordem única dos grupos (menu, índice /ferramentas e llms.txt). */
+export const TOOL_GROUP_ORDER: ToolGroup[] = ["whatsapp", "fiscal", "margem", "site", "operacao"];
 
 /** Campos textuais de uma ferramenta em um idioma. */
 export type LocalizedText = {
@@ -39,6 +43,7 @@ export type Tool = {
 };
 
 export const tools: Tool[] = [
+  ...whatsappDevTools,
   ...growthTools,
   {
     slug: "calculadora-cmv-preco-de-venda",
@@ -1153,6 +1158,7 @@ export const tools: Tool[] = [
 ];
 
 export const GROUP_LABEL: Record<ToolGroup, { pt: string; en: string }> = {
+  whatsapp: { pt: "WhatsApp Cloud API · Dev", en: "WhatsApp Cloud API · Dev" },
   fiscal: { pt: "Fiscal e pagamento", en: "Tax and payments" },
   margem: { pt: "Preço e margem", en: "Price and margin" },
   site: { pt: "Site, domínio e segurança", en: "Site, domain and security" },

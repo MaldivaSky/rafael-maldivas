@@ -128,10 +128,10 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       pt: {
         metaTitle: "MercadinhoSys — ERP Multi-Tenant e PDV Fiscal em mercadinhosys.com.br",
         metaDescription:
-          "MercadinhoSys (mercadinhosys.com.br) opera com cliente real no varejo: ERP com PDV fiscal NFC-e, entrada automática de XML, estoque transacional e BI Curva ABC, RFM e DRE.",
+          "MercadinhoSys (mercadinhosys.com.br) é a plataforma validada no varejo, com novas implantações em andamento: ERP com PDV fiscal NFC-e, entrada automática de XML, estoque transacional e BI Curva ABC, RFM e DRE.",
         h1: "O ERP e PDV fiscal em operação real que elimina furo de caixa e ruptura",
         tagline:
-          "Domínio próprio (mercadinhosys.com.br) e cliente real no varejo: PDV NFC-e, importação XML, estoque transacional e BI (Curva ABC, RFM e DRE).",
+          "Domínio próprio (mercadinhosys.com.br), validado no varejo: PDV NFC-e, importação XML, estoque transacional e BI (Curva ABC, RFM e DRE).",
         keywords: [
           "sistema ERP para mercadinho e varejo",
           "PDV fiscal NFC-e online",
@@ -144,10 +144,10 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
       en: {
         metaTitle: "MercadinhoSys — Multi-Tenant Retail ERP & Fiscal POS (mercadinhosys.com.br)",
         metaDescription:
-          "MercadinhoSys (mercadinhosys.com.br) runs in production with a real retail client: fiscal NFC-e POS, automated invoice XML ingestion, transactional inventory and ABC/RFM BI.",
+          "MercadinhoSys (mercadinhosys.com.br) is a retail-validated platform with new rollouts in progress: fiscal NFC-e POS, automated invoice XML ingestion, transactional inventory and ABC/RFM BI.",
         h1: "Live retail ERP & fiscal POS built to stop stockouts and margin leaks",
         tagline:
-          "Custom domain (mercadinhosys.com.br) serving a real retail operation: fiscal POS, XML intake, transactional inventory and commercial BI.",
+          "Custom domain (mercadinhosys.com.br) validated in retail: fiscal POS, XML intake, transactional inventory and commercial BI.",
         keywords: [
           "retail ERP software",
           "multi-tenant POS system",

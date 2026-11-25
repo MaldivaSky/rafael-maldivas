@@ -20,7 +20,8 @@ export const SITE = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.maldivastech.dev"
 ).replace(/\/$/, "");
 
-export const EMAIL = "rafaelmaldivas@gmail.com";
+/** Contato único da empresa — o mesmo do Atol Connect e das páginas legais. */
+export const EMAIL = "suporte@maldivastech.dev";
 export const PHONE_E164 = "+5511919889233";
 export const PHONE_HUMAN = "(11) 91988-9233";
 export const WHATSAPP = "https://wa.me/5511919889233";

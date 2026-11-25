@@ -20,7 +20,7 @@ export async function generateMetadata({ params: p }: { params: Promise<{ lang: 
     lang: lang as Lang,
     path: `whatsapp-api/${n.slug}`,
     title: `${n.seoTitle[lang as Lang]} · Atol Connect`,
-    description: n.pitch[lang as Lang] + (lang === "pt" ? " API oficial da Meta, a partir de R$ 79/mês, 14 dias grátis." : " Official Meta API from BRL 79/month, 14 days free."),
+    description: n.pitch[lang as Lang] + (lang === "pt" ? " API oficial da Meta em reais, a partir de R$ 79/mês, sem markup nas tarifas." : " Official Meta API in BRL from BRL 79/month, no markup on fees."),
     keywords: [n.seoTitle[lang as Lang], lang === "pt" ? "WhatsApp API oficial" : "official WhatsApp API"],
   });
 }

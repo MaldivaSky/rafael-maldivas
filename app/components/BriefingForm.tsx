@@ -158,7 +158,10 @@ export default function BriefingForm() {
     lang === "pt" ? "Levantamento pelo site — Maldivas Tech" : "Website discovery — Maldivas Tech"
   )}&body=${encodeURIComponent(mensagem)}`;
 
-  const porArea = (Object.keys(AREAS) as Area[]).map((a) => ({
+  // posicionamento: engenharia de software, WhatsApp oficial e SaaS —
+  // audiovisual e marketing (drone, vídeo, tráfego, impresso) saíram do levantamento
+  const AREAS_LEVANTAMENTO: Area[] = ["software", "ti"];
+  const porArea = (Object.keys(AREAS) as Area[]).filter((a) => AREAS_LEVANTAMENTO.includes(a)).map((a) => ({
     area: a,
     label: AREAS[a][lang],
     itens: servicos.filter((s) => s.area === a),

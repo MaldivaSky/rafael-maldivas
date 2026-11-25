@@ -13,6 +13,8 @@ import "./globals.css";
 import "./editorial.css";
 import "./growth-tools.css";
 import "./studio-home.css";
+import "./atol.css";
+import "./home.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -37,11 +39,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
     default:
-      "Maldivas Tech — Sistemas de gestão e software sob medida | Rafael Maldivas",
+      "Maldivas Tech — WhatsApp API Oficial e SaaS em produção",
     template: "%s · Maldivas Tech",
   },
   description:
-    "Sistemas de gestão e software sob medida para organizar operações, integrar ferramentas e reduzir trabalho manual. Desenvolvimento e consultoria com Rafael Maldivas, em São Paulo e a distância.",
+    "Infraestrutura oficial de WhatsApp (Atol Connect, Cloud API da Meta em reais, sem markup) e SaaS multi-tenant em produção: MiseOn, MercadinhoSys e SelectSys Jobs. São Paulo.",
   authors: [{ name: "Rafael Maldivas", url: SITE }],
   creator: "Rafael Maldivas",
   publisher: "Maldivas Tech",
@@ -50,9 +52,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "Maldivas Tech — Sistemas de gestão e software sob medida | Rafael Maldivas",
+      "Maldivas Tech — WhatsApp API Oficial e SaaS em produção",
     description:
-      "Sistemas de gestão e software sob medida para organizar operações, integrar ferramentas e reduzir trabalho manual. Desenvolvimento e consultoria com Rafael Maldivas, em São Paulo e a distância.",
+      "Infraestrutura oficial de WhatsApp (Atol Connect, Cloud API da Meta em reais, sem markup) e SaaS multi-tenant em produção: MiseOn, MercadinhoSys e SelectSys Jobs. São Paulo.",
     url: `${SITE}/`,
     siteName: "Maldivas Tech",
     locale: "pt_BR",
@@ -69,9 +71,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Maldivas Tech — Sistemas de gestão e software sob medida | Rafael Maldivas",
+      "Maldivas Tech — WhatsApp API Oficial e SaaS em produção",
     description:
-      "Sistemas de gestão e software sob medida para organizar operações, integrar ferramentas e reduzir trabalho manual. Desenvolvimento e consultoria com Rafael Maldivas, em São Paulo e a distância.",
+      "Infraestrutura oficial de WhatsApp (Atol Connect, Cloud API da Meta em reais, sem markup) e SaaS multi-tenant em produção: MiseOn, MercadinhoSys e SelectSys Jobs. São Paulo.",
     images: [`${SITE}/opengraph-image.png`],
   },
   // Keep the favicon at the conventional, stable root URL for search crawlers.

@@ -8,7 +8,7 @@ import { AlertTriangle, Check, Loader2, MessageCircle, Search, X } from "lucide-
 import { useLang, localePath } from "../lib/i18n";
 import { WHATSAPP } from "../lib/site";
 import { Reveal, Spotlight } from "../components/fx";
-import { GROUP_LABEL, tools as toolList, type ToolGroup } from "../lib/tools";
+import { GROUP_LABEL, TOOL_GROUP_ORDER, tools as toolList, type ToolGroup } from "../lib/tools";
 import { DeliveryTool, HeadersTool, NfeTool, PixTool } from "./MoreTools";
 import { CambioTool, CnpjTool } from "./ApiTools";
 import { CepTool, DominioTool, FeriadosTool, FichaTool, IpcaTool, MarkupTool } from "./BizTools";
@@ -391,7 +391,7 @@ export function MailTool({ c }: { c: Copy }) {
 
 
 function ToolIndex({ lang, title }: { lang: "pt" | "en"; title: string }) {
-  const groups: ToolGroup[] = ["fiscal", "margem", "site", "operacao"];
+  const groups: ToolGroup[] = TOOL_GROUP_ORDER;
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState<ToolGroup | "all">("all");
   const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();

@@ -20,16 +20,16 @@ export async function generateMetadata({
     path: "",
     title:
       lang === "pt"
-        ? "Maldivas Tech — Sistemas de Gestão e Software Sob Medida em São Paulo"
-        : "Maldivas Tech — Management Systems & Custom Software in São Paulo",
+        ? "Maldivas Tech — WhatsApp API Oficial em reais e SaaS em produção | São Paulo"
+        : "Maldivas Tech — Official WhatsApp API in BRL & Live SaaS | São Paulo",
     description:
       lang === "pt"
-        ? "A Maldivas Tech, de Rafael Maldivas, desenvolve sistemas de gestão e software sob medida para organizar operações, integrar ferramentas e reduzir tarefas manuais. São Paulo e atendimento remoto."
-        : "Maldivas Tech, led by Rafael Maldivas, builds management systems and custom software to organise operations, connect tools and reduce manual work. Based in São Paulo, serving clients remotely.",
+        ? "Infraestrutura oficial de WhatsApp (Atol Connect, Cloud API da Meta com Inbox e Coexistência a partir de R$ 79/mês, sem markup) e sistemas em produção: MiseOn, MercadinhoSys e SelectSys Jobs."
+        : "Official WhatsApp infrastructure (Atol Connect, Meta Cloud API with Inbox and Coexistence from BRL 79/month, no markup) and live systems: MiseOn, MercadinhoSys and SelectSys Jobs.",
     keywords:
       lang === "pt"
-        ? ["sistemas de gestão", "SaaS para restaurantes", "ATS para agências", "software sob medida"]
-        : ["management systems", "restaurant SaaS", "ATS for agencies", "custom software"],
+        ? ["api oficial whatsapp em reais", "whatsapp api sem markup", "whatsapp coexistência", "sistema para restaurante", "ATS Brasil Japão", "Maldivas Tech"]
+        : ["official whatsapp api brazil", "whatsapp api no markup", "restaurant SaaS", "ATS Brazil Japan"],
   });
 }
 

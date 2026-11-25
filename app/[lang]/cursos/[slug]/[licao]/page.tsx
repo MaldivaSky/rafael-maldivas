@@ -17,6 +17,7 @@ import ModuleZeroLessonClient from "../../../../components/curso/ModuleZeroLesso
 import MarketplaceLessonClient from "../../../../components/curso/MarketplaceLessonClient";
 import { MODULE_ZERO_LESSONS } from "@/app/lib/module-zero-content";
 import { MARKETPLACE_LESSONS } from "@/app/lib/marketplace-lessons-content";
+import AtolCrossLink from "@/app/components/atol/AtolCrossLink";
 
 export function generateStaticParams(): {
   lang: Lang;
@@ -218,6 +219,8 @@ export default async function CourseLessonPage({
             )}
           </section>
         )}
+
+        <AtolCrossLink lang={lang} context="course" />
       </main>
     </>
   );

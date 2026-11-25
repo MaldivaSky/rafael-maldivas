@@ -15,7 +15,7 @@ export const META_RATES_BRL = {
 
 export const ATOL_PLANS = [
   { id: "start", name: "Start", priceBRL: 79, numbers: 1, users: 3 },
-  { id: "pro", name: "Pro", priceBRL: 199, numbers: 2, users: 8 },
+  { id: "pro", name: "Pro", priceBRL: 149, numbers: 2, users: 8 },
   { id: "business", name: "Business", priceBRL: 499, numbers: 5, users: 25 },
 ] as const;
 

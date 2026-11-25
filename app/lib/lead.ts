@@ -41,7 +41,31 @@ export type RawLead = {
   origem?: { primeira?: unknown; ultima?: unknown };
   /** aparelho da equipe (?interno=1): o lead entra marcado como teste */
   interno?: boolean;
+  /** formulário enxuto da home / acesso prioritário: id de INTERESSES */
+  interesse?: string;
+  /** nome da empresa (formulário enxuto) */
+  empresa?: string;
+  /** acesso prioritário Atol: segmento do negócio */
+  segmento?: string;
+  /** acesso prioritário Atol: quantas linhas (números) pretende conectar */
+  linhas?: number | string;
 };
+
+/**
+ * Os 5 interesses do formulário B2B da home + os pontos de captura do Atol.
+ * O rótulo vai para a coluna "serviços" do CRM; a área define o funil.
+ */
+export const INTERESSES: Record<string, { label: string; area: string }> = {
+  atol: { label: "Atol Connect — Lista prioritária / Sandbox / Parceiros", area: "Software" },
+  "atol-prioritario": { label: "Atol Connect — Acesso prioritário (pré-aprovação Meta)", area: "Software" },
+  "exit-intent": { label: "Atol Connect — Diagnóstico WhatsApp (saída da home)", area: "Software" },
+  miseon: { label: "MiseOn — Restaurante, delivery ou totem", area: "Software" },
+  mercadinhosys: { label: "MercadinhoSys — Varejo com IA", area: "Software" },
+  selectsys: { label: "SelectSys Jobs — Agência / empreiteira Brasil–Japão", area: "Software" },
+  "sob-medida": { label: "Software sob medida, integrações API ou BI", area: "Software" },
+};
+
+const corta = (v: unknown, max: number) => String(v ?? "").trim().slice(0, max);
 
 export type LeadNormalizado = {
   nome: string;
@@ -107,16 +131,33 @@ function derivarArea(escolhas: string[], dor: string): string {
 }
 
 export function normalizarLead(raw: RawLead): LeadNormalizado {
-  const dor = (raw.dor ?? "").trim();
+  const interesse = raw.interesse ? INTERESSES[raw.interesse] : undefined;
+  const segmento = corta(raw.segmento, 80);
+  const linhasNum = Math.floor(Number(raw.linhas));
+  const linhas = Number.isFinite(linhasNum) && linhasNum > 0 ? Math.min(linhasNum, 10_000) : 0;
+
+  // o formulário enxuto manda 1 linha; o interesse vira o contexto da dor
+  const extras = [
+    segmento && `Segmento: ${segmento}`,
+    linhas > 0 && `Linhas WhatsApp: ${linhas}`,
+  ].filter(Boolean);
+  const dorBase = corta(raw.dor, 2000);
+  const dor = interesse
+    ? [`[${interesse.label}]`, dorBase, ...extras].filter(Boolean).join(" · ")
+    : dorBase;
+
   const escolhas = Array.isArray(raw.escolhas) ? raw.escolhas.filter(Boolean) : [];
-  const nome = (raw.nome ?? "").trim() || "Sem nome";
-  const negocio = (raw.negocio ?? "").trim();
-  const contato = (raw.contato ?? "").trim();
+  const nome = corta(raw.nome, 120) || "Sem nome";
+  const negocio = corta(raw.negocio, 200) || corta(raw.empresa, 200);
+  const contato = corta(raw.contato, 160);
   const prazo = PRAZO_LABEL[raw.prazo ?? ""] ?? "Estudando";
 
-  const servicosNomes = escolhas
-    .map((id) => servicos.find((s) => s.id === id)?.nome.pt)
-    .filter(Boolean) as string[];
+  const servicosNomes = [
+    ...(interesse ? [interesse.label] : []),
+    ...(escolhas
+      .map((id) => servicos.find((s) => s.id === id)?.nome.pt)
+      .filter(Boolean) as string[]),
+  ];
 
   const origemPrimeira = limparToque(raw.origem?.primeira);
   const origemUltima = limparToque(raw.origem?.ultima);
@@ -134,6 +175,14 @@ export function normalizarLead(raw: RawLead): LeadNormalizado {
     origemPrimeira,
     origemUltima,
   };
+
+  if (interesse) {
+    // captura enxuta: sem contato não há como responder
+    if (contato.replace(/\D/g, "").length < 8 && !/@/.test(contato)) {
+      return { ...base, valido: false, motivo: "contato_obrigatorio" };
+    }
+    return { ...base, area: interesse.area, valido: true };
+  }
 
   if (dor.length < 4) {
     return { ...base, valido: false, motivo: "dor_obrigatoria" };

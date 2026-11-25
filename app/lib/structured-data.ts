@@ -21,6 +21,8 @@ import { ORACLE_CERT } from "./credentials";
 const ORG_ID = `${SITE}/#organization`;
 const WEBSITE_ID = `${SITE}/#website`;
 const FOUNDER_ID = `${SITE}/#founder`;
+/** mesma entidade declarada no JSON-LD de connect.maldivastech.dev */
+const ATOL_ID = "https://connect.maldivastech.dev/#software";
 
 /**
  * Grafo oficial da empresa Maldivas Tech para o Painel de Conhecimento
@@ -40,8 +42,14 @@ export const maldivasTechKnowledgeGraph = {
       url: SITE,
       logo: `${SITE}/logo-bimi.svg`,
       description:
-        "Sistemas de gestão SaaS, arquitetura de software, presença digital e automação — do modelo de dados ao sistema em produção.",
+        "Infraestrutura oficial de WhatsApp (Atol Connect, Cloud API da Meta) e SaaS multi-tenant em produção — MiseOn, MercadinhoSys e SelectSys Jobs — do modelo de dados ao deploy.",
       email: EMAIL,
+      owns: [
+        { "@id": ATOL_ID },
+        { "@id": `${SITE}/#product-miseon` },
+        { "@id": `${SITE}/#product-mercadinhosys` },
+        { "@id": `${SITE}/#product-selectsys-jobs` },
+      ],
       address: {
         "@type": "PostalAddress",
         streetAddress: COMPANY.street,
@@ -148,27 +156,23 @@ export const maldivasTechKnowledgeGraph = {
     },
     {
       "@type": "SoftwareApplication",
-      "@id": `${SITE}/#product-atol-connect`,
+      "@id": ATOL_ID,
       name: "Atol Connect",
       description:
-        "Plataforma multi-tenant sobre a WhatsApp Business Platform (Cloud API da Meta): Embedded Signup, caixa de entrada em equipe, modelos, REST API e webhooks assinados.",
+        "Plataforma multi-tenant sobre a WhatsApp Business Platform (Cloud API da Meta) em reais: Coexistência com o celular, caixa de entrada em equipe, templates, REST API e webhooks assinados, sem markup nas tarifas da Meta.",
       url: "https://connect.maldivastech.dev",
       applicationCategory: "BusinessApplication",
       applicationSubCategory: "WhatsAppBusinessPlatformCloudAPI",
       operatingSystem: "Web",
       offers: {
-        "@type": "AggregateOffer",
+        "@type": "Offer",
+        price: "79.00",
         priceCurrency: "BRL",
-        lowPrice: "79.00",
-        highPrice: "499.00",
-        offerCount: 3,
+        url: `${SITE}/pt/whatsapp-api`,
       },
-      author: {
-        "@id": ORG_ID,
-      },
-      provider: {
-        "@id": ORG_ID,
-      },
+      author: { "@id": ORG_ID },
+      provider: { "@id": ORG_ID },
+      publisher: { "@id": ORG_ID },
     },
   ],
 };

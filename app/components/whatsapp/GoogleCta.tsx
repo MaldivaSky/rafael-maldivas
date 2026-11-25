@@ -1,6 +1,9 @@
-import { signupUrl } from "../../lib/whatsapp-niches";
+import AtolCta from "../atol/AtolCta";
 
-/** CTA único do funil: cadastro no Atol Connect (Google ou e-mail), com origem rastreável. */
+/**
+ * CTA único do funil Atol nas páginas /whatsapp-api e /desenvolvedores.
+ * Delegado ao AtolCta, que respeita NEXT_PUBLIC_TECH_PROVIDER_APPROVED.
+ */
 export default function GoogleCta({
   lang,
   src,
@@ -12,22 +15,5 @@ export default function GoogleCta({
   plan?: string;
   secondary?: { href: string; label: string };
 }) {
-  const pt = lang === "pt";
-  return (
-    <>
-      <div className="wa-cta">
-        <a className="btn btn-primary wa-google" href={signupUrl(src, plan)} data-analytics="atol_signup">
-          {pt ? "Testar 14 dias grátis" : "Start 14-day free trial"}
-        </a>
-        {secondary && (
-          <a className="btn btn-ghost" href={secondary.href}>
-            {secondary.label}
-          </a>
-        )}
-      </div>
-      <p className="wa-micro">
-        {pt ? "Sem cartão · Conecta em 3 min · Cadastro em 1 minuto" : "No card · Connect in 3 min · 1-minute sign-up"}
-      </p>
-    </>
-  );
+  return <AtolCta lang={lang} src={src} plan={plan} secondary={secondary} />;
 }

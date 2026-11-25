@@ -2,44 +2,48 @@
 
 import { useEffect, useState } from "react";
 
-export function useExitIntent(delayMs = 2000, triggerOnce = true) {
+/**
+ * Exit-intent honesto:
+ *  - só arma depois de `armAfterMs` na página (padrão 45s);
+ *  - só em desktop com mouse (pointer: fine) — no celular não existe "saída pelo topo";
+ *  - só quando o cursor sai pela borda SUPERIOR (rumo à aba/barra de endereço);
+ *  - no máximo uma vez por sessão do navegador.
+ * Nunca dispara por tempo sozinho.
+ */
+export function useExitIntent(armAfterMs = 45_000, storageKey = "mt_exit_shown") {
   const [isTriggered, setIsTriggered] = useState(false);
-  const [hasTriggered, setHasTriggered] = useState(false);
 
   useEffect(() => {
-    // Se já foi disparado e deve disparar só uma vez, aborta
-    if (triggerOnce && hasTriggered) return;
+    if (typeof window === "undefined") return;
+    if (!window.matchMedia?.("(pointer: fine)").matches) return;
+    try {
+      if (sessionStorage.getItem(storageKey)) return;
+    } catch {
+      /* storage bloqueado: segue sem persistência */
+    }
 
-    let timeout: NodeJS.Timeout;
-    
-    // Dispara após ficar X tempo na página (fallback)
-    const timeTrigger = setTimeout(() => {
-      if (!isTriggered && (!triggerOnce || !hasTriggered)) {
-        setIsTriggered(true);
-        setHasTriggered(true);
-      }
-    }, delayMs * 60); // Ex: 2000ms * 60 = 2 minutos (ou o que for passado)
+    let armed = false;
+    const armTimer = setTimeout(() => {
+      armed = true;
+    }, armAfterMs);
 
-    const handleMouseLeave = (e: MouseEvent) => {
-      // Se o mouse sair por cima (direção da barra de endereço/fechar aba)
-      if (e.clientY <= 0 || e.clientX <= 0 || (e.clientX >= window.innerWidth || e.clientY >= window.innerHeight)) {
-        if (!isTriggered && (!triggerOnce || !hasTriggered)) {
-          setIsTriggered(true);
-          setHasTriggered(true);
-          clearTimeout(timeTrigger);
-        }
+    const onLeave = (e: MouseEvent) => {
+      if (!armed || e.relatedTarget !== null || e.clientY > 0) return;
+      setIsTriggered(true);
+      try {
+        sessionStorage.setItem(storageKey, "1");
+      } catch {
+        /* ignore */
       }
+      document.removeEventListener("mouseout", onLeave);
     };
 
-    document.addEventListener("mouseleave", handleMouseLeave);
-
+    document.addEventListener("mouseout", onLeave);
     return () => {
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      clearTimeout(timeTrigger);
+      clearTimeout(armTimer);
+      document.removeEventListener("mouseout", onLeave);
     };
-  }, [isTriggered, hasTriggered, triggerOnce, delayMs]);
+  }, [armAfterMs, storageKey]);
 
-  const dismiss = () => setIsTriggered(false);
-
-  return { isTriggered, dismiss };
+  return { isTriggered, dismiss: () => setIsTriggered(false) };
 }

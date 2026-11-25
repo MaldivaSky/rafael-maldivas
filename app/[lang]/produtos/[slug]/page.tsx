@@ -122,7 +122,7 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
 
   mercadinhosys: {
     pt: {
-      heroLabel: "ERP Multi-Tenant & PDV Fiscal · Domínio Próprio mercadinhosys.com.br · Cliente Real",
+      heroLabel: "ERP Multi-Tenant & PDV Fiscal · Domínio Próprio mercadinhosys.com.br · Validado no Varejo",
       problem:
         "Mercados, minimercados e varejistas perdem lucro todo mês com ruptura de gôndola, furos de caixa e digitação manual de notas fiscais de fornecedor. Sem histórico transacional de estoque nem leitura de margem real, o dono só descobre o prejuízo tarde demais.",
       solutionTitle: "Do XML do fornecedor ao PDV NFC-e e Curva ABC em tempo real",
@@ -136,17 +136,17 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
       ],
       stats: [
         { n: ".com.br", label: "Domínio próprio em produção" },
-        { n: "Cliente Real", label: "Varejo operando diariamente" },
+        { n: "Varejo", label: "Plataforma validada · novas implantações em andamento" },
         { n: "NFC-e", label: "PDV Fiscal + Entrada XML" },
         { n: "Curva ABC", label: "BI com Pandas + Plotly" },
       ],
       cta: "Acessar mercadinhosys.com.br",
       ctaDemo: "Implantar na Minha Loja",
       ctaAllProducts: "Ver todos os produtos",
-      trialNote: "14 dias grátis · Domínio próprio mercadinhosys.com.br · Operando com cliente real",
+      trialNote: "2 meses grátis com implantação · Domínio próprio mercadinhosys.com.br · Plataforma validada no varejo, novas implantações em andamento",
     },
     en: {
-      heroLabel: "Multi-Tenant Retail ERP & Fiscal POS · mercadinhosys.com.br · Real Client Live",
+      heroLabel: "Multi-Tenant Retail ERP & Fiscal POS · mercadinhosys.com.br · Retail-Validated",
       problem:
         "Supermarkets and independent retailers lose margin every month to shelf stockouts, register discrepancies, and manual supplier invoice entry. Without transactional stock ledgers, owners spot losses too late.",
       solutionTitle: "From supplier XML intake to fiscal POS and real-time ABC/RFM BI",
@@ -156,18 +156,18 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
         { icon: BarChart3, title: "Commercial BI: ABC Curve & RFM", desc: "Interactive analytics built on Python (Pandas, Statsmodels, Plotly) surfacing top-margin SKUs, dead stock, and P&L visibility." },
         { icon: Layers, title: "Fail-Closed Multi-Tenant Architecture", desc: "Strict tenant isolation inside PostgreSQL with nested transaction savepoints and full cash-drawer audit trails." },
         { icon: TrendingUp, title: "Demand Forecasting & Stockout Alerts", desc: "Velocity tracking and time-series signals alert purchasing before best-selling shelves go empty." },
-        { icon: Zap, title: "Production Sentry Observability", desc: "Live telemetry and exception tracking backing real retail stores running on mercadinhosys.com.br." },
+        { icon: Zap, title: "Production Sentry Observability", desc: "Live telemetry and exception tracking backing the production platform at mercadinhosys.com.br." },
       ],
       stats: [
         { n: ".com.br", label: "Custom production domain" },
-        { n: "Real Client", label: "Daily retail operations" },
+        { n: "Retail", label: "Validated platform · new rollouts in progress" },
         { n: "NFC-e", label: "Fiscal POS + XML intake" },
         { n: "ABC / RFM", label: "Pandas + Plotly analytics" },
       ],
       cta: "Open mercadinhosys.com.br",
       ctaDemo: "Request Retail Demo",
       ctaAllProducts: "All products",
-      trialNote: "14 days free · Live at mercadinhosys.com.br with real retail client",
+      trialNote: "2 months free with onboarding · mercadinhosys.com.br · Retail-validated platform, new rollouts in progress",
     },
   },
 
@@ -238,14 +238,14 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
       ],
       stats: [
         { n: "R$ 79", label: "plano de entrada por mês" },
-        { n: "14 dias", label: "teste grátis, sem cartão" },
+        { n: "R$ 0,00", label: "respostas no celular (Coexistência)" },
         { n: "OpenAPI 3.1", label: "API pública documentada" },
         { n: "Cloud API", label: "oficial da Meta" },
       ],
       cta: "Acessar connect.maldivastech.dev",
       ctaDemo: "Falar sobre integração",
       ctaAllProducts: "Ver todos os produtos",
-      trialNote: "14 dias grátis · A Maldivas Tech está em processo de credenciamento como Tech Provider da Meta · Tarifas de mensagem pagas direto à Meta",
+      trialNote: "14 dias grátis na liberação · Operação oficial Meta ativa para Food Service via MiseOn; credenciamento Tech Provider para demais segmentos em validação final na Meta · Tarifas pagas direto à Meta",
     },
     en: {
       heroLabel: "WhatsApp Business Platform · Official Meta Cloud API · Multi-tenant",
@@ -262,14 +262,14 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
       ],
       stats: [
         { n: "BRL 79", label: "entry plan per month" },
-        { n: "14 days", label: "free trial, no card" },
+        { n: "BRL 0.00", label: "phone replies (Coexistence)" },
         { n: "OpenAPI 3.1", label: "documented public API" },
         { n: "Cloud API", label: "official Meta" },
       ],
       cta: "Open connect.maldivastech.dev",
       ctaDemo: "Talk about integration",
       ctaAllProducts: "All products",
-      trialNote: "14 days free · Maldivas Tech's Meta Tech Provider accreditation is in progress · Message fees are paid directly to Meta",
+      trialNote: "14 days free at release · Official Meta operation live for Food Service via MiseOn; Tech Provider accreditation for other segments in final validation at Meta · Fees paid directly to Meta",
     },
   },
 };
