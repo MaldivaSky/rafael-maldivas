@@ -20,3 +20,8 @@ yarn-error.log*
 
 # readmes de perfil do GitHub (nao fazem parte do projeto)
 _readme_perfil_*.md
+
+# configuração local do Claude Code (permissões e worktrees temporários)
+.claude/
+# segredos locais nunca entram no repositório (repo é público)
+secrets/
