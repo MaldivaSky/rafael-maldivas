@@ -18,17 +18,16 @@ import {
 const t = {
   pt: {
     tagline:
-      "Infraestrutura WhatsApp Oficial e SaaS multi-tenant em produção — do modelo de dados ao deploy.",
+      "Software house: produtos SaaS próprios e sistemas sob medida — do modelo de dados ao deploy.",
     nav: "Institucional",
     social: "Onde nos achar",
     company: "Empresa",
     links: [
-      ["/whatsapp-api", "Atol Connect"],
-      ["/whatsapp-api/calculadora-2026", "Calculadora 2026"],
-      ["/produtos", "Sistemas"],
-      ["/portfolio", "Portfólio"],
-      ["/servicos", "Software sob medida"],
+      ["/produtos", "Produtos"],
       ["/cursos", "Academy"],
+      ["/servicos", "Software sob medida"],
+      ["/portfolio", "Portfólio"],
+      ["/whatsapp-api", "Atol Connect"],
       ["/ferramentas", "Ferramentas"],
       ["/about", "Sobre"],
       ["/#contato", "Contato"],
@@ -42,17 +41,16 @@ const t = {
   },
   en: {
     tagline:
-      "Official WhatsApp infrastructure and multi-tenant SaaS in production — from data model to deploy.",
+      "Software house: our own SaaS products and custom systems — from data model to deploy.",
     nav: "Company pages",
     social: "Find us",
     company: "Company",
     links: [
-      ["/whatsapp-api", "Atol Connect"],
-      ["/whatsapp-api/calculadora-2026", "2026 Calculator"],
-      ["/produtos", "Systems"],
-      ["/portfolio", "Portfolio"],
-      ["/servicos", "Custom software"],
+      ["/produtos", "Products"],
       ["/cursos", "Academy"],
+      ["/servicos", "Custom software"],
+      ["/portfolio", "Portfolio"],
+      ["/whatsapp-api", "Atol Connect"],
       ["/ferramentas", "Tools"],
       ["/about", "About"],
       ["/#contato", "Contact"],
