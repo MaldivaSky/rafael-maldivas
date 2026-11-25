@@ -72,7 +72,7 @@ export default function BeforeAfter({
       onPointerLeave={onPointerUp}
     >
       {/* Imagem de Fundo (Antes) */}
-      <img
+      <img loading="lazy" decoding="async"
         src={beforeImage}
         alt={beforeAlt}
         style={{
@@ -102,7 +102,7 @@ export default function BeforeAfter({
       </div>
 
       {/* Imagem Sobreposta (Depois) com Clip-Path */}
-      <img
+      <img loading="lazy" decoding="async"
         src={afterImage}
         alt={afterAlt}
         style={{

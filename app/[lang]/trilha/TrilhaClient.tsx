@@ -292,7 +292,7 @@ export default function TrilhaClient({
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           {aluno.avatar_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <img loading="lazy" decoding="async"
               src={aluno.avatar_url}
               alt={aluno.nome}
               width={56}

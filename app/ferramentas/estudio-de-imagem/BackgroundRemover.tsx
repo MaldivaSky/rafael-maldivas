@@ -237,7 +237,7 @@ export default function BackgroundRemover() {
             <figcaption>{pt ? "Original" : "Original"}</figcaption>
             <div className="studio-checker">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={sourceUrl} alt={pt ? "Imagem original" : "Original image"} />
+              <img loading="lazy" decoding="async" src={sourceUrl} alt={pt ? "Imagem original" : "Original image"} />
             </div>
             <span className="studio-source">
               <span>{sourceName}</span>
@@ -250,7 +250,7 @@ export default function BackgroundRemover() {
             <div className="studio-checker">
               {phase === "done" && cutoutUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={cutoutUrl} alt={pt ? "Imagem sem fundo" : "Image without background"} />
+                <img loading="lazy" decoding="async" src={cutoutUrl} alt={pt ? "Imagem sem fundo" : "Image without background"} />
               ) : (
                 <span role="status">{pt ? "Não foi possível processar." : "Could not process."}</span>
               )}

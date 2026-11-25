@@ -338,7 +338,7 @@ export default async function ProductPage({
             <div className="prod-brand-lockup">
               {product.icon && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <img loading="lazy" decoding="async"
                   src={product.icon}
                   alt=""
                   width={64}
@@ -349,7 +349,7 @@ export default async function ProductPage({
               {product.logoHorizontal ? (
                 <div className={needsLightPlate ? "prod-logo-plate" : "prod-logo-dark"}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={product.logoHorizontal} alt={product.name} />
+                  <img loading="lazy" decoding="async" src={product.logoHorizontal} alt={product.name} />
                 </div>
               ) : null}
               <span className="prod-domain-pill">{domainLabel}</span>
@@ -381,7 +381,7 @@ export default async function ProductPage({
           {product.showcaseImage && (
             <div className="prod-hero-visual">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <img loading="lazy" decoding="async"
                 src={product.showcaseImage}
                 alt={`${product.name} — arquitetura e interface`}
               />

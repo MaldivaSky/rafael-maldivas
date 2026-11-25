@@ -92,7 +92,7 @@ export default function FujiarteCase() {
               margin: "0 auto",
               boxShadow: "0 12px 40px rgba(0,0,0,0.1)"
             }}>
-              <img src="/clients/fujiarte.png" alt="Fujiarte Logo" style={{ width: "100%", height: "auto", objectFit: "contain" }} />
+              <img loading="lazy" decoding="async" src="/clients/fujiarte.png" alt="Fujiarte Logo" style={{ width: "100%", height: "auto", objectFit: "contain" }} />
             </div>
           </Reveal>
         </div>
@@ -104,7 +104,7 @@ export default function FujiarteCase() {
         <div className="wrap fj-grid" style={{ alignItems: "center" }}>
           <Reveal>
             <div style={{ borderRadius: "24px", overflow: "hidden", border: "1px solid var(--line)", boxShadow: "0 30px 60px rgba(0,0,0,0.3)" }}>
-              <img src="/clients/fujiarte-poster.png" alt="Fujiarte: Além do recrutamento, um compromisso social" style={{ width: "100%", height: "auto", display: "block" }} />
+              <img loading="lazy" decoding="async" src="/clients/fujiarte-poster.webp" alt="Fujiarte: Além do recrutamento, um compromisso social" style={{ width: "100%", height: "auto", display: "block" }} />
             </div>
           </Reveal>
           <Reveal delay={0.2}>

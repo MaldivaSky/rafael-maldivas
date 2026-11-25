@@ -631,7 +631,7 @@ export default function CoursePracticeStationClient({
                     background: "#070d19",
                   }}
                 >
-                  <img
+                  <img loading="lazy" decoding="async"
                     src="/cursos/guias/anatomia-casa-pre-moldada.svg"
                     alt="Diagrama mostrando os 4 cômodos da Casa Pré-Moldada na ordem de construção: 1. Alicerce, 2. Paredes, 3. Móveis e 4. Habite-se."
                     style={{ width: "100%", height: "auto", display: "block" }}

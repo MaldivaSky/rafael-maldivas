@@ -38,7 +38,7 @@ export default function PartnerBadges() {
             <Reveal key={b.id} delay={i * 0.08}>
               <Spotlight className={`badge badge-${b.status}`}>
                 <div className="badge-top">
-                  <img src={b.icon} alt="" width={30} height={30} />
+                  <img loading="lazy" decoding="async" src={b.icon} alt="" width={30} height={30} />
                   <span className="badge-platform">{b.platform}</span>
                   <span className="badge-pill">
                     {b.status === "approved" ? <BadgeCheck size={13} /> : <Clock3 size={13} />}

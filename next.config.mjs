@@ -10,6 +10,9 @@ const nextConfig = {
   // acima (worktrees em .claude/worktrees) — vale igual na Vercel
   outputFileTracingRoot: path.dirname(fileURLToPath(import.meta.url)),
 
+  // <Image> entrega AVIF quando o navegador aceita (≈20–30% menor que WebP) e WebP no resto
+  images: { formats: ["image/avif", "image/webp"] },
+
   /**
    * A remoção de fundo (@imgly/background-removal) NÃO entra no bundle: o
    * componente BackgroundRemover a carrega sob demanda direto do CDN (esm.sh),

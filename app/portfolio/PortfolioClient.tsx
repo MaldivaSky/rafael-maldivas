@@ -136,7 +136,7 @@ export default function PortfolioClient() {
               </div>
               <div style={{ flex: "1 1 300px", display: "flex", justifyContent: "center" }}>
                 <div style={{ padding: "24px", background: "var(--bg)", borderRadius: "16px", border: "1px solid var(--line)", width: "100%", maxWidth: "300px" }}>
-                  <img src="/clients/fujiarte.png" alt="Fujiarte Logo" style={{ width: "100%", height: "auto", objectFit: "contain" }} />
+                  <img loading="lazy" decoding="async" src="/clients/fujiarte.png" alt="Fujiarte Logo" style={{ width: "100%", height: "auto", objectFit: "contain" }} />
                 </div>
               </div>
             </Spotlight>
@@ -258,7 +258,7 @@ export default function PortfolioClient() {
 
             {/* 6. Piloto de Drone (Imagem) */}
             <Reveal className="media-card" delay={0.25}>
-              <img src="/media/cidade-avenida.jpg" alt="Operação em campo" />
+              <img loading="lazy" decoding="async" src="/media/cidade-avenida.webp" alt="Operação em campo" />
               <div className="media-cap">
                 <h3>{c.pilot[0]}</h3>
                 <p>{c.pilot[1]}</p>

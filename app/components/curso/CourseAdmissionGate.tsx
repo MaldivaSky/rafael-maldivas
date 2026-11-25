@@ -454,7 +454,7 @@ export function CourseAdmissionGate({
                 <div className="admission-oauth-info">
                   {googleLinked.avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={googleLinked.avatarUrl}
                       alt=""
                       width={38}

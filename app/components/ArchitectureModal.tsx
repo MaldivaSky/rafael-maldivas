@@ -98,7 +98,7 @@ export default function ArchitectureModal({ isOpen, onClose, product, lang }: Mo
                       : 'none',
                     display: 'flex', alignItems: 'center', justifyContent: 'center'
                   }}>
-                    <img src={`${product.logoHorizontal || product.icon}?v=17`} alt={product.name} style={{ height: (product.name.includes("SelectSys") || product.name.includes("mercadinhosys")) ? '44px' : '56px', width: 'auto', objectFit: 'contain', filter: (product.name.includes("SelectSys") || product.name.includes("mercadinhosys")) ? 'none' : 'drop-shadow(0 4px 8px rgba(0,0,0,0.6))' }} />
+                    <img loading="lazy" decoding="async" src={`${product.logoHorizontal || product.icon}?v=17`} alt={product.name} style={{ height: (product.name.includes("SelectSys") || product.name.includes("mercadinhosys")) ? '44px' : '56px', width: 'auto', objectFit: 'contain', filter: (product.name.includes("SelectSys") || product.name.includes("mercadinhosys")) ? 'none' : 'drop-shadow(0 4px 8px rgba(0,0,0,0.6))' }} />
                   </div>
                 )}
                 <div>
@@ -185,7 +185,7 @@ export default function ArchitectureModal({ isOpen, onClose, product, lang }: Mo
                 <span style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#64748b', marginRight: '8px', fontFamily: 'var(--mono)' }}>Tech Stack:</span>
                 {product.tags && product.tags.map((tag: any, i: number) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', whiteSpace: 'nowrap', fontSize: '12px', color: '#cbd5e1' }}>
-                        {tag.s && <img src={tag.s} alt="" style={{ width: '14px', height: '14px', opacity: 0.8 }} />}
+                        {tag.s && <img loading="lazy" decoding="async" src={tag.s} alt="" style={{ width: '14px', height: '14px', opacity: 0.8 }} />}
                         {tag.l}
                     </div>
                 ))}

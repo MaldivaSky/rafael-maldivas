@@ -44,7 +44,7 @@ export default function ProductCards() {
               <div className="p-top" style={{ position: "relative", zIndex: 10 }}>
                 <span className="p-icon" aria-hidden="true">
                   {typeof Icon === "string" ? (
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={Icon}
                       alt=""
                       width={76}
