@@ -6,7 +6,7 @@ import { ArrowUpRight, BadgeCheck, MapPin } from "lucide-react";
 import { useLang, localePath } from "../lib/i18n";
 import { t } from "../lib/content";
 import { WHATSAPP } from "../lib/site";
-import { ORACLE_CERT } from "../lib/credentials";
+import { CX_CERT, ORACLE_CERT } from "../lib/credentials";
 
 export default function PersonalIntro({ about = false }: { about?: boolean }) {
   const { lang } = useLang();
@@ -21,11 +21,18 @@ export default function PersonalIntro({ about = false }: { about?: boolean }) {
           <h1>{about ? (pt ? "Sou Rafael." : "I’m Rafael.") : c.h1a}<br /><span className="hl">{about ? (pt ? "Prazer em conhecer você." : "Nice to meet you.") : c.h1b}</span></h1>
           <p className="personal-lead">{about ? (pt ? "Sou Product Owner e construo meus próprios produtos de ponta a ponta, sozinho, com agentes de IA: da conversa com quem opera até o sistema em produção. Antes disso vieram vendas, PDV e inteligência de mercado, e é daí que vem meu olhar de negócio." : "I’m a Product Owner who builds his own products end to end, solo, with AI agents: from talking to the people who run the operation to a system running in production. Before that came field sales, retail and market intelligence, which is where my business sense comes from.") : c.lead}</p>
           <p className="personal-note">{pt ? "Gosto de entender o trabalho de quem me procura. O que toma tempo, o que dá problema e o que dá para fazer melhor." : "I like understanding the work of the people who reach out to me. What takes time, what causes problems and what we can improve."}</p>
-          <a className="cert-chip" href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click">
-            <BadgeCheck size={17} />
-            <span><strong>Oracle Certified</strong> · {ORACLE_CERT.name}</span>
-            <small>{pt ? "verificar" : "verify"} <ArrowUpRight size={13} /></small>
-          </a>
+          <div className="cert-chips">
+            <a className="cert-chip" href={CX_CERT.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click">
+              <BadgeCheck size={17} />
+              <span><strong>Oracle Certified</strong> · {CX_CERT.short[lang]}</span>
+              <small>{pt ? "verificar" : "verify"} <ArrowUpRight size={13} /></small>
+            </a>
+            <a className="cert-chip" href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click">
+              <BadgeCheck size={17} />
+              <span><strong>Oracle Certified</strong> · {ORACLE_CERT.short[lang]}</span>
+              <small>{pt ? "verificar" : "verify"} <ArrowUpRight size={13} /></small>
+            </a>
+          </div>
           <div className="personal-actions">
             <a className="btn btn-primary" href={WHATSAPP} target="_blank" rel="noopener noreferrer" data-analytics="contact_click">{pt ? "Vamos conversar" : "Let’s talk"}<ArrowUpRight size={18} /></a>
             <Link className="personal-link" href={localePath(about ? "/portfolio" : "/servicos", lang)} data-analytics={about ? "portfolio_click" : "service_click"}>{about ? (pt ? "Conhecer meus projetos" : "Explore my projects") : (pt ? "Como posso ajudar" : "How I can help")}<ArrowUpRight size={17} /></Link>

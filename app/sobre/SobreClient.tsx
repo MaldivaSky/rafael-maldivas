@@ -5,9 +5,9 @@ import { ArrowUpRight, BadgeCheck, MessageCircle } from "lucide-react";
 import { useLang, localePath } from "../lib/i18n";
 import { t } from "../lib/content";
 import { PRODUCTS } from "../lib/products";
-import { ORACLE_CERT } from "../lib/credentials";
+import { ORACLE_CERTS, type OracleCert } from "../lib/credentials";
 import { rich } from "../lib/rich";
-import { EMAIL, LINKEDIN, WHATSAPP } from "../lib/site";
+import { EMAIL, GITHUB_ORG, GITHUB_USER, INSTAGRAM, LINKEDIN, WHATSAPP, YOUTUBE } from "../lib/site";
 import PersonalIntro from "../components/PersonalIntro";
 import { Magnetic, Reveal, Spotlight, TechIcon } from "../components/fx";
 
@@ -17,11 +17,13 @@ const copy = {
     "h1a": "Sou Rafael. ",
     "h1b": "Prazer em conhecer você.",
     "lead": "Minha trajetória passou por vendas, qualidade, processos, marcenaria, química e gastronomia. Hoje trabalho com consultoria de tecnologia e desenvolvimento na minha empresa, a Maldivas Tech.",
-    "certTag": "Certificação",
-    "certTitle": "Certificado pela Oracle em IA agêntica",
-    "certLead": "Formação prática em agentes de IA: construir um agente do zero, usar LangChain, um servidor MCP real e a OpenAI Agents SDK, e ver como agentes rodam em produção na Oracle Cloud. É o mesmo tipo de ferramenta que eu uso para construir meus produtos.",
-    "certIssued": "Emitido em 03/10/2026",
-    "certValid": "válido até 03/10/2028",
+    "certTag": "Certificações",
+    "certTitle": "Duas certificações Oracle — IA agêntica e processos de CX",
+    "certLead": "Tecnologia não se aprende uma vez: se recicla. Como profissional de TI, eu me mantenho sempre atualizado — volto ao banco, estudo e lapido o que já sei. A certificação de IA agêntica me dá a engenharia com que construo meus produtos; a de processos CX me dá a língua do negócio — marketing, vendas e atendimento — exatamente o que o MiseOn, o MercadinhoSys e o Atol Connect digitalizam.",
+    "certCxTag": "Oracle · Processos de CX",
+    "certCxLead": "Formação nos Oracle Modern Best Practices (OMBP) da suíte CX: como dados e processos fluem e se integram entre marketing, vendas, gestão de performance comercial e atendimento, e como o Cloud Success Navigator e os Cloud Quality Standards conduzem uma transformação em nuvem. É o processo do cliente que meus produtos digitalizam — agora certificado de ponta a ponta.",
+    "certAiTag": "Oracle · IA agêntica",
+    "certAiLead": "Formação prática em agentes de IA: construir um agente do zero, usar LangChain, um servidor MCP real e a OpenAI Agents SDK, e ver como agentes rodam em produção na Oracle Cloud. É o mesmo tipo de ferramenta que eu uso para construir meus produtos.",
     "certVerify": "Verificar na Oracle",
     "certId": "Credencial",
     "pmTag": "Product Owner, na prática",
@@ -78,12 +80,16 @@ const copy = {
       [
         "2026 — hoje",
         "Product Owner e fundador — Maldivas Tech",
-        "Concebo e construo sozinho, com agentes de IA, meus próprios produtos (MiseOn e SelectSys Jobs). CNPJ próprio, contrato com agência de recrutamento Brasil–Japão, integração com a API oficial do WhatsApp, homologação no iFood e certificação Oracle em IA agêntica."
+        "Concebo e construo sozinho, com agentes de IA, meus próprios produtos (MiseOn e SelectSys Jobs). CNPJ próprio, contrato com agência de recrutamento Brasil–Japão, integração com a API oficial do WhatsApp, homologação no iFood e certificações Oracle em IA agêntica e processos de CX."
       ]
     ],
     "stackTag": "Formação",
     "stackTitle": "Formação e certificações",
     "edu": [
+      [
+        "Fusion Cloud CX Process Essentials (1Z0-1161-1)",
+        "Oracle — 2026 · aprovação 84% (mínimo exigido 65%)"
+      ],
       [
         "Agentic AI Certified Foundations Associate",
         "Oracle — 2026 (válido até 2028)"
@@ -113,6 +119,16 @@ const copy = {
         "Português nativo · Inglês avançado · Espanhol intermediário"
       ]
     ],
+    "followTag": "Redes",
+    "followTitle": "Me acompanhe por perto",
+    "followLead": "Eu documento o que construo e compartilho o caminho — bastidores de produto e de engenharia, e o que aprendo a cada reciclagem. Seguir é o jeito mais rápido de ver o próximo capítulo.",
+    "followCta": "Seguir",
+    "followSubscribe": "Inscrever-se",
+    "socialLinkedin": "Carreira, certificações e visão de produto em primeira mão.",
+    "socialGithubPersonal": "Código dos meus projetos pessoais, experimentos e estudos.",
+    "socialGithubOrg": "Repositórios oficiais dos produtos: MiseOn, MercadinhoSys e MySuperStore.",
+    "socialYoutube": "O canal do MiseOn: demonstrações do sistema, tutoriais e bastidores da construção.",
+    "socialInstagram": "Gestão para food service no dia a dia: ficha técnica, CMV e lançamentos do MiseOn.",
     "ctaTitle": "Vamos conversar?",
     "ctaLead": "Se você está buscando ajuda com tecnologia ou quer conversar sobre uma oportunidade, pode me chamar.",
     "ctaBtn": "Falar no WhatsApp",
@@ -123,11 +139,13 @@ const copy = {
     "h1a": "I’m Rafael. ",
     "h1b": "Nice to meet you.",
     "lead": "My background spans sales, quality, processes, woodworking, chemistry and gastronomy. Today I work in technology consulting and development at my company, Maldivas Tech.",
-    "certTag": "Certification",
-    "certTitle": "Oracle certified in agentic AI",
-    "certLead": "Hands-on training in AI agents: building an agent from scratch, using LangChain, a real MCP server and the OpenAI Agents SDK, and seeing how agents run in production on Oracle Cloud. The same kind of tooling I use to build my products.",
-    "certIssued": "Issued 3 Oct 2026",
-    "certValid": "valid until 3 Oct 2028",
+    "certTag": "Certifications",
+    "certTitle": "Two Oracle certifications — agentic AI and CX processes",
+    "certLead": "Technology isn't learned once: it's refreshed. As an IT professional, I keep myself current — I go back to the books, study and polish what I already know. The agentic AI certification gives me the engineering I use to build my products; the CX one gives me the language of the business — marketing, sales and service — exactly what MiseOn, MercadinhoSys and Atol Connect digitize.",
+    "certCxTag": "Oracle · CX Processes",
+    "certCxLead": "Training in the Oracle Modern Best Practices (OMBP) of the CX suite: how data and process flows integrate across marketing, sales, sales performance management and service, and how Cloud Success Navigator and Cloud Quality Standards steer a cloud transformation. It's the customer process my products digitize — now certified end to end.",
+    "certAiTag": "Oracle · Agentic AI",
+    "certAiLead": "Hands-on training in AI agents: building an agent from scratch, using LangChain, a real MCP server and the OpenAI Agents SDK, and seeing how agents run in production on Oracle Cloud. The same kind of tooling I use to build my products.",
     "certVerify": "Verify on Oracle",
     "certId": "Credential",
     "pmTag": "Product ownership, in practice",
@@ -184,12 +202,16 @@ const copy = {
       [
         "2026 — today",
         "Product Owner and founder — Maldivas Tech",
-        "I design and build my own products (MiseOn and SelectSys Jobs) solo, with AI agents. Registered company, a signed contract with a Brazil–Japan recruitment agency, official WhatsApp API integration, iFood approval and an Oracle certification in agentic AI."
+        "I design and build my own products (MiseOn and SelectSys Jobs) solo, with AI agents. Registered company, a signed contract with a Brazil–Japan recruitment agency, official WhatsApp API integration, iFood approval and Oracle certifications in agentic AI and CX processes."
       ]
     ],
     "stackTag": "Education",
     "stackTitle": "Education and certifications",
     "edu": [
+      [
+        "Fusion Cloud CX Process Essentials (1Z0-1161-1)",
+        "Oracle — 2026 · scored 84% (65% required)"
+      ],
       [
         "Agentic AI Certified Foundations Associate",
         "Oracle — 2026 (valid until 2028)"
@@ -219,6 +241,16 @@ const copy = {
         "Portuguese native · English advanced · Spanish intermediate"
       ]
     ],
+    "followTag": "Social",
+    "followTitle": "Follow my work",
+    "followLead": "I document what I build and share the journey — product and engineering behind the scenes, and what I learn every time I go back to the books. Following is the fastest way to see the next chapter.",
+    "followCta": "Follow",
+    "followSubscribe": "Subscribe",
+    "socialLinkedin": "Career, certifications and product thinking, firsthand.",
+    "socialGithubPersonal": "Code for my personal projects, experiments and studies.",
+    "socialGithubOrg": "Official product repositories: MiseOn, MercadinhoSys and MySuperStore.",
+    "socialYoutube": "The MiseOn channel: system demos, tutorials and build behind the scenes.",
+    "socialInstagram": "Day-to-day food service management: recipe costing, COGS and MiseOn releases.",
     "ctaTitle": "Shall we talk?",
     "ctaLead": "Get in touch if you need help with technology or would like to discuss an opportunity.",
     "ctaBtn": "Message on WhatsApp",
@@ -231,6 +263,16 @@ export default function SobreClient() {
   const c = copy[lang];
   const g = t[lang];
 
+  const certMeta = (cert: OracleCert) =>
+    [
+      cert.issuedLabel[lang],
+      cert.validUntilLabel?.[lang],
+      cert.score?.label[lang],
+      `${c.certId} ${cert.id}`,
+    ]
+      .filter((x): x is string => Boolean(x))
+      .join(" · ");
+
   return (
     <>
       <PersonalIntro about />
@@ -238,33 +280,41 @@ export default function SobreClient() {
       <section id="certificacao">
         <div className="wrap">
           <Reveal>
-            <Spotlight className="cert-card">
-              <div className="cert-card-head">
-                <BadgeCheck size={30} />
-                <div>
-                  <div className="sec-tag">{c.certTag}</div>
-                  <h2>{c.certTitle}</h2>
-                </div>
-              </div>
-              <p className="cert-name">
-                <strong>{ORACLE_CERT.issuer}</strong> · {ORACLE_CERT.name}
-              </p>
-              <p className="sec-lead">{c.certLead}</p>
-              <ul className="cert-skills">
-                {ORACLE_CERT.skills[lang].map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
-              <div className="cert-foot">
-                <a className="btn btn-primary" href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click">
-                  {c.certVerify} <ArrowUpRight size={17} />
-                </a>
-                <span>
-                  {c.certIssued} · {c.certValid} · {c.certId} {ORACLE_CERT.id}
-                </span>
-              </div>
-            </Spotlight>
+            <div className="sec-tag">{c.certTag}</div>
+            <h2>{c.certTitle}</h2>
+            <p className="sec-lead">{c.certLead}</p>
+            <div style={{ height: 30 }} />
           </Reveal>
+          <div className="cert-grid">
+            {ORACLE_CERTS.map((cert, i) => (
+              <Reveal key={cert.key} delay={i * 0.06}>
+                <Spotlight className="cert-card">
+                  <div className="cert-card-head">
+                    <BadgeCheck size={30} />
+                    <div>
+                      <div className="sec-tag">{cert.key === "cx" ? c.certCxTag : c.certAiTag}</div>
+                      <h3>{cert.short[lang]}</h3>
+                    </div>
+                  </div>
+                  <p className="cert-name">
+                    <strong>{cert.issuer}</strong> · {cert.name}
+                  </p>
+                  <p className="sec-lead">{cert.key === "cx" ? c.certCxLead : c.certAiLead}</p>
+                  <ul className="cert-skills">
+                    {cert.skills[lang].map((s) => (
+                      <li key={s}>{s}</li>
+                    ))}
+                  </ul>
+                  <div className="cert-foot">
+                    <a className="btn btn-primary" href={cert.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click">
+                      {c.certVerify} <ArrowUpRight size={17} />
+                    </a>
+                    <span>{certMeta(cert)}</span>
+                  </div>
+                </Spotlight>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -374,6 +424,78 @@ export default function SobreClient() {
                   <h4>{h}</h4>
                   <p>{p}</p>
                 </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="redes" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <Reveal>
+            <div className="sec-tag">{c.followTag}</div>
+            <h2>{c.followTitle}</h2>
+            <p className="sec-lead">{c.followLead}</p>
+            <div style={{ height: 30 }} />
+          </Reveal>
+          <div className="follow-grid">
+            {[
+              {
+                key: "linkedin",
+                icon: "/icons/linkedin.svg",
+                name: "LinkedIn",
+                handle: "linkedin.com/in/rafael-paiva-dias",
+                url: LINKEDIN,
+                cta: c.followCta,
+                desc: c.socialLinkedin,
+              },
+              {
+                key: "github-personal",
+                icon: "/icons/github.svg",
+                name: "GitHub · pessoal",
+                handle: "github.com/MaldivaSky",
+                url: GITHUB_USER,
+                cta: c.followCta,
+                desc: c.socialGithubPersonal,
+              },
+              {
+                key: "github-org",
+                icon: "/icons/github.svg",
+                name: "GitHub · Maldivas Tech",
+                handle: "github.com/Mald1vas-Tech-Solut1ons",
+                url: GITHUB_ORG,
+                cta: c.followCta,
+                desc: c.socialGithubOrg,
+              },
+              {
+                key: "youtube",
+                icon: "/icons/youtube.svg",
+                name: "YouTube · MiseOn",
+                handle: "@MiseOnSISTEMA--CozinhasProfiss",
+                url: YOUTUBE,
+                cta: c.followSubscribe,
+                desc: c.socialYoutube,
+              },
+              {
+                key: "instagram",
+                icon: "/icons/instagram.svg",
+                name: "Instagram · MiseOn",
+                handle: "@miseon_system_food_service",
+                url: INSTAGRAM,
+                cta: c.followCta,
+                desc: c.socialInstagram,
+              },
+            ].map((s, i) => (
+              <Reveal key={s.key} delay={i * 0.05}>
+                <Spotlight className="follow-card">
+                  <TechIcon src={s.icon} size={26} />
+                  <h3>{s.name}</h3>
+                  <p className="follow-handle">{s.handle}</p>
+                  <p>{s.desc}</p>
+                  <a className="plink" href={s.url} target="_blank" rel="noopener noreferrer" data-analytics={`social_${s.key}`}>
+                    {s.cta} <ArrowUpRight size={16} />
+                  </a>
+                </Spotlight>
               </Reveal>
             ))}
           </div>
