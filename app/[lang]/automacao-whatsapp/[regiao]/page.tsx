@@ -24,7 +24,7 @@ export async function generateMetadata({ params: p }: { params: Promise<{ lang: 
   const meta = buildMetadata({
     lang: "pt",
     path,
-    title: `Automação de WhatsApp Oficial ${r.prep} · implantação assistida`,
+    title: `Automação de WhatsApp oficial ${r.prep}`,
     description: `Implantação assistida da WhatsApp Cloud API oficial ${r.prep} (${r.areas.slice(0, 4).join(", ")}): número no celular com Coexistência, avisos automáticos e integração com seus sistemas. Maldivas Tech.`,
     keywords: [`automação whatsapp ${r.name.toLowerCase()}`, `whatsapp oficial ${r.name.toLowerCase()}`, `api whatsapp ${r.name.toLowerCase()}`, "implantação whatsapp business api"],
   });

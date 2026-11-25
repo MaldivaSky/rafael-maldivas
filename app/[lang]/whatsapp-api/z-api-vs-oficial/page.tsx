@@ -20,7 +20,7 @@ export async function generateMetadata({ params: p }: { params: Promise<{ lang: 
   return buildMetadata({
     lang: lang as Lang,
     path: PATH,
-    title: pt ? "Z-API x WhatsApp Cloud API oficial: comparativo técnico e financeiro" : "Z-API vs official WhatsApp Cloud API: technical & cost comparison",
+    title: pt ? "Z-API x WhatsApp Cloud API oficial: comparativo" : "Z-API vs official WhatsApp Cloud API: technical & cost comparison",
     description: pt
       ? "Alternativa oficial à Z-API: risco de banimento, Coexistência com o celular, templates, webhooks e custo total com a tabela Meta 2026. Guia de migração do QR Code para a Cloud API."
       : "Official alternative to Z-API: ban risk, phone Coexistence, templates, webhooks and total cost under Meta's 2026 rates. Migration guide from QR code to Cloud API.",

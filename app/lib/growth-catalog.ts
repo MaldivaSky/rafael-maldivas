@@ -73,7 +73,7 @@ export const growthTools: Tool[] = [
       },
       en: {
         title: "Digital presence ROI calculator",
-        seoTitle: "Digital presence ROI calculator: what are you leaving on the table?",
+        seoTitle: "Digital presence ROI calculator",
         h1: "How much revenue is your business missing without a strong digital presence?",
         description: "Find out how much more your business could earn each month by improving its digital presence. Enter your average ticket and current leads — the calculator shows the real potential.",
         keywords: ["digital presence ROI", "website ROI calculator", "is a website worth it", "digital marketing return", "business website investment"],

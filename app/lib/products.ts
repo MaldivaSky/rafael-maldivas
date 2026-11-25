@@ -126,7 +126,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     ],
     copy: {
       pt: {
-        metaTitle: "MercadinhoSys — ERP Multi-Tenant e PDV Fiscal em mercadinhosys.com.br",
+        metaTitle: "MercadinhoSys — sistema com IA para mercadinho e varejo",
         metaDescription:
           "MercadinhoSys (mercadinhosys.com.br) é a plataforma validada no varejo, com novas implantações em andamento: ERP com PDV fiscal NFC-e, entrada automática de XML, estoque transacional e BI Curva ABC, RFM e DRE.",
         h1: "O ERP e PDV fiscal em operação real que elimina furo de caixa e ruptura",
@@ -142,7 +142,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
         ],
       },
       en: {
-        metaTitle: "MercadinhoSys — Multi-Tenant Retail ERP & Fiscal POS (mercadinhosys.com.br)",
+        metaTitle: "MercadinhoSys — AI retail system with fiscal POS",
         metaDescription:
           "MercadinhoSys (mercadinhosys.com.br) is a retail-validated platform with new rollouts in progress: fiscal NFC-e POS, automated invoice XML ingestion, transactional inventory and ABC/RFM BI.",
         h1: "Live retail ERP & fiscal POS built to stop stockouts and margin leaks",

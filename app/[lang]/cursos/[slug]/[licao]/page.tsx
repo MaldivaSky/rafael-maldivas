@@ -17,8 +17,6 @@ import ModuleZeroLessonClient from "../../../../components/curso/ModuleZeroLesso
 import MarketplaceLessonClient from "../../../../components/curso/MarketplaceLessonClient";
 import { MODULE_ZERO_LESSONS } from "@/app/lib/module-zero-content";
 import { MARKETPLACE_LESSONS } from "@/app/lib/marketplace-lessons-content";
-import AtolCrossLink from "@/app/components/atol/AtolCrossLink";
-
 export function generateStaticParams(): {
   lang: Lang;
   slug: string;
@@ -48,12 +46,15 @@ export async function generateMetadata({
   const lesson = lessonBySlug(course, params.licao);
   if (!lesson) return {};
 
-  return buildMetadata({
-    lang,
-    path: `cursos/${course.slug}/${lesson.slug}`,
-    title: `${lesson.title} | ${course.name}`,
-    description: lesson.summary,
-  });
+  const path = `cursos/${course.slug}/${lesson.slug}`;
+  // o H1 da aula continua completo; a tag <title> usa o tema (antes dos ":") + curso
+  let short = lesson.title.length > 46 ? lesson.title.split(":")[0].trim() : lesson.title;
+  if (short.length > 46) short = short.split(" — ")[0].trim();
+  const meta = buildMetadata({ lang, path, title: `${short} | Curso grátis`, description: lesson.summary });
+  // A aula só existe em português: /en/... é a mesma página. Canonical para /pt
+  // (sem conteúdo duplicado no índice) e hreflang só da versão real.
+  const ptUrl = `${SITE}/pt/${path}`;
+  return { ...meta, alternates: { canonical: ptUrl, languages: { "pt-BR": ptUrl, "x-default": ptUrl } } };
 }
 
 export default async function CourseLessonPage({
@@ -219,8 +220,6 @@ export default async function CourseLessonPage({
             )}
           </section>
         )}
-
-        <AtolCrossLink lang={lang} context="course" />
       </main>
     </>
   );

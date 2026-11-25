@@ -29,7 +29,7 @@ export async function generateMetadata({
     path: "about",
     title:
       lang === "pt"
-        ? "Rafael Maldivas — Product Owner certificado pela Oracle em IA agêntica"
+        ? "Rafael Maldivas — fundador da Maldivas Tech · Oracle IA"
         : "Rafael Maldivas — Product Owner, Oracle-Certified in Agentic AI",
     description:
       lang === "pt"

@@ -20,7 +20,7 @@ export async function generateMetadata({
     path: "ferramentas/estudio-de-imagem",
     title:
       lang === "pt"
-        ? "Estúdio de Imagem Grátis — Remover Fundo, Redimensionar e Converter"
+        ? "Estúdio de imagem grátis: remover fundo e converter"
         : "Free Image Studio — Remove Background, Resize and Convert",
     description:
       lang === "pt"

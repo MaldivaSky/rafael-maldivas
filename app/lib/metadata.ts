@@ -34,6 +34,25 @@ type SeoInput = {
 const absolute = (p?: string) =>
   !p ? `${SITE}/opengraph-image.png` : p.startsWith("http") ? p : `${SITE}${p}`;
 
+/** Google corta a description em ~155–160 caracteres: corta em palavra inteira. */
+export function clampDescription(d: string, max = 158): string {
+  const s = d.trim().replace(/\s+/g, " ");
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max - 1);
+  return cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,;:.—–-]+$/, "") + "…";
+}
+
+/**
+ * O layout aplica o template "%s · Maldivas Tech". Título que já traz a marca
+ * vira absoluto (senão sai "Maldivas Tech — … · Maldivas Tech").
+ */
+export function pageTitle(title: string): Metadata["title"] {
+  // marca só entra quando cabe no limite de ~62 caracteres que o Google exibe
+  const SUFFIX = " · Maldivas Tech".length;
+  if (/Maldivas Tech/i.test(title) || title.length + SUFFIX > 62) return { absolute: title };
+  return title;
+}
+
 /**
  * Monta o Metadata completo. O canonical e o hreflang saem sempre daqui —
  * nenhuma página deve declará-los à mão (evita divergência).
@@ -52,10 +71,11 @@ export function buildMetadata({
 }: SeoInput): Metadata {
   const url = localeUrl(lang, path);
   const image = absolute(ogImage);
+  description = clampDescription(description);
 
   return {
     metadataBase: new URL(SITE),
-    title,
+    title: pageTitle(title),
     description,
     keywords,
     alternates: buildAlternates(lang, path),

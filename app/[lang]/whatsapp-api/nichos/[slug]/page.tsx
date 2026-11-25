@@ -24,7 +24,7 @@ export async function generateMetadata({ params: p }: { params: Promise<{ lang: 
   return buildMetadata({
     lang: lang as Lang,
     path: `whatsapp-api/nichos/${n.slug}`,
-    title: pt ? `WhatsApp API oficial para ${n.name.pt}: regra, template e código` : `Official WhatsApp API for ${n.name.en}: rule, template and code`,
+    title: pt ? `WhatsApp oficial para ${n.name.pt}` : `Official WhatsApp for ${n.name.en}`,
     description: pt
       ? `${n.short.pt} Template de ${CATEGORY_LABEL[n.template.category].pt.toLowerCase()} a R$ ${CATEGORY_PRICE_BRL[n.template.category].toFixed(3).replace(".", ",")}, resposta no celular a R$ 0,00 e exemplo REST com Idempotency-Key.`
       : `${n.short.en} ${CATEGORY_LABEL[n.template.category].en} template at BRL ${CATEGORY_PRICE_BRL[n.template.category]}, phone reply at BRL 0.00 and a REST example with Idempotency-Key.`,

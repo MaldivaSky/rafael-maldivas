@@ -18,7 +18,7 @@ export async function generateMetadata({ params: p }: { params: Promise<{ lang: 
   return buildMetadata({
     lang: lang as Lang,
     path: "desenvolvedores",
-    title: pt ? "API do WhatsApp para desenvolvedores: REST, SDK e webhooks · Atol Connect" : "WhatsApp API for developers: REST, SDK and webhooks · Atol Connect",
+    title: pt ? "API do WhatsApp para devs: REST, SDK e webhooks" : "WhatsApp API for developers: REST, SDK, webhooks",
     description: pt
       ? "Integre o WhatsApp oficial em 10 minutos: exemplos em cURL, Node, Python, PHP e C#, SDK TypeScript, OpenAPI e webhooks assinados com HMAC. Guia de migração da Z-API."
       : "Integrate official WhatsApp in 10 minutes: cURL, Node, Python, PHP and C# examples, TypeScript SDK, OpenAPI and HMAC-signed webhooks. Z-API migration guide.",

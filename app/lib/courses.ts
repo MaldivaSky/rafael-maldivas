@@ -472,7 +472,7 @@ export const COURSES: Record<CourseSlug, Course> = {
     copy: {
       pt: {
         metaTitle:
-          "Curso Gratuito Construa seu Marketplace: Do Código ao Pagamento em Produção",
+          "Curso grátis com certificado: construa seu marketplace",
         metaDescription:
           "Curso interativo 100% gratuito (18 aulas · 38h 10min) com simulador de terminal, Casa Pré-Moldada no VS Code, deploy R$ 0 e certificado verificável.",
         h1: "Construa seu marketplace: do código ao pagamento em produção (100% Gratuito)",
@@ -511,7 +511,7 @@ export const COURSES: Record<CourseSlug, Course> = {
       },
       en: {
         metaTitle:
-          "Free Course — Build a Marketplace in Production: From Data Model to PIX & Payouts",
+          "Free certified course: build a marketplace in production",
         metaDescription:
           "100% free 18-lesson (38h 10m) interactive engineering course with browser terminal simulator, VS Code starter kit, free cloud deploy and verifiable certificate.",
         h1: "Build your marketplace: from code to payments in production (100% Free)",

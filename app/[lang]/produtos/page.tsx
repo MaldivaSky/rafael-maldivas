@@ -22,8 +22,8 @@ export async function generateMetadata({
     path: "produtos",
     title:
       lang === "pt"
-        ? "Produtos SaaS — MiseOn, MercadinhoSys (.com.br) e SelectSys Jobs | Maldivas Tech"
-        : "SaaS Products — MiseOn, MercadinhoSys & SelectSys Jobs | Maldivas Tech",
+        ? "Produtos SaaS: MiseOn, MercadinhoSys e SelectSys Jobs"
+        : "SaaS products: MiseOn, MercadinhoSys and SelectSys Jobs",
     description:
       lang === "pt"
         ? "MiseOn (food service em miseon.app.br), MercadinhoSys (ERP e PDV fiscal para varejo em mercadinhosys.com.br) e SelectSys Jobs (ATS Brasil–Japão): sistemas reais com clientes em produção."
@@ -103,7 +103,7 @@ export default async function ProductsIndex({
                   <div className="prod-brand-lockup">
                     {p.icon && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={p.icon}
                         alt=""
                         width={46}
@@ -114,7 +114,7 @@ export default async function ProductsIndex({
                     {p.logoHorizontal ? (
                       <div className={needsLightPlate ? "prod-logo-plate is-compact" : "prod-logo-dark is-compact"}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={p.logoHorizontal} alt={p.name} />
+                        <img loading="lazy" decoding="async" src={p.logoHorizontal} alt={p.name} />
                       </div>
                     ) : (
                       <strong>{p.name}</strong>

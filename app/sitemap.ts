@@ -52,15 +52,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency: "weekly",
       }),
     ),
-    ...courseList.flatMap((c) =>
-      allCourseLessons(c).map(
-        (l): Route => ({
-          path: `cursos/${c.slug}/${l.slug}`,
-          priority: l.status === "gratuita" ? 0.8 : 0.6,
-          changeFrequency: "monthly",
-        }),
-      ),
-    ),
         ...productList.map(
       (p): Route => ({
         path: `produtos/${p.slug}`,
@@ -99,6 +90,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency: r.changeFrequency,
         priority: r.priority,
         alternates: { languages: languages(r.path) },
+      });
+    }
+  }
+
+  // Aulas: conteúdo só em português → só a URL /pt entra (a /en tem canonical para ela)
+  for (const c of courseList) {
+    for (const l of allCourseLessons(c)) {
+      const url = localeUrl("pt", `cursos/${c.slug}/${l.slug}`);
+      entries.push({
+        url,
+        lastModified: now,
+        changeFrequency: "monthly",
+        priority: l.status === "gratuita" ? 0.8 : 0.6,
+        alternates: { languages: { "pt-BR": url } },
       });
     }
   }

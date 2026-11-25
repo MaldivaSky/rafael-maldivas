@@ -23,7 +23,7 @@ export async function generateMetadata({ params: p }: { params: Promise<{ lang: 
     lang: lang as Lang,
     path: PATH,
     title: pt
-      ? "Calculadora WhatsApp Business API 2026: preço pós-outubro em reais"
+      ? "Calculadora WhatsApp API 2026: preço em reais"
       : "WhatsApp Business API cost calculator 2026 (Brazil, BRL)",
     description: pt
       ? "Simule o custo real da WhatsApp Cloud API com a tabela da Meta vigente desde 01/10/2026: 1.000 mensagens de serviço grátis, utilidade R$ 0,035, marketing R$ 0,3217 e Coexistência a R$ 0."
