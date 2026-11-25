@@ -50,15 +50,11 @@ button.nav-cta { border: 0; cursor: pointer; font-family: inherit; line-height: 
 .nx-panel-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
 .nx-eyebrow { font: 600 11.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--fg-dim); }
 .nx-badge { font: 700 11.5px/1 var(--mono); padding: 6px 9px; border-radius: 6px; border: 1px solid var(--line-strong); }
-.nx-badge.is-utility, .nx-badge.is-authentication { color: var(--accent); border-color: var(--accent); }
-.nx-badge.is-marketing { color: var(--gold); border-color: var(--gold); }
 .nx-phone { display: flex; flex-direction: column; gap: 8px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
 .nx-bubble { max-width: 86%; padding: 10px 12px; border-radius: 14px; font-size: 14.5px; line-height: 1.45; color: var(--fg); }
 .nx-bubble small { display: flex; gap: 6px; align-items: center; font-size: 11.5px; color: var(--fg-dim); margin-bottom: 4px; }
 .nx-bubble small code { font-family: var(--mono); }
 .nx-bubble.is-business { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-top-left-radius: 4px; }
-.nx-bubble.is-customer { align-self: flex-start; background: var(--surface); border: 1px dashed var(--line-strong); border-top-left-radius: 4px; }
-.nx-bubble.is-team { align-self: flex-end; background: rgba(34, 197, 94, .14); border: 1px solid rgba(34, 197, 94, .35); border-top-right-radius: 4px; }
 .nx-window { align-self: center; display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--fg-dim); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); }
 .nx-rule { display: flex; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
 .nx-rule > svg { flex: none; color: var(--accent); margin-top: 2px; }
@@ -91,7 +87,7 @@ button.nav-cta { border: 0; cursor: pointer; font-family: inherit; line-height: 
 .tco-out { display: grid; gap: 14px; align-content: start; }
 .tco-total { background: var(--bg-soft); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); padding: 16px 18px; }
 .tco-total span { font-size: 13px; color: var(--fg-muted); }
-.tco-total strong { display: block; font: 800 clamp(28px, 4vw, 38px)/1.1 var(--font-display); color: var(--fg); margin: 4px 0; }
+.tco-total strong { display: block; font-weight: 800; font-size: clamp(28px, 4vw, 38px); line-height: 1.1; font-family: var(--font-display), var(--font-sans), system-ui, sans-serif; color: var(--fg); margin: 4px 0; }
 .tco-total small { font-size: 12.5px; color: var(--fg-dim); }
 .tco-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .tco-table td { padding: 8px 0; border-bottom: 1px solid var(--line); color: var(--fg-muted); }
@@ -101,7 +97,7 @@ button.nav-cta { border: 0; cursor: pointer; font-family: inherit; line-height: 
 .tco-table .is-sum td { font-weight: 700; color: var(--fg); }
 .tco-save { border: 1px solid rgba(34,197,94,.4); background: rgba(34,197,94,.08); border-radius: var(--radius-sm); padding: 14px 16px; }
 .tco-save span { font-size: 13px; color: var(--fg-muted); }
-.tco-save strong { display: block; font: 800 24px/1.2 var(--font-display); color: #22c55e; margin: 2px 0 4px; }
+.tco-save strong { display: block; font-weight: 800; font-size: 24px; line-height: 1.2; font-family: var(--font-display), var(--font-sans), system-ui, sans-serif; color: #22c55e; margin: 2px 0 4px; }
 .tco-save small, .tco-note, .tco-source { font-size: 12px; color: var(--fg-dim); line-height: 1.5; }
 .tco-source { margin: 16px 0 0; }
 .tco.is-compact .tco-grid { grid-template-columns: 1fr 1fr; }

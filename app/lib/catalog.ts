@@ -100,13 +100,13 @@ export const servicos: Servico[] = [
     entrega: {
       pt: [
         "iFood: integração homologada, pedido entra direto na fila",
-        "WhatsApp Business API: empresa verificada como Provedora pela Meta",
+        "WhatsApp Business API oficial (Cloud API da Meta), em produção no MiseOn",
         "Pix e split automático de recebimento entre lojistas",
         "Conciliação e baixa automática no pedido",
       ],
       en: [
         "iFood: approved integration, orders land straight in the queue",
-        "WhatsApp Business API: company verified as a Provider by Meta",
+        "Official WhatsApp Business API (Meta Cloud API), live in MiseOn",
         "Pix and automatic receipt splitting between sellers",
         "Reconciliation and automatic order settlement",
       ],

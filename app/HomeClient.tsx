@@ -1,225 +1,226 @@
 "use client";
 
+import { useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  BadgeCheck,
-  BookOpen,
-  Check,
-  CheckCircle2,
-  ExternalLink,
-  Minus,
-  ShieldCheck,
-  Wrench,
-  X,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight, BadgeCheck, CheckCircle2, ExternalLink, Pause, Play, PlayCircle, ShieldCheck, Wrench } from "lucide-react";
 import { useLang, localePath } from "./lib/i18n";
 import { ORACLE_CERT } from "./lib/credentials";
-import AtolCta from "./components/atol/AtolCta";
-import EightNichesExplorer from "./components/atol/EightNichesExplorer";
-import MetaTcoCalculator2026 from "./components/atol/MetaTcoCalculator2026";
+import { CANVA_REEL, COMPANY, GITHUB_ORG, LINKEDIN, YOUTUBE } from "./lib/site";
+import { works, workTags } from "./lib/projects";
+import { HOME_FAQ } from "./lib/home-content";
+import { servicos } from "./lib/catalog";
+
+/* Linhas de serviço sob medida: vêm do catálogo (fonte única com /servicos) */
+const SERVICES = servicos.filter((s) => s.area === "software");
+import VideoBackdrop from "./components/VideoBackdrop";
+import AcademySection from "./components/home/AcademySection";
 import HomeContactForm from "./components/home/HomeContactForm";
 import ExitToast from "./components/ExitToast";
-import { CONNECT_URL } from "./lib/flags";
+import type { GraphEdge, GraphIntegration, GraphProduct } from "./components/home/PortfolioGraph";
 
-/* ------------------------------------------------------------------ */
-/*  Home — exatamente 6 blocos                                         */
-/*   1 Hero · 2 Atol Connect (8 nichos) · 3 Sistemas 01-03 ·            */
-/*   4 Planos + comparativo + TCO · 5 Provas + engenharia aberta ·      */
-/*   6 Contato B2B (rodapé corporativo vem do layout)                   */
-/* ------------------------------------------------------------------ */
+/* 3D só carrega quando a seção entra em cena (não disputa o LCP do hero) */
+const PortfolioGraph = dynamic(() => import("./components/home/PortfolioGraph"), {
+  ssr: false,
+  loading: () => <div className="pg pg-loading" aria-hidden="true" />,
+});
 
 type Bi = { pt: string; en: string };
 
-const SYSTEMS: {
-  n: string;
+type Product = {
+  id: string;
   name: string;
-  domain: string;
-  href: string;
-  detail: string;
   logo: string;
+  logoDark?: boolean;
   segment: Bi;
   status: Bi;
   live: boolean;
-  desc: Bi;
-  tags: string[];
-}[] = [
+  headline: Bi;
+  problem: Bi;
+  solution: Bi;
+  proof: Bi;
+  offer: Bi;
+  points: Bi[];
+  site: { href: string; label: string };
+  page?: string;
+  media: { kind: "video"; src: string; poster: string; alt: Bi } | { kind: "images"; items: { src: string; alt: Bi; contain?: boolean }[] };
+};
+
+const PRODUCTS: Product[] = [
   {
-    n: "01",
+    id: "miseon",
     name: "MiseOn",
-    domain: "miseon.app.br",
-    href: "https://miseon.app.br",
-    detail: "/produtos/miseon",
     logo: "/logo-horiz-miseon.png",
-    segment: { pt: "Food Service, Restaurantes & Totem", en: "Food Service, Restaurants & Kiosk" },
+    segment: { pt: "Sistema para restaurantes, delivery e totem", en: "Restaurant, delivery and kiosk system" },
     status: { pt: "Em operação · Meta & iFood", en: "Live · Meta & iFood" },
     live: true,
-    desc: {
-      pt: "PDV, cardápio digital, cozinha KDS sem papel, entrada de estoque por cupom fiscal NFC-e (SEFAZ), ficha técnica com custeio PEPS, WhatsApp IA oficial e integração com hardware Bravus Core / Gertec.",
-      en: "POS, digital menu, paperless KDS, stock intake from NFC-e fiscal receipts (SEFAZ), FIFO recipe costing, official WhatsApp AI and Bravus Core / Gertec hardware integration.",
+    headline: { pt: "Da chapa ao fechamento do caixa, sem redigitar pedido e sem chutar o lucro.", en: "From the grill to closing the till — no retyped orders, no guessed margins." },
+    problem: { pt: "Pedido chega por quatro canais, a cozinha recebe no papel e o custo do prato é estimado de cabeça.", en: "Orders come from four channels, the kitchen gets paper tickets and dish cost is a guess." },
+    solution: {
+      pt: "Cardápio digital, totem, iFood e WhatsApp caem direto no KDS; o estoque baixa pela ficha técnica com custo PEPS e a nota do fornecedor entra escaneando o cupom fiscal (NFC-e).",
+      en: "Digital menu, kiosk, iFood and WhatsApp land straight on the KDS; stock is deducted by FIFO-costed recipes and supplier invoices come in by scanning the NFC-e receipt.",
     },
-    tags: ["KDS & PDV", "NFC-e", "PEPS", "iFood", "WhatsApp oficial"],
+    proof: { pt: "Integração homologada com o iFood e API oficial da Meta em produção.", en: "Approved iFood integration and Meta's official API in production." },
+    offer: { pt: "R$ 149,90/mês · 30 dias grátis", en: "BRL 149.90/mo · 30-day free trial" },
+    points: [
+      { pt: "PDV + cozinha KDS sem papel", en: "POS + paperless KDS" },
+      { pt: "Ficha técnica com custo PEPS", en: "FIFO recipe costing" },
+      { pt: "Totem Bravus Core / Gertec", en: "Bravus Core / Gertec kiosk" },
+      { pt: "WhatsApp com cardápio real", en: "WhatsApp with the real menu" },
+    ],
+    site: { href: "https://miseon.app.br", label: "miseon.app.br" },
+    page: "/produtos/miseon",
+    media: { kind: "video", src: "/video/miseon-totem.mp4", poster: "/video/miseon-totem-poster.jpg", alt: { pt: "Totem de autoatendimento MiseOn em operação", en: "MiseOn self-service kiosk in operation" } },
   },
   {
-    n: "02",
+    id: "mercadinhosys",
     name: "MercadinhoSys",
-    domain: "mercadinhosys.com.br",
-    href: "https://mercadinhosys.com.br",
-    detail: "/produtos/mercadinhosys",
     logo: "/logo-horiz-mercadinhosys.png",
-    segment: { pt: "Varejo & Comércios com IA", en: "AI-powered Retail" },
-    status: { pt: "Plataforma validada no varejo · novas implantações em andamento", en: "Retail-validated platform · new rollouts in progress" },
+    segment: { pt: "Sistema com IA para mercadinhos e varejo", en: "AI system for grocers and retail" },
+    status: { pt: "Plataforma validada no varejo · novas implantações em andamento", en: "Retail-validated · new rollouts in progress" },
     live: false,
-    desc: {
-      pt: "Frente de caixa rápida, cadastro por código de barras ou comando via IA (Consultor M-IA), importação de XML do fornecedor, controle de fiado, ponto da equipe pelo celular e DRE com lucro real.",
-      en: "Fast checkout, product entry by barcode or AI command (M-IA Advisor), supplier XML import, store-credit control, staff time clock on the phone and a real-profit P&L.",
+    headline: { pt: "Você atende no balcão. O sistema controla estoque, fiado e o lucro de verdade.", en: "You serve at the counter. The system tracks stock, store credit and real profit." },
+    problem: { pt: "Fiado no caderno, estoque que nunca bate e o dono só descobre o prejuízo no fim do mês.", en: "Credit in a notebook, stock that never matches and losses found only at month's end." },
+    solution: {
+      pt: "Bipa e cadastra, importa o XML do fornecedor, controla o fiado com cobrança no WhatsApp, registra o ponto da equipe pelo celular e fecha o mês com DRE — com o Consultor M-IA explicando a loja em português.",
+      en: "Scan and register, import the supplier XML, track store credit with WhatsApp reminders, clock staff in on mobile and close the month with a P&L — with the M-IA Advisor explaining the store in plain words.",
     },
-    tags: ["Caixa & estoque", "XML NF-e", "Fiado", "Consultor M-IA", "DRE"],
+    proof: { pt: "Nasceu de seis anos de PDV, estoque e ruptura no varejo.", en: "Born from six years of POS, stock and stockout work in retail." },
+    offer: { pt: "2 meses grátis com implantação na sua loja", en: "2 months free with in-store onboarding" },
+    points: [
+      { pt: "Caixa rápido + NFC-e", en: "Fast checkout + NFC-e" },
+      { pt: "Entrada por XML da nota", en: "Invoice XML intake" },
+      { pt: "Fiado e ponto pelo celular", en: "Credit & time clock on mobile" },
+      { pt: "DRE, Curva ABC e M-IA", en: "P&L, ABC curve and M-IA" },
+    ],
+    site: { href: "https://mercadinhosys.com.br", label: "mercadinhosys.com.br" },
+    page: "/produtos/mercadinhosys",
+    media: { kind: "images", items: [{ src: "/media/mercadinhosys-flagship.jpg", alt: { pt: "Painel do MercadinhoSys com PDV, Curva ABC e DRE", en: "MercadinhoSys dashboard with POS, ABC curve and P&L" } }] },
   },
   {
-    n: "03",
+    id: "selectsys",
     name: "SelectSys Jobs",
-    domain: "selectsys-jobs.vercel.app",
-    href: "https://selectsys-jobs.vercel.app",
-    detail: "/produtos/selectsys-jobs",
     logo: "/logo-horiz-selectsys.png",
-    segment: { pt: "Recrutamento Internacional Brasil ➔ Japão", en: "International Recruiting Brazil ➔ Japan" },
-    status: { pt: "Em produção na Fujiarte Co., Ltd. · aberto para novas agências", en: "Live at Fujiarte Co., Ltd. · open to new agencies" },
+    segment: { pt: "ATS para agências de recrutamento Brasil → Japão", en: "ATS for Brazil → Japan recruiting agencies" },
+    status: { pt: "Em produção na Fujiarte Co., Ltd. · aberto a novas agências", en: "Live at Fujiarte Co., Ltd. · open to new agencies" },
     live: true,
-    desc: {
-      pt: "ATS trilíngue (PT/JP/EN) com Kanban de 9 etapas de imigração, OCR documental por IA, sincronização Cybozu Garoon, 12 KPIs executivos, exportação .XLS fiel ao padrão japonês e conformidade LGPD + APPI.",
-      en: "Trilingual ATS (PT/JP/EN) with a 9-stage immigration Kanban, AI document OCR, Cybozu Garoon sync, 12 executive KPIs, .XLS export faithful to the Japanese standard, and LGPD + APPI compliance.",
+    headline: { pt: "O fluxo dekassegui inteiro num só lugar, sem planilha solta e sem retrabalho com o Japão.", en: "The whole Brazil–Japan hiring flow in one place — no loose spreadsheets, no rework with Japan." },
+    problem: { pt: "Candidatos em e-mail, documentos em pastas e a matriz no Japão pedindo planilha no formato dela.", en: "Candidates in email, documents in folders and headquarters in Japan asking for its own spreadsheet format." },
+    solution: {
+      pt: "Kanban de 9 etapas de imigração, leitura de documentos por IA, sincronização com o Cybozu Garoon da matriz, 12 KPIs executivos e exportação .XLS fiel ao padrão das fábricas — em português, japonês e inglês.",
+      en: "A 9-stage immigration Kanban, AI document reading, sync with headquarters' Cybozu Garoon, 12 executive KPIs and .XLS exports faithful to factory standards — in Portuguese, Japanese and English.",
     },
-    tags: ["Kanban 9 etapas", "OCR IA", "Garoon", "LGPD + APPI"],
-  },
-];
-
-const PLANS: {
-  name: Bi;
-  price: string;
-  unit: Bi;
-  highlight?: boolean;
-  items: Bi[];
-  cta: "atol" | "partner";
-}[] = [
-  {
-    name: { pt: "Operação", en: "Operation" },
-    price: "R$ 79",
-    unit: { pt: "/mês", en: "/month" },
-    items: [
-      { pt: "1 número · até 3 atendentes", en: "1 number · up to 3 agents" },
-      { pt: "Cloud API oficial da Meta", en: "Official Meta Cloud API" },
-      { pt: "Coexistência: respostas no celular a R$ 0,00", en: "Coexistence: phone replies at BRL 0.00" },
-      { pt: "Inbox em equipe + gestor de templates", en: "Team inbox + template manager" },
-      { pt: "0% de markup nas tarifas da Meta", en: "0% markup on Meta fees" },
+    proof: { pt: "Fujiarte: −60% no tempo de triagem documental.", en: "Fujiarte: −60% document screening time." },
+    offer: { pt: "R$ 399/mês · 7 dias grátis", en: "BRL 399/mo · 7-day free trial" },
+    points: [
+      { pt: "Trilíngue PT · JP · EN", en: "Trilingual PT · JP · EN" },
+      { pt: "OCR de passaporte e documentos", en: "Passport & document OCR" },
+      { pt: "Sync com Cybozu Garoon", en: "Cybozu Garoon sync" },
+      { pt: "LGPD + APPI (Japão)", en: "LGPD + APPI (Japan)" },
     ],
-    cta: "atol",
+    site: { href: "https://selectsys-jobs.vercel.app", label: "selectsys-jobs" },
+    page: "/produtos/selectsys-jobs",
+    media: { kind: "images", items: [{ src: "/media/selectsys-flagship.jpg", alt: { pt: "SelectSys Jobs: Kanban de imigração e leitura de documentos", en: "SelectSys Jobs: immigration Kanban and document reading" } }] },
   },
   {
-    name: { pt: "Pro / Automação", en: "Pro / Automation" },
-    price: "R$ 149",
-    unit: { pt: "/mês", en: "/month" },
-    highlight: true,
-    items: [
-      { pt: "Até 2 números · 8 atendentes", en: "Up to 2 numbers · 8 agents" },
-      { pt: "Automação: boas-vindas, fora do horário e palavra-chave", en: "Automation: welcome, out-of-hours and keyword replies" },
-      { pt: "100 mil chamadas de API/mês · 5 webhooks", en: "100k API calls/month · 5 webhooks" },
-      { pt: "Webhooks HMAC com 8 retentativas", en: "HMAC webhooks with 8 retries" },
-      { pt: "Logs de eventos e entregas por 30 dias", en: "Event and delivery logs for 30 days" },
+    id: "atol",
+    name: "Atol Connect",
+    logo: "/logo-atol-connect.png",
+    segment: { pt: "API oficial do WhatsApp Business em reais", en: "Official WhatsApp Business API in BRL" },
+    status: { pt: "Cloud API oficial da Meta", en: "Official Meta Cloud API" },
+    live: true,
+    headline: { pt: "WhatsApp oficial para empresas e software houses, sem QR Code e sem markup em dólar.", en: "Official WhatsApp for businesses and software houses — no QR code, no dollar markup." },
+    problem: { pt: "API por QR Code cai no pico de movimento; provedor oficial cobra em dólar e por usuário.", en: "QR-code APIs drop at peak time; official providers bill in dollars and per seat." },
+    solution: {
+      pt: "Conexão pela Meta mantendo o celular (Coexistência), caixa de entrada em equipe, modelos aprovados e API REST com webhooks assinados para ERP, PDV e loja virtual.",
+      en: "Connect through Meta while keeping the phone (Coexistence), team inbox, approved templates and a REST API with signed webhooks for ERP, POS and storefronts.",
+    },
+    proof: { pt: "É a mesma infraestrutura que os sistemas da casa usam.", en: "The same infrastructure our own systems run on." },
+    offer: { pt: "A partir de R$ 79/mês · tarifa Meta sem markup", en: "From BRL 79/mo · Meta fees with no markup" },
+    points: [
+      { pt: "Coexistência: celular a R$ 0,00", en: "Coexistence: phone at BRL 0.00" },
+      { pt: "Inbox + modelos aprovados", en: "Inbox + approved templates" },
+      { pt: "REST + webhooks HMAC", en: "REST + HMAC webhooks" },
+      { pt: "Parceiro: R$ 59/número", en: "Partner: BRL 59/number" },
     ],
-    cta: "atol",
+    site: { href: "https://connect.maldivastech.dev/?utm_source=maldivastech&utm_medium=portal&utm_campaign=home-produtos", label: "connect.maldivastech.dev" },
+    page: "/whatsapp-api",
+    media: { kind: "images", items: [{ src: "/logo-atol-connect.png", alt: { pt: "Atol Connect", en: "Atol Connect" }, contain: true }] },
   },
   {
-    name: { pt: "Software Houses / Parceiros", en: "Software Houses / Partners" },
-    price: "R$ 59",
-    unit: { pt: "/número", en: "/number" },
-    items: [
-      { pt: "Sem mínimo de números para homologar", en: "No minimum number count to get started" },
-      { pt: "R$ 49/número a partir de 21 números", en: "BRL 49/number from 21 numbers" },
-      { pt: "100 mil chamadas/número · webhooks ilimitados", en: "100k calls/number · unlimited webhooks" },
-      { pt: "Inbox + Templates + Coexistência prontos para embarcar no seu ERP/PDV", en: "Inbox + Templates + Coexistence ready to embed in your ERP/POS" },
-      { pt: "Diferente de API headless de R$ 39,90: você não constrói o front-end", en: "Unlike a BRL 39.90 headless API: you don't build the front-end" },
+    id: "mysuperstore",
+    name: "MySuperStore",
+    logo: "/logo-horiz-mysuperstore.png",
+    logoDark: true,
+    segment: { pt: "Plataforma de marketplace multi-vendedor", en: "Multi-vendor marketplace platform" },
+    status: { pt: "No ar com o Ateliê Eli Trassi", en: "Live with Ateliê Eli Trassi" },
+    live: true,
+    headline: { pt: "A loja própria com checkout PIX que divide o dinheiro na hora certa.", en: "Your own storefront with PIX checkout that splits money at the right moment." },
+    problem: { pt: "Vender em marketplace grande come a margem; loja própria sem split vira planilha de repasse.", en: "Big marketplaces eat the margin; a store without split turns payouts into spreadsheets." },
+    solution: {
+      pt: "Vitrine por lojista, frete calculado na hora, assistente de IA que conhece o catálogo e split PIX na liquidação, com webhook de pagamento idempotente e dinheiro em centavos inteiros.",
+      en: "A storefront per merchant, live shipping quotes, an AI assistant that knows the catalog and PIX split on settlement, with idempotent payment webhooks and integer-cent money.",
+    },
+    proof: { pt: "Roda a loja do Ateliê Eli Trassi Macramê.", en: "Runs Ateliê Eli Trassi Macramê's store." },
+    offer: { pt: "Loja no ar para conhecer", en: "Live store to explore" },
+    points: [
+      { pt: "Split PIX via Efí Bank", en: "PIX split via Efí Bank" },
+      { pt: "Webhook HMAC idempotente", en: "Idempotent HMAC webhook" },
+      { pt: "Assistente de IA da loja", en: "Store AI assistant" },
+      { pt: "Frete calculado na hora", en: "Live shipping quotes" },
     ],
-    cta: "partner",
+    site: { href: "https://mysuperstore-lime.vercel.app", label: "Ateliê Eli Trassi" },
+    media: { kind: "images", items: [{ src: "/media/mysuperstore-architecture.jpg", alt: { pt: "Arquitetura do MySuperStore com split PIX", en: "MySuperStore architecture with PIX split" } }] },
   },
 ];
 
-type Cell = { v: Bi; tone: "yes" | "no" | "mid" };
-const COMPARE: { row: Bi; atol: Cell; qr: Cell; crm: Cell }[] = [
-  {
-    row: { pt: "Preço da plataforma", en: "Platform price" },
-    atol: { v: { pt: "R$ 79/mês · R$ 59/número parceiro", en: "BRL 79/month · BRL 59/number partner" }, tone: "yes" },
-    qr: { v: { pt: "~R$ 29 a R$ 99,99 por instância", en: "~BRL 29 to 99.99 per instance" }, tone: "mid" },
-    crm: { v: { pt: "~R$ 189 a R$ 497+/mês, ou em dólar + IOF", en: "~BRL 189 to 497+/month, or USD + IOF" }, tone: "no" },
-  },
-  {
-    row: { pt: "Risco de banimento do número", en: "Number ban risk" },
-    atol: { v: { pt: "Canal oficial da Meta", en: "Meta's official channel" }, tone: "yes" },
-    qr: { v: { pt: "Real: emulação fora dos termos do WhatsApp, quedas de sessão no pico", en: "Real: emulation outside WhatsApp terms, session drops at peak" }, tone: "no" },
-    crm: { v: { pt: "Canal oficial", en: "Official channel" }, tone: "yes" },
-  },
-  {
-    row: { pt: "Celular + API juntos", en: "Phone + API together" },
-    atol: { v: { pt: "Coexistência: app no celular a R$ 0,00", en: "Coexistence: phone app at BRL 0.00" }, tone: "yes" },
-    qr: { v: { pt: "Depende de sessão aberta no aparelho", en: "Depends on a session open on the device" }, tone: "mid" },
-    crm: { v: { pt: "Varia por provedor", en: "Varies by provider" }, tone: "mid" },
-  },
-  {
-    row: { pt: "Inbox + API REST + templates oficiais", en: "Inbox + REST API + official templates" },
-    atol: { v: { pt: "Os três inclusos", en: "All three included" }, tone: "yes" },
-    qr: { v: { pt: "Sem templates oficiais nem Inbox oficial", en: "No official templates or inbox" }, tone: "no" },
-    crm: { v: { pt: "Sim, com planos cobrados por usuário", en: "Yes, with per-user plans" }, tone: "mid" },
-  },
-  {
-    row: { pt: "Markup sobre a tarifa da Meta", en: "Markup on Meta fees" },
-    atol: { v: { pt: "0% — você paga a Meta direto", en: "0% — you pay Meta directly" }, tone: "yes" },
-    qr: { v: { pt: "Não se aplica (canal não oficial)", en: "N/a (unofficial channel)" }, tone: "mid" },
-    crm: { v: { pt: "De 0% a markup variável, conforme o provedor", en: "From 0% to variable markup, by provider" }, tone: "mid" },
-  },
+/* Grafo do ecossistema: só integrações que existem no código de cada produto */
+const G_PRODUCTS: GraphProduct[] = PRODUCTS.map((p) => ({ id: p.id, label: p.name, sub: "", href: `#produto-${p.id}` }));
+// ordem no anel externo acompanha a ordem dos produtos (menos cruzamento de arestas)
+const G_INTEGRATIONS: GraphIntegration[] = [
+  { id: "ifood", label: "iFood" },
+  { id: "bravus", label: "Bravus / Gertec" },
+  { id: "sefaz", label: "SEFAZ · NFC-e" },
+  { id: "garoon", label: "Cybozu Garoon" },
+  { id: "ocr", label: "OCR documental" },
+  { id: "llm", label: "LLM (IA)" },
+  { id: "pagbank", label: "PagBank" },
+  { id: "efi", label: "Efí · PIX Split" },
+  { id: "meta", label: "Meta Cloud API" },
+];
+const G_EDGES: GraphEdge[] = [
+  ["miseon", "ifood"], ["miseon", "sefaz"], ["miseon", "meta"], ["miseon", "bravus"],
+  ["mercadinhosys", "sefaz"], ["mercadinhosys", "llm"],
+  ["selectsys", "garoon"], ["selectsys", "ocr"],
+  ["atol", "meta"], ["atol", "pagbank"],
+  ["mysuperstore", "efi"], ["mysuperstore", "llm"],
 ];
 
-const CASES: { client: string; tag: Bi; result: Bi; stack: string; href: string; cta: Bi; external: boolean }[] = [
-  {
-    client: "Fujiarte Co., Ltd.",
-    tag: { pt: "SelectSys Jobs · Agência Brasil–Japão", en: "SelectSys Jobs · Brazil–Japan agency" },
-    result: { pt: "Triagem documental digitalizada: −60% no tempo de triagem e fim das planilhas paralelas.", en: "Digital document screening: −60% screening time and no more parallel spreadsheets." },
-    stack: "React 19 · PostgreSQL RLS · OCR",
-    href: "/portfolio/fujiarte",
-    cta: { pt: "Ver case", en: "View case" },
-    external: false,
-  },
-  {
-    client: "Loja de Macramê da Eli",
-    tag: { pt: "MySuperStore · E-commerce multi-vendedor", en: "MySuperStore · Multi-vendor e-commerce" },
-    result: { pt: "Loja própria sobre arquitetura multi-vendedor com checkout PIX Split.", en: "Own storefront on a multi-vendor architecture with PIX Split checkout." },
-    stack: "Django REST · Next.js · Efí PIX Split",
-    href: "https://mysuperstore-lime.vercel.app",
-    cta: { pt: "Ver loja", en: "View store" },
-    external: true,
-  },
-  {
-    client: "Espaço Eli Trassi",
-    tag: { pt: "Serviços locais", en: "Local services" },
-    result: { pt: "Agendamento próprio + PWA + SEO local: fim da agenda de papel.", en: "Own booking + PWA + local SEO: no more paper diary." },
-    stack: "React · PWA · SEO local",
-    href: "https://agenda-sal-o-de-beleza.vercel.app",
-    cta: { pt: "Ver no ar", en: "View live" },
-    external: true,
-  },
-  {
-    client: "Animaz Pet Center",
-    tag: { pt: "Data Science & BI", en: "Data Science & BI" },
-    result: { pt: "3 bases unificadas: faturamento × meta, funil por vendedor e ruptura de estoque.", en: "3 datasets unified: revenue vs. target, per-seller funnel and stockouts." },
-    stack: "Python · Pandas · BI",
-    href: "https://ecommerce-analisys.vercel.app",
-    cta: { pt: "Ver projeto", en: "View project" },
-    external: true,
-  },
-];
-
-const ToneIcon = ({ tone }: { tone: Cell["tone"] }) =>
-  tone === "yes" ? <Check size={15} aria-hidden="true" /> : tone === "no" ? <X size={15} aria-hidden="true" /> : <Minus size={15} aria-hidden="true" />;
+function ProductVideo({ src, poster, alt, pt }: { src: string; poster: string; alt: string; pt: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const toggle = () => {
+    const v = ref.current;
+    if (!v) return;
+    if (v.paused) v.play().then(() => setPlaying(true)).catch(() => {});
+    else {
+      v.pause();
+      setPlaying(false);
+    }
+  };
+  return (
+    <div className="h8-media-tile is-video">
+      <video ref={ref} poster={poster} muted loop playsInline preload="none" aria-label={alt} onPause={() => setPlaying(false)}>
+        <source src={src} type="video/mp4" />
+      </video>
+      <button type="button" className="h8-play" onClick={toggle} aria-label={playing ? (pt ? "Pausar vídeo" : "Pause video") : pt ? "Assistir vídeo" : "Play video"}>
+        {playing ? <Pause size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}
+        {playing ? (pt ? "Pausar" : "Pause") : pt ? "Ver em operação" : "See it running"}
+      </button>
+    </div>
+  );
+}
 
 export default function HomeClient() {
   const { lang } = useLang();
@@ -227,120 +228,130 @@ export default function HomeClient() {
   const L = (b: Bi) => b[lang];
 
   return (
-    <div className="h6">
-      {/* ============================ 1 · HERO ============================ */}
-      <header className="h6-hero" id="top">
-        <div className="wrap">
-          <div className="h6-eyebrow">
-            {pt
-              ? "MALDIVAS TECH · INFRAESTRUTURA WHATSAPP OFICIAL & SAAS EM PRODUÇÃO · SÃO PAULO"
-              : "MALDIVAS TECH · OFFICIAL WHATSAPP INFRASTRUCTURE & LIVE SAAS · SÃO PAULO"}
+    <div className="h6 h8">
+      {/* ================================ 1 · HERO ================================ */}
+      <header className="h8-hero" id="top">
+        <div className="wrap h8-hero-grid">
+          <div className="h8-hero-copy">
+            <div className="h6-eyebrow">{pt ? "SOFTWARE HOUSE · SÃO PAULO" : "SOFTWARE HOUSE · SÃO PAULO"}</div>
+            <h1>
+              Maldivas Tech
+              <span>{pt ? "Sistemas que operações reais usam todo dia." : "Systems real operations run on every day."}</span>
+            </h1>
+            <p className="h6-lead">
+              {pt
+                ? "Construímos e operamos produtos SaaS próprios — para restaurantes, varejo, recrutamento internacional, WhatsApp oficial e e-commerce — e desenvolvemos sistemas sob medida para empresas que não podem parar."
+                : "We build and run our own SaaS products — for restaurants, retail, international recruiting, official WhatsApp and e-commerce — and develop custom systems for companies that can't stop."}
+            </p>
+            <div className="h8-cta">
+              <a className="btn btn-primary" href="#produtos">
+                {pt ? "Ver produtos" : "See products"} <ArrowRight size={17} aria-hidden="true" />
+              </a>
+              <a className="btn btn-ghost" href="#contato">
+                {pt ? "Falar com a engenharia" : "Talk to engineering"}
+              </a>
+            </div>
           </div>
-          <h1>
-            {pt ? (
-              <>
-                Infraestrutura Oficial de WhatsApp e Sistemas de Gestão em produção — <em>sem gambiarras de QR Code e sem markup em dólar.</em>
-              </>
-            ) : (
-              <>
-                Official WhatsApp infrastructure and management systems in production — <em>no QR-code hacks, no dollar markup.</em>
-              </>
-            )}
-          </h1>
-          <p className="h6-lead">
-            {pt
-              ? "Desenvolvemos e operamos plataformas SaaS com domínio próprio — lideradas pelo Atol Connect (Cloud API oficial da Meta com Inbox e Coexistência a partir de R$ 79/mês) e pelos sistemas MiseOn, MercadinhoSys e SelectSys Jobs."
-              : "We build and run SaaS platforms on our own domains — led by Atol Connect (Meta's official Cloud API with Inbox and Coexistence from BRL 79/month) and by MiseOn, MercadinhoSys and SelectSys Jobs."}
-          </p>
-          <AtolCta
-            lang={lang}
-            src="home-hero"
-            sandboxHref="#atol"
-            secondary={{ href: "#sistemas", label: pt ? "Ver sistemas em produção" : "See live systems" }}
-          />
-          <ul className="h6-cred" aria-label={pt ? "Credenciais" : "Credentials"}>
+          <figure className="h8-hero-video">
+            <VideoBackdrop
+              label={
+                pt
+                  ? { on: "Ouvir", off: "Silenciar", hint: "Toque para ouvir", replay: "Ouvir de novo" }
+                  : { on: "Sound on", off: "Mute", hint: "Tap for sound", replay: "Play sound again" }
+              }
+            />
+            <figcaption>
+              {pt ? "Vídeo institucional" : "Brand video"} ·{" "}
+              <a href={CANVA_REEL} target="_blank" rel="noopener noreferrer">
+                {pt ? "versão completa" : "full version"} <ArrowUpRight size={12} aria-hidden="true" />
+              </a>
+            </figcaption>
+          </figure>
+        </div>
+
+        {/* ============================ 2 · FAIXA DE PROVA ============================ */}
+        <div className="wrap">
+          <ul className="h8-proof" aria-label={pt ? "Provas" : "Proof"}>
+            <li><strong>5</strong> {pt ? "produtos SaaS em produção" : "SaaS products in production"}</li>
+            <li><CheckCircle2 size={15} aria-hidden="true" /> {pt ? "iFood homologado" : "iFood approved"}</li>
+            <li><ShieldCheck size={15} aria-hidden="true" /> {pt ? "Cloud API oficial da Meta" : "Official Meta Cloud API"}</li>
+            <li><CheckCircle2 size={15} aria-hidden="true" /> {pt ? "Cliente operando entre Brasil e Japão" : "Client operating between Brazil and Japan"}</li>
             <li>
               <a href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer" data-analytics="cert_click">
-                <BadgeCheck size={15} aria-hidden="true" /> Oracle Certified · Agentic AI
+                <BadgeCheck size={15} aria-hidden="true" /> Oracle · Agentic AI
               </a>
             </li>
-            <li>
-              <ShieldCheck size={15} aria-hidden="true" /> {pt ? "Cloud API Oficial Meta" : "Official Meta Cloud API"}
-            </li>
-            <li>
-              <CheckCircle2 size={15} aria-hidden="true" /> {pt ? "iFood Homologado (MiseOn)" : "iFood approved (MiseOn)"}
-            </li>
-            <li>CNPJ 68.923.239/0001-77 · NFSe</li>
           </ul>
         </div>
       </header>
 
-      {/* ===================== 2 · ATOL CONNECT · 8 NICHOS ===================== */}
-      <section className="h6-sec" id="atol" aria-labelledby="h6-atol">
+      {/* ================================ 3 · PRODUTOS ================================ */}
+      <section className="h6-sec" id="produtos" aria-labelledby="h8-prod">
         <div className="wrap">
           <div className="h6-head">
-            <span className="h6-kicker">{pt ? "PRODUTO PRINCIPAL · ATOL CONNECT" : "FLAGSHIP · ATOL CONNECT"}</span>
-            <h2 id="h6-atol">
-              {pt ? "Oito negócios, uma API oficial. Veja a conversa e o código lado a lado." : "Eight businesses, one official API. See the chat and the code side by side."}
-            </h2>
-            <p>
-              {pt
-                ? "Cada nicho mostra o template que a Meta cobra, a resposta da equipe no celular a R$ 0,00 e a chamada REST real com Idempotency-Key e webhook assinado."
-                : "Each industry shows the template Meta charges for, the team's phone reply at BRL 0.00, and the real REST call with Idempotency-Key and signed webhook."}
-            </p>
+            <span className="h6-kicker">{pt ? "PRODUTOS" : "PRODUCTS"}</span>
+            <h2 id="h8-prod">{pt ? "Cinco produtos SaaS, cada um nascido de uma operação real" : "Five SaaS products, each born from a real operation"}</h2>
+            <p>{pt ? "Domínio próprio, cliente usando e código que a gente mantém. Escolha pelo seu tipo de negócio:" : "Own domain, real users and code we maintain. Pick by your type of business:"}</p>
           </div>
-          <EightNichesExplorer lang={lang} />
-          <div className="h6-links">
-            <Link href={localePath("/whatsapp-api", lang)}>
-              {pt ? "Hub completo do Atol Connect" : "Full Atol Connect hub"} <ArrowRight size={15} aria-hidden="true" />
-            </Link>
-            <Link href={localePath("/whatsapp-api/calculadora-2026", lang)}>
-              {pt ? "Calculadora de custo 2026" : "2026 cost calculator"} <ArrowRight size={15} aria-hidden="true" />
-            </Link>
-            <a href={CONNECT_URL} target="_blank" rel="noopener noreferrer">
-              connect.maldivastech.dev <ExternalLink size={14} aria-hidden="true" />
-            </a>
-          </div>
-        </div>
-      </section>
 
-      {/* ======================= 3 · SISTEMAS 01-03 ======================= */}
-      <section className="h6-sec" id="sistemas" aria-labelledby="h6-sis">
-        <div className="wrap">
-          <div className="h6-head">
-            <span className="h6-kicker">{pt ? "ECOSSISTEMA · SISTEMAS PRÓPRIOS EM DOMÍNIO PRÓPRIO" : "ECOSYSTEM · OWN SYSTEMS ON OWN DOMAINS"}</span>
-            <h2 id="h6-sis">{pt ? "O WhatsApp traz o cliente. Nossos sistemas seguram a operação." : "WhatsApp brings the customer. Our systems run the operation."}</h2>
-          </div>
-          <div className="h6-systems">
-            {SYSTEMS.map((s) => (
-              <article className="h6-sys" key={s.name}>
-                <div className="h6-sys-top">
-                  <span className="h6-num">{s.n}</span>
-                  <span className={`h6-status${s.live ? " is-live" : ""}`}>{L(s.status)}</span>
+          <nav className="h8-prod-index" aria-label={pt ? "Produtos" : "Products"}>
+            {PRODUCTS.map((p) => (
+              <a key={p.id} href={`#produto-${p.id}`}>
+                <strong>{p.name}</strong>
+                <span>{L(p.segment)}</span>
+              </a>
+            ))}
+          </nav>
+
+          <div className="h8-products">
+            {PRODUCTS.map((p, i) => (
+              <article className={`h8-prod${i % 2 ? " is-rev" : ""}`} id={`produto-${p.id}`} key={p.id}>
+                <div className="h8-prod-media">
+                  {p.media.kind === "video" ? (
+                    <ProductVideo src={p.media.src} poster={p.media.poster} alt={L(p.media.alt)} pt={pt} />
+                  ) : (
+                    p.media.items.map((m) => (
+                      <div className={`h8-media-tile${m.contain ? " is-contain" : ""}`} key={m.src}>
+                        <Image src={m.src} alt={L(m.alt)} fill sizes="(max-width: 1040px) 92vw, 46vw" style={{ objectFit: m.contain ? "contain" : "cover" }} />
+                      </div>
+                    ))
+                  )}
                 </div>
-                <div className="h6-sys-logo">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={s.logo} alt={s.name} loading="lazy" />
-                </div>
-                <h3>
-                  {s.name} <small>{s.domain}</small>
-                </h3>
-                <p className="h6-seg">{L(s.segment)}</p>
-                <p>{L(s.desc)}</p>
-                <div className="tags">
-                  {s.tags.map((t) => (
-                    <span className="tag" key={t}>
-                      {t}
-                    </span>
-                  ))}
-                </div>
-                <div className="h6-sys-foot">
-                  <a className="plink solid" href={s.href} target="_blank" rel="noopener noreferrer" data-analytics="product_demo">
-                    <ExternalLink size={15} aria-hidden="true" /> <span>{s.domain}</span>
-                  </a>
-                  <Link className="plink" href={localePath(s.detail, lang)} data-analytics="product_click">
-                    <span>{pt ? "Detalhes" : "Details"}</span> <ArrowUpRight size={15} aria-hidden="true" />
-                  </Link>
+                <div className="h8-prod-copy">
+                  <div className="h8-prod-top">
+                    <div className={`h7-logo${p.logoDark ? " is-dark" : ""}`}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={p.logo} alt={p.name} loading="lazy" />
+                    </div>
+                    <span className={`h7-status${p.live ? " is-live" : ""}`}>{L(p.status)}</span>
+                  </div>
+                  <h3>
+                    <span className="h8-seg">{L(p.segment)}</span>
+                    {L(p.headline)}
+                  </h3>
+                  <dl className="h8-psp">
+                    <div><dt>{pt ? "O problema" : "The problem"}</dt><dd>{L(p.problem)}</dd></div>
+                    <div><dt>{pt ? "O que o sistema faz" : "What it does"}</dt><dd>{L(p.solution)}</dd></div>
+                  </dl>
+                  <ul className="h7-points">
+                    {p.points.map((x) => (
+                      <li key={x.pt}><CheckCircle2 size={15} aria-hidden="true" /> {L(x)}</li>
+                    ))}
+                  </ul>
+                  <div className="h8-proofline">
+                    <span>{L(p.proof)}</span>
+                    <strong>{L(p.offer)}</strong>
+                  </div>
+                  <div className="h7-flag-actions">
+                    {p.page && (
+                      <Link className="btn btn-primary" href={localePath(p.page, lang)} data-analytics="product_click">
+                        {pt ? `Conhecer o ${p.name}` : `Explore ${p.name}`} <ArrowRight size={15} aria-hidden="true" />
+                      </Link>
+                    )}
+                    <a className={`btn ${p.page ? "btn-ghost" : "btn-primary"}`} href={p.site.href} target="_blank" rel="noopener noreferrer" data-analytics="product_demo">
+                      {p.site.label} <ExternalLink size={14} aria-hidden="true" />
+                    </a>
+                  </div>
                 </div>
               </article>
             ))}
@@ -348,152 +359,171 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ================== 4 · PLANOS + COMPARATIVO + TCO ================== */}
-      <section className="h6-sec" id="planos" aria-labelledby="h6-planos">
+      {/* ============================ 4 · ECOSSISTEMA 3D ============================ */}
+      <section className="h6-sec" id="ecossistema" aria-labelledby="h8-eco">
+        <div className="wrap h8-eco">
+          <div className="h6-head">
+            <span className="h6-kicker">{pt ? "ARQUITETURA DO ECOSSISTEMA" : "ECOSYSTEM ARCHITECTURE"}</span>
+            <h2 id="h8-eco">{pt ? "Integrações oficiais, em produção" : "Official integrations, in production"}</h2>
+            <p>
+              {pt
+                ? "Cada linha é uma integração que existe no código: fiscal com a SEFAZ, pedidos do iFood, WhatsApp pela Cloud API da Meta, pagamentos PIX com split, sincronização com sistemas japoneses. Passe o mouse num produto para ver só as integrações dele."
+                : "Each line is an integration that exists in code: tax with SEFAZ, iFood orders, WhatsApp through Meta's Cloud API, PIX payments with split, sync with Japanese systems. Hover a product to see only its integrations."}
+            </p>
+          </div>
+          <PortfolioGraph
+            products={G_PRODUCTS}
+            integrations={G_INTEGRATIONS}
+            edges={G_EDGES}
+            caption={pt ? "Todos os produtos compartilham a mesma base: PostgreSQL multi-tenant com isolamento por linha (RLS), trilha de auditoria e LGPD." : "All products share the same foundation: multi-tenant PostgreSQL with row-level isolation (RLS), audit trail and LGPD compliance."}
+          />
+        </div>
+      </section>
+
+      {/* ================================ 5 · ACADEMY ================================ */}
+      <AcademySection />
+
+      {/* ============================ 6 · SOB MEDIDA ============================ */}
+      <section className="h6-sec" id="cases" aria-labelledby="h8-cases">
         <div className="wrap">
           <div className="h6-head">
-            <span className="h6-kicker">{pt ? "PLANOS ATOL CONNECT · PREÇO EM REAIS · 2026" : "ATOL CONNECT PLANS · PRICED IN BRL · 2026"}</span>
-            <h2 id="h6-planos">{pt ? "A Meta cobra a Meta. Você paga só a plataforma." : "Meta bills Meta. You only pay for the platform."}</h2>
+            <span className="h6-kicker">{pt ? "SOB MEDIDA · SISTEMAS, INTEGRAÇÕES E DADOS" : "CUSTOM · SYSTEMS, INTEGRATIONS AND DATA"}</span>
+            <h2 id="h8-cases">{pt ? "Quando o produto pronto não cobre, a gente constrói" : "When an off-the-shelf product isn't enough, we build it"}</h2>
+            <p>{pt ? "A mesma engenharia dos nossos produtos, aplicada à sua operação — com escopo, prazo e critério de aceite combinados antes." : "The same engineering behind our products, applied to your operation — with scope, timeline and acceptance criteria agreed upfront."}</p>
           </div>
 
-          <div className="h6-plans">
-            {PLANS.map((p) => (
-              <div className={`h6-plan${p.highlight ? " is-hl" : ""}`} key={p.name.pt}>
-                <span className="h6-plan-name">{L(p.name)}</span>
-                <div className="h6-price">
-                  {p.price}
-                  <span>{L(p.unit)}</span>
-                </div>
+          <div className="h8-services">
+            {SERVICES.map((s) => (
+              <article className="h8-service" key={s.id}>
+                <h3>{s.nome[lang]}</h3>
+                <p>{s.resumo[lang]}</p>
                 <ul>
-                  {p.items.map((it) => (
-                    <li key={it.pt}>
-                      <Check size={15} aria-hidden="true" /> {L(it)}
-                    </li>
+                  {s.entrega[lang].map((e) => (
+                    <li key={e}><CheckCircle2 size={14} aria-hidden="true" /> {e}</li>
                   ))}
                 </ul>
-                {p.cta === "partner" ? (
-                  <a className="btn btn-ghost" href={`${CONNECT_URL}/parceiros`} target="_blank" rel="noopener noreferrer">
-                    {pt ? "Programa de parceiros" : "Partner program"} <ArrowUpRight size={15} aria-hidden="true" />
-                  </a>
-                ) : (
-                  <AtolCta lang={lang} src={`home-plan-${p.price}`} sandboxHref="#atol" note={false} compact />
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="h6-addon">
-            <Wrench size={18} aria-hidden="true" />
-            <p>
-              <strong>{pt ? "Add-on opcional · Implantação Assistida Maldivas Tech (taxa única)" : "Optional add-on · Maldivas Tech Assisted Setup (one-time fee)"}</strong>{" "}
-              {pt
-                ? "Configuração do Business Manager, templates de utilidade aprovados, integração técnica com seu sistema e presença local no Google. Plano Business (5 números, 25 atendentes) a R$ 499/mês."
-                : "Business Manager setup, approved utility templates, technical integration with your system and local Google presence. Business plan (5 numbers, 25 agents) at BRL 499/month."}
-            </p>
-            <a href="#contato">{pt ? "Pedir orçamento" : "Get a quote"} →</a>
-          </div>
-
-          <h3 className="h6-sub">{pt ? "Comparativo honesto de mercado" : "Honest market comparison"}</h3>
-          <div className="wa-scroll">
-            <table className="h6-compare">
-              <thead>
-                <tr>
-                  <th scope="col">{pt ? "Critério" : "Criterion"}</th>
-                  <th scope="col">Atol Connect ({pt ? "oficial" : "official"})</th>
-                  <th scope="col">{pt ? "APIs por QR Code" : "QR-code APIs"}<small>Z-API · ZAP-API · Evolution</small></th>
-                  <th scope="col">{pt ? "Plataformas oficiais + CRM" : "Official platforms + CRM"}<small>ConverZAP · BotConversa · BSPs</small></th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMPARE.map((r) => (
-                  <tr key={r.row.pt}>
-                    <th scope="row">{L(r.row)}</th>
-                    {[r.atol, r.qr, r.crm].map((c, i) => (
-                      <td key={i} className={`is-${c.tone}`}>
-                        <ToneIcon tone={c.tone} /> {L(c.v)}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="h6-fine">
-            {pt
-              ? "Faixas de preço de categoria observadas em páginas públicas e comparativos em nov/2026; variam por plano e provedor. Marcas citadas pertencem aos seus titulares e servem só como exemplo de categoria."
-              : "Category price ranges observed on public pages and comparisons in Nov 2026; they vary by plan and provider. Brands cited belong to their owners and are only category examples."}{" "}
-            <Link href={localePath("/whatsapp-api/z-api-vs-oficial", lang)}>{pt ? "Comparativo técnico completo →" : "Full technical comparison →"}</Link>
-          </p>
-
-          <h3 className="h6-sub">{pt ? "Simule seu custo real (tarifa Meta pós-outubro/2026)" : "Simulate your real cost (Meta fees after Oct 2026)"}</h3>
-          <MetaTcoCalculator2026 lang={lang} compact />
-          <p className="h6-fine">
-            <Link href={localePath("/whatsapp-api/calculadora-2026", lang)}>
-              {pt ? "Abrir a calculadora completa com Coexistência e atendentes →" : "Open the full calculator with Coexistence and agents →"}
-            </Link>
-          </p>
-        </div>
-      </section>
-
-      {/* ================= 5 · PROVAS REAIS + ENGENHARIA ABERTA ================= */}
-      <section className="h6-sec" id="cases" aria-labelledby="h6-cases">
-        <div className="wrap">
-          <div className="h6-head">
-            <span className="h6-kicker">{pt ? "ENTREGAS REAIS · SISTEMA NO AR, NÃO SLIDE" : "REAL DELIVERIES · LIVE SYSTEMS, NOT SLIDES"}</span>
-            <h2 id="h6-cases">{pt ? "Quem contrata vê sistema rodando." : "Clients see running systems."}</h2>
-          </div>
-          <div className="h6-cases">
-            {CASES.map((c) => (
-              <article className="h6-case" key={c.client}>
-                <span className="h6-case-tag">{L(c.tag)}</span>
-                <h3>{c.client}</h3>
-                <p>{L(c.result)}</p>
-                <small>{c.stack}</small>
-                {c.external ? (
-                  <a href={c.href} target="_blank" rel="noopener noreferrer" data-analytics="portfolio_click">
-                    {L(c.cta)} <ExternalLink size={13} aria-hidden="true" />
-                  </a>
-                ) : (
-                  <Link href={localePath(c.href, lang)} data-analytics="portfolio_click">
-                    {L(c.cta)} <ArrowRight size={13} aria-hidden="true" />
-                  </Link>
-                )}
+                <p className="h8-service-result">{s.resultado[lang]}</p>
               </article>
             ))}
           </div>
 
-          <div className="h6-open">
-            <Link className="h6-open-card" href={localePath("/cursos", lang)}>
-              <BookOpen size={22} aria-hidden="true" />
-              <div>
-                <strong>{pt ? "Curso livre gratuito com certificado" : "Free course with certificate"}</strong>
-                <p>
-                  {pt
-                    ? "Arquitetura real de marketplace com Django/DRF & PIX Split — Módulos 0 e 1 abertos."
-                    : "Real marketplace architecture with Django/DRF & PIX Split — Modules 0 and 1 open (pt-BR)."}
-                </p>
-              </div>
-              <ArrowUpRight size={18} aria-hidden="true" />
-            </Link>
-            <Link className="h6-open-card" href={localePath("/ferramentas", lang)}>
-              <Wrench size={22} aria-hidden="true" />
-              <div>
-                <strong>{pt ? "Workbench Dev · 19+ ferramentas gratuitas" : "Dev Workbench · 19+ free tools"}</strong>
-                <p>
-                  {pt
-                    ? "Simuladores, utilitários sem cadastro e ferramentas para a WhatsApp Cloud API."
-                    : "Simulators, no-signup utilities and WhatsApp Cloud API tools."}
-                </p>
-              </div>
-              <ArrowUpRight size={18} aria-hidden="true" />
+          <h3 className="h8-sub">{pt ? "Projetos entregues — todos no ar" : "Delivered projects — all live"}</h3>
+          <div className="h8-works">
+            {works.map((w) => (
+              <article className="h8-work" key={w.name}>
+                <span className="h6-case-tag">{w.client[lang]}</span>
+                <h3>{w.name}</h3>
+                <p className="h8-work-kind">{w.kind[lang]}</p>
+                <p>{w.desc[lang]}</p>
+                <p className="h8-work-proof">{w.proof[lang]}</p>
+                <div className="tags">
+                  {workTags(w, lang).map((t) => <span className="tag" key={t}>{t}</span>)}
+                </div>
+                <div className="h8-work-links">
+                  <a href={w.url} target="_blank" rel="noopener noreferrer" data-analytics="portfolio_click">
+                    {pt ? "Ver no ar" : "View live"} <ExternalLink size={13} aria-hidden="true" />
+                  </a>
+                  {w.name === "SelectSys Jobs" && (
+                    <Link href={localePath("/portfolio/fujiarte", lang)}>{pt ? "Ler o case" : "Read the case"} <ArrowRight size={13} aria-hidden="true" /></Link>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+          <Link className="h7-textlink" href={localePath("/portfolio", lang)}>
+            {pt ? "Portfólio completo" : "Full portfolio"} <ArrowRight size={15} aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
+
+      {/* ================================ 7 · SOBRE ================================ */}
+      <section className="h6-sec" id="sobre" aria-labelledby="h8-sobre">
+        <div className="wrap h7-about">
+          <figure className="h7-about-photo">
+            <Image src="/media/rafael-drone.jpg" alt={pt ? "Rafael Maldivas, fundador da Maldivas Tech" : "Rafael Maldivas, founder of Maldivas Tech"} fill sizes="(max-width: 1040px) 92vw, 40vw" style={{ objectFit: "cover" }} />
+            <figcaption>
+              <strong>Rafael Maldivas</strong>
+              <span>{pt ? "Fundador · produto e engenharia" : "Founder · product & engineering"}</span>
+            </figcaption>
+          </figure>
+          <div className="h7-about-copy">
+            <span className="h6-kicker">{pt ? "A EMPRESA E O FUNDADOR" : "THE COMPANY AND ITS FOUNDER"}</span>
+            <h2 id="h8-sobre">{pt ? "Antes do código, eu estive do outro lado do balcão." : "Before the code, I was on the other side of the counter."}</h2>
+            <p>
+              {pt
+                ? "Passei por vendas, qualidade, processos e gastronomia. Foram seis anos na Heineken rodando PDV, estoque e ruptura na prática — e mentorando quem chegava. A cozinha virou o MiseOn; o balcão virou o MercadinhoSys."
+                : "I worked in sales, quality, processes and gastronomy. Six years at Heineken running POS, stock and stockouts in practice — and mentoring newcomers. The kitchen became MiseOn; the counter became MercadinhoSys."}
+            </p>
+            <p>
+              {pt
+                ? "Hoje a Maldivas Tech desenha, constrói e responde pelos seus sistemas, com agentes de IA no processo de engenharia e parceria de hardware com a Bravus Core / Gertec. Você fala direto com quem decide a arquitetura — com contrato, nota fiscal e o sistema no ar."
+                : "Today Maldivas Tech designs, builds and owns its systems, with AI agents in the engineering process and a hardware partnership with Bravus Core / Gertec. You talk directly to whoever decides the architecture — with a contract, an invoice and a live system."}
+            </p>
+            <dl className="h7-facts">
+              <div><dt>{pt ? "Razão social" : "Legal name"}</dt><dd>{COMPANY.legalName}</dd></div>
+              <div><dt>CNPJ</dt><dd>{COMPANY.cnpj} · NFSe</dd></div>
+              <div><dt>{pt ? "Endereço" : "Address"}</dt><dd>{COMPANY.street} — {COMPANY.city}/{COMPANY.region}</dd></div>
+              <div><dt>{pt ? "Certificação" : "Certification"}</dt><dd><a href={ORACLE_CERT.verifyUrl} target="_blank" rel="noopener noreferrer">Oracle — {ORACLE_CERT.name}</a></dd></div>
+            </dl>
+            <Link className="h7-textlink" href={localePath("/about", lang)}>
+              {pt ? "Trajetória completa" : "Full background"} <ArrowRight size={15} aria-hidden="true" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ======================= 6 · CONTATO B2B ======================= */}
-      <HomeContactForm />
+      {/* ============================ 8 · CONTEÚDO E CANAIS ============================ */}
+      <section className="h6-sec" id="conteudo" aria-labelledby="h8-cont">
+        <div className="wrap">
+          <div className="h6-head">
+            <span className="h6-kicker">{pt ? "CONTEÚDO E CANAIS" : "CONTENT & CHANNELS"}</span>
+            <h2 id="h8-cont">{pt ? "Acompanhe o que estamos construindo" : "Follow what we're building"}</h2>
+          </div>
+          <div className="h8-channels">
+            <a href={YOUTUBE} target="_blank" rel="noopener noreferrer" className="h8-channel">
+              <PlayCircle size={22} aria-hidden="true" />
+              <strong>YouTube</strong>
+              <span>{pt ? "MiseOn em operação na cozinha" : "MiseOn running in the kitchen"}</span>
+            </a>
+            <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="h8-channel">
+              <BadgeCheck size={22} aria-hidden="true" />
+              <strong>LinkedIn</strong>
+              <span>{pt ? "Bastidores de produto e engenharia" : "Product and engineering behind the scenes"}</span>
+            </a>
+            <a href={GITHUB_ORG} target="_blank" rel="noopener noreferrer" className="h8-channel">
+              <ExternalLink size={22} aria-hidden="true" />
+              <strong>GitHub</strong>
+              <span>{pt ? "Organização Maldivas Tech Solutions" : "Maldivas Tech Solutions organization"}</span>
+            </a>
+            <Link href={localePath("/ferramentas", lang)} className="h8-channel">
+              <Wrench size={22} aria-hidden="true" />
+              <strong>{pt ? "Ferramentas gratuitas" : "Free tools"}</strong>
+              <span>{pt ? "20+ calculadoras e utilitários sem cadastro" : "20+ calculators and utilities, no signup"}</span>
+            </Link>
+          </div>
+        </div>
+      </section>
 
+      {/* ================================== 9 · FAQ ================================== */}
+      <section className="h6-sec" id="faq" aria-labelledby="h8-faq">
+        <div className="wrap h8-faq">
+          <div className="h6-head">
+            <span className="h6-kicker">{pt ? "PERGUNTAS FREQUENTES" : "FAQ"}</span>
+            <h2 id="h8-faq">{pt ? "Antes de conversar" : "Before we talk"}</h2>
+          </div>
+          <div>
+            {HOME_FAQ.map((f, i) => (
+              <details className="h8-faq-item" key={f.q.pt} open={i === 0}>
+                <summary>{f.q[lang]}</summary>
+                <p>{f.a[lang]}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================================ 10 · CONTATO ================================ */}
+      <HomeContactForm />
       <ExitToast />
     </div>
   );

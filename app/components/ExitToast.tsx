@@ -30,7 +30,7 @@ export default function ExitToast() {
       const r = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ interesse: "exit-intent", contato: whats, dor: "Pediu diagnóstico de custo WhatsApp ao sair da home", idioma: lang, ...origemParaEnvio() }),
+        body: JSON.stringify({ interesse: "exit-intent", contato: whats, dor: "Pediu contato da engenharia ao sair da home", idioma: lang, ...origemParaEnvio() }),
       });
       const d = await r.json().catch(() => ({}));
       if (r.ok && d.ok) {
@@ -58,11 +58,11 @@ export default function ExitToast() {
           <h3 id="exit-t">{pt ? "Antes de ir…" : "Before you go…"}</h3>
           <p>
             {pt
-              ? "Quanto o WhatsApp oficial custaria para você com a tabela da Meta de outubro/2026? Simule agora ou deixe o WhatsApp e a engenharia responde."
-              : "What would official WhatsApp cost you under Meta's October 2026 rates? Simulate now or leave your WhatsApp and engineering replies."}
+              ? "Deixe seu WhatsApp e conte o que trava a sua operação: a engenharia responde com o caminho — produto pronto ou sob medida. Ou comece agora o curso gratuito com certificado."
+              : "Leave your WhatsApp and tell us what's blocking your operation: engineering replies with the path — ready product or custom. Or start the free certified course now."}
           </p>
-          <Link className="btn btn-primary" href={localePath("/whatsapp-api/calculadora-2026", lang)} onClick={dismiss}>
-            {pt ? "Abrir calculadora 2026" : "Open the 2026 calculator"} <ArrowRight size={16} aria-hidden="true" />
+          <Link className="btn btn-primary" href={localePath("/cursos/construa-seu-marketplace", lang)} onClick={dismiss}>
+            {pt ? "Ver o curso gratuito" : "See the free course"} <ArrowRight size={16} aria-hidden="true" />
           </Link>
           <form onSubmit={submit} className="exit-toast-form">
             <input
@@ -74,7 +74,7 @@ export default function ExitToast() {
               autoComplete="tel"
             />
             <button type="submit" className="btn btn-ghost" disabled={state === "busy"}>
-              {state === "busy" ? "…" : pt ? "Quero o diagnóstico" : "Get the diagnosis"}
+              {state === "busy" ? "…" : pt ? "Quero contato" : "Contact me"}
             </button>
           </form>
           {state === "error" && <p className="atol-err">{pt ? "Confira o número com DDD e tente de novo." : "Check the number and try again."}</p>}

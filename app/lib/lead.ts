@@ -58,7 +58,7 @@ export type RawLead = {
 export const INTERESSES: Record<string, { label: string; area: string }> = {
   atol: { label: "Atol Connect — Lista prioritária / Sandbox / Parceiros", area: "Software" },
   "atol-prioritario": { label: "Atol Connect — Acesso prioritário (pré-aprovação Meta)", area: "Software" },
-  "exit-intent": { label: "Atol Connect — Diagnóstico WhatsApp (saída da home)", area: "Software" },
+  "exit-intent": { label: "Saída da home — pediu contato da engenharia", area: "Software" },
   miseon: { label: "MiseOn — Restaurante, delivery ou totem", area: "Software" },
   mercadinhosys: { label: "MercadinhoSys — Varejo com IA", area: "Software" },
   selectsys: { label: "SelectSys Jobs — Agência / empreiteira Brasil–Japão", area: "Software" },

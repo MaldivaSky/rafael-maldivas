@@ -6,6 +6,7 @@ import { NICHES, META_RATES, CONNECT_URL, brl, scenarioCost } from "../../lib/wh
 import JsonLd from "../../components/whatsapp/JsonLd";
 import GoogleCta from "../../components/whatsapp/GoogleCta";
 import EightNichesExplorer from "../../components/atol/EightNichesExplorer";
+import MetaTariffSceneLazy from "../../components/atol/MetaTariffSceneLazy";
 import { TECH_PROVIDER_APPROVED } from "../../lib/flags";
 import { SITE } from "../../lib/site";
 import "../../whatsapp-api.css";
@@ -81,6 +82,23 @@ export default async function WhatsappApiHub({ params: p }: { params: Promise<{ 
           </div>
         </div>
       </header>
+
+      <section className="wa-sec" style={{ paddingTop: 8 }}>
+        <div className="wrap wa-tariff">
+          <div>
+            <h2>{pt ? "De onde vem o custo de cada mensagem" : "Where each message's cost comes from"}</h2>
+            <p className="wa-sub">
+              {pt
+                ? "O que o cliente manda cai na franquia grátis de 1.000 por número. Aviso do sistema é utilidade (R$ 0,035) e campanha é marketing (R$ 0,3217), pagos por entrega direto à Meta. A resposta que a equipe dá pelo celular nem passa pela API: R$ 0,00."
+                : "What customers send falls into the free 1,000-per-number quota. System notices are utility (BRL 0.035) and campaigns are marketing (BRL 0.3217), paid per delivery directly to Meta. Replies your team sends from the phone don't touch the API: BRL 0.00."}
+            </p>
+            <p className="wa-micro">
+              <Link href={`${base}/whatsapp-api/calculadora-2026`}>{pt ? "Simular com o volume da minha operação →" : "Simulate with my volume →"}</Link>
+            </p>
+          </div>
+          <MetaTariffSceneLazy lang={lang} />
+        </div>
+      </section>
 
       <section className="wa-sec" style={{ paddingTop: 8 }}>
         <div className="wrap">

@@ -8,28 +8,14 @@ import { useTheme } from "next-themes";
 import { ChevronDown, GraduationCap, LogIn, LogOut, Menu, Moon, Sun, User, X } from "lucide-react";
 import { useLang, localePath } from "../lib/i18n";
 import { tools, GROUP_LABEL, TOOL_GROUP_ORDER, type ToolGroup } from "../lib/tools";
-import { TECH_PROVIDER_APPROVED } from "../lib/flags";
 import { ScrollProgress } from "./fx";
-import PriorityAccess from "./atol/PriorityAccess";
-import { signupHref } from "./atol/AtolCta";
 
-/** CTA do topo controlado pela flag de pré-aprovação Meta. */
+/** CTA do topo: o site é da empresa — o contato vale para todos os produtos. */
 function NavCta({ lang, mobile = false }: { lang: "pt" | "en"; mobile?: boolean }) {
-  const cls = mobile ? "btn btn-primary" : "nav-cta";
-  if (TECH_PROVIDER_APPROVED) {
-    return (
-      <a className={cls} href={signupHref(mobile ? "nav-mobile" : "nav")} data-analytics="atol_signup">
-        {lang === "pt" ? "Conectar meu número" : "Connect my number"}
-      </a>
-    );
-  }
   return (
-    <PriorityAccess
-      lang={lang}
-      source={mobile ? "nav-mobile" : "nav"}
-      className={cls}
-      label={lang === "pt" ? "Acesso prioritário" : "Priority access"}
-    />
+    <a className={mobile ? "btn btn-primary" : "nav-cta"} href={`/${lang}#contato`} data-analytics="contact_click">
+      {lang === "pt" ? "Falar com a engenharia" : "Talk to engineering"}
+    </a>
   );
 }
 
@@ -76,28 +62,32 @@ const toolsGroups: SubGroup[] = [
   })),
 ];
 
-const academyGroups: SubGroup[] = [
-  {
-    label: { pt: "Academy", en: "Academy" },
-    items: [
-      { href: "/cursos", pt: "Cursos gratuitos com certificado", en: "Free courses with certificate" },
-      { href: "/trilha", pt: "Minha trilha & progresso", en: "My track & progress" },
-    ],
-  },
-  ...toolsGroups,
-];
-
 /*
  * Navbar comercial: Atol Connect · Calculadora 2026 · Sistemas · Cases ·
  * Academy & Ferramentas. Serviços/Portfólio/Sobre seguem no ar (SEO) e
  * linkados no rodapé — saíram só do topo para não diluir o funil.
  */
+const productsSub: SubItem[] = [
+  { href: "/produtos/miseon", pt: "MiseOn — sistema para restaurantes", en: "MiseOn — restaurant system" },
+  { href: "/produtos/mercadinhosys", pt: "MercadinhoSys — varejo com IA", en: "MercadinhoSys — AI retail" },
+  { href: "/produtos/selectsys-jobs", pt: "SelectSys Jobs — ATS Brasil–Japão", en: "SelectSys Jobs — Brazil–Japan ATS" },
+  { href: "/whatsapp-api", pt: "Atol Connect — API oficial do WhatsApp", en: "Atol Connect — official WhatsApp API" },
+  { href: "/#produto-mysuperstore", pt: "MySuperStore — marketplace", en: "MySuperStore — marketplace" },
+];
+
+const academySub: SubItem[] = [
+  { href: "/cursos/construa-seu-marketplace", pt: "Curso gratuito com certificado", en: "Free certified course" },
+  { href: "/cursos", pt: "Catálogo de cursos", en: "Course catalog" },
+  { href: "/trilha", pt: "Minha trilha", en: "My track" },
+];
+
+/* Menu da empresa: produtos com peso igual, Academy com destaque próprio. */
 const menu: MenuItem[] = [
-  { href: "/whatsapp-api", pt: "Atol Connect", en: "Atol Connect" },
-  { href: "/whatsapp-api/calculadora-2026", pt: "Calculadora 2026", en: "2026 Calculator" },
-  { href: "/#sistemas", pt: "Sistemas", en: "Systems" },
-  { href: "/#cases", pt: "Cases", en: "Cases" },
-  { href: "/ferramentas", pt: "Academy & Ferramentas", en: "Academy & Tools", groups: academyGroups },
+  { href: "/produtos", pt: "Produtos", en: "Products", sub: productsSub },
+  { href: "/cursos", pt: "Academy", en: "Academy", sub: academySub },
+  { href: "/#cases", pt: "Sob medida", en: "Custom" },
+  { href: "/#sobre", pt: "Sobre", en: "About" },
+  { href: "/ferramentas", pt: "Ferramentas", en: "Tools", groups: toolsGroups },
 ];
 
 /** "/#sistemas" → "/pt#sistemas" (sem a barra que viraria redirect). */

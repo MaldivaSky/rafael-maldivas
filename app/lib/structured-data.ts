@@ -49,6 +49,7 @@ export const maldivasTechKnowledgeGraph = {
         { "@id": `${SITE}/#product-miseon` },
         { "@id": `${SITE}/#product-mercadinhosys` },
         { "@id": `${SITE}/#product-selectsys-jobs` },
+        { "@id": `${SITE}/#product-mysuperstore` },
       ],
       address: {
         "@type": "PostalAddress",

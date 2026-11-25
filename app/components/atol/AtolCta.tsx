@@ -10,6 +10,10 @@ export const PRE_APPROVAL_NOTE = {
   en: "Official Meta operation already live for Food Service via MiseOn; Tech Provider accreditation for other segments is in final validation at Meta.",
 } as const;
 
+/** Página do produto no subdomínio, com origem rastreável. */
+export const productHref = (src: string) =>
+  `${CONNECT_URL}/?utm_source=maldivastech&utm_medium=portal&utm_campaign=${encodeURIComponent(src)}`;
+
 export const signupHref = (src: string, plan?: string) =>
   `${CONNECT_URL}/login?mode=signup${plan ? `&plan=${plan}` : ""}&utm_source=maldivastech&utm_medium=portal&utm_campaign=${encodeURIComponent(src)}`;
 
@@ -26,7 +30,10 @@ export default function AtolCta({
   secondary,
   note = true,
   compact = false,
+  showSandbox = false,
 }: {
+  /** mostra um 3º botão para a sandbox interativa */
+  showSandbox?: boolean;
   lang: Lang;
   src: string;
   plan?: string;
@@ -49,10 +56,21 @@ export default function AtolCta({
           </a>
         ) : (
           <>
-            <a className="btn btn-primary" href={sandbox} data-analytics="atol_sandbox">
-              {pt ? "Explorar Sandbox Interativa" : "Explore the Interactive Sandbox"}
+            {/* a ponte: sempre leva ao produto; o connect trata a pré-aprovação nos CTAs dele */}
+            <a className="btn btn-primary" href={productHref(src)} data-analytics="atol_connect_click">
+              {pt ? "Conhecer o Atol Connect →" : "Explore Atol Connect →"}
             </a>
-            <PriorityAccess lang={lang} source={src} className="btn btn-ghost" />
+            <PriorityAccess
+              lang={lang}
+              source={src}
+              className="btn btn-ghost"
+              label={pt ? "Reservar acesso prioritário" : "Reserve priority access"}
+            />
+            {showSandbox && (
+              <a className="btn btn-ghost" href={sandbox} data-analytics="atol_sandbox">
+                {pt ? "Ver sandbox (8 nichos)" : "See sandbox (8 industries)"}
+              </a>
+            )}
           </>
         )}
         {secondary && (

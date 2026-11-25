@@ -53,3 +53,6 @@
 .wa-crumb { font-size: 13px; color: var(--fg-dim); margin-bottom: 14px; }
 .wa-crumb a { color: var(--fg-muted); }
 @media (max-width: 640px) { .wa-hero { padding: 64px 0 32px; } .wa-sec { padding: 40px 0; } }
+
+.wa-tariff { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 32px; align-items: center; }
+@media (max-width: 960px) { .wa-tariff { grid-template-columns: 1fr; } }
