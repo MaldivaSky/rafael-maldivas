@@ -44,7 +44,7 @@ type Product = {
   points: Bi[];
   site: { href: string; label: string };
   page?: string;
-  media: { kind: "video"; src: string; poster: string; alt: Bi } | { kind: "images"; items: { src: string; alt: Bi; contain?: boolean }[] };
+  media: { kind: "video"; src: string; poster: string; alt: Bi } | { kind: "images"; items: { src: string; alt: Bi; contain?: boolean; position?: string }[] };
 };
 
 const PRODUCTS: Product[] = [
@@ -130,8 +130,8 @@ const PRODUCTS: Product[] = [
     segment: { pt: "API oficial do WhatsApp Business em reais", en: "Official WhatsApp Business API in BRL" },
     status: { pt: "Cloud API oficial da Meta", en: "Official Meta Cloud API" },
     live: true,
-    headline: { pt: "WhatsApp oficial para empresas e software houses, sem QR Code e sem markup em dólar.", en: "Official WhatsApp for businesses and software houses — no QR code, no dollar markup." },
-    problem: { pt: "API por QR Code cai no pico de movimento; provedor oficial cobra em dólar e por usuário.", en: "QR-code APIs drop at peak time; official providers bill in dollars and per seat." },
+    headline: { pt: "WhatsApp oficial para empresas e software houses, sem QR Code, sem cobrança por atendente e sem ágio na tarifa da Meta.", en: "Official WhatsApp for businesses and software houses — no QR code, no per-seat fees, no markup on Meta's rates." },
+    problem: { pt: "API por QR Code cai no pico de movimento; plataforma oficial cobra por atendente; e desde outubro cada resposta pela API depois das 1.000 grátis entra na fatura da Meta.", en: "QR-code APIs drop at peak time; official platforms charge per seat; and since October every API reply past the 1,000 free ones is billed by Meta." },
     solution: {
       pt: "Conexão pela Meta mantendo o celular (Coexistência), caixa de entrada em equipe, modelos aprovados e API REST com webhooks assinados para ERP, PDV e loja virtual.",
       en: "Connect through Meta while keeping the phone (Coexistence), team inbox, approved templates and a REST API with signed webhooks for ERP, POS and storefronts.",
@@ -146,7 +146,13 @@ const PRODUCTS: Product[] = [
     ],
     site: { href: "https://connect.maldivastech.dev/?utm_source=maldivastech&utm_medium=portal&utm_campaign=home-produtos", label: "connect.maldivastech.dev" },
     page: "/whatsapp-api",
-    media: { kind: "images", items: [{ src: "/logo-atol-connect.png", alt: { pt: "Atol Connect", en: "Atol Connect" }, contain: true }] },
+    media: {
+      kind: "images",
+      items: [
+        { src: "/media/atol-inbox.png", position: "center bottom", alt: { pt: "Caixa de entrada em equipe do Atol Connect (ilustração com dados de exemplo)", en: "Atol Connect team inbox (illustration with sample data)" } },
+        { src: "/media/atol-simulador.png", position: "right center", alt: { pt: "Simulador de economia do Atol Connect: plataforma por atendente versus Atol", en: "Atol Connect savings simulator: per-seat platform versus Atol" } },
+      ],
+    },
   },
   {
     id: "mysuperstore",
@@ -171,6 +177,7 @@ const PRODUCTS: Product[] = [
       { pt: "Frete calculado na hora", en: "Live shipping quotes" },
     ],
     site: { href: "https://mysuperstore-lime.vercel.app", label: "Ateliê Eli Trassi" },
+    page: "/produtos/mysuperstore",
     media: { kind: "images", items: [{ src: "/media/mysuperstore-architecture.jpg", alt: { pt: "Arquitetura do MySuperStore com split PIX", en: "MySuperStore architecture with PIX split" } }] },
   },
 ];
@@ -312,7 +319,7 @@ export default function HomeClient() {
                   ) : (
                     p.media.items.map((m) => (
                       <div className={`h8-media-tile${m.contain ? " is-contain" : ""}`} key={m.src}>
-                        <Image src={m.src} alt={L(m.alt)} fill sizes="(max-width: 1040px) 92vw, 46vw" style={{ objectFit: m.contain ? "contain" : "cover" }} />
+                        <Image src={m.src} alt={L(m.alt)} fill sizes="(max-width: 1040px) 92vw, 46vw" style={{ objectFit: m.contain ? "contain" : "cover", objectPosition: m.position }} />
                       </div>
                     ))
                   )}
