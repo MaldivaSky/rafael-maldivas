@@ -22,6 +22,10 @@ export type SiteEvent = (typeof SITE_EVENTS)[number];
  */
 export function trackSiteEvent(event: SiteEvent, path?: string, segundos?: number) {
   if (typeof window === "undefined") return;
+  // conversões que não vêm de clique marcado vão também ao GA4 (cliques o SiteAnalytics já envia)
+  const w = window as Window & { gtag?: (...a: unknown[]) => void };
+  if (event === "lead_submit") w.gtag?.("event", "generate_lead", { page_path: path ?? window.location.pathname });
+  else if (event === "briefing_start") w.gtag?.("event", "briefing_start");
   const { origem, interno } = origemParaEnvio();
   const payload = JSON.stringify({
     event,

@@ -6,6 +6,7 @@ import SiteNav from "./components/SiteNav";
 import ThreeBackground from "./components/ThreeBackgroundLazy";
 import SiteFooter from "./components/SiteFooter";
 import SiteAnalytics from "./components/SiteAnalytics";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 import CookieConsent from "./components/CookieConsent";
 import { COMPANY, SITE, VERIFICATION } from "./lib/site";
 import { maldivasTechKnowledgeGraph } from "./lib/structured-data";
@@ -145,6 +146,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <LangProvider>
             <SiteAnalytics />
+            <GoogleAnalytics />
             <ThreeBackground />
             <SiteNav />
             <main>{children}</main>

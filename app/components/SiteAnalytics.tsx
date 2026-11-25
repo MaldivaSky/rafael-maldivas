@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { SITE_EVENTS, trackSiteEvent, type SiteEvent } from "../lib/analytics";
 import { capturarOrigem } from "../lib/origem-client";
+import { gaEvent } from "./GoogleAnalytics";
 
 const allowed = new Set<string>(SITE_EVENTS);
 
@@ -69,9 +70,11 @@ export default function SiteAnalytics() {
       if (!(target instanceof Element)) return;
       const value = target.closest<HTMLElement>("[data-analytics]")?.dataset.analytics;
       // page_view/page_exit são do relógio acima, nunca de um clique
-      if (value && allowed.has(value) && value !== "page_view" && value !== "page_exit") {
-        trackSiteEvent(value as SiteEvent);
-      }
+      if (!value || value === "page_view" || value === "page_exit") return;
+      // GA4 recebe todo clique marcado; o registro próprio só os eventos que o
+      // banco aceita (CHECK em site.eventos) — os demais não geram erro de gravação
+      gaEvent(value, { page_path: window.location.pathname });
+      if (allowed.has(value)) trackSiteEvent(value as SiteEvent);
     };
 
     document.addEventListener("click", onClick, true);

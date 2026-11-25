@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { X, Cookie } from "lucide-react";
 import { useLang } from "../lib/i18n";
 import { Reveal } from "./fx";
+import { CONSENT_EVENT } from "./GoogleAnalytics";
 
 export default function CookieConsent() {
   const { lang } = useLang();
@@ -26,19 +27,16 @@ export default function CookieConsent() {
 
   if (!show) return null;
 
-  const handleAcceptAll = () => {
+  // a escolha precisa chegar ao GA (Consent Mode v2): antes o aviso não controlava nada
+  const decide = (choice: "all" | "essential") => {
     try {
-      localStorage.setItem("cookie_consent", "all");
+      localStorage.setItem("cookie_consent", choice);
     } catch {}
+    window.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: choice }));
     setShow(false);
   };
-
-  const handleEssentialOnly = () => {
-    try {
-      localStorage.setItem("cookie_consent", "essential");
-    } catch {}
-    setShow(false);
-  };
+  const handleAcceptAll = () => decide("all");
+  const handleEssentialOnly = () => decide("essential");
 
   return (
     <aside
