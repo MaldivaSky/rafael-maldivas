@@ -272,6 +272,57 @@ const CONTENT: Record<string, Record<Lang, ProductContent>> = {
       trialNote: "14 days free at release · Official Meta operation live for Food Service via MiseOn; Tech Provider accreditation for other segments in final validation at Meta · Fees paid directly to Meta",
     },
   },
+
+  mysuperstore: {
+    pt: {
+      heroLabel: "Marketplace multi-vendedor · Split PIX · No ar com o Ateliê Eli Trassi",
+      problem:
+        "Vender em marketplace grande come a margem com comissão e taxa. Montar loja própria com vários lojistas sem split de pagamento vira planilha de repasse, conciliação manual e risco de pagar errado.",
+      solutionTitle: "Do carrinho ao repasse por lojista, com o servidor no controle do dinheiro",
+      features: [
+        { icon: Layers, title: "Vitrine por lojista", desc: "Cada lojista com sua vitrine e seus produtos; o pedido é dividido em sub-pedidos por lojista, com snapshot de preço e endereço." },
+        { icon: Zap, title: "Checkout PIX e cartão pela Efí", desc: "PIX e cartão tokenizado: o número do cartão nunca passa pelo servidor da loja." },
+        { icon: TrendingUp, title: "Split e repasse na liquidação", desc: "O valor de cada lojista e a comissão da plataforma são separados quando o pagamento liquida, sem planilha de repasse." },
+        { icon: ShieldCheck, title: "Webhook de pagamento idempotente", desc: "Assinatura verificada e processamento único: o aviso repetido do banco não confirma o pedido duas vezes." },
+        { icon: Database, title: "Dinheiro em centavos inteiros", desc: "Total, frete e cupom são recalculados no servidor em centavos, sem erro de ponto flutuante e sem aceitar valor vindo do navegador." },
+        { icon: MessageCircle, title: "Assistente de IA da loja", desc: "Responde o cliente com base no catálogo real da loja." },
+      ],
+      stats: [
+        { n: "PIX", label: "e cartão via Efí" },
+        { n: "Split", label: "por lojista na liquidação" },
+        { n: "Django", label: "DRF, PostgreSQL e Celery" },
+        { n: "No ar", label: "Ateliê Eli Trassi" },
+      ],
+      cta: "Ver a loja no ar",
+      ctaDemo: "Falar sobre implantação",
+      ctaAllProducts: "Ver todos os produtos",
+      trialNote: "Implantação sob proposta · Código estudado aula a aula no curso grátis da Maldivas Tech",
+    },
+    en: {
+      heroLabel: "Multi-vendor marketplace · PIX split · Live with Ateliê Eli Trassi",
+      problem:
+        "Selling on big marketplaces eats margin with commissions and fees. Running your own multi-merchant store without payment split turns into payout spreadsheets, manual reconciliation and the risk of paying the wrong amount.",
+      solutionTitle: "From cart to per-merchant payout, with the server in control of the money",
+      features: [
+        { icon: Layers, title: "Per-merchant storefronts", desc: "Each merchant has its own storefront; orders split into sub-orders per merchant with price and address snapshots." },
+        { icon: Zap, title: "PIX and card checkout via Efí", desc: "PIX and tokenized cards: the card number never touches the store's server." },
+        { icon: TrendingUp, title: "Split and payout on settlement", desc: "Each merchant's share and the platform commission are separated when the payment settles — no payout spreadsheet." },
+        { icon: ShieldCheck, title: "Idempotent payment webhook", desc: "Verified signature and single processing: a repeated bank notification never confirms an order twice." },
+        { icon: Database, title: "Money in integer cents", desc: "Total, shipping and coupons are recalculated server-side in cents — no floating-point errors and no prices trusted from the browser." },
+        { icon: MessageCircle, title: "Store AI assistant", desc: "Answers customers based on the store's real catalog." },
+      ],
+      stats: [
+        { n: "PIX", label: "and card via Efí" },
+        { n: "Split", label: "per merchant on settlement" },
+        { n: "Django", label: "DRF, PostgreSQL and Celery" },
+        { n: "Live", label: "Ateliê Eli Trassi" },
+      ],
+      cta: "See the live store",
+      ctaDemo: "Talk about a rollout",
+      ctaAllProducts: "All products",
+      trialNote: "Rollout by proposal · The code is studied lesson by lesson in Maldivas Tech's free course",
+    },
+  },
 };
 
 /* ──────────────────────────────────────────────
@@ -292,7 +343,7 @@ export default async function ProductPage({
   const content = CONTENT[product.slug]?.[lang];
   if (!content) notFound();
 
-  const needsLightPlate = product.slug === "selectsys-jobs" || product.slug === "mercadinhosys";
+  const needsLightPlate = product.slug === "selectsys-jobs" || product.slug === "mercadinhosys" || product.slug === "mysuperstore";
   const domainLabel = product.appUrl
     ? product.appUrl.replace(/^https?:\/\//, "")
     : "selectsys-jobs.vercel.app";
@@ -312,11 +363,8 @@ export default async function ProductPage({
     applicationCategory: product.applicationCategory,
     applicationSubCategory: product.applicationSubCategory,
     operatingSystem: "Web",
-    offers: {
-      "@type": "Offer",
-      price: product.priceBRL,
-      priceCurrency: product.priceCurrency,
-    },
+    // "0" significa sob consulta: publicar Offer com preço 0 diria ao Google que é grátis
+    ...(product.priceBRL !== "0" ? { offers: { "@type": "Offer", price: product.priceBRL, priceCurrency: product.priceCurrency } } : {}),
     description: c.metaDescription,
     author: { "@type": "Organization", name: "Maldivas Tech", url: SITE },
   };

@@ -4,7 +4,7 @@
 
 import type { Lang } from "./seo";
 
-export type ProductSlug = "miseon" | "mercadinhosys" | "selectsys-jobs" | "atol-connect";
+export type ProductSlug = "miseon" | "mercadinhosys" | "selectsys-jobs" | "atol-connect" | "mysuperstore";
 
 export type ProductCopy = {
   /** use no <title> — frase de busca real do mercado daquele idioma */
@@ -252,6 +252,57 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
           "WhatsApp API for ERP integration",
           "multi-tenant WhatsApp API",
           "WhatsApp API Brazil",
+        ],
+      },
+    },
+  },
+
+  mysuperstore: {
+    slug: "mysuperstore",
+    name: "MySuperStore",
+    icon: "/logo-mysuperstore.png",
+    logoHorizontal: "/logo-horiz-mysuperstore.png",
+    showcaseImage: "/media/mysuperstore-architecture.jpg",
+    appUrl: "https://mysuperstore-lime.vercel.app",
+    applicationCategory: "BusinessApplication",
+    applicationSubCategory: "MultiVendorMarketplacePlatform",
+    // sem preço público: implantação sob proposta ("0" = sob consulta; a página não publica oferta)
+    priceBRL: "0",
+    priceCurrency: "BRL",
+    hasFreeTrial: false,
+    trialDays: 0,
+    stack: ["Django", "Django REST Framework", "PostgreSQL", "Efí (PIX e cartão)", "Split de pagamento", "WebSockets", "Celery", "Docker", "Caddy"],
+    copy: {
+      pt: {
+        metaTitle: "Plataforma de Marketplace Multi-Vendedor com Split PIX | MySuperStore",
+        metaDescription:
+          "MySuperStore: marketplace multi-vendedor com checkout PIX e cartão pela Efí, split por lojista na liquidação, frete e cupom calculados no servidor e webhook idempotente.",
+        h1: "Sua loja própria com checkout PIX que divide o dinheiro na hora certa",
+        tagline:
+          "Marketplace multi-vendedor em produção (Ateliê Eli Trassi): vitrine por lojista, PIX e cartão pela Efí, split na liquidação, assistente de IA e webhook de pagamento idempotente.",
+        keywords: [
+          "plataforma de marketplace",
+          "marketplace multi vendedor",
+          "split de pagamento PIX",
+          "loja virtual própria com PIX",
+          "sistema de marketplace para lojistas",
+          "checkout PIX Efí",
+        ],
+      },
+      en: {
+        metaTitle: "Multi-Vendor Marketplace Platform with PIX Split Payments | MySuperStore",
+        metaDescription:
+          "MySuperStore is a multi-vendor marketplace with PIX and card checkout via Efí, per-merchant split on settlement, server-side shipping and coupons, and idempotent payment webhooks.",
+        h1: "Your own storefront with PIX checkout that splits money at the right moment",
+        tagline:
+          "Multi-vendor marketplace in production (Ateliê Eli Trassi): per-merchant storefronts, PIX and card via Efí, split on settlement, a store AI assistant and idempotent payment webhooks.",
+        keywords: [
+          "multi-vendor marketplace platform",
+          "marketplace software Brazil",
+          "PIX split payments",
+          "Django marketplace",
+          "marketplace payment split",
+          "idempotent payment webhook",
         ],
       },
     },

@@ -47,7 +47,7 @@ export default async function LangHome({ params: paramsP }: { params: Promise<{ 
     { name: "MercadinhoSys", url: `${SITE}/${lang}/produtos/mercadinhosys`, id: `${SITE}/#product-mercadinhosys` },
     { name: "SelectSys Jobs", url: `${SITE}/${lang}/produtos/selectsys-jobs`, id: `${SITE}/#product-selectsys-jobs` },
     { name: "Atol Connect", url: `${SITE}/${lang}/whatsapp-api`, id: "https://connect.maldivastech.dev/#software" },
-    { name: "MySuperStore", url: "https://mysuperstore-lime.vercel.app", id: `${SITE}/#product-mysuperstore` },
+    { name: "MySuperStore", url: `${SITE}/${lang}/produtos/mysuperstore`, id: `${SITE}/#product-mysuperstore` },
   ];
 
   const ld = [
