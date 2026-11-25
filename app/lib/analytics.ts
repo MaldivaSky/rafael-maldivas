@@ -10,6 +10,16 @@ export const SITE_EVENTS = [
   "lead_submit",
   "tool_click",
   "product_demo",
+  // aceitos no banco a partir da migração em scripts/oracle/leads-schema.sql
+  // (eventos_evento_check); antes dela a API registra erro e responde 204
+  "product_click",
+  "cert_click",
+  "course_start",
+  "course_syllabus",
+  "atol_connect_click",
+  "atol_signup",
+  "atol_sandbox",
+  "atol_priority_open",
 ] as const;
 
 export type SiteEvent = (typeof SITE_EVENTS)[number];

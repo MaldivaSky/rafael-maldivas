@@ -87,9 +87,11 @@ CREATE INDEX IF NOT EXISTS lead_eventos_lead_idx ON site.lead_eventos (lead_id, 
 CREATE TABLE IF NOT EXISTS site.eventos (
   id          bigserial PRIMARY KEY,
   em          timestamptz NOT NULL DEFAULT now(),
-  evento      text NOT NULL CHECK (evento IN (
+  evento      text NOT NULL CONSTRAINT eventos_evento_check CHECK (evento IN (
                 'page_view','page_exit','contact_click','service_click','portfolio_click',
-                'briefing_start','lead_submit','tool_click','product_demo')),
+                'briefing_start','lead_submit','tool_click','product_demo',
+                'product_click','cert_click','course_start','course_syllabus',
+                'atol_connect_click','atol_signup','atol_sandbox','atol_priority_open')),
   caminho     text NOT NULL DEFAULT '/' CHECK (char_length(caminho) <= 160),
   canal       text NOT NULL DEFAULT 'Direto' CHECK (char_length(canal) <= 60),
   utm_content text CHECK (char_length(utm_content) <= 120),
@@ -527,3 +529,33 @@ GRANT UPDATE (status, concluido_em) ON site.matriculas TO site_admin;
 REVOKE EXECUTE ON FUNCTION site.validar_certificado(text), site.painel_alunos() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION site.validar_certificado(text) TO site_student_api, site_admin;
 GRANT EXECUTE ON FUNCTION site.painel_alunos() TO site_admin;
+
+-- ---------------------------------------------------------------------------
+-- Migração idempotente (2026-11-25): amplia a lista de eventos aceitos.
+-- CREATE TABLE IF NOT EXISTS não altera tabela existente, então o CHECK antigo
+-- (9 eventos) é trocado aqui. Só AMPLIA a lista: toda linha existente continua
+-- válida. Seguro para rodar várias vezes (setup-leads.sh reaplica o schema).
+-- ---------------------------------------------------------------------------
+DO $$
+DECLARE c record;
+BEGIN
+  FOR c IN
+    SELECT conname FROM pg_constraint
+    WHERE conrelid = 'site.eventos'::regclass AND contype = 'c'
+      AND pg_get_constraintdef(oid) LIKE '%evento%'
+      AND pg_get_constraintdef(oid) NOT LIKE '%atol_priority_open%'
+  LOOP
+    EXECUTE format('ALTER TABLE site.eventos DROP CONSTRAINT %I', c.conname);
+  END LOOP;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'site.eventos'::regclass AND conname = 'eventos_evento_check'
+  ) THEN
+    ALTER TABLE site.eventos ADD CONSTRAINT eventos_evento_check CHECK (evento IN (
+      'page_view','page_exit','contact_click','service_click','portfolio_click',
+      'briefing_start','lead_submit','tool_click','product_demo',
+      'product_click','cert_click','course_start','course_syllabus',
+      'atol_connect_click','atol_signup','atol_sandbox','atol_priority_open'));
+  END IF;
+END $$;
+
