@@ -33,7 +33,8 @@
   --radius-sm: 12px;
   --maxw: 1280px;
 
-  --font-display: var(--font-display, "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif);
+  /* antes var(--font-display): referência a si mesma = ciclo, a Plus Jakarta Sans nunca carregava */
+  --font-display: var(--font-jakarta, "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif);
   --font: var(--font-sans, "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif);
   --mono: var(--font-mono, "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace);
 }

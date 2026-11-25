@@ -19,7 +19,8 @@ import "./home.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-display",
+  // não pode ser --font-display: o :root de globals.css define essa a partir desta (antes era ciclo)
+  variable: "--font-jakarta",
   display: "swap",
 });
 
