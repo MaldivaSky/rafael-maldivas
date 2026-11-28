@@ -592,11 +592,9 @@ export default function CoursePracticeStationClient({
           <section className="ide-station-stage" aria-label="Casa Pré-Moldada e Instalação do VS Code">
             {/* Step 0: Visual Blueprint + Studio Video before any download */}
             <div
-              className="ide-prefab-card"
+              className="ide-prefab-card ide-prefab-highlight"
               style={{
                 marginBottom: 20,
-                border: "1px solid rgba(56, 189, 248, 0.35)",
-                background: "rgba(15, 23, 42, 0.9)",
               }}
             >
               <span className="ide-file-badge">
@@ -642,14 +640,14 @@ export default function CoursePracticeStationClient({
                   style={{
                     padding: 14,
                     borderRadius: 12,
-                    background: "rgba(2, 6, 23, 0.7)",
-                    border: "1px solid rgba(148, 163, 184, 0.2)",
+                    background: "var(--bg-soft)",
+                    border: "1px solid var(--line-strong)",
                   }}
                 >
-                  <strong style={{ display: "block", fontSize: "0.92rem", color: "#f8fafc" }}>
+                  <strong style={{ display: "block", fontSize: "0.92rem", color: "var(--fg)" }}>
                     🎥 Assista: Preparando a Bancada &amp; Terminal (Estúdio .mp4)
                   </strong>
-                  <p style={{ fontSize: "0.8rem", color: "#cbd5e1", margin: "4px 0 10px" }}>
+                  <p style={{ fontSize: "0.8rem", color: "var(--fg-muted)", margin: "4px 0 10px" }}>
                     Veja em 2 minutos como o terminal, o VS Code, o ambiente virtual Python e o Git
                     trabalham juntos sem bagunçar seu computador.
                   </p>
@@ -679,7 +677,7 @@ export default function CoursePracticeStationClient({
                     marginBottom: 14,
                     paddingLeft: 18,
                     fontSize: "0.85rem",
-                    color: "#cbd5e1",
+                    color: "var(--fg-muted)",
                     lineHeight: 1.6,
                   }}
                 >

@@ -466,7 +466,7 @@ export function CourseAdmissionGate({
                     <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" aria-hidden="true" />
                   )}
                   <div>
-                    <strong style={{ color: "#4ade80" }}>
+                    <strong className="ide-text-emerald">
                       Conta Google Conectada ({googleLinked.email})
                     </strong>
                     <p>

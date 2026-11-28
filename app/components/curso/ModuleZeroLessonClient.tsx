@@ -31,10 +31,8 @@ import { SoftwareSkeletonMasterclass } from "./SoftwareSkeletonMasterclass";
 import HttpStatusLab from "./HttpStatusLab";
 import NotebookLMMediaBlock from "./NotebookLMMediaBlock";
 import LessonVisualDiagram from "./LessonVisualDiagram";
-import {
-  FillInTheBlankLab,
-  PredictInteractive,
-} from "./InteractivePracticeLab";
+import { FillInTheBlankLab, PredictInteractive } from "./InteractivePracticeLab";
+import CopyCodeBlock from "./CopyCodeBlock";
 import {
   M0_DIAGRAM_BY_SLUG,
   M0_FILL_BLANKS,
@@ -278,12 +276,10 @@ export default function ModuleZeroLessonClient({
 
                     {sec.codeBlock && (
                       <div>
-                        <p className="curso-fine" style={{ marginBottom: 6 }}>
-                          <strong>{sec.codeBlock.title}</strong>
-                        </p>
-                        <pre className="curso-code-block">
-                          <code>{sec.codeBlock.code}</code>
-                        </pre>
+                        <CopyCodeBlock
+                          title={sec.codeBlock.title}
+                          code={sec.codeBlock.code}
+                        />
                         {sec.codeBlock.lineNotes && (
                           <ul>
                             {sec.codeBlock.lineNotes.map(([token, note]) => (

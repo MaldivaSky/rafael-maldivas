@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, Code2 } from "lucide-react";
+import CopyCodeBlock from "./CopyCodeBlock";
 
 type FlowStep = {
   id: string;
@@ -169,9 +170,10 @@ export default function PixFlowInteractive({
           {current.num}. {current.title}
         </h4>
         <p>{current.summary}</p>
-        <pre className="curso-code-block">
-          <code>{current.code}</code>
-        </pre>
+        <CopyCodeBlock
+          title={current.fileRef}
+          code={current.code}
+        />
         <p className="curso-why">
           <strong>Por que importa:</strong> {current.why}
         </p>

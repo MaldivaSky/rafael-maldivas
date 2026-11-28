@@ -507,6 +507,7 @@ export function IdeWorkbench({
             onChange={(next) => onUpdateCodeDraft(lessonSlug, next)}
             onRunShortcut={handleRunPython}
             language={lab.language}
+            fileName={lab.filePath}
             ariaLabel={`Editor de código do laboratório ${lab.title}`}
             minHeight={240}
           />

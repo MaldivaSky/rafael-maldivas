@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, type KeyboardEvent, type ReactNode } from "react";
+import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 
 interface IdeCodeEditorProps {
   value: string;
@@ -121,18 +121,40 @@ export function IdeCodeEditor({
   onChange,
   onRunShortcut,
   readOnly = false,
+  language = "python",
+  fileName,
   ariaLabel = "Editor de codigo Python",
   minHeight = 260,
-}: IdeCodeEditorProps) {
+}: IdeCodeEditorProps & { fileName?: string }) {
   const preRef = useRef<HTMLPreElement | null>(null);
   const gutterRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const lines = useMemo(() => value.split("\n"), [value]);
   const highlightedLines = useMemo(
     () => lines.map((line, i) => highlightLineTokens(line, i)),
     [lines],
   );
+
+  const langLabel =
+    language === "sql-py"
+      ? "PYTHON + SQL"
+      : language === "yaml"
+        ? "YAML"
+        : language === "text"
+          ? "TEXT"
+          : "PYTHON 3.12";
+
+  async function handleCopyEditor() {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard indisponível */
+    }
+  }
 
   function syncScroll(scrollTop: number, scrollLeft: number) {
     if (preRef.current) {
@@ -169,40 +191,66 @@ export function IdeCodeEditor({
   }
 
   return (
-    <div className="ide-editor-shell" style={{ minHeight }}>
-      <div ref={gutterRef} className="ide-editor-gutter" aria-hidden="true">
-        {lines.map((_, i) => (
-          <div key={i} className="ide-editor-line-num">
-            {i + 1}
-          </div>
-        ))}
+    <div className="ide-editor-frame" data-code-theme="dark">
+      <div className="ide-editor-topbar">
+        <div className="curso-code-head-left">
+          <span className="curso-code-dots" aria-hidden="true">
+            <i className="dot-r" />
+            <i className="dot-y" />
+            <i className="dot-g" />
+          </span>
+          <span className="curso-code-filename">
+            {fileName ?? (readOnly ? "reference_module.py" : "workspace_lab.py")}
+          </span>
+        </div>
+        <div className="curso-code-head-right">
+          <span className="curso-code-lang-pill">{langLabel}</span>
+          <button
+            type="button"
+            className="curso-copy-btn"
+            onClick={handleCopyEditor}
+            aria-label="Copiar código do editor"
+          >
+            {copied ? "✓ Copiado" : "Copiar"}
+          </button>
+        </div>
       </div>
 
-      <div className="ide-editor-stage">
-        <pre ref={preRef} className="ide-editor-highlight" aria-hidden="true">
-          <code>
-            {highlightedLines.map((nodes, idx) => (
-              <div key={idx} className="ide-editor-code-line">
-                {nodes}
-              </div>
-            ))}
-          </code>
-        </pre>
+      <div className="ide-editor-shell" style={{ minHeight }}>
+        <div ref={gutterRef} className="ide-editor-gutter" aria-hidden="true">
+          {lines.map((_, i) => (
+            <div key={i} className="ide-editor-line-num">
+              {i + 1}
+            </div>
+          ))}
+        </div>
 
-        <textarea
-          ref={textareaRef}
-          className="ide-editor-textarea"
-          value={value}
-          readOnly={readOnly}
-          aria-label={ariaLabel}
-          spellCheck={false}
-          autoCapitalize="off"
-          autoComplete="off"
-          autoCorrect="off"
-          onChange={(e) => onChange?.(e.target.value)}
-          onScroll={(e) => syncScroll(e.currentTarget.scrollTop, e.currentTarget.scrollLeft)}
-          onKeyDown={handleKeyDown}
-        />
+        <div className="ide-editor-stage">
+          <pre ref={preRef} className="ide-editor-highlight" aria-hidden="true">
+            <code>
+              {highlightedLines.map((nodes, idx) => (
+                <div key={idx} className="ide-editor-code-line">
+                  {nodes}
+                </div>
+              ))}
+            </code>
+          </pre>
+
+          <textarea
+            ref={textareaRef}
+            className="ide-editor-textarea"
+            value={value}
+            readOnly={readOnly}
+            aria-label={ariaLabel}
+            spellCheck={false}
+            autoCapitalize="off"
+            autoComplete="off"
+            autoCorrect="off"
+            onChange={(e) => onChange?.(e.target.value)}
+            onScroll={(e) => syncScroll(e.currentTarget.scrollTop, e.currentTarget.scrollLeft)}
+            onKeyDown={handleKeyDown}
+          />
+        </div>
       </div>
     </div>
   );

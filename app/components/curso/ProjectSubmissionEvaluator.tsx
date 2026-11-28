@@ -336,10 +336,12 @@ export default function ProjectSubmissionEvaluator() {
               </div>
               {sendMsg && (
                 <p
-                  className="curso-fine"
+                  className={`curso-fine ${
+                    sendStatus === "sent" ? "ide-text-emerald" : "curso-form-error"
+                  }`}
                   style={{
                     marginTop: 10,
-                    color: sendStatus === "sent" ? "#4ade80" : "#f87171",
+                    fontWeight: 600,
                   }}
                 >
                   {sendMsg}

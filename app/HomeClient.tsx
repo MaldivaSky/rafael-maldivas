@@ -186,22 +186,27 @@ const PRODUCTS: Product[] = [
 const G_PRODUCTS: GraphProduct[] = PRODUCTS.map((p) => ({ id: p.id, label: p.name, sub: "", href: `#produto-${p.id}` }));
 // ordem no anel externo acompanha a ordem dos produtos (menos cruzamento de arestas)
 const G_INTEGRATIONS: GraphIntegration[] = [
-  { id: "ifood", label: "iFood" },
+  { id: "bigdatacorp", label: "BigDataCorp API" },
+  { id: "usda", label: "USDA Nutrition API" },
+  { id: "ifood", label: "iFood Orders API" },
   { id: "bravus", label: "Bravus / Gertec" },
-  { id: "sefaz", label: "SEFAZ · NFC-e" },
+  { id: "sefaz", label: "Focus NFe · SEFAZ" },
   { id: "garoon", label: "Cybozu Garoon" },
-  { id: "ocr", label: "OCR documental" },
-  { id: "llm", label: "LLM (IA)" },
+  { id: "ocr", label: "Tesseract OCR" },
+  { id: "llm", label: "Consultor M-IA (LLM)" },
   { id: "pagbank", label: "PagBank" },
   { id: "efi", label: "Efí · PIX Split" },
-  { id: "meta", label: "Meta Cloud API" },
+  { id: "meta", label: "WhatsApp Cloud API" },
+  { id: "metasdk", label: "Meta Embedded Signup" },
+  { id: "melhorenvio", label: "Melhor Envio" },
+  { id: "supabase", label: "Supabase · RLS" },
 ];
 const G_EDGES: GraphEdge[] = [
-  ["miseon", "ifood"], ["miseon", "sefaz"], ["miseon", "meta"], ["miseon", "bravus"],
-  ["mercadinhosys", "sefaz"], ["mercadinhosys", "llm"],
-  ["selectsys", "garoon"], ["selectsys", "ocr"],
-  ["atol", "meta"], ["atol", "pagbank"],
-  ["mysuperstore", "efi"], ["mysuperstore", "llm"],
+  ["miseon", "usda"], ["miseon", "ifood"], ["miseon", "sefaz"], ["miseon", "meta"], ["miseon", "bravus"], ["miseon", "efi"], ["miseon", "supabase"],
+  ["mercadinhosys", "bigdatacorp"], ["mercadinhosys", "sefaz"], ["mercadinhosys", "llm"],
+  ["selectsys", "garoon"], ["selectsys", "ocr"], ["selectsys", "supabase"],
+  ["atol", "meta"], ["atol", "metasdk"], ["atol", "pagbank"], ["atol", "supabase"],
+  ["mysuperstore", "efi"], ["mysuperstore", "melhorenvio"], ["mysuperstore", "llm"],
 ];
 
 function ProductVideo({ src, poster, alt, pt }: { src: string; poster: string; alt: string; pt: boolean }) {
@@ -375,19 +380,19 @@ export default function HomeClient() {
       <section className="h6-sec" id="ecossistema" aria-labelledby="h8-eco">
         <div className="wrap h8-eco">
           <div className="h6-head">
-            <span className="h6-kicker">{pt ? "ARQUITETURA DO ECOSSISTEMA" : "ECOSYSTEM ARCHITECTURE"}</span>
-            <h2 id="h8-eco">{pt ? "Integrações oficiais, em produção" : "Official integrations, in production"}</h2>
+            <span className="h6-kicker">{pt ? "ARQUITETURA ORBITAL DO ECOSSISTEMA" : "ECOSYSTEM ORBITAL ARCHITECTURE"}</span>
+            <h2 id="h8-eco">{pt ? "Sistema Solar de Integrações Oficiais em Produção" : "Solar System of Official Production Integrations"}</h2>
             <p>
               {pt
-                ? "Cada linha é uma integração que existe no código: fiscal com a SEFAZ, pedidos do iFood, WhatsApp pela Cloud API da Meta, pagamentos PIX com split, sincronização com sistemas japoneses. Passe o mouse num produto para ver só as integrações dele."
-                : "Each line is an integration that exists in code: tax with SEFAZ, iFood orders, WhatsApp through Meta's Cloud API, PIX payments with split, sync with Japanese systems. Hover a product to see only its integrations."}
+                ? "Cada planeta em órbita representa uma API oficial que roda em produção nos nossos produtos: enriquecimento de dados com BigDataCorp, cálculo nutricional com a API norte-americana USDA FoodData Central, emissão fiscal SEFAZ, pedidos iFood, WhatsApp Cloud API da Meta, split PIX via Efí Bank e sincronização com o Japão. Passe o mouse para pausar uma órbita e clique em qualquer integração para abrir a ficha técnica."
+                : "Each orbiting planet represents an official API running in production across our products: BigDataCorp data enrichment, US nutritional data via USDA FoodData Central, SEFAZ tax emission, iFood orders, Meta WhatsApp Cloud API, Efí Bank PIX split, and Japan enterprise sync. Hover to pause an orbit and click any integration to inspect its technical flow."}
             </p>
           </div>
           <PortfolioGraph
             products={G_PRODUCTS}
             integrations={G_INTEGRATIONS}
             edges={G_EDGES}
-            caption={pt ? "Todos os produtos compartilham a mesma base: PostgreSQL multi-tenant com isolamento por linha (RLS), trilha de auditoria e LGPD." : "All products share the same foundation: multi-tenant PostgreSQL with row-level isolation (RLS), audit trail and LGPD compliance."}
+            caption={pt ? "Todos os produtos compartilham a mesma fundação de engenharia: PostgreSQL multi-tenant com isolamento por linha (RLS), criptografia AES-256-GCM, trilha de auditoria e conformidade LGPD." : "All products share the same engineering foundation: multi-tenant PostgreSQL with row-level isolation (RLS), AES-256-GCM encryption, audit trail and LGPD compliance."}
           />
         </div>
       </section>

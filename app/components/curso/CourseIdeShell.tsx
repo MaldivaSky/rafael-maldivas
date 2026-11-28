@@ -582,6 +582,7 @@ export function CourseIdeShell({
               value={selectedRepoFile.content}
               readOnly
               language={selectedRepoFile.language}
+              fileName={selectedRepoFile.path}
               minHeight={220}
             />
           </div>

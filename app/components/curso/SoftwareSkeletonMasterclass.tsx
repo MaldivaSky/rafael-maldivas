@@ -258,13 +258,10 @@ export function SoftwareSkeletonMasterclass({
 
   return (
     <section
-      className="curso-panel"
+      className="curso-panel curso-masterclass-panel"
       style={{
         marginTop: compact ? 24 : 32,
         marginBottom: compact ? 24 : 32,
-        border: "1px solid rgba(56, 189, 248, 0.35)",
-        background:
-          "linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(7, 13, 25, 0.98) 100%)",
       }}
       aria-label="Masterclass Interativa: Esqueleto do Sistema, Modelagem de Dados e Ordem de Implementação"
     >
@@ -280,7 +277,7 @@ export function SoftwareSkeletonMasterclass({
         }}
       >
         <div>
-          <span className="curso-Complete-badge">
+          <span className="curso-badge">
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" /> Fundamento Mestre de
             Engenharia · Do Alicerce ao Deploy
           </span>
@@ -323,21 +320,21 @@ export function SoftwareSkeletonMasterclass({
             cursor: "pointer",
             border:
               activeTab === "skeleton"
-                ? "2px solid #38bdf8"
-                : "1px solid rgba(148, 163, 184, 0.22)",
+                ? "2px solid var(--accent)"
+                : "1px solid var(--line-strong)",
             background:
               activeTab === "skeleton"
-                ? "rgba(56, 189, 248, 0.16)"
-                : "rgba(15, 23, 42, 0.65)",
-            color: "#f8fafc",
+                ? "var(--accent-glow)"
+                : "var(--surface)",
+            color: "var(--fg)",
           }}
         >
           <Layers className="w-5 h-5 ide-text-cyan shrink-0" aria-hidden="true" />
           <div>
-            <strong style={{ display: "block", fontSize: "0.92rem" }}>
+            <strong style={{ display: "block", fontSize: "0.92rem", color: "var(--fg)" }}>
               1. O Esqueleto &amp; Ordem (6 Degraus)
             </strong>
-            <span style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
+            <span style={{ fontSize: "0.76rem", color: "var(--fg-muted)" }}>
               Por onde começar e como avançar cada feature
             </span>
           </div>
@@ -358,21 +355,21 @@ export function SoftwareSkeletonMasterclass({
             cursor: "pointer",
             border:
               activeTab === "datamodel"
-                ? "2px solid #34d399"
-                : "1px solid rgba(148, 163, 184, 0.22)",
+                ? "2px solid #10b981"
+                : "1px solid var(--line-strong)",
             background:
               activeTab === "datamodel"
-                ? "rgba(16, 185, 129, 0.16)"
-                : "rgba(15, 23, 42, 0.65)",
-            color: "#f8fafc",
+                ? "rgba(16, 185, 129, 0.14)"
+                : "var(--surface)",
+            color: "var(--fg)",
           }}
         >
           <Database className="w-5 h-5 ide-text-emerald shrink-0" aria-hidden="true" />
           <div>
-            <strong style={{ display: "block", fontSize: "0.92rem" }}>
+            <strong style={{ display: "block", fontSize: "0.92rem", color: "var(--fg)" }}>
               2. Modelagem de Dados Interativa
             </strong>
-            <span style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
+            <span style={{ fontSize: "0.76rem", color: "var(--fg-muted)" }}>
               Tabelas, PK/FK, Order × SubOrder e Snapshot
             </span>
           </div>
@@ -393,21 +390,21 @@ export function SoftwareSkeletonMasterclass({
             cursor: "pointer",
             border:
               activeTab === "studio"
-                ? "2px solid #fbbf24"
-                : "1px solid rgba(148, 163, 184, 0.22)",
+                ? "2px solid var(--gold)"
+                : "1px solid var(--line-strong)",
             background:
               activeTab === "studio"
-                ? "rgba(245, 158, 11, 0.16)"
-                : "rgba(15, 23, 42, 0.65)",
-            color: "#f8fafc",
+                ? "rgba(245, 158, 11, 0.14)"
+                : "var(--surface)",
+            color: "var(--fg)",
           }}
         >
           <PlayCircle className="w-5 h-5 ide-text-amber shrink-0" aria-hidden="true" />
           <div>
-            <strong style={{ display: "block", fontSize: "0.92rem" }}>
+            <strong style={{ display: "block", fontSize: "0.92rem", color: "var(--fg)" }}>
               3. Estúdio Multimídia &amp; NotebookLM
             </strong>
-            <span style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
+            <span style={{ fontSize: "0.76rem", color: "var(--fg-muted)" }}>
               4 Vídeos (.mp4), 5 Podcasts (.m4a), 6 PDFs e Mapa
             </span>
           </div>
@@ -469,24 +466,24 @@ export function SoftwareSkeletonMasterclass({
                     textAlign: "left",
                     cursor: "pointer",
                     border: isSelected
-                      ? "2px solid #38bdf8"
-                      : "1px solid rgba(148, 163, 184, 0.2)",
+                      ? "2px solid var(--accent)"
+                      : "1px solid var(--line-strong)",
                     background: isSelected
-                      ? "rgba(56, 189, 248, 0.18)"
-                      : "rgba(15, 23, 42, 0.55)",
-                    color: "#f8fafc",
+                      ? "var(--accent-glow)"
+                      : "var(--surface)",
+                    color: "var(--fg)",
                   }}
                 >
                   <div
                     style={{
                       fontSize: "0.7rem",
                       fontWeight: 800,
-                      color: isSelected ? "#38bdf8" : "#94a3b8",
+                      color: isSelected ? "var(--accent)" : "var(--fg-dim)",
                     }}
                   >
                     DEGRAU {st.order} DE 6
                   </div>
-                  <div style={{ fontSize: "0.82rem", fontWeight: 700, marginTop: 2 }}>
+                  <div style={{ fontSize: "0.82rem", fontWeight: 700, marginTop: 2, color: "var(--fg)" }}>
                     {st.title.split("(")[0].trim()}
                   </div>
                 </button>
@@ -499,8 +496,8 @@ export function SoftwareSkeletonMasterclass({
             style={{
               padding: 20,
               borderRadius: 14,
-              border: "1px solid rgba(56, 189, 248, 0.35)",
-              background: "rgba(2, 6, 23, 0.78)",
+              border: "1px solid var(--line-strong)",
+              background: "var(--surface)",
               marginBottom: 22,
             }}
           >
@@ -520,10 +517,10 @@ export function SoftwareSkeletonMasterclass({
               </span>
             </div>
 
-            <h3 style={{ fontSize: "1.2rem", color: "#f8fafc", marginBottom: 6 }}>
+            <h3 style={{ fontSize: "1.2rem", color: "var(--fg)", marginBottom: 6 }}>
               {currentStep.title}
             </h3>
-            <p style={{ fontSize: "0.88rem", color: "#7dd3fc", marginBottom: 12 }}>
+            <p style={{ fontSize: "0.88rem", color: "var(--accent)", marginBottom: 12 }}>
               <strong>Analogia da Obra:</strong> {currentStep.analogy}
             </p>
 
@@ -539,14 +536,14 @@ export function SoftwareSkeletonMasterclass({
                 style={{
                   padding: 12,
                   borderRadius: 10,
-                  background: "rgba(15, 23, 42, 0.75)",
-                  border: "1px solid rgba(148, 163, 184, 0.16)",
+                  background: "var(--bg-soft)",
+                  border: "1px solid var(--line-strong)",
                 }}
               >
-                <strong style={{ color: "#38bdf8", fontSize: "0.8rem" }}>
+                <strong style={{ color: "var(--accent)", fontSize: "0.8rem" }}>
                   O QUE VOCÊ FAZ NESTE DEGRAU:
                 </strong>
-                <p style={{ fontSize: "0.86rem", color: "#e2e8f0", marginTop: 4 }}>
+                <p style={{ fontSize: "0.86rem", color: "var(--fg)", marginTop: 4 }}>
                   {currentStep.whatYouDo}
                 </p>
               </div>
@@ -554,33 +551,35 @@ export function SoftwareSkeletonMasterclass({
                 style={{
                   padding: 12,
                   borderRadius: 10,
-                  background: "rgba(16, 185, 129, 0.08)",
-                  border: "1px solid rgba(52, 211, 153, 0.28)",
+                  background: "rgba(16, 185, 129, 0.09)",
+                  border: "1px solid rgba(16, 185, 129, 0.35)",
                 }}
               >
-                <strong style={{ color: "#34d399", fontSize: "0.8rem" }}>
+                <strong style={{ color: "#059669", fontSize: "0.8rem" }}>
                   POR QUE VEM NESTA ORDEM EXATA:
                 </strong>
-                <p style={{ fontSize: "0.86rem", color: "#e2e8f0", marginTop: 4 }}>
+                <p style={{ fontSize: "0.86rem", color: "var(--fg)", marginTop: 4 }}>
                   {currentStep.whyThisOrder}
                 </p>
               </div>
             </div>
 
-            <pre
-              style={{
-                padding: 14,
-                borderRadius: 10,
-                background: "#090d16",
-                border: "1px solid rgba(148, 163, 184, 0.2)",
-                color: "#e2e8f0",
-                fontSize: "0.8rem",
-                overflowX: "auto",
-                marginBottom: 14,
-              }}
-            >
-              <code>{currentStep.codeSnippet}</code>
-            </pre>
+            <div className="curso-code-card" data-code-theme="dark" style={{ marginTop: 0, marginBottom: 14 }}>
+              <div className="curso-code-head curso-code-head-flex">
+                <div className="curso-code-head-left">
+                  <span className="curso-code-dots" aria-hidden="true">
+                    <i className="dot-r" />
+                    <i className="dot-y" />
+                    <i className="dot-g" />
+                  </span>
+                  <span className="curso-code-filename">{currentStep.codeFile}</span>
+                </div>
+                <span className="curso-code-lang-pill">CODE</span>
+              </div>
+              <pre className="curso-code-pre">
+                <code>{currentStep.codeSnippet}</code>
+              </pre>
+            </div>
 
             <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
               <Link
@@ -608,7 +607,7 @@ export function SoftwareSkeletonMasterclass({
               padding: 20,
               borderRadius: 14,
               border: "1px solid rgba(245, 158, 11, 0.4)",
-              background: "rgba(245, 158, 11, 0.06)",
+              background: "rgba(245, 158, 11, 0.07)",
             }}
           >
             <div
@@ -639,11 +638,11 @@ export function SoftwareSkeletonMasterclass({
               )}
             </div>
 
-            <h4 style={{ fontSize: "1.02rem", color: "#f8fafc", marginBottom: 4 }}>
+            <h4 style={{ fontSize: "1.02rem", color: "var(--fg)", marginBottom: 4 }}>
               Missão: Você precisa criar a feature &ldquo;Cupom de Desconto no Checkout&rdquo;.
               Clique nos cartões abaixo na ordem exata de implementação (do 1º ao 6º)!
             </h4>
-            <p style={{ fontSize: "0.84rem", color: "#cbd5e1", marginBottom: 14 }}>
+            <p style={{ fontSize: "0.84rem", color: "var(--fg-muted)", marginBottom: 14 }}>
               Próximo passo esperado: <strong>Degrau {Math.min(6, unlockedStepCount + 1)} de 6</strong>
             </p>
 
@@ -671,12 +670,12 @@ export function SoftwareSkeletonMasterclass({
                       textAlign: "left",
                       cursor: isAlreadyUnlocked ? "default" : "pointer",
                       border: isAlreadyUnlocked
-                        ? "1.5px solid #34d399"
-                        : "1px solid rgba(148, 163, 184, 0.28)",
+                        ? "1.5px solid #10b981"
+                        : "1px solid var(--line-strong)",
                       background: isAlreadyUnlocked
-                        ? "rgba(16, 185, 129, 0.16)"
-                        : "rgba(15, 23, 42, 0.8)",
-                      color: "#f8fafc",
+                        ? "rgba(16, 185, 129, 0.14)"
+                        : "var(--surface)",
+                      color: "var(--fg)",
                       fontSize: "0.83rem",
                       lineHeight: 1.45,
                     }}
@@ -696,7 +695,7 @@ export function SoftwareSkeletonMasterclass({
                     )}
                     <span>
                       {isAlreadyUnlocked && (
-                        <strong style={{ color: "#34d399", marginRight: 6 }}>
+                        <strong style={{ color: "#059669", marginRight: 6 }}>
                           [{card.stepNumber}º Passo OK]
                         </strong>
                       )}
@@ -713,9 +712,9 @@ export function SoftwareSkeletonMasterclass({
                   marginTop: 14,
                   padding: 12,
                   borderRadius: 10,
-                  background: "rgba(15, 23, 42, 0.9)",
-                  border: "1px solid rgba(56, 189, 248, 0.35)",
-                  color: "#e2e8f0",
+                  background: "var(--surface)",
+                  border: "1px solid var(--accent)",
+                  color: "var(--fg)",
                   fontSize: "0.86rem",
                 }}
               >
@@ -763,8 +762,8 @@ export function SoftwareSkeletonMasterclass({
             style={{
               padding: 20,
               borderRadius: 14,
-              border: "1px solid rgba(52, 211, 153, 0.35)",
-              background: "rgba(2, 6, 23, 0.78)",
+              border: "1px solid var(--line-strong)",
+              background: "var(--surface)",
             }}
           >
             <div
@@ -781,7 +780,7 @@ export function SoftwareSkeletonMasterclass({
                 <span className="ide-file-badge">
                   🧪 Laboratório Visual de Modelagem · Teste o que Acontece no Banco!
                 </span>
-                <h3 style={{ fontSize: "1.12rem", color: "#f8fafc", marginTop: 6 }}>
+                <h3 style={{ fontSize: "1.12rem", color: "var(--fg)", marginTop: 6 }}>
                   Simule Eventos Reais do Marketplace no Banco de Dados
                 </h3>
               </div>
@@ -856,18 +855,18 @@ export function SoftwareSkeletonMasterclass({
                 style={{
                   padding: 14,
                   borderRadius: 12,
-                  background: "rgba(15, 23, 42, 0.85)",
-                  border: "1px solid rgba(56, 189, 248, 0.3)",
+                  background: "var(--bg-soft)",
+                  border: "1px solid var(--line-strong)",
                 }}
               >
-                <strong style={{ color: "#38bdf8", fontSize: "0.82rem" }}>
+                <strong style={{ color: "var(--accent)", fontSize: "0.82rem" }}>
                   TABELA 1: catalog_product (Catálogo Hoje)
                 </strong>
-                <p style={{ fontSize: "0.86rem", color: "#e2e8f0", marginTop: 8 }}>
+                <p style={{ fontSize: "0.86rem", color: "var(--fg)", marginTop: 8 }}>
                   Produto: <code>Camiseta Oversized Preta</code>
                   <br />
                   Preço Atual na Vitrine:{" "}
-                  <strong style={{ color: "#34d399" }}>
+                  <strong style={{ color: "#059669" }}>
                     {simulatedPriceChange
                       ? "7990 centavos (R$ 79,90)"
                       : "12990 centavos (R$ 129,90)"}
@@ -891,36 +890,36 @@ export function SoftwareSkeletonMasterclass({
                   background:
                     modelMode === "pro"
                       ? "rgba(16, 185, 129, 0.1)"
-                      : "rgba(239, 68, 68, 0.14)",
+                      : "rgba(239, 68, 68, 0.12)",
                   border:
                     modelMode === "pro"
-                      ? "1px solid rgba(52, 211, 153, 0.45)"
-                      : "1px solid rgba(248, 113, 113, 0.55)",
+                      ? "1px solid rgba(16, 185, 129, 0.45)"
+                      : "1px solid rgba(239, 68, 68, 0.5)",
                 }}
               >
                 <strong
                   style={{
-                    color: modelMode === "pro" ? "#34d399" : "#f87171",
+                    color: modelMode === "pro" ? "#059669" : "#dc2626",
                     fontSize: "0.82rem",
                   }}
                 >
                   TABELA 2: orders_orderitem (Recibo do Pedido #1042 feito ontem)
                 </strong>
                 {modelMode === "pro" ? (
-                  <p style={{ fontSize: "0.86rem", color: "#e2e8f0", marginTop: 8 }}>
+                  <p style={{ fontSize: "0.86rem", color: "var(--fg)", marginTop: 8 }}>
                     <code>unit_price_cents_snapshot</code>:{" "}
-                    <strong style={{ color: "#fde68a" }}>
+                    <strong style={{ color: "var(--gold)" }}>
                       12990 centavos (R$ 129,90 · Intacto!)
                     </strong>
                     <br />
                     Integridade Fiscal:{" "}
-                    <strong style={{ color: "#34d399" }}>
+                    <strong style={{ color: "#059669" }}>
                       ✓ 100% Blindada! Mesmo com promoção hoje ou tentativa de exclusão, o
                       recibo de ontem continua valendo exatamente R$ 129,90.
                     </strong>
                   </p>
                 ) : (
-                  <p style={{ fontSize: "0.86rem", color: "#fecaca", marginTop: 8 }}>
+                  <p style={{ fontSize: "0.86rem", color: "var(--fg)", marginTop: 8 }}>
                     {simulatedDeleteProduct ? (
                       <strong>
                         💥 DESASTRE CONTÁBIL: Como usou on_delete=CASCADE, deletar o produto
@@ -983,7 +982,7 @@ export function SoftwareSkeletonMasterclass({
           </figure>
 
           {/* 4 Studio Videos (.mp4) */}
-          <h3 style={{ fontSize: "1.08rem", color: "#f8fafc", marginBottom: 12 }}>
+          <h3 style={{ fontSize: "1.08rem", color: "var(--fg)", marginBottom: 12 }}>
             🎬 4 Vídeos de Estúdio: O Sistema Explicado Visualmente (.mp4)
           </h3>
           <div
@@ -1025,14 +1024,14 @@ export function SoftwareSkeletonMasterclass({
                 style={{
                   padding: 12,
                   borderRadius: 12,
-                  background: "rgba(15, 23, 42, 0.8)",
-                  border: "1px solid rgba(148, 163, 184, 0.2)",
+                  background: "var(--surface)",
+                  border: "1px solid var(--line-strong)",
                 }}
               >
-                <strong style={{ display: "block", fontSize: "0.9rem", color: "#f8fafc" }}>
+                <strong style={{ display: "block", fontSize: "0.9rem", color: "var(--fg)" }}>
                   {vid.title}
                 </strong>
-                <p style={{ fontSize: "0.78rem", color: "#cbd5e1", margin: "4px 0 10px" }}>
+                <p style={{ fontSize: "0.78rem", color: "var(--fg-muted)", margin: "4px 0 10px" }}>
                   {vid.desc}
                 </p>
                 <video
@@ -1049,7 +1048,7 @@ export function SoftwareSkeletonMasterclass({
                 <div style={{ marginTop: 8 }}>
                   <Link
                     href={`/pt/cursos/${courseSlug}/${vid.lessonSlug}`}
-                    style={{ fontSize: "0.78rem", color: "#38bdf8", fontWeight: 600 }}
+                    style={{ fontSize: "0.78rem", color: "var(--accent)", fontWeight: 600 }}
                   >
                     Ir para a aula deste vídeo →
                   </Link>
@@ -1070,8 +1069,8 @@ export function SoftwareSkeletonMasterclass({
               style={{
                 padding: 16,
                 borderRadius: 12,
-                background: "rgba(15, 23, 42, 0.8)",
-                border: "1px solid rgba(56, 189, 248, 0.25)",
+                background: "var(--surface)",
+                border: "1px solid var(--line-strong)",
               }}
             >
               <h4
@@ -1080,7 +1079,7 @@ export function SoftwareSkeletonMasterclass({
                   alignItems: "center",
                   gap: 8,
                   fontSize: "0.98rem",
-                  color: "#f8fafc",
+                  color: "var(--fg)",
                   marginBottom: 12,
                 }}
               >
@@ -1115,14 +1114,15 @@ export function SoftwareSkeletonMasterclass({
                     style={{
                       padding: 10,
                       borderRadius: 8,
-                      background: "rgba(2, 6, 23, 0.65)",
+                      background: "var(--bg-soft)",
+                      border: "1px solid var(--line)",
                     }}
                   >
                     <div
                       style={{
                         fontSize: "0.8rem",
                         fontWeight: 600,
-                        color: "#e2e8f0",
+                        color: "var(--fg)",
                         marginBottom: 6,
                       }}
                     >
@@ -1140,8 +1140,8 @@ export function SoftwareSkeletonMasterclass({
               style={{
                 padding: 16,
                 borderRadius: 12,
-                background: "rgba(15, 23, 42, 0.8)",
-                border: "1px solid rgba(52, 211, 153, 0.25)",
+                background: "var(--surface)",
+                border: "1px solid var(--line-strong)",
               }}
             >
               <h4
@@ -1150,7 +1150,7 @@ export function SoftwareSkeletonMasterclass({
                   alignItems: "center",
                   gap: 8,
                   fontSize: "0.98rem",
-                  color: "#f8fafc",
+                  color: "var(--fg)",
                   marginBottom: 12,
                 }}
               >
@@ -1199,9 +1199,9 @@ export function SoftwareSkeletonMasterclass({
                       justifyContent: "space-between",
                       padding: "10px 12px",
                       borderRadius: 8,
-                      background: "rgba(2, 6, 23, 0.65)",
-                      border: "1px solid rgba(148, 163, 184, 0.16)",
-                      color: "#e2e8f0",
+                      background: "var(--bg-soft)",
+                      border: "1px solid var(--line)",
+                      color: "var(--fg)",
                       fontSize: "0.82rem",
                       textDecoration: "none",
                     }}

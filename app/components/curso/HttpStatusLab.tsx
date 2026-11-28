@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Terminal } from "lucide-react";
+import CopyCodeBlock from "./CopyCodeBlock";
 
 type HttpScenario = {
   id: string;
@@ -128,22 +129,18 @@ export default function HttpStatusLab() {
         </div>
 
         {current.requestBody && (
-          <>
-            <p className="curso-fine" style={{ marginBottom: 4 }}>
-              Corpo enviado (Request JSON):
-            </p>
-            <pre className="curso-code-block">
-              <code>{current.requestBody}</code>
-            </pre>
-          </>
+          <CopyCodeBlock
+            title={`Request JSON · ${current.method} ${current.path}`}
+            code={current.requestBody}
+            language="JSON"
+          />
         )}
 
-        <p className="curso-fine" style={{ marginBottom: 4 }}>
-          Resposta do servidor (Response JSON):
-        </p>
-        <pre className="curso-code-block">
-          <code>{current.responseBody}</code>
-        </pre>
+        <CopyCodeBlock
+          title={`Response JSON · HTTP ${current.statusText}`}
+          code={current.responseBody}
+          language="JSON"
+        />
 
         <p className="curso-why">
           <strong>O que o professor destaca:</strong> {current.explanation}
