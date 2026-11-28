@@ -36,6 +36,11 @@ const GlobalOperationsGlobe3D = dynamic(() => import("./components/home/GlobalOp
   loading: () => <div className="globe3d-loading" aria-hidden="true" />,
 });
 
+const AiOrchestratorHub3D = dynamic(() => import("./components/home/AiOrchestratorHub3D"), {
+  ssr: false,
+  loading: () => <div className="aihub3d-loading" aria-hidden="true" />,
+});
+
 type Bi = { pt: string; en: string };
 
 type Product = {
@@ -131,7 +136,27 @@ const PRODUCTS: Product[] = [
     ],
     site: { href: "https://selectsys-jobs.vercel.app", label: "selectsys-jobs" },
     page: "/produtos/selectsys-jobs",
-    media: { kind: "images", items: [{ src: "/media/selectsys-flagship.jpg", alt: { pt: "SelectSys Jobs: Kanban de imigração e leitura de documentos", en: "SelectSys Jobs: immigration Kanban and document reading" } }] },
+    media: {
+      kind: "images",
+      items: [
+        {
+          src: "/media/selectsys-kanban.jpg",
+          position: "left top",
+          alt: {
+            pt: "Tela real de Triagem de Candidatos (Funil Kanban) do SelectSys Jobs em operação na Fujiarte do Brasil — dados pessoais anonimizados por LGPD",
+            en: "Live SelectSys Jobs Candidate Screening (Kanban Funnel) running at Fujiarte Brazil — personal data anonymized under LGPD",
+          },
+        },
+        {
+          src: "/media/selectsys-visao-geral.png",
+          position: "left top",
+          alt: {
+            pt: "Tela real de Visão Geral do SelectSys Jobs na Fujiarte do Brasil com fusos SP/TYO, CPF/RG ocultos e distribuição do funil",
+            en: "Live SelectSys Jobs Overview screen at Fujiarte Brazil with SP/TYO clocks, masked IDs and funnel distribution",
+          },
+        },
+      ],
+    },
   },
   {
     id: "atol",
@@ -429,6 +454,28 @@ export default function HomeClient() {
             </p>
           </div>
           <ArchitectureXRay3D />
+        </div>
+      </section>
+
+      {/* ============================ 5.8 · HUB 3D MULTI-LLM ============================ */}
+      <section className="h6-sec" id="ia-orquestracao" aria-labelledby="h8-aihub">
+        <div className="wrap">
+          <div className="h6-head">
+            <span className="h6-kicker">
+              {pt ? "THREE.JS · ORACLE AGENTIC AI · ORQUESTRAÇÃO MULTI-LLM" : "THREE.JS · ORACLE AGENTIC AI · MULTI-LLM ORCHESTRATION"}
+            </span>
+            <h2 id="h8-aihub">
+              {pt
+                ? "Roteamento inteligente entre Groq, Google Gemini e DeepSeek"
+                : "Smart routing across Groq, Google Gemini and DeepSeek"}
+            </h2>
+            <p>
+              {pt
+                ? "Não dependemos de um único modelo nem deixamos IA solta sem controle. Cada tarefa real é roteada pelo menor tempo de resposta, custo por token e precisão — protegida por guardrails determinísticos, PII scrubbing e fallback automático."
+                : "We never lock into a single model or leave AI unguarded. Every production workload is routed by latency, token cost and accuracy — protected by deterministic guardrails, PII scrubbing and automatic fallback."}
+            </p>
+          </div>
+          <AiOrchestratorHub3D />
         </div>
       </section>
 

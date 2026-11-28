@@ -164,7 +164,7 @@ export const PRODUCTS: Record<ProductSlug, Product> = {
     name: "SelectSys Jobs",
     icon: "/logo-selectsys.png",
     logoHorizontal: "/logo-horiz-selectsys.png",
-    showcaseImage: "/media/selectsys-flagship.jpg",
+    showcaseImage: "/media/selectsys-kanban.jpg",
     appUrl: "https://selectsys-jobs.vercel.app",
     applicationCategory: "BusinessApplication",
     applicationSubCategory: "ApplicantTrackingSystem",
