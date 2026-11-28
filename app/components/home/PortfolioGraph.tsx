@@ -85,6 +85,9 @@ export interface SolarApiPlanet {
     | "melhorenvio"
     | "supabase"
     | "mia"
+    | "gemini"
+    | "deepseek"
+    | "groq"
     | "edge"
     | "sentry";
 }
@@ -154,7 +157,7 @@ const SOLAR_PLANETS: SolarApiPlanet[] = [
     name: "Supabase · PostgreSQL + RLS",
     shortName: "Supabase RLS",
     orbit: 1,
-    angleDeg: 25,
+    angleDeg: 10,
     color: "#10B981",
     bgTint: "rgba(16, 185, 129, 0.14)",
     category: { pt: "Banco Multi-Tenant & Segurança", en: "Multi-Tenant DB & Security" },
@@ -175,14 +178,89 @@ const SOLAR_PLANETS: SolarApiPlanet[] = [
     iconKey: "supabase",
   },
   {
-    id: "mia",
-    name: "Consultor M-IA · LLM & Plotly BI",
-    shortName: "M-IA · LLM & BI",
+    id: "gemini",
+    name: "Google Gemini API · Multimodal & Agentes",
+    shortName: "Google Gemini API",
     orbit: 1,
-    angleDeg: 115,
+    angleDeg: 62,
+    color: "#0284C7",
+    bgTint: "rgba(2, 132, 199, 0.14)",
+    category: { pt: "IA Generativa Multimodal & Agentes", en: "Multimodal GenAI & Agents" },
+    products: ["mercadinhosys", "miseon", "atol", "mysuperstore"],
+    statusBadge: {
+      pt: "Em produção · API Oficial Google AI",
+      en: "In production · Official Google AI API",
+    },
+    businessRule: {
+      pt: "Alimenta o Concierge do portfólio, o Tutor Socrático da Academy, o diagnóstico arquitetural sob medida e análises multimodais no ecossistema Maldivas Tech.",
+      en: "Powers the portfolio Concierge, the Academy Socratic Tutor, custom architectural diagnostics, and multimodal analysis across the Maldivas Tech ecosystem.",
+    },
+    technicalFlow: {
+      pt: "Chamadas REST estruturadas em JSON (Gemini Flash / Pro) com validação rigorosa de schema, rate limiting por IP, sanitização de prompt e fallback determinístico.",
+      en: "Structured JSON REST calls (Gemini Flash / Pro) with strict schema validation, per-IP rate limiting, prompt sanitization, and deterministic fallback.",
+    },
+    metricsPill: { pt: "JSON Estruturado · Agentes IA", en: "Structured JSON · AI Agents" },
+    iconKey: "gemini",
+  },
+  {
+    id: "deepseek",
+    name: "DeepSeek AI · Tradução PT/JP/EN & Análise",
+    shortName: "DeepSeek AI",
+    orbit: 1,
+    angleDeg: 114,
+    color: "#0EA5E9",
+    bgTint: "rgba(14, 165, 233, 0.14)",
+    category: { pt: "LLM de Raciocínio & Tradução Técnica", en: "Reasoning LLM & Technical Translation" },
+    products: ["selectsys", "mercadinhosys"],
+    statusBadge: {
+      pt: "Em produção · Integração Oficial",
+      en: "In production · Official Integration",
+    },
+    businessRule: {
+      pt: "No SelectSys Jobs, traduz currículos e pareceres técnicos entre Português, Japonês e Inglês com precisão de termos industriais; no MercadinhoSys, gera análises de margem com altíssima eficiência de custo por token.",
+      en: "In SelectSys Jobs, translates resumes and recruiter notes across Portuguese, Japanese, and English with industrial terminology; in MercadinhoSys, generates margin insights with top token cost-efficiency.",
+    },
+    technicalFlow: {
+      pt: "Orquestração via cliente compatível OpenAI/DeepSeek com prompts versionados, extração estruturada pós-OCR (Tesseract) e cache semântico para reduzir latência e custo.",
+      en: "Orchestrated via OpenAI-compatible DeepSeek client with versioned prompts, post-OCR structured extraction (Tesseract), and semantic caching.",
+    },
+    metricsPill: { pt: "Tradução PT/JP/EN · Baixo Custo/Token", en: "PT/JP/EN Translation · Low Cost/Token" },
+    iconKey: "deepseek",
+  },
+  {
+    id: "groq",
+    name: "Groq LPU · Inferência Ultrarrápida Real-Time",
+    shortName: "Groq LPU API",
+    orbit: 1,
+    angleDeg: 166,
+    color: "#F97316",
+    bgTint: "rgba(249, 115, 22, 0.14)",
+    category: { pt: "Inferência IA de Baixa Latência (LPU)", en: "Ultra-Low Latency AI Inference (LPU)" },
+    products: ["atol", "miseon", "mercadinhosys"],
+    statusBadge: {
+      pt: "Em produção · Inferência Real-Time",
+      en: "In production · Real-Time Inference",
+    },
+    businessRule: {
+      pt: "Viabiliza respostas de IA em frações de segundo para triagem de atendimento no WhatsApp (Atol Connect), comandos rápidos de operação e classificação instantânea de intenções sem travar o operador.",
+      en: "Delivers sub-second AI inference for WhatsApp triage (Atol Connect), fast operational commands, and instant intent classification without stalling operators.",
+    },
+    technicalFlow: {
+      pt: "Execução em hardware Groq LPU (Llama / Mixtral) via streaming HTTP com TTFT (Time-to-First-Token) sub-250ms e roteamento automático de failover junto ao Gemini/DeepSeek.",
+      en: "Runs on Groq LPU hardware (Llama / Mixtral) over streaming HTTP with sub-250ms TTFT and automated failover routing alongside Gemini/DeepSeek.",
+    },
+    metricsPill: { pt: "TTFT < 250ms · Streaming LPU", en: "TTFT < 250ms · LPU Streaming" },
+    iconKey: "groq",
+  },
+  {
+    id: "mia",
+    name: "Consultor M-IA · Pandas & Plotly BI",
+    shortName: "M-IA · Plotly BI",
+    orbit: 1,
+    angleDeg: 218,
     color: "#F59E0B",
     bgTint: "rgba(245, 158, 11, 0.14)",
-    category: { pt: "Inteligência Artificial & Analytics", en: "Artificial Intelligence & Analytics" },
+    category: { pt: "Inteligência Comercial & Analytics", en: "Commercial Intelligence & Analytics" },
     products: ["mercadinhosys", "selectsys", "mysuperstore"],
     statusBadge: {
       pt: "Em produção · Motor Analítico Oficial",
@@ -193,8 +271,8 @@ const SOLAR_PLANETS: SolarApiPlanet[] = [
       en: "Turns POS sales, inventory, and resumes into actionable diagnostics: computes Pareto ABC curves, RFM customer matrices, automated P&L, and natural-language insights.",
     },
     technicalFlow: {
-      pt: "Pipeline Python (Pandas + Plotly) agrega séries temporais do banco transacional e injeta contexto estruturado em LLMs (Gemini / DeepSeek) com guardrails contra alucinação numérica.",
-      en: "Python pipeline (Pandas + Plotly) aggregates transactional time-series and injects structured context into LLMs (Gemini / DeepSeek) with strict numeric guardrails.",
+      pt: "Pipeline Python (Pandas + Plotly) agrega séries temporais do banco transacional e injeta contexto estruturado em LLMs (Gemini / DeepSeek / Groq) com guardrails contra alucinação numérica.",
+      en: "Python pipeline (Pandas + Plotly) aggregates transactional time-series and injects structured context into LLMs (Gemini / DeepSeek / Groq) with strict numeric guardrails.",
     },
     metricsPill: { pt: "Curva ABC · Matriz RFM · DRE", en: "ABC Curve · RFM Matrix · P&L" },
     iconKey: "mia",
@@ -204,9 +282,9 @@ const SOLAR_PLANETS: SolarApiPlanet[] = [
     name: "Vercel & Cloudflare Edge Network",
     shortName: "Vercel + Cloudflare",
     orbit: 1,
-    angleDeg: 205,
-    color: "#0EA5E9",
-    bgTint: "rgba(14, 165, 233, 0.14)",
+    angleDeg: 270,
+    color: "#06B6D4",
+    bgTint: "rgba(6, 182, 212, 0.14)",
     category: { pt: "Infraestrutura Cloud & WAF", en: "Cloud Infrastructure & WAF" },
     products: ["miseon", "mercadinhosys", "atol", "selectsys", "mysuperstore"],
     statusBadge: {
@@ -229,7 +307,7 @@ const SOLAR_PLANETS: SolarApiPlanet[] = [
     name: "Sentry · Telemetria & Observabilidade",
     shortName: "Sentry Telemetry",
     orbit: 1,
-    angleDeg: 295,
+    angleDeg: 322,
     color: "#F43F5E",
     bgTint: "rgba(244, 63, 94, 0.14)",
     category: { pt: "Observabilidade & APM em Produção", en: "Production Observability & APM" },
@@ -562,6 +640,9 @@ function PlanetIcon({ iconKey }: { iconKey: SolarApiPlanet["iconKey"] | string }
     case "supabase":
       return <Database size={16} aria-hidden="true" />;
     case "mia":
+    case "gemini":
+    case "deepseek":
+    case "groq":
       return <BrainCircuit size={16} aria-hidden="true" />;
     case "edge":
       return <Cloud size={16} aria-hidden="true" />;
@@ -682,7 +763,7 @@ export default function PortfolioGraph({
             onClick={() => handleSelectProductFilter("all")}
           >
             <Sparkles size={14} aria-hidden="true" />
-            <span>{pt ? "Ecossistema Completo (15 APIs)" : "Full Ecosystem (15 APIs)"}</span>
+            <span>{pt ? `Ecossistema Completo (${SOLAR_PLANETS.length} APIs)` : `Full Ecosystem (${SOLAR_PLANETS.length} APIs)`}</span>
           </button>
 
           {SOLAR_PRODUCTS.map((prod) => {
@@ -1078,7 +1159,7 @@ export default function PortfolioGraph({
           {/* Quick Planet Switcher Footer inside Drawer (great for mobile & keyboard navigation) */}
           <div className="solar-inspector-footer">
             <span className="solar-quick-label">
-              {pt ? "Navegação rápida pelas 15 APIs:" : "Quick jump across all 15 APIs:"}
+              {pt ? `Navegação rápida pelas ${SOLAR_PLANETS.length} APIs:` : `Quick jump across all ${SOLAR_PLANETS.length} APIs:`}
             </span>
             <div className="solar-quick-grid">
               {SOLAR_PLANETS.map((pl) => {

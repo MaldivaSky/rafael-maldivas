@@ -26,6 +26,11 @@ const PortfolioGraph = dynamic(() => import("./components/home/PortfolioGraph"),
   loading: () => <div className="pg pg-loading" aria-hidden="true" />,
 });
 
+const ArchitectureXRay3D = dynamic(() => import("./components/home/ArchitectureXRay3D"), {
+  ssr: false,
+  loading: () => <div className="arch3d-loading" aria-hidden="true" />,
+});
+
 type Bi = { pt: string; en: string };
 
 type Product = {
@@ -399,6 +404,28 @@ export default function HomeClient() {
 
       {/* ================================ 5 · ACADEMY ================================ */}
       <AcademySection />
+
+      {/* ============================ 5.5 · RAIO-X 3D DA ARQUITETURA ============================ */}
+      <section className="h6-sec" id="arquitetura" aria-labelledby="h8-arch">
+        <div className="wrap">
+          <div className="h6-head">
+            <span className="h6-kicker">
+              {pt ? "ENGENHARIA EM THREE.JS · ARQUITETURA MULTI-TENANT" : "THREE.JS ENGINEERING · MULTI-TENANT ARCHITECTURE"}
+            </span>
+            <h2 id="h8-arch">
+              {pt
+                ? "Raio-X 3D da nossa stack de produção"
+                : "Interactive 3D X-Ray of our production stack"}
+            </h2>
+            <p>
+              {pt
+                ? "Por baixo de cada produto SaaS e sistema sob medida roda a mesma arquitetura de 4 camadas: borda global com webhooks assinados, roteamento Multi-LLM (Gemini, DeepSeek e Groq), núcleo transacional com dinheiro em centavos inteiros e PostgreSQL multi-tenant com Row-Level Security (RLS). Clique nas camadas 3D ou simule um fluxo real abaixo."
+                : "Beneath every SaaS product and custom system runs the same 4-layer architecture: global edge with signed webhooks, Multi-LLM routing (Gemini, DeepSeek & Groq), integer-cent transactional core, and multi-tenant PostgreSQL with Row-Level Security (RLS). Click the 3D slabs or simulate a live flow below."}
+            </p>
+          </div>
+          <ArchitectureXRay3D />
+        </div>
+      </section>
 
       {/* ============================ 6 · SOB MEDIDA ============================ */}
       <section className="h6-sec" id="cases" aria-labelledby="h8-cases">
