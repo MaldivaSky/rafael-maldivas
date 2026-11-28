@@ -18,6 +18,12 @@ import {
   Utensils,
 } from "lucide-react";
 import { useLang } from "../../lib/i18n";
+import {
+  AmbientStarfield,
+  ThreeCameraHud,
+  ThreeCameraRig,
+  type CameraControlAction,
+} from "./ThreeCameraRig";
 
 /* ------------------------------------------------------------------ *
  *  OPTION 1 — Three.js / React Three Fiber
@@ -511,35 +517,43 @@ function ArchitectureStackScene({
   activeFlow,
   exploded,
   isDark,
+  autoRotate,
+  cameraAction,
   onSelectLayer,
 }: {
   selectedLayerId: ArchLayerSpec["id"];
   activeFlow: ArchFlowScenario;
   exploded: boolean;
   isDark: boolean;
+  autoRotate: boolean;
+  cameraAction: CameraControlAction | null;
   onSelectLayer: (id: ArchLayerSpec["id"]) => void;
 }) {
-  const rootRef = useRef<THREE.Group>(null);
-
-  useFrame(({ clock, pointer }) => {
-    const g = rootRef.current;
-    if (!g) return;
-    const t = clock.getElapsedTime();
-    // Smooth isometric presentation with gentle pointer-driven parallax
-    const targetRotY = -Math.PI / 4 + Math.sin(t * 0.25) * 0.14 + pointer.x * 0.26;
-    const targetRotX = 0.24 + pointer.y * 0.1;
-    g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, targetRotY, 0.045);
-    g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, targetRotX, 0.045);
-  });
-
   return (
     <>
-      <ambientLight intensity={isDark ? 0.65 : 0.95} />
-      <directionalLight position={[6, 10, 8]} intensity={isDark ? 1.35 : 1.15} color="#ffffff" />
-      <pointLight position={[-5, 3, 5]} intensity={1.1} color="#22B5F2" />
-      <pointLight position={[5, -3, -4]} intensity={0.9} color="#10B981" />
+      <ambientLight intensity={isDark ? 0.65 : 0.98} />
+      <directionalLight position={[6, 10, 8]} intensity={isDark ? 1.4 : 1.2} color="#ffffff" />
+      <pointLight position={[-5, 3, 5]} intensity={1.15} color="#22B5F2" />
+      <pointLight position={[5, -3, -4]} intensity={0.95} color="#10B981" />
 
-      <group ref={rootRef} rotation={[0.24, -Math.PI / 4, 0]}>
+      <AmbientStarfield
+        count={280}
+        radius={13}
+        color={isDark ? "#38bdf8" : "#0284c7"}
+        opacity={isDark ? 0.42 : 0.22}
+      />
+
+      <ThreeCameraRig
+        defaultPosition={[5.4, 3.6, 6.2]}
+        defaultTarget={[0, 0.1, 0]}
+        minDistance={4.2}
+        maxDistance={14.5}
+        autoRotate={autoRotate}
+        autoRotateSpeed={0.75}
+        action={cameraAction}
+      />
+
+      <group>
         <VerticalDataConduits activeFlow={activeFlow} exploded={exploded} isDark={isDark} />
         {ARCH_LAYERS.map((layer) => (
           <IsometricPlate
@@ -571,9 +585,32 @@ export default function ArchitectureXRay3D() {
   const [selectedLayerId, setSelectedLayerId] = useState<ArchLayerSpec["id"]>("tx");
   const [activeFlowId, setActiveFlowId] = useState<ArchFlowScenario["id"]>("pix");
   const [exploded, setExploded] = useState(true);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const [cameraAction, setCameraAction] = useState<CameraControlAction | null>(null);
   const [visible, setVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const actionSeq = useRef(0);
+
+  const focusLayer = (id: ArchLayerSpec["id"]) => {
+    setSelectedLayerId(id);
+    const layer = ARCH_LAYERS.find((l) => l.id === id);
+    if (!layer) return;
+    const spread = exploded ? 1.24 : 0.86;
+    const y = layer.baseY * spread;
+    actionSeq.current += 1;
+    setCameraAction({
+      type: "fly",
+      seq: actionSeq.current,
+      position: [4.9, y + 2.45, 5.5],
+      target: [0, y, 0],
+    });
+  };
+
+  const triggerCam = (type: "zoom-in" | "zoom-out" | "reset") => {
+    actionSeq.current += 1;
+    setCameraAction({ type, seq: actionSeq.current });
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -703,7 +740,7 @@ export default function ArchitectureXRay3D() {
 
           <div className="arch3d-canvas-wrap">
             <Canvas
-              camera={{ position: [0, 2.2, 8.8], fov: 38 }}
+              camera={{ position: [5.4, 3.6, 6.2], fov: 38 }}
               dpr={[1, 1.75]}
               frameloop={visible && !reducedMotion ? "always" : "demand"}
               gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
@@ -718,9 +755,20 @@ export default function ArchitectureXRay3D() {
                 activeFlow={activeFlow}
                 exploded={exploded}
                 isDark={isDark}
-                onSelectLayer={setSelectedLayerId}
+                autoRotate={autoRotate && !reducedMotion}
+                cameraAction={cameraAction}
+                onSelectLayer={focusLayer}
               />
             </Canvas>
+
+            <ThreeCameraHud
+              pt={pt}
+              autoRotate={autoRotate}
+              onToggleAutoRotate={() => setAutoRotate((v) => !v)}
+              onZoomIn={() => triggerCam("zoom-in")}
+              onZoomOut={() => triggerCam("zoom-out")}
+              onReset={() => triggerCam("reset")}
+            />
           </div>
 
           {/* Interactive Layer Pills along the bottom of the 3D Stage */}
@@ -745,7 +793,7 @@ export default function ArchitectureXRay3D() {
                         }
                       : undefined
                   }
-                  onClick={() => setSelectedLayerId(layer.id)}
+                  onClick={() => focusLayer(layer.id)}
                 >
                   <span
                     className="arch3d-layer-dot"

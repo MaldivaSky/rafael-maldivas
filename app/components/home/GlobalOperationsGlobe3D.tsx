@@ -14,6 +14,12 @@ import {
 } from "lucide-react";
 import { useLang } from "../../lib/i18n";
 import { useTheme } from "next-themes";
+import {
+  AmbientStarfield,
+  ThreeCameraHud,
+  ThreeCameraRig,
+  type CameraControlAction,
+} from "./ThreeCameraRig";
 
 type Bi = { pt: string; en: string };
 
@@ -304,20 +310,27 @@ function HubBeacon({
     () => latLonToVec3(hub.lat, hub.lon, GLOBE_RADIUS + 0.03),
     [hub.lat, hub.lon],
   );
+  const normal = useMemo(() => pos.clone().normalize(), [pos]);
   const quat = useMemo(() => {
     const q = new THREE.Quaternion();
-    q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), pos.clone().normalize());
+    q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
     return q;
-  }, [pos]);
+  }, [normal]);
+  const towerQuat = useMemo(() => {
+    const q = new THREE.Quaternion();
+    q.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
+    return q;
+  }, [normal]);
   const color = useMemo(() => new THREE.Color(hub.colorHex), [hub.colorHex]);
+  const towerHeight = isHighlighted ? 0.34 : 0.16;
 
   useFrame(({ clock }) => {
     if (!ringRef.current) return;
-    const t = (clock.getElapsedTime() * 0.9 + (hub.lat * 0.05)) % 1;
-    const s = 0.8 + t * (isHighlighted ? 2.1 : 1.35);
+    const t = (clock.getElapsedTime() * 0.9 + hub.lat * 0.05) % 1;
+    const s = 0.8 + t * (isHighlighted ? 2.4 : 1.4);
     ringRef.current.scale.set(s, s, 1);
     const mat = ringRef.current.material as THREE.MeshBasicMaterial;
-    mat.opacity = (1 - t) * (isHighlighted ? 0.85 : 0.45);
+    mat.opacity = (1 - t) * (isHighlighted ? 0.9 : 0.48);
   });
 
   return (
@@ -335,17 +348,32 @@ function HubBeacon({
         document.body.style.cursor = "auto";
       }}
     >
+      {/* Glowing Surface Core */}
       <mesh>
-        <sphereGeometry args={[isHighlighted ? 0.085 : 0.06, 16, 16]} />
+        <sphereGeometry args={[isHighlighted ? 0.088 : 0.06, 16, 16]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={isHighlighted ? 1.5 : 0.85}
+          emissiveIntensity={isHighlighted ? 1.7 : 0.9}
         />
       </mesh>
+      {/* Vertical Telemetry Pillar protruding from city coordinates */}
+      <group quaternion={towerQuat}>
+        <mesh position={[0, towerHeight / 2, 0]}>
+          <cylinderGeometry args={[0.012, 0.026, towerHeight, 10]} />
+          <meshStandardMaterial
+            color={color}
+            emissive={color}
+            emissiveIntensity={isHighlighted ? 1.4 : 0.6}
+            transparent
+            opacity={isHighlighted ? 0.95 : 0.65}
+          />
+        </mesh>
+      </group>
+      {/* Expanding Radar Pulse Ring */}
       <mesh ref={ringRef} quaternion={quat}>
-        <ringGeometry args={[0.08, 0.115, 28]} />
-        <meshBasicMaterial color={color} transparent opacity={0.65} side={THREE.DoubleSide} />
+        <ringGeometry args={[0.08, 0.12, 28]} />
+        <meshBasicMaterial color={color} transparent opacity={0.68} side={THREE.DoubleSide} />
       </mesh>
     </group>
   );
@@ -414,52 +442,79 @@ function CorridorArc({
 function GlobeScene({
   activeCorridor,
   isDark,
+  autoRotate,
+  cameraAction,
   onSelectHub,
 }: {
   activeCorridor: GlobalCorridor;
   isDark: boolean;
+  autoRotate: boolean;
+  cameraAction: CameraControlAction | null;
   onSelectHub: (hubId: HubId) => void;
 }) {
-  const groupRef = useRef<THREE.Group>(null);
+  const orbitRingRef = useRef<THREE.Mesh>(null);
 
-  useFrame(({ clock, pointer }) => {
-    const g = groupRef.current;
-    if (!g) return;
-    const t = clock.getElapsedTime();
-    const targetY = activeCorridor.targetRotY + Math.sin(t * 0.22) * 0.26 + pointer.x * 0.28;
-    const targetX = activeCorridor.targetRotX - pointer.y * 0.14;
-    g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, targetY, 0.045);
-    g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, targetX, 0.045);
+  useFrame(({ clock }) => {
+    if (orbitRingRef.current) {
+      orbitRingRef.current.rotation.z = clock.getElapsedTime() * 0.18;
+    }
   });
 
   return (
     <>
       <ambientLight intensity={isDark ? 0.65 : 1.05} />
-      <directionalLight position={[6, 5, 6]} intensity={isDark ? 1.25 : 1.15} color="#ffffff" />
-      <pointLight position={[-5, -3, 4]} intensity={0.7} color="#0EA5E9" />
-      <pointLight position={[4, 4, -4]} intensity={0.6} color="#F59E0B" />
+      <directionalLight position={[6, 5, 6]} intensity={isDark ? 1.3 : 1.15} color="#ffffff" />
+      <pointLight position={[-5, -3, 4]} intensity={0.75} color="#0EA5E9" />
+      <pointLight position={[4, 4, -4]} intensity={0.65} color="#F59E0B" />
 
-      <group ref={groupRef}>
+      <AmbientStarfield
+        count={320}
+        radius={11}
+        color={isDark ? "#38bdf8" : "#0284c7"}
+        opacity={isDark ? 0.45 : 0.25}
+      />
+
+      <ThreeCameraRig
+        defaultPosition={[0.6, 1.15, 5.45]}
+        defaultTarget={[0, 0, 0]}
+        minDistance={3.05}
+        maxDistance={9.5}
+        autoRotate={autoRotate}
+        autoRotateSpeed={0.85}
+        action={cameraAction}
+      />
+
+      <group>
         {/* Core Translucent Sphere */}
         <mesh>
           <sphereGeometry args={[GLOBE_RADIUS, 48, 48]} />
           <meshStandardMaterial
             color={isDark ? "#081426" : "#e0f2fe"}
-            metalness={isDark ? 0.35 : 0.08}
-            roughness={isDark ? 0.55 : 0.45}
+            metalness={isDark ? 0.38 : 0.1}
+            roughness={isDark ? 0.5 : 0.42}
             transparent
-            opacity={isDark ? 0.9 : 0.82}
+            opacity={isDark ? 0.92 : 0.84}
           />
         </mesh>
 
         {/* Outer Atmospheric Halo */}
         <mesh>
-          <sphereGeometry args={[GLOBE_RADIUS + 0.12, 40, 40]} />
+          <sphereGeometry args={[GLOBE_RADIUS + 0.14, 40, 40]} />
           <meshBasicMaterial
             color={isDark ? "#0EA5E9" : "#38bdf8"}
             transparent
-            opacity={isDark ? 0.08 : 0.1}
+            opacity={isDark ? 0.09 : 0.11}
             side={THREE.BackSide}
+          />
+        </mesh>
+
+        {/* Subtle Inclined Orbital Satellite Ring */}
+        <mesh ref={orbitRingRef} rotation={[1.22, 0.35, 0]}>
+          <torusGeometry args={[GLOBE_RADIUS + 0.44, 0.008, 12, 96]} />
+          <meshBasicMaterial
+            color={isDark ? "#38bdf8" : "#0284c7"}
+            transparent
+            opacity={0.28}
           />
         </mesh>
 
@@ -506,9 +561,35 @@ export default function GlobalOperationsGlobe3D() {
   const L = (b: Bi) => b[lang];
 
   const [activeCorridorId, setActiveCorridorId] = useState<CorridorId>("br-jp");
+  const [autoRotate, setAutoRotate] = useState(true);
+  const [cameraAction, setCameraAction] = useState<CameraControlAction | null>(null);
   const [visible, setVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const actionSeq = useRef(0);
+
+  const flyToCorridor = (corridorId: CorridorId) => {
+    setActiveCorridorId(corridorId);
+    const c = CORRIDORS.find((item) => item.id === corridorId) ?? CORRIDORS[0];
+    const fromH = HUBS.find((h) => h.id === c.from)!;
+    const toH = HUBS.find((h) => h.id === c.to)!;
+    const mid = latLonToVec3(fromH.lat, fromH.lon, 1)
+      .add(latLonToVec3(toH.lat, toH.lon, 1))
+      .normalize()
+      .multiplyScalar(5.35);
+    actionSeq.current += 1;
+    setCameraAction({
+      type: "fly",
+      seq: actionSeq.current,
+      position: [mid.x, Math.max(mid.y, 0.7), mid.z],
+      target: [0, 0, 0],
+    });
+  };
+
+  const triggerCam = (type: "zoom-in" | "zoom-out" | "reset") => {
+    actionSeq.current += 1;
+    setCameraAction({ type, seq: actionSeq.current });
+  };
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -538,9 +619,9 @@ export default function GlobalOperationsGlobe3D() {
   const toHub = HUBS.find((h) => h.id === activeCorridor.to)!;
 
   const handleSelectHub = (hubId: HubId) => {
-    if (hubId === "aichi-japan") setActiveCorridorId("br-jp");
-    else if (hubId === "us-east") setActiveCorridorId("br-us");
-    else if (hubId === "meta-edge") setActiveCorridorId("br-edge");
+    if (hubId === "aichi-japan") flyToCorridor("br-jp");
+    else if (hubId === "us-east") flyToCorridor("br-us");
+    else if (hubId === "meta-edge") flyToCorridor("br-edge");
   };
 
   return (
@@ -569,7 +650,7 @@ export default function GlobalOperationsGlobe3D() {
                       }
                     : undefined
                 }
-                onClick={() => setActiveCorridorId(corridor.id)}
+                onClick={() => flyToCorridor(corridor.id)}
               >
                 <span
                   className="globe3d-dot"
@@ -598,7 +679,7 @@ export default function GlobalOperationsGlobe3D() {
 
           <div className="globe3d-canvas-wrap">
             <Canvas
-              camera={{ position: [0, 0.5, 5.75], fov: 40 }}
+              camera={{ position: [0.6, 1.15, 5.45], fov: 40 }}
               dpr={[1, 1.75]}
               frameloop={visible && !reducedMotion ? "always" : "demand"}
               gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
@@ -611,9 +692,20 @@ export default function GlobalOperationsGlobe3D() {
               <GlobeScene
                 activeCorridor={activeCorridor}
                 isDark={isDark}
+                autoRotate={autoRotate && !reducedMotion}
+                cameraAction={cameraAction}
                 onSelectHub={handleSelectHub}
               />
             </Canvas>
+
+            <ThreeCameraHud
+              pt={pt}
+              autoRotate={autoRotate}
+              onToggleAutoRotate={() => setAutoRotate((v) => !v)}
+              onZoomIn={() => triggerCam("zoom-in")}
+              onZoomOut={() => triggerCam("zoom-out")}
+              onReset={() => triggerCam("reset")}
+            />
           </div>
 
           {/* Bottom Geographic Nodes Strip */}
