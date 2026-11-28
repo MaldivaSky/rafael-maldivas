@@ -31,6 +31,11 @@ const ArchitectureXRay3D = dynamic(() => import("./components/home/ArchitectureX
   loading: () => <div className="arch3d-loading" aria-hidden="true" />,
 });
 
+const GlobalOperationsGlobe3D = dynamic(() => import("./components/home/GlobalOperationsGlobe3D"), {
+  ssr: false,
+  loading: () => <div className="globe3d-loading" aria-hidden="true" />,
+});
+
 type Bi = { pt: string; en: string };
 
 type Product = {
@@ -477,6 +482,28 @@ export default function HomeClient() {
           <Link className="h7-textlink" href={localePath("/portfolio", lang)}>
             {pt ? "Portfólio completo" : "Full portfolio"} <ArrowRight size={15} aria-hidden="true" />
           </Link>
+        </div>
+      </section>
+
+      {/* ============================ 6.5 · GLOBO 3D INTERNACIONAL ============================ */}
+      <section className="h6-sec" id="operacao-global" aria-labelledby="h8-globe">
+        <div className="wrap">
+          <div className="h6-head">
+            <span className="h6-kicker">
+              {pt ? "THREE.JS · OPERAÇÃO INTERNACIONAL & EDGE" : "THREE.JS · INTERNATIONAL OPERATIONS & EDGE"}
+            </span>
+            <h2 id="h8-globe">
+              {pt
+                ? "Infraestrutura em produção entre Brasil, Japão e EUA"
+                : "Production infrastructure across Brazil, Japan and the US"}
+            </h2>
+            <p>
+              {pt
+                ? "Nossos sistemas não ficam só no papel: conectam São Paulo à operação da Fujiarte Co., Ltd. no Japão (Cybozu Garoon + APPI), consomem APIs norte-americanas (USDA FoodData Central, Gemini e Groq) e entregam webhooks assinados em baixa latência."
+                : "Our systems don't sit on slides: they connect São Paulo to Fujiarte Co., Ltd.'s live operation in Japan (Cybozu Garoon + APPI), consume US APIs (USDA FoodData Central, Gemini & Groq), and deliver low-latency signed webhooks."}
+            </p>
+          </div>
+          <GlobalOperationsGlobe3D />
         </div>
       </section>
 
